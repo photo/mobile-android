@@ -1,5 +1,5 @@
 /**
- * The Main screen of OpenPhoto
+ * The embedded camera screen
  */
 package me.openphoto.android.app;
 
@@ -7,19 +7,20 @@ import android.app.Activity;
 import android.os.Bundle;
 
 /**
- * The Main screen of OpenPhoto
+ * The embedded camera screen
  * 
  * @author pas
  */
-public class Main extends Activity {
+public class Camera extends Activity {
 	/**
-	 * Called when Main Activity is first loaded
+	 * Called when Camera Activity is first loaded
 	 * 
 	 * @see android.app.Activity#onCreate(android.os.Bundle)
 	 */
 	@Override
-	public void onCreate(Bundle savedInstanceState) {
+	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.main);
+		setContentView(R.layout.camera);
 	}
+
 }
