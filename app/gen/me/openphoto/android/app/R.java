@@ -14,7 +14,9 @@ public final class R {
         public static final int icon=0x7f020000;
     }
     public static final class id {
-        public static final int title=0x7f050000;
+        public static final int splash_image=0x7f060001;
+        public static final int splash_title=0x7f060002;
+        public static final int title=0x7f060000;
     }
     public static final class layout {
         public static final int camera=0x7f030000;
@@ -29,5 +31,11 @@ public final class R {
     }
     public static final class string {
         public static final int app_name=0x7f040000;
+        public static final int openphoto=0x7f040001;
+    }
+    public static final class style {
+        /**  Add our theme customizations here 
+         */
+        public static final int Theme_OpenPhoto_Light=0x7f050000;
     }
 }

@@ -1,18 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-      package="me.openphoto.android.app"
-      android:versionCode="1"
-      android:versionName="1.0">
-    <uses-sdk android:minSdkVersion="7" />
+<manifest
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  package="me.openphoto.android.app"
+  android:versionCode="1"
+  android:versionName="0.1"
+>
+  <uses-sdk android:minSdkVersion="7" />
 
-    <application android:icon="@drawable/icon" android:label="@string/app_name">
-        <activity android:name=".Main"
-                  android:label="@string/app_name">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
-
-    </application>
+  <application
+    android:icon="@drawable/icon"
+    android:label="@string/app_name"
+    android:theme="@style/Theme.OpenPhoto.Light"
+  >
+    <activity android:name=".Camera"></activity>
+    <activity android:name=".Gallery"></activity>
+    <activity android:name=".Main"></activity>
+    <activity android:name=".PhotoDetails"></activity>
+    <activity android:name=".PhotoTaken"></activity>
+    <activity android:name=".Search"></activity>
+    <activity android:name=".Settings"></activity>
+    <activity
+      android:name=".Splash"
+      android:label="@string/app_name"
+    >
+      <intent-filter>
+        <action android:name="android.intent.action.MAIN" />
+        <category android:name="android.intent.category.LAUNCHER" />
+      </intent-filter>
+    </activity>
+    <activity android:name=".ViewPhoto"></activity>
+  </application>
 </manifest>
