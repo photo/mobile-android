@@ -6,6 +6,8 @@
   android:versionName="0.1"
 >
   <uses-sdk android:minSdkVersion="7" />
+  
+  <uses-permission android:name="android.permission.INTERNET" />
 
   <application
     android:icon="@drawable/icon"
