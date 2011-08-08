@@ -15,13 +15,13 @@ import org.json.JSONObject;
 public class ApiBaseTest extends TestCase {
     public void testConstructorUrl() {
         ApiBase api = new ApiBase(OpenPhotoApiConstants.OPENPHOTO_BASE_URI);
-        assertEquals(OpenPhotoApiConstants.OPENPHOTO_BASE_URI, api.getApiUrl());
+        assertEquals(OpenPhotoApiConstants.OPENPHOTO_BASE_URI, api.getBaseUrl());
     }
 
     public void testUrlEndsWithSlash() {
         ApiBase api = new ApiBase(OpenPhotoApiConstants.OPENPHOTO_BASE_URI + "/");
         assertEquals("Even if given a slash at the end, this should be removed",
-                OpenPhotoApiConstants.OPENPHOTO_BASE_URI, api.getApiUrl());
+                OpenPhotoApiConstants.OPENPHOTO_BASE_URI, api.getBaseUrl());
     }
 
     public void testBasicRequest() throws ClientProtocolException, IOException, JSONException {

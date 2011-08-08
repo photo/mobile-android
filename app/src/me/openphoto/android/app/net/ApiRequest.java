@@ -59,19 +59,37 @@ public class ApiRequest {
         return mMethod;
     }
 
+    /**
+     * Adds a request parameter.
+     * 
+     * @param name the name
+     * @param value the value
+     */
     public void addParameter(String name, String value) {
         mParameters.add(new BasicNameValuePair(name, value));
     }
 
+    /**
+     * @return the parameters specified in the ApiRequest object
+     */
     public List<NameValuePair> getParameters() {
         return mParameters;
     }
 
+    /**
+     * Add a header to be sent with the request
+     * 
+     * @param name the header name (without :)
+     * @param value the value
+     */
     public void addHeader(String name, String value) {
         mHeaders.add(new BasicNameValuePair(name, value));
 
     }
 
+    /**
+     * @return the headers specified in the ApiRequest object
+     */
     public List<NameValuePair> getHeaders() {
         return mHeaders;
     }
