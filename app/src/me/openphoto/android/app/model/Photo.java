@@ -35,12 +35,11 @@ public class Photo {
     /**
      * Creates a Photo object from json.
      * 
-     * @param jsonString json as received from the OpenPhoto API
+     * @param json JSONObject of the Photo as received from the OpenPhoto API
      * @return Photo as represented in the given json
      * @throws JSONException
      */
-    public static Photo fromJson(String jsonString) throws JSONException {
-        JSONObject json = new JSONObject(jsonString);
+    public static Photo fromJson(JSONObject json) throws JSONException {
         Photo photo = new Photo();
         photo.mId = json.optString("id");
         photo.mAppId = json.optString("appId");

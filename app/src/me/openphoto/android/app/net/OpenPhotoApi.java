@@ -1,6 +1,11 @@
 
 package me.openphoto.android.app.net;
 
+import java.io.IOException;
+
+import org.apache.http.client.ClientProtocolException;
+import org.json.JSONException;
+
 /**
  * OpenPhotoApi provides access to the acOpenPhoto API.
  * 
@@ -15,6 +20,21 @@ public class OpenPhotoApi extends ApiBase {
      */
     public OpenPhotoApi(String baseUrl) {
         super(baseUrl);
+    }
+
+    /**
+     * Get photos.
+     * 
+     * @throws IOException
+     * @throws ClientProtocolException
+     * @throws JSONException
+     * @throws IllegalStateException
+     */
+    public PhotosResponse getPhotos() throws ClientProtocolException, IOException,
+            IllegalStateException, JSONException {
+        ApiRequest request = new ApiRequest(ApiRequest.GET, "/photos.json");
+        ApiResponse response = execute(request);
+        return PhotosResponse.fromJson(response.getContentAsString());
     }
 
 }
