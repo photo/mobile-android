@@ -1,6 +1,12 @@
 
 package me.openphoto.android.app.net;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
+
 /**
  * ApiRequest holds the information for a call to the API.
  * 
@@ -14,6 +20,8 @@ public class ApiRequest {
 
     private final int mMethod;
     private final String mPath;
+    private final List<NameValuePair> mParameters;
+    private final List<NameValuePair> mHeaders;
 
     /**
      * Creates a basic ApiRequest
@@ -33,6 +41,8 @@ public class ApiRequest {
         }
         mMethod = requestMethod;
         mPath = path;
+        mParameters = new ArrayList<NameValuePair>();
+        mHeaders = new ArrayList<NameValuePair>();
     }
 
     /**
@@ -47,5 +57,22 @@ public class ApiRequest {
      */
     public int getMethod() {
         return mMethod;
+    }
+
+    public void addParameter(String name, String value) {
+        mParameters.add(new BasicNameValuePair(name, value));
+    }
+
+    public List<NameValuePair> getParameters() {
+        return mParameters;
+    }
+
+    public void addHeader(String name, String value) {
+        mHeaders.add(new BasicNameValuePair(name, value));
+
+    }
+
+    public List<NameValuePair> getHeaders() {
+        return mHeaders;
     }
 }
