@@ -1,5 +1,5 @@
 /**
- * The search screen
+ * The general photo viewing screen
  */
 package me.openphoto.android.app;
 
@@ -7,20 +7,20 @@ import android.app.Activity;
 import android.os.Bundle;
 
 /**
- * The search screen
+ * The general photo viewing screen
  * 
  * @author pas
  */
-public class Search extends Activity {
+public class ViewPhotoActivity extends Activity {
 	/**
-	 * Called when Search Activity is first loaded
+	 * Called when ViewPhoto Activity is first loaded
 	 * 
 	 * @see android.app.Activity#onCreate(android.os.Bundle)
 	 */
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.search);
+		setContentView(R.layout.view_photo);
 	}
 
 }

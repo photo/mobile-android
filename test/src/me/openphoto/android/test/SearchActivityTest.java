@@ -1,17 +1,17 @@
 package me.openphoto.android.test;
 
-import me.openphoto.android.app.Search;
+import me.openphoto.android.app.SearchActivity;
 import android.test.ActivityInstrumentationTestCase2;
 import android.widget.TextView;
 
-public class SearchTest extends ActivityInstrumentationTestCase2<Search> {
+public class SearchActivityTest extends ActivityInstrumentationTestCase2<SearchActivity> {
 
-	private Search activity;
+	private SearchActivity activity;
 	private TextView view;
 	private String resourceString;
 
-	public SearchTest() {
-		super("me.openphoto.android.app", Search.class);
+	public SearchActivityTest() {
+		super("me.openphoto.android.app", SearchActivity.class);
 	}
 
 	/**

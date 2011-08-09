@@ -13,7 +13,7 @@ import android.os.Bundle;
  * 
  * @author pas
  */
-public class Splash extends Activity {
+public class SplashActivity extends Activity {
 	private InitialLoad loadTask;
 
 	/**
@@ -58,7 +58,7 @@ public class Splash extends Activity {
 			super.onPostExecute(result);
 
 			// Go to Main screen
-			Intent i = new Intent(Splash.this, Main.class);
+			Intent i = new Intent(SplashActivity.this, MainActivity.class);
 			startActivity(i);
 			finish();
 		}

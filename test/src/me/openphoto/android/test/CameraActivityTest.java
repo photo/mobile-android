@@ -1,17 +1,17 @@
 package me.openphoto.android.test;
 
-import me.openphoto.android.app.Settings;
+import me.openphoto.android.app.CameraActivity;
 import android.test.ActivityInstrumentationTestCase2;
 import android.widget.TextView;
 
-public class SettingsTest extends ActivityInstrumentationTestCase2<Settings> {
+public class CameraActivityTest extends ActivityInstrumentationTestCase2<CameraActivity> {
 
-	private Settings activity;
+	private CameraActivity activity;
 	private TextView view;
 	private String resourceString;
 
-	public SettingsTest() {
-		super("me.openphoto.android.app", Settings.class);
+	public CameraActivityTest() {
+		super("me.openphoto.android.app", CameraActivity.class);
 	}
 
 	/**

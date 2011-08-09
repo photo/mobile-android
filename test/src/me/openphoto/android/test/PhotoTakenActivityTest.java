@@ -1,17 +1,18 @@
 package me.openphoto.android.test;
 
-import me.openphoto.android.app.Camera;
+import me.openphoto.android.app.PhotoTakenActivity;
 import android.test.ActivityInstrumentationTestCase2;
 import android.widget.TextView;
 
-public class CameraTest extends ActivityInstrumentationTestCase2<Camera> {
+public class PhotoTakenActivityTest extends
+		ActivityInstrumentationTestCase2<PhotoTakenActivity> {
 
-	private Camera activity;
+	private PhotoTakenActivity activity;
 	private TextView view;
 	private String resourceString;
 
-	public CameraTest() {
-		super("me.openphoto.android.app", Camera.class);
+	public PhotoTakenActivityTest() {
+		super("me.openphoto.android.app", PhotoTakenActivity.class);
 	}
 
 	/**

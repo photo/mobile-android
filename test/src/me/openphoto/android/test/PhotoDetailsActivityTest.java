@@ -1,17 +1,18 @@
 package me.openphoto.android.test;
 
-import me.openphoto.android.app.Splash;
+import me.openphoto.android.app.PhotoDetailsActivity;
 import android.test.ActivityInstrumentationTestCase2;
 import android.widget.TextView;
 
-public class SplashTest extends ActivityInstrumentationTestCase2<Splash> {
+public class PhotoDetailsActivityTest extends
+		ActivityInstrumentationTestCase2<PhotoDetailsActivity> {
 
-	private Splash activity;
+	private PhotoDetailsActivity activity;
 	private TextView view;
 	private String resourceString;
 
-	public SplashTest() {
-		super("me.openphoto.android.app", Splash.class);
+	public PhotoDetailsActivityTest() {
+		super("me.openphoto.android.app", PhotoDetailsActivity.class);
 	}
 
 	/**
@@ -22,9 +23,9 @@ public class SplashTest extends ActivityInstrumentationTestCase2<Splash> {
 		super.setUp();
 		activity = this.getActivity();
 		view = (TextView) activity
-				.findViewById(me.openphoto.android.app.R.id.splash_title);
+				.findViewById(me.openphoto.android.app.R.id.title);
 		resourceString = activity
-				.getString(me.openphoto.android.app.R.string.openphoto);
+				.getString(me.openphoto.android.app.R.string.app_name);
 	}
 
 	public void testPreconditions() {

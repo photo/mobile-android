@@ -1,17 +1,17 @@
 package me.openphoto.android.test;
 
-import me.openphoto.android.app.ViewPhoto;
+import me.openphoto.android.app.GalleryActivity;
 import android.test.ActivityInstrumentationTestCase2;
 import android.widget.TextView;
 
-public class ViewPhotoTest extends ActivityInstrumentationTestCase2<ViewPhoto> {
+public class GalleryActivityTest extends ActivityInstrumentationTestCase2<GalleryActivity> {
 
-	private ViewPhoto activity;
+	private GalleryActivity activity;
 	private TextView view;
 	private String resourceString;
 
-	public ViewPhotoTest() {
-		super("me.openphoto.android.app", ViewPhoto.class);
+	public GalleryActivityTest() {
+		super("me.openphoto.android.app", GalleryActivity.class);
 	}
 
 	/**

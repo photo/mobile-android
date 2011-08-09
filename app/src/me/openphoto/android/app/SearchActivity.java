@@ -1,5 +1,5 @@
 /**
- * The photo-has-been-taken-do-we-want-to-use-it screen
+ * The search screen
  */
 package me.openphoto.android.app;
 
@@ -7,20 +7,20 @@ import android.app.Activity;
 import android.os.Bundle;
 
 /**
- * The photo-has-been-taken-do-we-want-to-use-it screen
+ * The search screen
  * 
  * @author pas
  */
-public class PhotoTaken extends Activity {
+public class SearchActivity extends Activity {
 	/**
-	 * Called when PhotoTaken Activity is first loaded
+	 * Called when Search Activity is first loaded
 	 * 
 	 * @see android.app.Activity#onCreate(android.os.Bundle)
 	 */
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.photo_taken);
+		setContentView(R.layout.search);
 	}
 
 }

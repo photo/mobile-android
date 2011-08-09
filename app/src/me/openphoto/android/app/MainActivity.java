@@ -22,7 +22,7 @@ import android.widget.Toast;
  * 
  * @author pas
  */
-public class Main extends Activity {
+public class MainActivity extends Activity {
     /**
      * Called when Main Activity is first loaded
      * 
@@ -57,7 +57,7 @@ public class Main extends Activity {
                 image.setImageBitmap(result);
                 image.setVisibility(View.VISIBLE);
             } else {
-                Toast.makeText(Main.this, "Could not download image", Toast.LENGTH_LONG).show();
+                Toast.makeText(MainActivity.this, "Could not download image", Toast.LENGTH_LONG).show();
             }
         }
 

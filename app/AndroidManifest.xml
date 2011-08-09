@@ -14,15 +14,15 @@
     android:label="@string/app_name"
     android:theme="@style/Theme.OpenPhoto.Light"
   >
-    <activity android:name=".Camera"></activity>
-    <activity android:name=".Gallery"></activity>
-    <activity android:name=".Main"></activity>
-    <activity android:name=".PhotoDetails"></activity>
-    <activity android:name=".PhotoTaken"></activity>
-    <activity android:name=".Search"></activity>
-    <activity android:name=".Settings"></activity>
+    <activity android:name=".CameraActivity"></activity>
+    <activity android:name=".GalleryActivity"></activity>
+    <activity android:name=".MainActivity"></activity>
+    <activity android:name=".PhotoDetailsActivity"></activity>
+    <activity android:name=".PhotoTakenActivity"></activity>
+    <activity android:name=".SearchActivity"></activity>
+    <activity android:name=".SettingsActivity"></activity>
     <activity
-      android:name=".Splash"
+      android:name=".SplashActivity"
       android:label="@string/app_name"
     >
       <intent-filter>
@@ -30,6 +30,6 @@
         <category android:name="android.intent.category.LAUNCHER" />
       </intent-filter>
     </activity>
-    <activity android:name=".ViewPhoto"></activity>
+    <activity android:name=".ViewPhotoActivity"></activity>
   </application>
 </manifest>
