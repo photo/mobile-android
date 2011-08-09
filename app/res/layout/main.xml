@@ -19,5 +19,34 @@
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
     android:scaleType="centerInside"
-    android:adjustViewBounds="true" />
+    android:adjustViewBounds="true" android:layout_weight="1"/>
+  <LinearLayout
+    android:layout_height="wrap_content"
+    android:layout_width="fill_parent"
+    android:id="@+id/main_navigation_linear" android:gravity="center">
+    <ImageButton
+      android:src="@android:drawable/ic_menu_search"
+      android:layout_height="wrap_content"
+      android:layout_width="wrap_content"
+      android:id="@+id/main_search_btn"
+    />
+    <ImageButton
+      android:src="@android:drawable/ic_menu_camera"
+      android:layout_height="wrap_content"
+      android:layout_width="wrap_content"
+      android:id="@+id/main_camera_btn"
+    />
+    <ImageButton
+      android:src="@android:drawable/ic_menu_gallery"
+      android:layout_height="wrap_content"
+      android:layout_width="wrap_content"
+      android:id="@+id/main_gallery_btn"
+    />
+    <ImageButton
+      android:src="@android:drawable/ic_menu_preferences"
+      android:layout_height="wrap_content"
+      android:layout_width="wrap_content"
+      android:id="@+id/main_settings_btn"
+    />
+  </LinearLayout>
 </LinearLayout>
