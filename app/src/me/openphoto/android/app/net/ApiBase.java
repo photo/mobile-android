@@ -2,9 +2,13 @@
 package me.openphoto.android.app.net;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
 
+import me.openphoto.android.app.net.ApiRequest.Parameter;
+
+import org.apache.http.HttpVersion;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
@@ -13,7 +17,12 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.entity.mime.MultipartEntity;
+import org.apache.http.entity.mime.content.ContentBody;
+import org.apache.http.entity.mime.content.InputStreamBody;
+import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.params.CoreProtocolPNames;
 import org.apache.http.protocol.HTTP;
 
 /**
@@ -56,6 +65,8 @@ public class ApiBase {
      */
     public ApiResponse execute(ApiRequest request) throws ClientProtocolException, IOException {
         DefaultHttpClient httpClient = new DefaultHttpClient();
+        httpClient.getParams().setParameter(CoreProtocolPNames.PROTOCOL_VERSION,
+                HttpVersion.HTTP_1_1);
         HttpUriRequest httpRequest = createHttpRequest(request);
 
         // This is needed because otherwise photo upload can fail on PHP servers
@@ -83,8 +94,25 @@ public class ApiBase {
                 break;
             case ApiRequest.POST:
                 httpRequest = new HttpPost(mBaseUrl + request.getPath());
-                ((HttpPost) httpRequest).setEntity(new UrlEncodedFormEntity(
-                        request.getParameters(), HTTP.UTF_8));
+                HttpPost httpPost = ((HttpPost) httpRequest);
+                if (request.isMime()) {
+                    MultipartEntity entity = new MultipartEntity();
+                    for (Parameter<?> parameter : request.getParametersMime()) {
+                        if (parameter.getValue() instanceof String) {
+                            entity.addPart(parameter.getName(),
+                                    new StringBody((String) parameter.getValue()));
+                        } else if (parameter.getValue() instanceof InputStream) {
+                            ContentBody cbFile = new InputStreamBody(
+                                    (InputStream) parameter.getValue(), "image.jpg");
+                            // TODO through some way get the correct file name
+                            // instead of image.jpg
+                            entity.addPart(parameter.getName(), cbFile);
+                        }
+                    }
+                    httpPost.setEntity(entity);
+                } else {
+                    httpPost.setEntity(new UrlEncodedFormEntity(request.getParameters(), HTTP.UTF_8));
+                }
                 break;
             case ApiRequest.PUT:
                 httpRequest = new HttpPut(addParamsToUrl(mBaseUrl + request.getPath(),

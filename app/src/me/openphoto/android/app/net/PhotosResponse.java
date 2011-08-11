@@ -14,31 +14,18 @@ public class PhotosResponse extends PagedResponse {
 
     private List<Photo> mPhotos;
 
-    private PhotosResponse() {
+    public PhotosResponse(JSONObject json) throws JSONException {
+        super(json);
+
         mPhotos = new ArrayList<Photo>();
-    }
 
-    /**
-     * This will create a PhotosResponse object by giving the response as
-     * received from an OpenPhoto API.
-     * 
-     * @param jsonString
-     * @return PhotosResponse object represented in the jsonString
-     * @throws JSONException
-     */
-    public static PhotosResponse fromJson(String jsonString) throws JSONException {
-        PhotosResponse response = new PhotosResponse();
-
-        JSONObject json = new JSONObject(jsonString);
         JSONArray result = json.getJSONArray("result");
-        response.setPaging(result.getJSONObject(0));
-        if (response.getTotalRows() > 0) {
+
+        if (getTotalRows() > 0) {
             for (int i = 0; i < result.length(); i++) {
-                response.mPhotos.add(Photo.fromJson(result.getJSONObject(i)));
+                mPhotos.add(Photo.fromJson(result.getJSONObject(i)));
             }
         }
-
-        return response;
     }
 
     /**

@@ -1,6 +1,7 @@
 
 package me.openphoto.android.app.net;
 
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,8 +21,9 @@ public class ApiRequest {
 
     private final int mMethod;
     private final String mPath;
-    private final List<NameValuePair> mParameters;
+    private final List<Parameter<?>> mParameters;
     private final List<NameValuePair> mHeaders;
+    private boolean mIsMime;
 
     /**
      * Creates a basic ApiRequest
@@ -41,8 +43,9 @@ public class ApiRequest {
         }
         mMethod = requestMethod;
         mPath = path;
-        mParameters = new ArrayList<NameValuePair>();
+        mParameters = new ArrayList<Parameter<?>>();
         mHeaders = new ArrayList<NameValuePair>();
+        mIsMime = false;
     }
 
     /**
@@ -66,13 +69,46 @@ public class ApiRequest {
      * @param value the value
      */
     public void addParameter(String name, String value) {
-        mParameters.add(new BasicNameValuePair(name, value));
+        mParameters.add(new Parameter<String>(name, value));
     }
 
     /**
-     * @return the parameters specified in the ApiRequest object
+     * Add a inputStream for a POST MIME upload request.<br />
+     * This will throw an exception if isMime() != true or this is not a POST
+     * request.
+     * 
+     * @param name the name
+     * @param inputStream the inputStream which is the file/value
+     */
+    public void addParameter(String name, InputStream inputStream) {
+        if (!isMime() || getMethod() != POST) {
+            throw new IllegalStateException("Only possible if POST and MIME is used.");
+        }
+        mParameters.add(new Parameter<InputStream>(name, inputStream));
+    }
+
+    /**
+     * Will return the parameters for a non MIME request.<br />
+     * Note that if this is a MIME request with InputStream parameters, those
+     * will not be returned herewith.
+     * 
+     * @return the string parameters
      */
     public List<NameValuePair> getParameters() {
+        List<NameValuePair> result = new ArrayList<NameValuePair>(mParameters.size());
+        for (Parameter<?> parameter : mParameters) {
+            if (parameter.getValue() instanceof String) {
+                result.add(new BasicNameValuePair(parameter.getName(), (String) parameter
+                        .getValue()));
+            }
+        }
+        return result;
+    }
+
+    /**
+     * @return all the parameters
+     */
+    public List<Parameter<?>> getParametersMime() {
         return mParameters;
     }
 
@@ -92,5 +128,54 @@ public class ApiRequest {
      */
     public List<NameValuePair> getHeaders() {
         return mHeaders;
+    }
+
+    /**
+     * @return if this request will use MIME
+     */
+    public boolean isMime() {
+        return mIsMime;
+    }
+
+    /**
+     * Set if this request should use MIME.
+     * 
+     * @param isMime true if should use MIME
+     */
+    public void setMime(boolean isMime) {
+        if (isMime && getMethod() != POST) {
+            throw new IllegalStateException("Needs to be a POST request to be MIME!");
+        }
+        mIsMime = isMime;
+    }
+
+    /**
+     * A parameter for a request.
+     * 
+     * @author Patrick Boos
+     * @param <T> Type of the Value
+     */
+    public class Parameter<T> {
+        private String mName;
+        private T mValue;
+
+        public Parameter(String name, T value) {
+            mName = name;
+            mValue = value;
+        }
+
+        /**
+         * @return Name of the parameter
+         */
+        public String getName() {
+            return mName;
+        }
+
+        /**
+         * @return Value of the parameter
+         */
+        public T getValue() {
+            return mValue;
+        }
     }
 }

@@ -1,6 +1,8 @@
 
 package me.openphoto.android.test.net;
 
+import java.io.ByteArrayInputStream;
+
 import junit.framework.TestCase;
 import me.openphoto.android.app.net.ApiRequest;
 
@@ -50,5 +52,36 @@ public class ApiRequestTest extends TestCase {
         assertEquals(request.getHeaders().size(), 1);
         assertEquals(request.getHeaders().get(0).getName(), "headerName");
         assertEquals(request.getHeaders().get(0).getValue(), "headerValue");
+    }
+
+    public void testMime() {
+        ApiRequest request = new ApiRequest(ApiRequest.GET, "/photo");
+        boolean hadException = false;
+        try {
+            request.setMime(true);
+        } catch (Exception e) {
+            hadException = true;
+        }
+        assertTrue("Should have had exception because MIME not possible with GET", hadException);
+
+        request = new ApiRequest(ApiRequest.POST, "/photo");
+        assertFalse("Mime should be off by default", request.isMime());
+        request.setMime(true);
+        assertTrue(request.isMime());
+
+        request.addParameter("mime1", "value1");
+        try {
+            request.addParameter("mime2", new ByteArrayInputStream(new byte[1]));
+        } catch (Exception e) {
+            fail("Exception should not happen: " + e.getClass().getSimpleName() + " - "
+                    + e.getMessage());
+        }
+
+        assertEquals(1, request.getParameters().size());
+        assertEquals("value1", request.getParameters().get(0).getValue());
+
+        assertEquals(2, request.getParametersMime().size());
+        assertEquals("value1", (String) request.getParametersMime().get(0).getValue());
+        assertTrue(request.getParametersMime().get(1).getValue() instanceof ByteArrayInputStream);
     }
 }

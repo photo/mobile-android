@@ -1,6 +1,8 @@
 
 package me.openphoto.android.app.net;
 
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
@@ -8,22 +10,21 @@ import org.json.JSONObject;
  * 
  * @author Patrick Boos
  */
-public class PagedResponse {
+public class PagedResponse extends OpenPhotoResponse {
     private int mTotalRows;
     private int mPageSize;
     private int mCurrentPage;
     private int mTotalPages;
 
-    /**
-     * Set values from JSONObject
-     * 
-     * @param objectContainingPaging object containing the paging information
-     */
-    public void setPaging(JSONObject objectContainingPaging) {
-        mTotalRows = objectContainingPaging.optInt("totalRows");
-        mPageSize = objectContainingPaging.optInt("pageSize");
-        mCurrentPage = objectContainingPaging.optInt("currentPage");
-        mTotalPages = objectContainingPaging.optInt("totalPages");
+    public PagedResponse(JSONObject json) throws JSONException {
+        super(json);
+        if (json.get("result") instanceof JSONArray) {
+            JSONObject objectContainingPaging = json.getJSONArray("result").getJSONObject(0);
+            mTotalRows = objectContainingPaging.optInt("totalRows");
+            mPageSize = objectContainingPaging.optInt("pageSize");
+            mCurrentPage = objectContainingPaging.optInt("currentPage");
+            mTotalPages = objectContainingPaging.optInt("totalPages");
+        }
     }
 
     /**
