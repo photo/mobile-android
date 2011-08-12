@@ -2,12 +2,13 @@ package me.openphoto.android.test;
 
 import me.openphoto.android.app.CameraActivity;
 import android.test.ActivityInstrumentationTestCase2;
-import android.widget.TextView;
+import android.widget.Button;
 
-public class CameraActivityTest extends ActivityInstrumentationTestCase2<CameraActivity> {
+public class CameraActivityTest extends
+		ActivityInstrumentationTestCase2<CameraActivity> {
 
 	private CameraActivity activity;
-	private TextView view;
+	private Button view;
 	private String resourceString;
 
 	public CameraActivityTest() {
@@ -21,10 +22,10 @@ public class CameraActivityTest extends ActivityInstrumentationTestCase2<CameraA
 	protected void setUp() throws Exception {
 		super.setUp();
 		activity = this.getActivity();
-		view = (TextView) activity
-				.findViewById(me.openphoto.android.app.R.id.title);
+		view = (Button) activity
+				.findViewById(me.openphoto.android.app.R.id.l_camera_btn_take_photo);
 		resourceString = activity
-				.getString(me.openphoto.android.app.R.string.app_name);
+				.getString(me.openphoto.android.app.R.string.take_photo);
 	}
 
 	public void testPreconditions() {

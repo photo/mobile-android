@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">OpenPhoto</string>
-    <string name="openphoto">OpenPhoto</string>
+  <string name="app_name">OpenPhoto</string>
+  <string name="openphoto">OpenPhoto</string>
+  <string name="take_photo">Take Photo</string>
+  <string name="uploading">Uploading...</string>
 </resources>
