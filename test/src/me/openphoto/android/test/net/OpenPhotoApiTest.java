@@ -5,8 +5,9 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import me.openphoto.android.app.net.OpenPhotoApi;
-import me.openphoto.android.app.net.PhotoUploadSettings;
+import me.openphoto.android.app.net.PhotoResponse;
 import me.openphoto.android.app.net.PhotosResponse;
+import me.openphoto.android.app.net.UploadMetaData;
 import me.openphoto.android.test.R;
 
 import org.apache.http.client.ClientProtocolException;
@@ -38,17 +39,21 @@ public class OpenPhotoApiTest extends InstrumentationTestCase {
         InputStream imageStream = getInstrumentation().getContext().getResources()
                 .openRawResource(R.raw.android);
 
-        PhotoUploadSettings settings = new PhotoUploadSettings();
+        UploadMetaData settings = new UploadMetaData();
         settings.setTitle("Android");
         settings.setDescription("Nice picture of an android");
         settings.setTags("test");
         try {
-            String resp = mApi.uploadPhoto(imageStream, settings);
-            resp += "";
+            PhotoResponse resp = mApi.uploadPhoto(imageStream, settings);
+            assertEquals(202, resp.getCode());
+            assertNotNull(resp.getPhoto());
+            assertEquals(1, resp.getPhoto().getTags().size());
+            assertEquals("test", resp.getPhoto().getTags().get(0));
+            assertEquals("Android", resp.getPhoto().getTitle());
+            assertEquals("Nice picture of an android", resp.getPhoto().getDescription());
         } catch (Exception e) {
             fail("Exception should not happen: " + e.getClass().getSimpleName() + " - "
                     + e.getMessage());
         }
-        // verify upload
     }
 }

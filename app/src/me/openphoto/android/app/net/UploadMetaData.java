@@ -1,7 +1,7 @@
 
 package me.openphoto.android.app.net;
 
-public class PhotoUploadSettings {
+public class UploadMetaData {
     private String mTitle;
     private String mDescription;
     private String mTags;

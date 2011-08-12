@@ -43,28 +43,29 @@ public class OpenPhotoApi extends ApiBase {
      * Upload a picture.
      * 
      * @param imageStream InputStream for the picture
-     * @param settings Settings which define title, ... of the photo
-     * @return // TODO
+     * @param metaData MetaData which define title, ... of the photo
+     * @return The response with which contains info about the uploaded photo
      * @throws IOException
      * @throws ClientProtocolException
+     * @throws JSONException
+     * @throws IllegalStateException
      */
-    public String uploadPhoto(InputStream imageStream, PhotoUploadSettings settings)
-            throws ClientProtocolException, IOException {
+    public PhotoResponse uploadPhoto(InputStream imageStream, UploadMetaData metaData)
+            throws ClientProtocolException, IOException, IllegalStateException, JSONException {
         ApiRequest request = new ApiRequest(ApiRequest.POST, "/photo/upload.json");
         request.setMime(true);
-        if (settings.getTags() != null) {
-            request.addParameter("tags", settings.getTags());
+        if (metaData.getTags() != null) {
+            request.addParameter("tags", metaData.getTags());
         }
-        if (settings.getTitle() != null) {
-            request.addParameter("title", settings.getTitle());
+        if (metaData.getTitle() != null) {
+            request.addParameter("title", metaData.getTitle());
         }
-        if (settings.getDescription() != null) {
-            request.addParameter("description", settings.getDescription());
+        if (metaData.getDescription() != null) {
+            request.addParameter("description", metaData.getDescription());
         }
 
         request.addParameter("photo", imageStream);
         ApiResponse response = execute(request);
-        return response.getContentAsString();
+        return new PhotoResponse(new JSONObject(response.getContentAsString()));
     }
-
 }
