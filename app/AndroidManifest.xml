@@ -9,6 +9,8 @@
 
   <uses-permission android:name="android.permission.CAMERA" />
   <uses-permission android:name="android.permission.INTERNET" />
+  <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+  <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
   <application
     android:icon="@drawable/icon"
@@ -35,5 +37,23 @@
       </intent-filter>
     </activity>
     <activity android:name=".ViewPhotoActivity"></activity>
+    
+    <!-- AutoUpload things -->
+    <!-- Stuff for auto uploading pictures to Flickr -->
+    <receiver android:name=".receiver.NewPhotoReceiver">
+      <intent-filter>
+        <action android:name="com.android.camera.NEW_PICTURE" />
+        <data android:mimeType="image/*" />
+      </intent-filter>
+      <intent-filter>
+        <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
+      </intent-filter>
+    </receiver>
+
+    <service  android:name=".service.UploaderService" />
+
+    <provider
+      android:name=".provider.UploadsProvider"
+      android:authorities="me.openphoto.android.app" />
   </application>
 </manifest>

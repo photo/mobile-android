@@ -1,7 +1,7 @@
 
 package me.openphoto.android.app.net;
 
-import java.io.InputStream;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -73,18 +73,18 @@ public class ApiRequest {
     }
 
     /**
-     * Add a inputStream for a POST MIME upload request.<br />
+     * Add a file for a POST MIME upload request.<br />
      * This will throw an exception if isMime() != true or this is not a POST
      * request.
      * 
      * @param name the name
-     * @param inputStream the inputStream which is the file/value
+     * @param file the file to be added
      */
-    public void addParameter(String name, InputStream inputStream) {
+    public void addFileParameter(String name, File file) {
         if (!isMime() || getMethod() != POST) {
             throw new IllegalStateException("Only possible if POST and MIME is used.");
         }
-        mParameters.add(new Parameter<InputStream>(name, inputStream));
+        mParameters.add(new Parameter<File>(name, file));
     }
 
     /**

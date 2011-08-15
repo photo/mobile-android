@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <!--#########-->	
+  <!-- Account -->
+  <!--#########-->
+  <string name="setting_account_title">Account</string>
+  
+  <string name="setting_account_edit_account_title">Edit account</string>
+  <string name="setting_account_change_profile_picture_title">Change profile picture</string>
+  <string name="setting_account_log_out_title">Log out</string>
+  
+  <!-- AutoUpload -->
+  <string name="setting_autoupload_on_key">setting_autoupload_on</string>
+  <bool   name="setting_autoupload_on_default">false</bool>
+
+  <string name="setting_autoupload_tag_key">setting_autoupload_tag</string>
+  <string name="setting_autoupload_tag_default">autoupload</string>
+</resources>

@@ -4,6 +4,7 @@
   android:versionName="1.0">
   <uses-sdk android:minSdkVersion="7" />
   <uses-permission android:name="android.permission.INTERNET" />
+  <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
   <instrumentation
     android:targetPackage="me.openphoto.android.app"

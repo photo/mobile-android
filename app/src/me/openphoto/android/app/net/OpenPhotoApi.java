@@ -1,8 +1,8 @@
 
 package me.openphoto.android.app.net;
 
+import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 
 import org.apache.http.client.ClientProtocolException;
 import org.json.JSONException;
@@ -42,7 +42,7 @@ public class OpenPhotoApi extends ApiBase {
     /**
      * Upload a picture.
      * 
-     * @param imageStream InputStream for the picture
+     * @param imageFile the image file
      * @param metaData MetaData which define title, ... of the photo
      * @return The response with which contains info about the uploaded photo
      * @throws IOException
@@ -50,7 +50,7 @@ public class OpenPhotoApi extends ApiBase {
      * @throws JSONException
      * @throws IllegalStateException
      */
-    public PhotoResponse uploadPhoto(InputStream imageStream, UploadMetaData metaData)
+    public PhotoResponse uploadPhoto(File imageFile, UploadMetaData metaData)
             throws ClientProtocolException, IOException, IllegalStateException, JSONException {
         ApiRequest request = new ApiRequest(ApiRequest.POST, "/photo/upload.json");
         request.setMime(true);
@@ -64,8 +64,9 @@ public class OpenPhotoApi extends ApiBase {
             request.addParameter("description", metaData.getDescription());
         }
 
-        request.addParameter("photo", imageStream);
+        request.addFileParameter("photo", imageFile);
         ApiResponse response = execute(request);
-        return new PhotoResponse(new JSONObject(response.getContentAsString()));
+        String responseString = response.getContentAsString();
+        return new PhotoResponse(new JSONObject(responseString));
     }
 }

@@ -1,6 +1,8 @@
 
 package me.openphoto.android.test.net;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -13,6 +15,7 @@ import me.openphoto.android.test.R;
 import org.apache.http.client.ClientProtocolException;
 import org.json.JSONException;
 
+import android.os.Environment;
 import android.test.InstrumentationTestCase;
 
 public class OpenPhotoApiTest extends InstrumentationTestCase {
@@ -35,16 +38,27 @@ public class OpenPhotoApiTest extends InstrumentationTestCase {
         assertNotSame(0, resp.getPhotos().size());
     }
 
-    public void testPhotoUpload() {
+    public void testPhotoUpload() throws IOException {
         InputStream imageStream = getInstrumentation().getContext().getResources()
                 .openRawResource(R.raw.android);
+        String state = Environment.getExternalStorageState();
+        File dir = new File(Environment.getExternalStorageDirectory().getAbsolutePath()
+                + "/data/me.openphoto.android");
+        if (!dir.exists()) {
+            assertTrue(dir.mkdirs());
+        }
+        File file = new File(dir, "test-android.jpg");
+        // if (!file.exists()) {
+        // file.createNewFile();
+        // }
+        writeToFile(imageStream, file);
 
         UploadMetaData settings = new UploadMetaData();
         settings.setTitle("Android");
         settings.setDescription("Nice picture of an android");
         settings.setTags("test");
         try {
-            PhotoResponse resp = mApi.uploadPhoto(imageStream, settings);
+            PhotoResponse resp = mApi.uploadPhoto(file, settings);
             assertEquals(202, resp.getCode());
             assertNotNull(resp.getPhoto());
             assertEquals(1, resp.getPhoto().getTags().size());
@@ -53,6 +67,22 @@ public class OpenPhotoApiTest extends InstrumentationTestCase {
             assertEquals("Nice picture of an android", resp.getPhoto().getDescription());
         } catch (Exception e) {
             fail("Exception should not happen: " + e.getClass().getSimpleName() + " - "
+                    + e.getMessage());
+        }
+        file.delete();
+    }
+
+    public void writeToFile(InputStream inputStream, File file) {
+        try {
+            FileOutputStream out = new FileOutputStream(file);
+            byte buf[] = new byte[1024];
+            int len;
+            while ((len = inputStream.read(buf)) > 0)
+                out.write(buf, 0, len);
+            out.close();
+            inputStream.close();
+        } catch (IOException e) {
+            fail("Could not write image to SD card: (" + e.getClass().getSimpleName() + ")"
                     + e.getMessage());
         }
     }

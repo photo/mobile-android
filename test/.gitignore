@@ -5,3 +5,4 @@ coverage/
 build.properties
 build.xml
 local.properties
+.settings/

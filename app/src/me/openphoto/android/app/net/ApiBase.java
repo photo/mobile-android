@@ -1,8 +1,8 @@
 
 package me.openphoto.android.app.net;
 
+import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
 
@@ -19,7 +19,7 @@ import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.entity.mime.MultipartEntity;
 import org.apache.http.entity.mime.content.ContentBody;
-import org.apache.http.entity.mime.content.InputStreamBody;
+import org.apache.http.entity.mime.content.FileBody;
 import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.params.CoreProtocolPNames;
@@ -70,7 +70,9 @@ public class ApiBase {
         HttpUriRequest httpRequest = createHttpRequest(request);
 
         // This is needed because otherwise photo upload can fail on PHP servers
-        httpRequest.getParams().setBooleanParameter("http.protocol.expect-continue", false);
+        httpRequest.getParams().setBooleanParameter(CoreProtocolPNames.WAIT_FOR_CONTINUE, true);
+        // httpRequest.getParams().setBooleanParameter("http.protocol.expect-continue",
+        // false);
 
         return new ApiResponse(httpClient.execute(httpRequest));
     }
@@ -101,11 +103,8 @@ public class ApiBase {
                         if (parameter.getValue() instanceof String) {
                             entity.addPart(parameter.getName(),
                                     new StringBody((String) parameter.getValue()));
-                        } else if (parameter.getValue() instanceof InputStream) {
-                            ContentBody cbFile = new InputStreamBody(
-                                    (InputStream) parameter.getValue(), "image.jpg");
-                            // TODO through some way get the correct file name
-                            // instead of image.jpg
+                        } else if (parameter.getValue() instanceof File) {
+                            ContentBody cbFile = new FileBody((File) parameter.getValue());
                             entity.addPart(parameter.getName(), cbFile);
                         }
                     }

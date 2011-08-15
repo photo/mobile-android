@@ -1,10 +1,11 @@
 
 package me.openphoto.android.test.net;
 
-import java.io.ByteArrayInputStream;
+import java.io.File;
 
 import junit.framework.TestCase;
 import me.openphoto.android.app.net.ApiRequest;
+import android.os.Environment;
 
 public class ApiRequestTest extends TestCase {
     public void testBasicConstruction() {
@@ -71,7 +72,7 @@ public class ApiRequestTest extends TestCase {
 
         request.addParameter("mime1", "value1");
         try {
-            request.addParameter("mime2", new ByteArrayInputStream(new byte[1]));
+            request.addFileParameter("mime2", Environment.getDataDirectory());
         } catch (Exception e) {
             fail("Exception should not happen: " + e.getClass().getSimpleName() + " - "
                     + e.getMessage());
@@ -82,6 +83,6 @@ public class ApiRequestTest extends TestCase {
 
         assertEquals(2, request.getParametersMime().size());
         assertEquals("value1", (String) request.getParametersMime().get(0).getValue());
-        assertTrue(request.getParametersMime().get(1).getValue() instanceof ByteArrayInputStream);
+        assertTrue(request.getParametersMime().get(1).getValue() instanceof File);
     }
 }
