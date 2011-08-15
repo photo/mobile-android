@@ -17,9 +17,9 @@ import org.json.JSONObject;
  */
 public class Photo {
     private String mId;
-    private List<String> mTags;
+    private final List<String> mTags;
     private String mAppId;
-    private Map<String, String> mUrls;
+    private final Map<String, String> mUrls;
     private String mTitle;
     private String mDescription;
 
@@ -45,6 +45,12 @@ public class Photo {
         photo.mAppId = json.optString("appId");
         photo.mTitle = json.optString("title");
         photo.mDescription = json.optString("description");
+
+        String host = "http://" + json.optString("host");
+        String base = json.optString("pathBase");
+        String original = json.optString("pathOriginal");
+        photo.mUrls.put("base", host + base);
+        photo.mUrls.put("original", host + original);
 
         // Tags
         JSONArray tags = json.getJSONArray("tags");

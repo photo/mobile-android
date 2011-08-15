@@ -26,83 +26,85 @@ import android.widget.Toast;
  * @author pas
  */
 public class MainActivity extends Activity implements OnClickListener {
-	private ImageButton searchBtn;
-	private ImageButton cameraBtn;
-	private ImageButton galleryBtn;
-	private ImageButton settingsBtn;
+    private ImageButton searchBtn;
+    private ImageButton cameraBtn;
+    private ImageButton galleryBtn;
+    private ImageButton settingsBtn;
 
-	/**
-	 * Called when Main Activity is first loaded
-	 * 
-	 * @see android.app.Activity#onCreate(android.os.Bundle)
-	 */
-	@Override
-	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.main);
-		findViewById(R.id.image).setVisibility(View.GONE);
-		new LoadImageTask().execute();
+    /**
+     * Called when Main Activity is first loaded
+     * 
+     * @see android.app.Activity#onCreate(android.os.Bundle)
+     */
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.main);
+        findViewById(R.id.image).setVisibility(View.GONE);
+        new LoadImageTask().execute();
 
-		// Get refereneces to navigation buttons
-		searchBtn = (ImageButton) findViewById(R.id.main_search_btn);
-		cameraBtn = (ImageButton) findViewById(R.id.main_camera_btn);
-		galleryBtn = (ImageButton) findViewById(R.id.main_gallery_btn);
-		settingsBtn = (ImageButton) findViewById(R.id.main_settings_btn);
-		searchBtn.setOnClickListener(this);
-		cameraBtn.setOnClickListener(this);
-		galleryBtn.setOnClickListener(this);
-		settingsBtn.setOnClickListener(this);
-	}
+        // Get refereneces to navigation buttons
+        searchBtn = (ImageButton) findViewById(R.id.main_search_btn);
+        cameraBtn = (ImageButton) findViewById(R.id.main_camera_btn);
+        galleryBtn = (ImageButton) findViewById(R.id.main_gallery_btn);
+        settingsBtn = (ImageButton) findViewById(R.id.main_settings_btn);
+        searchBtn.setOnClickListener(this);
+        cameraBtn.setOnClickListener(this);
+        galleryBtn.setOnClickListener(this);
+        settingsBtn.setOnClickListener(this);
+    }
 
-	private class LoadImageTask extends AsyncTask<Void, Void, Bitmap> {
+    private class LoadImageTask extends AsyncTask<Void, Void, Bitmap> {
 
-		@Override
-		protected Bitmap doInBackground(Void... params) {
-			OpenPhotoApi api = new OpenPhotoApi("http://current.openphoto.me");
-			try {
-				Photo photo = api.getPhotos().getPhotos().get(0);
-				return BitmapFactory.decodeStream(new URL(photo
-						.getUrl("640x960")).openStream());
-			} catch (Exception e) {
-				return null;
-			}
-		}
+        @Override
+        protected Bitmap doInBackground(Void... params) {
+            OpenPhotoApi api = new OpenPhotoApi(Preferences.getServer(MainActivity.this));
+            try {
+                Photo photo = api.getPhotos().getPhotos().get(0);
+                // TODO do not use base, make getPhotos actually use a
+                // returnSize parameter that should be used then.
+                return BitmapFactory.decodeStream(new URL(photo
+                        .getUrl("base")).openStream());
+            } catch (Exception e) {
+                return null;
+            }
+        }
 
-		@Override
-		protected void onPostExecute(Bitmap result) {
-			if (result != null) {
-				findViewById(R.id.progress).setVisibility(View.GONE);
-				ImageView image = (ImageView) findViewById(R.id.image);
-				image.setImageBitmap(result);
-				image.setVisibility(View.VISIBLE);
-			} else {
-				Toast.makeText(MainActivity.this, "Could not download image",
-						Toast.LENGTH_LONG).show();
-			}
-		}
+        @Override
+        protected void onPostExecute(Bitmap result) {
+            if (result != null) {
+                findViewById(R.id.progress).setVisibility(View.GONE);
+                ImageView image = (ImageView) findViewById(R.id.image);
+                image.setImageBitmap(result);
+                image.setVisibility(View.VISIBLE);
+            } else {
+                Toast.makeText(MainActivity.this, "Could not download image",
+                        Toast.LENGTH_LONG).show();
+            }
+        }
 
-	}
+    }
 
-	/**
-	 * Handle clicks on the navigation buttons
-	 */
-	@Override
-	public void onClick(View v) {
-		Class<?> nextScreen = null;
-		if (v.equals(searchBtn)) {
-			nextScreen = SearchActivity.class;
-		} else if (v.equals(cameraBtn)) {
-			nextScreen = CameraActivity.class;
-		} else if (v.equals(galleryBtn)) {
-			nextScreen = GalleryActivity.class;
-		} else if (v.equals(settingsBtn)) {
-			nextScreen = SettingsActivity.class;
-		}
+    /**
+     * Handle clicks on the navigation buttons
+     */
+    @Override
+    public void onClick(View v) {
+        Class<?> nextScreen = null;
+        if (v.equals(searchBtn)) {
+            nextScreen = SearchActivity.class;
+        } else if (v.equals(cameraBtn)) {
+            nextScreen = CameraActivity.class;
+        } else if (v.equals(galleryBtn)) {
+            nextScreen = GalleryActivity.class;
+        } else if (v.equals(settingsBtn)) {
+            nextScreen = SettingsActivity.class;
+        }
 
-		if (nextScreen != null) {
-			// Go to the next screen, but keep this Activity in the stack
-			Intent i = new Intent(this, nextScreen);
-			startActivity(i);
-		}
-	}
+        if (nextScreen != null) {
+            // Go to the next screen, but keep this Activity in the stack
+            Intent i = new Intent(this, nextScreen);
+            startActivity(i);
+        }
+    }
 }

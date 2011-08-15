@@ -23,9 +23,16 @@ public class PhotoTest extends TestCase {
         assertEquals(2, photo.getTags().size());
         assertEquals("sunnyvale", photo.getTags().get(0));
         assertEquals("tavin", photo.getTags().get(1));
-        assertEquals("Tavin riding the horsey at Murphy Park in Sunnyvale", photo.getTitle());
+        assertEquals("Tavin riding the horsey at Murphy Park in Sunnyvale",
+                photo.getTitle());
         assertEquals("Nice description", photo.getDescription());
         assertEquals("current.openphoto.me", photo.getAppId());
+        assertEquals(
+                "http://opmecurrent.s3.amazonaws.com/base/201108/1312348300-IMAG0015.jpg",
+                photo.getUrl("base"));
+        assertEquals(
+                "http://opmecurrent.s3.amazonaws.com/original/201108/1312348300-IMAG0015.jpg",
+                photo.getUrl("original"));
         assertEquals(
                 "http://opmecurrent.s3.amazonaws.com/custom/201108/1312348300-IMAG0015_960x960.jpg",
                 photo.getUrl("960x960"));
