@@ -150,8 +150,7 @@ public class UploadActivity extends Activity implements OnClickListener {
                 return new OpenPhotoApi(Preferences.getServer(UploadActivity.this)).uploadPhoto(
                         params[0], metaData);
             } catch (Exception e) {
-                Log.e(TAG,
-                        e.getClass().getSimpleName() + " error while uploading: " + e.getMessage());
+                Log.e(TAG, "Error while uploading", e);
             }
             return null;
         }

@@ -14,6 +14,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ImageButton;
@@ -26,6 +27,8 @@ import android.widget.Toast;
  * @author pas
  */
 public class MainActivity extends Activity implements OnClickListener {
+    public static final String TAG = MainActivity.class.getSimpleName();
+
     private ImageButton searchBtn;
     private ImageButton cameraBtn;
     private ImageButton galleryBtn;
@@ -66,6 +69,7 @@ public class MainActivity extends Activity implements OnClickListener {
                 return BitmapFactory.decodeStream(new URL(photo
                         .getUrl("base")).openStream());
             } catch (Exception e) {
+                Log.w(TAG, "Error while getting image", e);
                 return null;
             }
         }

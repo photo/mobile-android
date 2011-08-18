@@ -69,10 +69,7 @@ public class ApiBase {
                 HttpVersion.HTTP_1_1);
         HttpUriRequest httpRequest = createHttpRequest(request);
 
-        // This is needed because otherwise photo upload can fail on PHP servers
-        httpRequest.getParams().setBooleanParameter(CoreProtocolPNames.WAIT_FOR_CONTINUE, true);
-        // httpRequest.getParams().setBooleanParameter("http.protocol.expect-continue",
-        // false);
+        httpRequest.getParams().setBooleanParameter("http.protocol.expect-continue", false);
 
         return new ApiResponse(httpClient.execute(httpRequest));
     }
