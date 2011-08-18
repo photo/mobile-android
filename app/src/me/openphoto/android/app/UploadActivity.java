@@ -5,15 +5,22 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 
+import me.openphoto.android.app.net.OpenPhotoApi;
+import me.openphoto.android.app.net.PhotoResponse;
+import me.openphoto.android.app.net.UploadMetaData;
 import me.openphoto.android.app.util.ImageUtils;
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.EditText;
 import android.widget.ImageView;
 
 /**
@@ -22,6 +29,7 @@ import android.widget.ImageView;
  * @author Patrick Boos
  */
 public class UploadActivity extends Activity implements OnClickListener {
+    private static final String TAG = UploadActivity.class.getSimpleName();
 
     private static final int REQUEST_GALLERY = 1;
 
@@ -35,6 +43,7 @@ public class UploadActivity extends Activity implements OnClickListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.photo_upload);
         findViewById(R.id.button_pick).setOnClickListener(this);
+        findViewById(R.id.button_upload).setOnClickListener(this);
     }
 
     @Override
@@ -107,9 +116,52 @@ public class UploadActivity extends Activity implements OnClickListener {
                 startActivityForResult(intent, REQUEST_GALLERY);
                 break;
 
+            case R.id.button_upload:
+                if (mUploadImageFile != null) {
+                    new UploadTask().execute(mUploadImageFile);
+                }
+                break;
+
             default:
                 break;
         }
+    }
+
+    private class UploadTask extends AsyncTask<File, Void, PhotoResponse> {
+
+        private ProgressDialog mDialog;
+
+        @Override
+        protected void onPreExecute() {
+            mDialog = ProgressDialog.show(UploadActivity.this, "",
+                    "Uploading image to openphoto...", true);
+        }
+
+        @Override
+        protected PhotoResponse doInBackground(File... params) {
+            UploadMetaData metaData = new UploadMetaData();
+            metaData.setTitle(((EditText) findViewById(R.id.edit_title)).getText().toString());
+            metaData.setDescription(((EditText) findViewById(R.id.edit_description)).getText()
+                    .toString());
+            metaData.setTags(((EditText) findViewById(R.id.edit_tags)).getText().toString());
+            // TODO add private and effects aviary
+
+            try {
+                return new OpenPhotoApi(Preferences.getServer(UploadActivity.this)).uploadPhoto(
+                        params[0], metaData);
+            } catch (Exception e) {
+                Log.e(TAG,
+                        e.getClass().getSimpleName() + " error while uploading: " + e.getMessage());
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(PhotoResponse result) {
+            // TODO give any information, or show uploaded picture in new view?
+            mDialog.dismiss();
+        }
+
     }
 
 }
