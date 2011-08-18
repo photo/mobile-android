@@ -27,6 +27,7 @@
     <activity android:name=".PhotoTakenActivity"></activity>
     <activity android:name=".SearchActivity"></activity>
     <activity android:name=".SettingsActivity"></activity>
+    <activity android:name=".UploadActivity"></activity>
     <activity
       android:name=".SplashActivity"
       android:label="@string/app_name"
@@ -50,7 +51,7 @@
       </intent-filter>
     </receiver>
 
-    <service  android:name=".service.UploaderService" />
+    <service android:name=".service.UploaderService" />
 
     <provider
       android:name=".provider.UploadsProvider"

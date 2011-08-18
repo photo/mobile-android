@@ -94,7 +94,7 @@ public class MainActivity extends Activity implements OnClickListener {
         if (v.equals(searchBtn)) {
             nextScreen = SearchActivity.class;
         } else if (v.equals(cameraBtn)) {
-            nextScreen = CameraActivity.class;
+            nextScreen = UploadActivity.class;
         } else if (v.equals(galleryBtn)) {
             nextScreen = GalleryActivity.class;
         } else if (v.equals(settingsBtn)) {

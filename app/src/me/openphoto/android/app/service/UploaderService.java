@@ -8,12 +8,12 @@ import me.openphoto.android.app.Preferences;
 import me.openphoto.android.app.net.OpenPhotoApi;
 import me.openphoto.android.app.net.UploadMetaData;
 import me.openphoto.android.app.provider.UploadsProvider;
+import me.openphoto.android.app.util.ImageUtils;
 import android.app.IntentService;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
-import android.provider.MediaStore;
 import android.util.Log;
 
 public class UploaderService extends IntentService {
@@ -33,7 +33,7 @@ public class UploaderService extends IntentService {
             try {
                 Uri uri = Uri.parse(cursor.getString(UploadsProvider.URI_COLUMN));
                 Log.i(TAG, "Starting upload to OpenPhoto: " + uri);
-                File file = new File(getRealPathFromURI(uri));
+                File file = new File(ImageUtils.getRealPathFromURI(this, uri));
 
                 UploadMetaData metaData = new UploadMetaData();
                 metaData.setTags(Preferences.getAutoUploadTag(this));
@@ -51,17 +51,5 @@ public class UploaderService extends IntentService {
                 continue;
             }
         }
-    }
-
-    public String getRealPathFromURI(Uri contentUri) {
-        String[] proj = {
-                MediaStore.Images.Media.DATA
-        };
-        Cursor cursor = getContentResolver().query(contentUri, proj, null, null, null);
-        int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
-        cursor.moveToFirst();
-        String path = cursor.getString(column_index);
-        cursor.close();
-        return path;
     }
 }
