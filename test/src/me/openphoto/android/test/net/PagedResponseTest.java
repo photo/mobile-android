@@ -1,16 +1,18 @@
 
 package me.openphoto.android.test.net;
 
-import junit.framework.TestCase;
 import me.openphoto.android.app.net.PagedResponse;
+import me.openphoto.android.test.R;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class PagedResponseTest extends TestCase {
+import android.test.InstrumentationTestCase;
+
+public class PagedResponseTest extends InstrumentationTestCase {
     public void testFromJson() throws JSONException {
-        String jsonString = "{ 'message':'', 'code':200, 'result': [ { 'totalRows':24, 'pageSize':'16', 'currentPage':1, 'totalPages':2 } ] }";
-        JSONObject json = new JSONObject(jsonString);
+        JSONObject json = JSONUtils.getJson(getInstrumentation().getContext(),
+                R.raw.json_paged_response);
         PagedResponse response = new PagedResponse(json);
 
         assertEquals(200, response.getCode());

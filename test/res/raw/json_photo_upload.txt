@@ -31,6 +31,6 @@
      "exifCameraModel":"NIKON D90",
      "longitude":"-89.24",
      "latitude":"37.65",
-     "path300x300":"\/custom\/201107\/1311053366-huge_300x300.jpg",
+     "path300x300":"\/custom\/201107\/1311053366-huge_300x300.jpg"
   }
 }

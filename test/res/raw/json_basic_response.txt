@@ -1,0 +1,7 @@
+{
+    'message':'Success',
+    'code':200,
+    'result': {
+        'data':'data'
+    }
+}
