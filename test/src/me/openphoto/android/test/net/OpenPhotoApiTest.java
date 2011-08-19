@@ -7,9 +7,9 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import me.openphoto.android.app.net.OpenPhotoApi;
-import me.openphoto.android.app.net.PhotoResponse;
 import me.openphoto.android.app.net.PhotosResponse;
 import me.openphoto.android.app.net.UploadMetaData;
+import me.openphoto.android.app.net.UploadResponse;
 import me.openphoto.android.test.R;
 
 import org.apache.http.client.ClientProtocolException;
@@ -58,8 +58,8 @@ public class OpenPhotoApiTest extends InstrumentationTestCase {
         settings.setDescription("Nice picture of an android");
         settings.setTags("test");
         try {
-            PhotoResponse resp = mApi.uploadPhoto(file, settings);
-            assertEquals(202, resp.getCode());
+            UploadResponse resp = mApi.uploadPhoto(file, settings);
+            assertTrue(resp.isSuccess());
             assertNotNull(resp.getPhoto());
             assertEquals(1, resp.getPhoto().getTags().size());
             assertEquals("test", resp.getPhoto().getTags().get(0));

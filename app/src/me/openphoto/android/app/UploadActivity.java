@@ -6,8 +6,8 @@ import java.io.IOException;
 import java.util.Date;
 
 import me.openphoto.android.app.net.OpenPhotoApi;
-import me.openphoto.android.app.net.PhotoResponse;
 import me.openphoto.android.app.net.UploadMetaData;
+import me.openphoto.android.app.net.UploadResponse;
 import me.openphoto.android.app.util.FileUtils;
 import me.openphoto.android.app.util.ImageUtils;
 import android.app.Activity;
@@ -102,7 +102,7 @@ public class UploadActivity extends Activity implements OnClickListener {
                                 } catch (IOException e) {
                                     Toast.makeText(UploadActivity.this,
                                             "Can not find external storage for taking a picture",
-                                            Toast.LENGTH_LONG);
+                                            Toast.LENGTH_LONG).show();
                                 }
                                 return;
                             case 1:
@@ -155,7 +155,7 @@ public class UploadActivity extends Activity implements OnClickListener {
         }
     }
 
-    private class UploadTask extends AsyncTask<File, Void, PhotoResponse> {
+    private class UploadTask extends AsyncTask<File, Void, UploadResponse> {
 
         private ProgressDialog mDialog;
 
@@ -166,7 +166,7 @@ public class UploadActivity extends Activity implements OnClickListener {
         }
 
         @Override
-        protected PhotoResponse doInBackground(File... params) {
+        protected UploadResponse doInBackground(File... params) {
             UploadMetaData metaData = new UploadMetaData();
             metaData.setTitle(((EditText) findViewById(R.id.edit_title)).getText().toString());
             metaData.setDescription(((EditText) findViewById(R.id.edit_description)).getText()
@@ -184,9 +184,18 @@ public class UploadActivity extends Activity implements OnClickListener {
         }
 
         @Override
-        protected void onPostExecute(PhotoResponse result) {
-            // TODO give any information, or show uploaded picture in new view?
+        protected void onPostExecute(UploadResponse result) {
             mDialog.dismiss();
+
+            if (result != null && result.isSuccess()) {
+                Toast.makeText(UploadActivity.this, "Uploaded", Toast.LENGTH_SHORT).show();
+                finish();
+            } else if (result != null) {
+                Toast.makeText(UploadActivity.this, "Upload failed: " + result.getMessage(),
+                        Toast.LENGTH_LONG).show();
+            } else {
+                Toast.makeText(UploadActivity.this, "Upload failed", Toast.LENGTH_LONG).show();
+            }
         }
 
     }

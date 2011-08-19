@@ -50,7 +50,7 @@ public class OpenPhotoApi extends ApiBase {
      * @throws JSONException
      * @throws IllegalStateException
      */
-    public PhotoResponse uploadPhoto(File imageFile, UploadMetaData metaData)
+    public UploadResponse uploadPhoto(File imageFile, UploadMetaData metaData)
             throws ClientProtocolException, IOException, IllegalStateException, JSONException {
         ApiRequest request = new ApiRequest(ApiRequest.POST, "/photo/upload.json");
         request.setMime(true);
@@ -67,6 +67,6 @@ public class OpenPhotoApi extends ApiBase {
         request.addFileParameter("photo", imageFile);
         ApiResponse response = execute(request);
         String responseString = response.getContentAsString();
-        return new PhotoResponse(new JSONObject(responseString));
+        return new UploadResponse(new JSONObject(responseString));
     }
 }

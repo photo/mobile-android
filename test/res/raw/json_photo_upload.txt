@@ -1,0 +1,36 @@
+{
+  "message":"Photo 8i uploaded successfully",
+  "code":202,
+  "result":{
+     "id":"8i",
+     "tags":[
+        "dog",
+        "cat"
+     ],
+     "pathBase":"\/base\/201107\/1311053366-huge.jpg",
+     "appId":"opme",
+     "host":"testjmathai1.s3.amazonaws.com",
+     "dateUploadedMonth":"07",
+     "status":"1",
+     "hash":"6d7a9b0af31073a76ff2e79ee44b5c4951671fa2",
+     "width":"4288",
+     "dateTakenMonth":"07",
+     "dateTakenDay":"03",
+     "permission":"0",
+     "pathOriginal":"\/original\/201107\/1311053366-huge.jpg",
+     "exifCameraMake":"NIKON CORPORATION",
+     "size":"5595",
+     "dateTaken":"1309707719",
+     "height":"2848",
+     "views":"0",
+     "dateUploadedYear":"2011",
+     "dateTakenYear":"2011",
+     "creativeCommons":"BY-NC",
+     "dateUploadedDay":"18",
+     "dateUploaded":"1311053403",
+     "exifCameraModel":"NIKON D90",
+     "longitude":"-89.24",
+     "latitude":"37.65",
+     "path300x300":"\/custom\/201107\/1311053366-huge_300x300.jpg",
+  }
+}
