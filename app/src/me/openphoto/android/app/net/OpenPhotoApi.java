@@ -3,6 +3,8 @@ package me.openphoto.android.app.net;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Collection;
+import java.util.Iterator;
 
 import org.apache.http.client.ClientProtocolException;
 import org.json.JSONException;
@@ -27,14 +29,93 @@ public class OpenPhotoApi extends ApiBase {
     /**
      * Get photos.
      * 
-     * @throws IOException
+     * @return the photos
      * @throws ClientProtocolException
-     * @throws JSONException
+     * @throws IOException
      * @throws IllegalStateException
+     * @throws JSONException
      */
-    public PhotosResponse getPhotos() throws ClientProtocolException, IOException,
-            IllegalStateException, JSONException {
+    public PhotosResponse getPhotos()
+            throws ClientProtocolException, IllegalStateException, IOException, JSONException {
+        return getPhotos(null, null, 0);
+    }
+
+    /**
+     * Get photos.
+     * 
+     * @param resize which sizes should be returned
+     * @return the photos
+     * @throws ClientProtocolException
+     * @throws IOException
+     * @throws IllegalStateException
+     * @throws JSONException
+     */
+    public PhotosResponse getPhotos(ReturnSize resize)
+            throws ClientProtocolException, IllegalStateException, IOException, JSONException {
+        return getPhotos(resize, null, 0);
+    }
+
+    /**
+     * Get photos.
+     * 
+     * @param resize which sizes should be returned
+     * @param page page to be retrieved
+     * @return the photos
+     * @throws ClientProtocolException
+     * @throws IOException
+     * @throws IllegalStateException
+     * @throws JSONException
+     */
+    public PhotosResponse getPhotos(ReturnSize resize, int page)
+            throws ClientProtocolException, IllegalStateException, IOException, JSONException {
+        return getPhotos(resize, null, page);
+    }
+
+    /**
+     * Get photos.
+     * 
+     * @param resize which sizes should be returned
+     * @param tags filter potos by these tags
+     * @return the photos
+     * @throws ClientProtocolException
+     * @throws IOException
+     * @throws IllegalStateException
+     * @throws JSONException
+     */
+    public PhotosResponse getPhotos(ReturnSize resize, Collection<String> tags)
+            throws ClientProtocolException, IllegalStateException, IOException, JSONException {
+        return getPhotos(resize, tags, 0);
+    }
+
+    /**
+     * Get photos.
+     * 
+     * @param resize which sizes should be returned
+     * @param tags filter potos by these tags
+     * @param page page to be retrieved
+     * @return the photos
+     * @throws ClientProtocolException
+     * @throws IOException
+     * @throws IllegalStateException
+     * @throws JSONException
+     */
+    public PhotosResponse getPhotos(ReturnSize resize, Collection<String> tags, int page)
+            throws ClientProtocolException, IOException, IllegalStateException, JSONException {
         ApiRequest request = new ApiRequest(ApiRequest.GET, "/photos.json");
+        if (resize != null) {
+            request.addParameter("returnSizes", resize.toString());
+        }
+        if (tags != null && !tags.isEmpty()) {
+            Iterator<String> it = tags.iterator();
+            StringBuilder sb = new StringBuilder(it.next());
+            while (it.hasNext()) {
+                sb.append("," + it.next());
+            }
+            request.addParameter("tags", sb.toString());
+        }
+        if (page > 0) {
+            request.addParameter("page", Integer.toString(page));
+        }
         ApiResponse response = execute(request);
         return new PhotosResponse(new JSONObject(response.getContentAsString()));
     }
