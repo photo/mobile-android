@@ -15,6 +15,7 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
+import android.content.DialogInterface.OnCancelListener;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -49,8 +50,9 @@ public class UploadActivity extends Activity implements OnClickListener {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.photo_upload);
-        findViewById(R.id.button_pick).setOnClickListener(this);
         findViewById(R.id.button_upload).setOnClickListener(this);
+        findViewById(R.id.image_upload).setOnClickListener(this);
+        showDialog(DIALOG_SELECT_IMAGE);
     }
 
     @Override
@@ -110,6 +112,12 @@ public class UploadActivity extends Activity implements OnClickListener {
                                 return;
                         }
                     }
+                }).setOnCancelListener(new OnCancelListener() {
+
+                    @Override
+                    public void onCancel(DialogInterface dialog) {
+                        finish();
+                    }
                 });
                 dialog = builder.create();
                 break;
@@ -133,17 +141,16 @@ public class UploadActivity extends Activity implements OnClickListener {
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.button_pick:
-                showDialog(DIALOG_SELECT_IMAGE);
-                break;
-
             case R.id.button_upload:
                 if (mUploadImageFile != null) {
                     new UploadTask().execute(mUploadImageFile);
                 }
                 break;
-
-            default:
+            case R.id.image_upload:
+                Intent intent = new Intent();
+                intent.setAction(android.content.Intent.ACTION_VIEW);
+                intent.setDataAndType(Uri.fromFile(mUploadImageFile), "image/png");
+                startActivity(intent);
                 break;
         }
     }
