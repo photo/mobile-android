@@ -63,6 +63,10 @@ public class OpenPhotoApi extends ApiBase {
         if (metaData.getDescription() != null) {
             request.addParameter("description", metaData.getDescription());
         }
+        if (metaData.getDescription() != null) {
+            request.addParameter("description", metaData.getDescription());
+        }
+        request.addParameter("permission", Integer.toString(metaData.getPermission()));
 
         request.addFileParameter("photo", imageFile);
         ApiResponse response = execute(request);

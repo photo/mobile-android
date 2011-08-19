@@ -57,6 +57,7 @@ public class OpenPhotoApiTest extends InstrumentationTestCase {
         settings.setTitle("Android");
         settings.setDescription("Nice picture of an android");
         settings.setTags("test");
+        settings.setPrivate(false);
         try {
             UploadResponse resp = mApi.uploadPhoto(file, settings);
             assertTrue(resp.isSuccess());
@@ -65,6 +66,7 @@ public class OpenPhotoApiTest extends InstrumentationTestCase {
             assertEquals("test", resp.getPhoto().getTags().get(0));
             assertEquals("Android", resp.getPhoto().getTitle());
             assertEquals("Nice picture of an android", resp.getPhoto().getDescription());
+            assertFalse(resp.getPhoto().isPrivate());
         } catch (Exception e) {
             fail("Exception should not happen: " + e.getClass().getSimpleName() + " - "
                     + e.getMessage());

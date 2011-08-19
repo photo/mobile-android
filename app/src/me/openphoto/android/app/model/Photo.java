@@ -16,12 +16,16 @@ import org.json.JSONObject;
  * @author Patrick Boos
  */
 public class Photo {
+    public static final int PERMISSION_PUBLIC = 1;
+    public static final int PERMISSION_PRIVATE = 0;
+
     private String mId;
     private final List<String> mTags;
     private String mAppId;
     private final Map<String, String> mUrls;
     private String mTitle;
     private String mDescription;
+    private int mPermission;
 
     /**
      * Constructor which probably will not be used externally. Everything should
@@ -45,6 +49,7 @@ public class Photo {
         photo.mAppId = json.optString("appId");
         photo.mTitle = json.optString("title");
         photo.mDescription = json.optString("description");
+        photo.mPermission = json.optInt("permission", PERMISSION_PRIVATE);
 
         String host = "http://" + json.optString("host");
         String base = json.optString("pathBase");
@@ -122,5 +127,12 @@ public class Photo {
      */
     public String getDescription() {
         return mDescription;
+    }
+
+    /**
+     * @return true if the picture is private
+     */
+    public boolean isPrivate() {
+        return mPermission == Photo.PERMISSION_PRIVATE;
     }
 }

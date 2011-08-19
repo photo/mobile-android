@@ -27,6 +27,7 @@ import android.view.View.OnClickListener;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 
 /**
  * This activity handles uploading pictures to OpenPhoto.
@@ -43,6 +44,8 @@ public class UploadActivity extends Activity implements OnClickListener {
 
     private File mUploadImageFile;
 
+    private ToggleButton mPrivateToggle;
+
     /**
      * @see android.app.Activity#onCreate(android.os.Bundle)
      */
@@ -53,6 +56,8 @@ public class UploadActivity extends Activity implements OnClickListener {
         findViewById(R.id.button_upload).setOnClickListener(this);
         findViewById(R.id.image_upload).setOnClickListener(this);
         showDialog(DIALOG_SELECT_IMAGE);
+        mPrivateToggle = (ToggleButton) findViewById(R.id.toggle_private);
+        mPrivateToggle.setChecked(true);
     }
 
     @Override
@@ -172,6 +177,7 @@ public class UploadActivity extends Activity implements OnClickListener {
             metaData.setDescription(((EditText) findViewById(R.id.edit_description)).getText()
                     .toString());
             metaData.setTags(((EditText) findViewById(R.id.edit_tags)).getText().toString());
+            metaData.setPrivate(mPrivateToggle.isChecked());
             // TODO add private and effects aviary
 
             try {
