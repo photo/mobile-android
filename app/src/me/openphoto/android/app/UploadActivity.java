@@ -2,26 +2,30 @@
 package me.openphoto.android.app;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.Date;
 
 import me.openphoto.android.app.net.OpenPhotoApi;
 import me.openphoto.android.app.net.PhotoResponse;
 import me.openphoto.android.app.net.UploadMetaData;
+import me.openphoto.android.app.util.FileUtils;
 import me.openphoto.android.app.util.ImageUtils;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 /**
  * This activity handles uploading pictures to OpenPhoto.
@@ -31,7 +35,10 @@ import android.widget.ImageView;
 public class UploadActivity extends Activity implements OnClickListener {
     private static final String TAG = UploadActivity.class.getSimpleName();
 
-    private static final int REQUEST_GALLERY = 1;
+    private static final int REQUEST_GALLERY = 0;
+    private static final int REQUEST_CAMERA = 1;
+
+    private static final int DIALOG_SELECT_IMAGE = 0;
 
     private File mUploadImageFile;
 
@@ -54,66 +61,80 @@ public class UploadActivity extends Activity implements OnClickListener {
                     setSelectedImageUri(data.getData());
                 }
                 break;
-
+            case REQUEST_CAMERA:
+                if (resultCode == RESULT_OK) {
+                    setSelectedImageFile(mUploadImageFile);
+                } else {
+                    mUploadImageFile = null;
+                }
+                break;
             default:
                 super.onActivityResult(requestCode, resultCode, data);
                 break;
         }
     }
 
-    private void setSelectedImageUri(Uri imageUri) {
-        mUploadImageFile = new File(ImageUtils.getRealPathFromURI(this, imageUri));
-        ImageView previewImage = (ImageView) findViewById(R.id.image_upload);
-        previewImage.setImageBitmap(decodeFile(mUploadImageFile, previewImage.getWidth()));
+    @Override
+    protected Dialog onCreateDialog(int id) {
+        Dialog dialog;
+        switch (id) {
+            case DIALOG_SELECT_IMAGE:
+                final CharSequence[] items = {
+                        "Camera", "Gallery"
+                };
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setTitle("Upload");
+                builder.setItems(items, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int item) {
+                        switch (item) {
+                            case 0:
+                                try {
+                                    mUploadImageFile = new File(FileUtils.getStorageFolder(),
+                                            "upload_" + new Date().getTime() + ".jpg");
+                                    Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                                    intent.putExtra(android.provider.MediaStore.EXTRA_OUTPUT,
+                                            Uri.fromFile(mUploadImageFile));
+                                    startActivityForResult(intent, REQUEST_CAMERA);
+                                } catch (IOException e) {
+                                    Toast.makeText(UploadActivity.this,
+                                            "Can not find external storage for taking a picture",
+                                            Toast.LENGTH_LONG);
+                                }
+                                return;
+                            case 1:
+                                Intent intent = new Intent(Intent.ACTION_PICK);
+                                intent.setType("image/*");
+                                startActivityForResult(intent, REQUEST_GALLERY);
+                                return;
+                        }
+                    }
+                });
+                dialog = builder.create();
+                break;
+            default:
+                dialog = null;
+        }
+        return dialog;
     }
 
-    /**
-     * decodes image and scales it to reduce memory consumption <br />
-     * <br />
-     * Source: http://stackoverflow
-     * .com/questions/477572/android-strange-out-of-memory-issue/823966#823966
-     * 
-     * @param file File
-     * @param requiredSize size that the image should have
-     * @return image in required size
-     */
-    private Bitmap decodeFile(File file, int requiredSize) {
-        try {
-            // Decode image size
-            BitmapFactory.Options o = new BitmapFactory.Options();
-            o.inJustDecodeBounds = true;
-            BitmapFactory.decodeStream(new FileInputStream(file), null, o);
+    private void setSelectedImageUri(Uri imageUri) {
+        mUploadImageFile = new File(ImageUtils.getRealPathFromURI(this, imageUri));
+        setSelectedImageFile(mUploadImageFile);
+    }
 
-            // The new size we want to scale to
-            final int REQUIRED_SIZE = requiredSize;
-
-            // Find the correct scale value. It should be the power of 2.
-            int width_tmp = o.outWidth, height_tmp = o.outHeight;
-            int scale = 1;
-            while (true) {
-                if (width_tmp / 2 < REQUIRED_SIZE || height_tmp / 2 < REQUIRED_SIZE)
-                    break;
-                width_tmp /= 2;
-                height_tmp /= 2;
-                scale *= 2;
-            }
-
-            // Decode with inSampleSize
-            BitmapFactory.Options o2 = new BitmapFactory.Options();
-            o2.inSampleSize = scale;
-            return BitmapFactory.decodeStream(new FileInputStream(file), null, o2);
-        } catch (FileNotFoundException e) {
-        }
-        return null;
+    private void setSelectedImageFile(File imageFile) {
+        ImageView previewImage = (ImageView) findViewById(R.id.image_upload);
+        previewImage
+                .setImageBitmap(ImageUtils.decodeFile(mUploadImageFile, previewImage.getWidth()));
     }
 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.button_pick:
-                Intent intent = new Intent(Intent.ACTION_PICK);
-                intent.setType("image/*");
-                startActivityForResult(intent, REQUEST_GALLERY);
+                showDialog(DIALOG_SELECT_IMAGE);
                 break;
 
             case R.id.button_upload:
