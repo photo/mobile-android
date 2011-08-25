@@ -37,7 +37,7 @@ public class OpenPhotoApi extends ApiBase {
      */
     public PhotosResponse getPhotos()
             throws ClientProtocolException, IllegalStateException, IOException, JSONException {
-        return getPhotos(null, null, 0);
+        return getPhotos(null, null, null);
     }
 
     /**
@@ -52,7 +52,7 @@ public class OpenPhotoApi extends ApiBase {
      */
     public PhotosResponse getPhotos(ReturnSize resize)
             throws ClientProtocolException, IllegalStateException, IOException, JSONException {
-        return getPhotos(resize, null, 0);
+        return getPhotos(resize, null, null);
     }
 
     /**
@@ -68,7 +68,7 @@ public class OpenPhotoApi extends ApiBase {
      */
     public PhotosResponse getPhotos(ReturnSize resize, int page)
             throws ClientProtocolException, IllegalStateException, IOException, JSONException {
-        return getPhotos(resize, null, page);
+        return getPhotos(resize, null, new Paging(page));
     }
 
     /**
@@ -84,7 +84,7 @@ public class OpenPhotoApi extends ApiBase {
      */
     public PhotosResponse getPhotos(ReturnSize resize, Collection<String> tags)
             throws ClientProtocolException, IllegalStateException, IOException, JSONException {
-        return getPhotos(resize, tags, 0);
+        return getPhotos(resize, tags, null);
     }
 
     /**
@@ -92,14 +92,14 @@ public class OpenPhotoApi extends ApiBase {
      * 
      * @param resize which sizes should be returned
      * @param tags filter potos by these tags
-     * @param page page to be retrieved
+     * @param pageing page and pageSize to be retrieved
      * @return the photos
      * @throws ClientProtocolException
      * @throws IOException
      * @throws IllegalStateException
      * @throws JSONException
      */
-    public PhotosResponse getPhotos(ReturnSize resize, Collection<String> tags, int page)
+    public PhotosResponse getPhotos(ReturnSize resize, Collection<String> tags, Paging paging)
             throws ClientProtocolException, IOException, IllegalStateException, JSONException {
         ApiRequest request = new ApiRequest(ApiRequest.GET, "/photos.json");
         if (resize != null) {
@@ -113,8 +113,13 @@ public class OpenPhotoApi extends ApiBase {
             }
             request.addParameter("tags", sb.toString());
         }
-        if (page > 0) {
-            request.addParameter("page", Integer.toString(page));
+        if (paging != null) {
+            if (paging.hasPage()) {
+                request.addParameter("page", Integer.toString(paging.getPage()));
+            }
+            if (paging.hasPageSize()) {
+                request.addParameter("pageSize", Integer.toString(paging.getPageSize()));
+            }
         }
         ApiResponse response = execute(request);
         return new PhotosResponse(new JSONObject(response.getContentAsString()));

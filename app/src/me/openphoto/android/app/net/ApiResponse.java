@@ -18,7 +18,7 @@ import org.apache.http.HttpResponse;
  * @author Patrick Boos
  */
 public class ApiResponse {
-    private HttpResponse mResponse;
+    private final HttpResponse mResponse;
 
     /**
      * Constructor.

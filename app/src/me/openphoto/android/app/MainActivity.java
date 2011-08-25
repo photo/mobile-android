@@ -8,6 +8,7 @@ import java.net.URL;
 
 import me.openphoto.android.app.model.Photo;
 import me.openphoto.android.app.net.OpenPhotoApi;
+import me.openphoto.android.app.net.Paging;
 import me.openphoto.android.app.net.ReturnSize;
 import android.app.Activity;
 import android.content.Intent;
@@ -64,7 +65,8 @@ public class MainActivity extends Activity implements OnClickListener {
         protected Bitmap doInBackground(Void... params) {
             OpenPhotoApi api = new OpenPhotoApi(Preferences.getServer(MainActivity.this));
             try {
-                Photo photo = api.getPhotos(new ReturnSize(600, 600)).getPhotos().get(0);
+                Photo photo = api.getPhotos(new ReturnSize(600, 600), null, new Paging(1, 1))
+                        .getPhotos().get(0);
                 // TODO do not use base, make getPhotos actually use a
                 // returnSize parameter that should be used then.
                 return BitmapFactory.decodeStream(new URL(photo
