@@ -7,6 +7,7 @@ package me.openphoto.android.app;
 import java.net.URL;
 
 import me.openphoto.android.app.model.Photo;
+import me.openphoto.android.app.net.IOpenPhotoApi;
 import me.openphoto.android.app.net.OpenPhotoApi;
 import me.openphoto.android.app.net.Paging;
 import me.openphoto.android.app.net.ReturnSize;
@@ -63,7 +64,8 @@ public class MainActivity extends Activity implements OnClickListener {
 
         @Override
         protected Bitmap doInBackground(Void... params) {
-            OpenPhotoApi api = new OpenPhotoApi(Preferences.getServer(MainActivity.this));
+            IOpenPhotoApi api = OpenPhotoApi
+                    .createInstance(Preferences.getServer(MainActivity.this));
             try {
                 Photo photo = api.getPhotos(new ReturnSize(600, 600), null, new Paging(1, 1))
                         .getPhotos().get(0);

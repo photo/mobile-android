@@ -181,8 +181,8 @@ public class UploadActivity extends Activity implements OnClickListener {
             // TODO add private and effects aviary
 
             try {
-                return new OpenPhotoApi(Preferences.getServer(UploadActivity.this)).uploadPhoto(
-                        params[0], metaData);
+                return OpenPhotoApi.createInstance(Preferences.getServer(UploadActivity.this))
+                        .uploadPhoto(params[0], metaData);
             } catch (Exception e) {
                 Log.e(TAG, "Error while uploading", e);
             }
@@ -203,7 +203,5 @@ public class UploadActivity extends Activity implements OnClickListener {
                 Toast.makeText(UploadActivity.this, "Upload failed", Toast.LENGTH_LONG).show();
             }
         }
-
     }
-
 }

@@ -5,6 +5,7 @@ import java.io.File;
 import java.util.Calendar;
 
 import me.openphoto.android.app.Preferences;
+import me.openphoto.android.app.net.IOpenPhotoApi;
 import me.openphoto.android.app.net.OpenPhotoApi;
 import me.openphoto.android.app.net.UploadMetaData;
 import me.openphoto.android.app.provider.UploadsProvider;
@@ -18,11 +19,11 @@ import android.util.Log;
 
 public class UploaderService extends IntentService {
     private static final String TAG = UploaderService.class.getSimpleName();
-    private final OpenPhotoApi mApi;
+    private final IOpenPhotoApi mApi;
 
     public UploaderService() {
         super(TAG);
-        mApi = new OpenPhotoApi(Preferences.getServer(this));
+        mApi = OpenPhotoApi.createInstance(Preferences.getServer(this));
     }
 
     @Override

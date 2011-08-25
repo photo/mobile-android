@@ -15,90 +15,81 @@ import org.json.JSONObject;
  * 
  * @author Patrick Boos
  */
-public class OpenPhotoApi extends ApiBase {
+public class OpenPhotoApi extends ApiBase implements IOpenPhotoApi {
+
+    private static IOpenPhotoApi sMock;
 
     /**
      * Constructor
      * 
      * @param baseUrl the base URL of the used OpenPhoto
      */
-    public OpenPhotoApi(String baseUrl) {
+    protected OpenPhotoApi(String baseUrl) {
         super(baseUrl);
     }
 
-    /**
-     * Get photos.
-     * 
-     * @return the photos
-     * @throws ClientProtocolException
-     * @throws IOException
-     * @throws IllegalStateException
-     * @throws JSONException
+    public static IOpenPhotoApi createInstance(String baseUrl) {
+        if (sMock != null) {
+            return sMock;
+        } else {
+            return new OpenPhotoApi(baseUrl);
+        }
+    }
+
+    /*
+     * (non-Javadoc)
+     * @see me.openphoto.android.app.net.IOpenPhotoApi#getPhotos()
      */
+    @Override
     public PhotosResponse getPhotos()
             throws ClientProtocolException, IllegalStateException, IOException, JSONException {
         return getPhotos(null, null, null);
     }
 
-    /**
-     * Get photos.
-     * 
-     * @param resize which sizes should be returned
-     * @return the photos
-     * @throws ClientProtocolException
-     * @throws IOException
-     * @throws IllegalStateException
-     * @throws JSONException
+    /*
+     * (non-Javadoc)
+     * @see
+     * me.openphoto.android.app.net.IOpenPhotoApi#getPhotos(me.openphoto.android
+     * .app.net.ReturnSize)
      */
+    @Override
     public PhotosResponse getPhotos(ReturnSize resize)
             throws ClientProtocolException, IllegalStateException, IOException, JSONException {
         return getPhotos(resize, null, null);
     }
 
-    /**
-     * Get photos.
-     * 
-     * @param resize which sizes should be returned
-     * @param page page to be retrieved
-     * @return the photos
-     * @throws ClientProtocolException
-     * @throws IOException
-     * @throws IllegalStateException
-     * @throws JSONException
+    /*
+     * (non-Javadoc)
+     * @see
+     * me.openphoto.android.app.net.IOpenPhotoApi#getPhotos(me.openphoto.android
+     * .app.net.ReturnSize, int)
      */
+    @Override
     public PhotosResponse getPhotos(ReturnSize resize, int page)
             throws ClientProtocolException, IllegalStateException, IOException, JSONException {
         return getPhotos(resize, null, new Paging(page));
     }
 
-    /**
-     * Get photos.
-     * 
-     * @param resize which sizes should be returned
-     * @param tags filter potos by these tags
-     * @return the photos
-     * @throws ClientProtocolException
-     * @throws IOException
-     * @throws IllegalStateException
-     * @throws JSONException
+    /*
+     * (non-Javadoc)
+     * @see
+     * me.openphoto.android.app.net.IOpenPhotoApi#getPhotos(me.openphoto.android
+     * .app.net.ReturnSize, java.util.Collection)
      */
+    @Override
     public PhotosResponse getPhotos(ReturnSize resize, Collection<String> tags)
             throws ClientProtocolException, IllegalStateException, IOException, JSONException {
         return getPhotos(resize, tags, null);
     }
 
-    /**
-     * Get photos.
-     * 
-     * @param resize which sizes should be returned
-     * @param tags filter potos by these tags
-     * @param pageing page and pageSize to be retrieved
-     * @return the photos
-     * @throws ClientProtocolException
-     * @throws IOException
-     * @throws IllegalStateException
-     * @throws JSONException
+    /*
+     * (non-Javadoc)
+     * @see
+     * me.openphoto.android.app.net.IOpenPhotoApi#getPhotos(me.openphoto.android
+     * .app.net.ReturnSize, java.util.Collection,
+     * me.openphoto.android.app.net.Paging)
      */
+    @Override
     public PhotosResponse getPhotos(ReturnSize resize, Collection<String> tags, Paging paging)
             throws ClientProtocolException, IOException, IllegalStateException, JSONException {
         ApiRequest request = new ApiRequest(ApiRequest.GET, "/photos.json");
@@ -125,17 +116,12 @@ public class OpenPhotoApi extends ApiBase {
         return new PhotosResponse(new JSONObject(response.getContentAsString()));
     }
 
-    /**
-     * Upload a picture.
-     * 
-     * @param imageFile the image file
-     * @param metaData MetaData which define title, ... of the photo
-     * @return The response with which contains info about the uploaded photo
-     * @throws IOException
-     * @throws ClientProtocolException
-     * @throws JSONException
-     * @throws IllegalStateException
+    /*
+     * (non-Javadoc)
+     * @see me.openphoto.android.app.net.IOpenPhotoApi#uploadPhoto(java.io.File,
+     * me.openphoto.android.app.net.UploadMetaData)
      */
+    @Override
     public UploadResponse uploadPhoto(File imageFile, UploadMetaData metaData)
             throws ClientProtocolException, IOException, IllegalStateException, JSONException {
         ApiRequest request = new ApiRequest(ApiRequest.POST, "/photo/upload.json");
@@ -158,5 +144,15 @@ public class OpenPhotoApi extends ApiBase {
         ApiResponse response = execute(request);
         String responseString = response.getContentAsString();
         return new UploadResponse(new JSONObject(responseString));
+    }
+
+    /**
+     * ONLY FOR TESTING! Will make the class return the given Mock when
+     * accessing createInstance(..)
+     * 
+     * @param mock Mock to be used for OpenPhotoApi
+     */
+    private static void injectMock(IOpenPhotoApi mock) {
+        OpenPhotoApi.sMock = mock;
     }
 }

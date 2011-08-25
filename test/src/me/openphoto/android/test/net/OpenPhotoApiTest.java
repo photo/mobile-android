@@ -6,6 +6,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+import me.openphoto.android.app.net.IOpenPhotoApi;
 import me.openphoto.android.app.net.OpenPhotoApi;
 import me.openphoto.android.app.net.PhotosResponse;
 import me.openphoto.android.app.net.UploadMetaData;
@@ -20,12 +21,12 @@ import android.test.InstrumentationTestCase;
 
 public class OpenPhotoApiTest extends InstrumentationTestCase {
 
-    private OpenPhotoApi mApi;
+    private IOpenPhotoApi mApi;
 
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        mApi = new OpenPhotoApi(OpenPhotoApiConstants.OPENPHOTO_BASE_URI);
+        mApi = OpenPhotoApi.createInstance(OpenPhotoApiConstants.OPENPHOTO_BASE_URI);
     }
 
     public void testPhotos() throws ClientProtocolException, IllegalStateException, IOException,
@@ -41,7 +42,6 @@ public class OpenPhotoApiTest extends InstrumentationTestCase {
     public void testPhotoUpload() throws IOException {
         InputStream imageStream = getInstrumentation().getContext().getResources()
                 .openRawResource(R.raw.android);
-        String state = Environment.getExternalStorageState();
         File dir = new File(Environment.getExternalStorageDirectory().getAbsolutePath()
                 + "/data/me.openphoto.android");
         if (!dir.exists()) {
@@ -74,7 +74,7 @@ public class OpenPhotoApiTest extends InstrumentationTestCase {
         file.delete();
     }
 
-    public void writeToFile(InputStream inputStream, File file) {
+    private void writeToFile(InputStream inputStream, File file) {
         try {
             FileOutputStream out = new FileOutputStream(file);
             byte buf[] = new byte[1024];
