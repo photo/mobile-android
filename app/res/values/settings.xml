@@ -3,6 +3,10 @@
   <!--#########-->	
   <!-- Account -->
   <!--#########-->
+  <string name="setting_account_server_title">Server URL</string>
+  <string name="setting_account_server_key">setting_server</string>
+  <string name="setting_account_server_default">http://current.openphoto.me</string>
+  
   <string name="setting_account_title">Account</string>
   
   <string name="setting_account_edit_account_title">Edit account</string>

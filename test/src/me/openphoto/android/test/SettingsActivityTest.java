@@ -56,6 +56,12 @@ public class SettingsActivityTest extends ActivityInstrumentationTestCase2<Setti
                 autouploadTagPreference.getText());
     }
 
+    public void testServerSetting() {
+        EditTextPreference serverPreference = (EditTextPreference) getPreference(R.string.setting_account_server_key);
+        assertEquals(mActivity.getString(R.string.setting_account_server_default).toString(),
+                serverPreference.getText());
+    }
+
     private Preference getPreference(int resId) {
         return mActivity.findPreference(mActivity.getString(resId));
     }

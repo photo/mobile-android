@@ -18,8 +18,8 @@ public class Preferences {
     }
 
     public static String getServer(Context context) {
-        // TODO replace this with reading from resources, as well add it in
-        // settings activity!
-        return "http://current.openphoto.me";
+        return PreferenceManager.getDefaultSharedPreferences(context).getString(
+                context.getString(R.string.setting_account_server_key),
+                context.getString(R.string.setting_account_server_default));
     }
 }
