@@ -21,8 +21,14 @@
       android:name=".CameraActivity"
       android:screenOrientation="landscape"
     />
+    <activity android:name=".SplashActivity"></activity>
+    <activity android:name=".MainActivity">
+      <intent-filter>
+        <action android:name="android.intent.action.MAIN" />
+        <category android:name="android.intent.category.LAUNCHER" />
+      </intent-filter>
+    </activity>
     <activity android:name=".GalleryActivity"></activity>
-    <activity android:name=".MainActivity"></activity>
     <activity android:name=".PhotoDetailsActivity"></activity>
     <activity android:name=".PhotoTakenActivity"></activity>
     <activity android:name=".SearchActivity"></activity>
@@ -30,14 +36,10 @@
     <activity
       android:name=".UploadActivity"
       android:configChanges="orientation"
-    />
-    <activity
-      android:name=".SplashActivity"
-      android:label="@string/app_name"
     >
       <intent-filter>
-        <action android:name="android.intent.action.MAIN" />
-        <category android:name="android.intent.category.LAUNCHER" />
+        <action android:name="android.intent.action.SEND" />
+        <data android:mimeType="image/*"/>
       </intent-filter>
     </activity>
     <activity android:name=".ViewPhotoActivity"></activity>
