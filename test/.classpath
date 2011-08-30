@@ -10,5 +10,6 @@
 	<classpathentry kind="lib" path="libs/junit-4.8.2.jar"/>
 	<classpathentry kind="lib" path="libs/objenesis-1.2.jar"/>
 	<classpathentry kind="lib" path="libs/powermock-easymock-1.4.10-full.jar"/>
+	<classpathentry kind="lib" path="libs/robotium-solo-2.4.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

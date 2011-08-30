@@ -2,7 +2,6 @@
 package me.openphoto.android.test.net;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -12,6 +11,7 @@ import me.openphoto.android.app.net.PhotosResponse;
 import me.openphoto.android.app.net.UploadMetaData;
 import me.openphoto.android.app.net.UploadResponse;
 import me.openphoto.android.test.R;
+import me.openphoto.android.test.util.FileUtils;
 
 import org.apache.http.client.ClientProtocolException;
 import org.json.JSONException;
@@ -51,7 +51,7 @@ public class OpenPhotoApiTest extends InstrumentationTestCase {
         // if (!file.exists()) {
         // file.createNewFile();
         // }
-        writeToFile(imageStream, file);
+        FileUtils.writeToFile(imageStream, file);
 
         UploadMetaData settings = new UploadMetaData();
         settings.setTitle("Android");
@@ -72,20 +72,5 @@ public class OpenPhotoApiTest extends InstrumentationTestCase {
                     + e.getMessage());
         }
         file.delete();
-    }
-
-    private void writeToFile(InputStream inputStream, File file) {
-        try {
-            FileOutputStream out = new FileOutputStream(file);
-            byte buf[] = new byte[1024];
-            int len;
-            while ((len = inputStream.read(buf)) > 0)
-                out.write(buf, 0, len);
-            out.close();
-            inputStream.close();
-        } catch (IOException e) {
-            fail("Could not write image to SD card: (" + e.getClass().getSimpleName() + ")"
-                    + e.getMessage());
-        }
     }
 }

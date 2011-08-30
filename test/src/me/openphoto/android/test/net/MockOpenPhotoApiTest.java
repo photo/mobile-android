@@ -3,10 +3,10 @@ package me.openphoto.android.test.net;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 
 import me.openphoto.android.app.net.IOpenPhotoApi;
 import me.openphoto.android.app.net.OpenPhotoApi;
+import me.openphoto.android.test.util.MockUtils;
 
 import org.apache.http.client.ClientProtocolException;
 import org.json.JSONException;
@@ -27,23 +27,13 @@ public class MockOpenPhotoApiTest extends InstrumentationTestCase {
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        mApiMock = PowerMock.createMock(IOpenPhotoApi.class);
-        Method injectMethod = OpenPhotoApi.class
-                .getDeclaredMethod("injectMock", IOpenPhotoApi.class);
-        injectMethod.setAccessible(true);
-        injectMethod.invoke(null, mApiMock);
-
+        mApiMock = MockUtils.mockOpenPhotoApi();
         mApiTested = OpenPhotoApi.createInstance(OpenPhotoApiConstants.OPENPHOTO_BASE_URI);
     }
 
     @Override
     protected void tearDown() throws Exception {
-        Method injectMethod = OpenPhotoApi.class.getDeclaredMethod("injectMock",
-                IOpenPhotoApi.class);
-        injectMethod.setAccessible(true);
-        injectMethod.invoke(null, new Object[] {
-                null
-        });
+        MockUtils.unMockOpenPhotoApi();
         super.tearDown();
     }
 

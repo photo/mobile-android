@@ -55,9 +55,17 @@ public class UploadActivity extends Activity implements OnClickListener {
         setContentView(R.layout.photo_upload);
         findViewById(R.id.button_upload).setOnClickListener(this);
         findViewById(R.id.image_upload).setOnClickListener(this);
-        showDialog(DIALOG_SELECT_IMAGE);
         mPrivateToggle = (ToggleButton) findViewById(R.id.toggle_private);
         mPrivateToggle.setChecked(true);
+
+        if (getIntent() != null && Intent.ACTION_SEND.equals(getIntent().getAction())
+                && getIntent().getExtras() != null
+                && getIntent().getExtras().containsKey(Intent.EXTRA_STREAM)) {
+            Bundle extras = getIntent().getExtras();
+            setSelectedImageUri((Uri) extras.getParcelable(Intent.EXTRA_STREAM));
+        } else {
+            showDialog(DIALOG_SELECT_IMAGE);
+        }
     }
 
     @Override
@@ -139,8 +147,7 @@ public class UploadActivity extends Activity implements OnClickListener {
 
     private void setSelectedImageFile(File imageFile) {
         ImageView previewImage = (ImageView) findViewById(R.id.image_upload);
-        previewImage
-                .setImageBitmap(ImageUtils.decodeFile(mUploadImageFile, previewImage.getWidth()));
+        previewImage.setImageBitmap(ImageUtils.decodeFile(mUploadImageFile, 200));
     }
 
     @Override
