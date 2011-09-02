@@ -36,22 +36,24 @@ public class UploadsProvider extends ContentProvider {
 
     private static final String TAG = UploadsProvider.class.getSimpleName();
     private static final String DATABASE_NAME = "uploads.db";
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 2;
     private static final String PHOTOS_TABLE = "uploads";
 
     // Column names
     public static final String KEY_ID = "_id";
     public static final String KEY_URI = "uri";
+    public static final String KEY_METADATA_JSON = "metadata";
     public static final String KEY_UPLOADED = "timestamp";
 
     // Column indexes
     public static final int ID_COLUMN = 0;
     public static final int URI_COLUMN = 1;
-    public static final int UPLOADED_COLUMN = 2;
+    public static final int METADATA_JSON_COLUMN = 2;
+    public static final int UPLOADED_COLUMN = 3;
 
     private static final String DATABASE_CREATE = "CREATE TABLE " + PHOTOS_TABLE + " (" + KEY_ID
             + " INTEGER primary key autoincrement, " + KEY_URI + " VARCHAR(255) not null, "
-            + KEY_UPLOADED + " INTEGER not null);";
+            + KEY_METADATA_JSON + " TEXT null, " + KEY_UPLOADED + " INTEGER not null);";
 
     private SQLiteDatabase mDb;
 

@@ -10,6 +10,9 @@ import me.openphoto.android.app.net.OpenPhotoApi;
 import me.openphoto.android.app.net.UploadMetaData;
 import me.openphoto.android.app.provider.UploadsProvider;
 import me.openphoto.android.app.util.ImageUtils;
+
+import org.json.JSONObject;
+
 import android.app.IntentService;
 import android.content.ContentValues;
 import android.content.Intent;
@@ -19,10 +22,15 @@ import android.util.Log;
 
 public class UploaderService extends IntentService {
     private static final String TAG = UploaderService.class.getSimpleName();
-    private final IOpenPhotoApi mApi;
+    private IOpenPhotoApi mApi;
 
     public UploaderService() {
         super(TAG);
+    }
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
         mApi = OpenPhotoApi.createInstance(Preferences.getServer(this));
     }
 
@@ -37,7 +45,15 @@ public class UploaderService extends IntentService {
                 File file = new File(ImageUtils.getRealPathFromURI(this, uri));
 
                 UploadMetaData metaData = new UploadMetaData();
-                metaData.setTags(Preferences.getAutoUploadTag(this));
+                String meta = cursor.getString(UploadsProvider.METADATA_JSON_COLUMN);
+                if (meta != null) {
+                    JSONObject jsonMeta = new JSONObject(meta);
+                    if (jsonMeta.has("tag")) {
+                        metaData.setTags(jsonMeta.optString("tag"));
+                    }
+                    // TODO get other meta data like title, description,
+                    // location?
+                }
 
                 mApi.uploadPhoto(file, metaData);
                 Log.i(TAG, "Upload to OpenPhoto completed for: " + uri);
