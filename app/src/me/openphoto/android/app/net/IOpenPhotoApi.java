@@ -38,14 +38,14 @@ public interface IOpenPhotoApi {
      * Get photos.
      * 
      * @param resize which sizes should be returned
-     * @param page page to be retrieved
+     * @param paging paging information
      * @return the photos
      * @throws ClientProtocolException
      * @throws IOException
      * @throws IllegalStateException
      * @throws JSONException
      */
-    PhotosResponse getPhotos(ReturnSize resize, int page)
+    PhotosResponse getPhotos(ReturnSize resize, Paging paging)
             throws ClientProtocolException, IllegalStateException, IOException, JSONException;
 
     /**

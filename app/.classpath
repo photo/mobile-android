@@ -7,5 +7,6 @@
 	<classpathentry kind="lib" path="libs/apache-mime4j-core-0.7.jar"/>
 	<classpathentry kind="lib" path="libs/commons-codec-1.4.jar"/>
 	<classpathentry kind="lib" path="libs/httpmime-4.1.2.jar"/>
+	<classpathentry kind="lib" path="libs/CWAC-AdapterWrapper.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

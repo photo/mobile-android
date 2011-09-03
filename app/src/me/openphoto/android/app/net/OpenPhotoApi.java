@@ -65,9 +65,9 @@ public class OpenPhotoApi extends ApiBase implements IOpenPhotoApi {
      * .app.net.ReturnSize, int)
      */
     @Override
-    public PhotosResponse getPhotos(ReturnSize resize, int page)
+    public PhotosResponse getPhotos(ReturnSize resize, Paging paging)
             throws ClientProtocolException, IllegalStateException, IOException, JSONException {
-        return getPhotos(resize, null, new Paging(page));
+        return getPhotos(resize, null, paging);
     }
 
     /*
