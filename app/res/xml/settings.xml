@@ -11,7 +11,7 @@
     <PreferenceScreen
       android:title="@string/setting_account_change_profile_picture_title" />
     <PreferenceScreen
-      android:title="@string/setting_account_log_out_title" />
+      android:key="@string/setting_account_loggedin_key" />
   </PreferenceCategory>
   <PreferenceCategory
     android:title="Auto upload of taken pictures">

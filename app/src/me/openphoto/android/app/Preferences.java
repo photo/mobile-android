@@ -6,20 +6,35 @@ import android.preference.PreferenceManager;
 
 public class Preferences {
     public static boolean isAutoUploadActive(Context context) {
-        return PreferenceManager.getDefaultSharedPreferences(context).getBoolean(
-                context.getString(R.string.setting_autoupload_on_key),
-                context.getResources().getBoolean(R.bool.setting_autoupload_on_default));
+        return PreferenceManager.getDefaultSharedPreferences(context)
+                .getBoolean(
+                        context.getString(R.string.setting_autoupload_on_key),
+                        context.getResources().getBoolean(R.bool.setting_autoupload_on_default));
     }
 
     public static String getAutoUploadTag(Context context) {
-        return PreferenceManager.getDefaultSharedPreferences(context).getString(
-                context.getString(R.string.setting_autoupload_tag_key),
-                context.getResources().getString(R.string.setting_autoupload_tag_default));
+        return PreferenceManager.getDefaultSharedPreferences(context)
+                .getString(
+                        context.getString(R.string.setting_autoupload_tag_key),
+                        context.getResources().getString(R.string.setting_autoupload_tag_default));
     }
 
     public static String getServer(Context context) {
-        return PreferenceManager.getDefaultSharedPreferences(context).getString(
-                context.getString(R.string.setting_account_server_key),
-                context.getString(R.string.setting_account_server_default));
+        return PreferenceManager.getDefaultSharedPreferences(context)
+                .getString(
+                        context.getString(R.string.setting_account_server_key),
+                        context.getString(R.string.setting_account_server_default));
+    }
+
+    public static boolean isLoggedIn(Context context) {
+        return PreferenceManager.getDefaultSharedPreferences(context)
+                .getBoolean(context.getString(R.string.setting_account_loggedin_key), false);
+    }
+
+    public static void setLoggedIn(Context context, boolean loggedIn) {
+        PreferenceManager.getDefaultSharedPreferences(context)
+                .edit()
+                .putBoolean(context.getString(R.string.setting_account_loggedin_key), loggedIn)
+                .commit();
     }
 }

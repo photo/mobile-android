@@ -47,6 +47,9 @@
     </activity>
     <activity android:name=".ViewPhotoActivity"></activity>
     
+    <activity android:name=".SettingsActivity"></activity>
+    <activity android:name=".OAuthActivity"></activity>
+    
     <!-- AutoUpload things -->
     <!-- Stuff for auto uploading pictures to Flickr -->
     <receiver android:name=".receiver.NewPhotoReceiver">
