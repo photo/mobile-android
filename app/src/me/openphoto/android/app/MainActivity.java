@@ -11,6 +11,7 @@ import me.openphoto.android.app.net.IOpenPhotoApi;
 import me.openphoto.android.app.net.OpenPhotoApi;
 import me.openphoto.android.app.net.Paging;
 import me.openphoto.android.app.net.ReturnSize;
+import me.openphoto.android.app.ui.widget.ActionBar;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -37,6 +38,8 @@ public class MainActivity extends Activity implements OnClickListener {
     private ImageButton galleryBtn;
     private ImageButton settingsBtn;
 
+    private ActionBar mActionBar;
+
     /**
      * Called when Main Activity is first loaded
      * 
@@ -46,7 +49,7 @@ public class MainActivity extends Activity implements OnClickListener {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
-        findViewById(R.id.image).setVisibility(View.GONE);
+        mActionBar = (ActionBar) findViewById(R.id.actionbar);
         new LoadImageTask().execute();
 
         // Get refereneces to navigation buttons
@@ -61,6 +64,12 @@ public class MainActivity extends Activity implements OnClickListener {
     }
 
     private class LoadImageTask extends AsyncTask<Void, Void, Bitmap> {
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            mActionBar.startLoading();
+        }
 
         @Override
         protected Bitmap doInBackground(Void... params) {
@@ -81,8 +90,8 @@ public class MainActivity extends Activity implements OnClickListener {
 
         @Override
         protected void onPostExecute(Bitmap result) {
+            mActionBar.stopLoading();
             if (result != null) {
-                findViewById(R.id.progress).setVisibility(View.GONE);
                 ImageView image = (ImageView) findViewById(R.id.image);
                 image.setImageBitmap(result);
                 image.setVisibility(View.VISIBLE);

@@ -27,13 +27,11 @@ public abstract class EndlessAdapter<T> extends BaseAdapter {
 
     private final AtomicBoolean mKeepOnAppending = new AtomicBoolean(true);
 
-    private final View mLoadView;
     private final List<T> mItems;
 
     public int mCurrentPage = 1;
 
-    public EndlessAdapter(View loadView) {
-        mLoadView = loadView;
+    public EndlessAdapter() {
         mItems = new ArrayList<T>();
         new LoadNextTask().execute();
     }
@@ -60,7 +58,7 @@ public abstract class EndlessAdapter<T> extends BaseAdapter {
 
         @Override
         protected void onPreExecute() {
-            mLoadView.setVisibility(View.VISIBLE);
+            onStartLoading();
         }
 
         @Override
@@ -72,11 +70,11 @@ public abstract class EndlessAdapter<T> extends BaseAdapter {
 
         @Override
         protected void onPostExecute(List<T> result) {
+            onStoppedLoading();
             if (result != null) {
                 mItems.addAll(result);
             }
             notifyDataSetChanged();
-            mLoadView.setVisibility(View.GONE);
         }
 
     }
@@ -90,4 +88,8 @@ public abstract class EndlessAdapter<T> extends BaseAdapter {
             this.hasNext = hasNext;
         }
     }
+
+    protected abstract void onStartLoading();
+
+    protected abstract void onStoppedLoading();
 }

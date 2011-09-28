@@ -12,6 +12,7 @@ import me.openphoto.android.app.net.PhotosResponse;
 import me.openphoto.android.app.net.ReturnSize;
 import me.openphoto.android.app.ui.adapter.EndlessAdapter;
 import me.openphoto.android.app.ui.lib.ImageStorage;
+import me.openphoto.android.app.ui.widget.ActionBar;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
@@ -28,7 +29,8 @@ import android.widget.ImageView;
  */
 public class GalleryActivity extends Activity {
     private static final String TAG = GalleryActivity.class.getSimpleName();
-    private View mLoadingView;
+
+    private ActionBar mActionBar;
 
     /**
      * Called when Gallery Activity is first loaded
@@ -39,17 +41,17 @@ public class GalleryActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.gallery);
+        mActionBar = (ActionBar) findViewById(R.id.actionbar);
         GridView photosGrid = (GridView) findViewById(R.id.grid_photos);
-        mLoadingView = findViewById(R.id.progress);
-        photosGrid.setAdapter(new PhotosEndlessAdapter(mLoadingView));
+        photosGrid.setAdapter(new PhotosEndlessAdapter());
     }
 
     private class PhotosEndlessAdapter extends EndlessAdapter<Photo> {
         private final IOpenPhotoApi mOpenPhotoApi;
         private final ImageStorage mStorage = new ImageStorage();
 
-        public PhotosEndlessAdapter(View loadView) {
-            super(loadView);
+        public PhotosEndlessAdapter() {
+            super();
             mOpenPhotoApi = OpenPhotoApi
                     .createInstance(Preferences.getServer(GalleryActivity.this));
         }
@@ -82,6 +84,16 @@ public class GalleryActivity extends Activity {
                 Log.e(TAG, "Could not load next photos in list", e);
             }
             return new LoadResponse(null, false);
+        }
+
+        @Override
+        protected void onStartLoading() {
+            mActionBar.startLoading();
+        }
+
+        @Override
+        protected void onStoppedLoading() {
+            mActionBar.stopLoading();
         }
     }
 }

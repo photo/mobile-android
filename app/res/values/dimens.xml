@@ -1,4 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+  <dimen name="site_padding">10dp</dimen>
+
+  <!-- ActionBar -->
+  <dimen name="actionbar_height">45dp</dimen>
+  <dimen name="actionbar_title_text_size">20dp</dimen>
+  <dimen name="actionbar_action_text_size">100dp</dimen>
+  
   <dimen name="gallery_item_size">100dp</dimen>
 </resources>
