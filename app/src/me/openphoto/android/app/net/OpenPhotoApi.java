@@ -92,7 +92,7 @@ public class OpenPhotoApi extends ApiBase implements IOpenPhotoApi {
     @Override
     public PhotosResponse getPhotos(ReturnSize resize, Collection<String> tags, Paging paging)
             throws ClientProtocolException, IOException, IllegalStateException, JSONException {
-        ApiRequest request = new ApiRequest(ApiRequest.GET, "/photos.json");
+        ApiRequest request = new ApiRequest(ApiRequest.GET, "/photos/list.json");
         if (resize != null) {
             request.addParameter("returnSizes", resize.toString());
         }

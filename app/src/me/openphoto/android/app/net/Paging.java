@@ -10,7 +10,7 @@ public class Paging {
     }
 
     public Paging(int page, int pageSize) {
-        mPage = pageSize;
+        mPage = page;
         mPageSize = pageSize;
     }
 

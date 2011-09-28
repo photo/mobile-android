@@ -10,8 +10,10 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:layout_weight="1"
-    android:numColumns="3"
-    android:stretchMode="columnWidth" />
+    android:drawSelectorOnTop="true"
+    android:stretchMode="columnWidth"
+    android:columnWidth="@dimen/gallery_item_size"
+    android:numColumns="auto_fit" />
   <ProgressBar
     android:id="@+id/progress"
     android:layout_width="wrap_content"

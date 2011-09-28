@@ -1,3 +1,4 @@
+
 package me.openphoto.android.app.ui.lib;
 
 import java.io.File;
@@ -24,14 +25,14 @@ public class ImageStorage {
 
     /** The Constant FOLDER_DOMO. */
     public static final String APP_FOLDER = Environment.getExternalStorageDirectory()
-            + "/data/ch.pboos.flickr/";
+            + "/data/me.openphoto.android/";
 
     /** The Constant FOLDER_TEMP. */
     public static final String FOLDER_TEMP = APP_FOLDER + ".tmp/";
     private static final String FOLDER_IMAGES = APP_FOLDER + ".img/";
 
-    private ImageDownloader mDownloader;
-    private ImageFromDiskReader mDiskReader;
+    private final ImageDownloader mDownloader;
+    private final ImageFromDiskReader mDiskReader;
 
     public ImageStorage() {
         mDiskReader = new ImageFromDiskReader();
