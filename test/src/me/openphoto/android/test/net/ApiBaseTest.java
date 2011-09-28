@@ -26,7 +26,7 @@ public class ApiBaseTest extends TestCase {
 
     public void testBasicRequest() throws ClientProtocolException, IOException, JSONException {
         ApiBase api = new ApiBase(OpenPhotoApiConstants.OPENPHOTO_BASE_URI);
-        ApiRequest request = new ApiRequest(ApiRequest.GET, "/photos.json");
+        ApiRequest request = new ApiRequest(ApiRequest.GET, "/photo/list.json");
 
         ApiResponse response = api.execute(request);
         assertEquals(200, response.getStatusCode());
