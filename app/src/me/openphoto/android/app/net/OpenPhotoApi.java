@@ -38,6 +38,23 @@ public class OpenPhotoApi extends ApiBase implements IOpenPhotoApi {
 
     /*
      * (non-Javadoc)
+     * @see
+     * me.openphoto.android.app.net.IOpenPhotoApi#getPhoto(java.lang.String,
+     * me.openphoto.android.app.net.ReturnSize)
+     */
+    @Override
+    public PhotoResponse getPhoto(String photoId, ReturnSize returnSize)
+            throws ClientProtocolException, IOException, IllegalStateException, JSONException {
+        ApiRequest request = new ApiRequest(ApiRequest.GET, "/photo/" + photoId + "/view.json");
+        if (returnSize != null) {
+            request.addParameter("returnSizes", returnSize.toString());
+        }
+        ApiResponse response = execute(request);
+        return new PhotoResponse(new JSONObject(response.getContentAsString()));
+    }
+
+    /*
+     * (non-Javadoc)
      * @see me.openphoto.android.app.net.IOpenPhotoApi#getPhotos()
      */
     @Override

@@ -5,9 +5,29 @@
   android:layout_width="fill_parent"
   android:layout_height="fill_parent"
 >
-  <TextView
+  <include layout="@layout/actionbar" />
+  <RelativeLayout
+    android:layout_height="fill_parent"
     android:layout_width="fill_parent"
-    android:layout_height="wrap_content"
-    android:text="@string/app_name"
-    android:id="@+id/title" />
+    android:layout_weight="1">
+    <ImageView
+      android:id="@+id/image"
+      android:layout_height="fill_parent"
+      android:layout_width="fill_parent"
+      android:scaleType="centerCrop"
+      android:adjustViewBounds="true" />
+    <TextView
+      android:id="@+id/image_title"
+      android:layout_height="wrap_content"
+      android:layout_width="fill_parent"
+      android:background="#55ffffff"
+      android:padding="5dp" />
+    <TextView
+      android:id="@+id/image_description"
+      android:layout_height="wrap_content"
+      android:layout_width="fill_parent"
+      android:layout_alignParentBottom="true"
+      android:background="#55ffffff"
+       android:padding="5dp" />
+  </RelativeLayout>
 </LinearLayout>

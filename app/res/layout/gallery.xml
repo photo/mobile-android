@@ -11,6 +11,7 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:layout_weight="1"
+    android:listSelector="@drawable/grid_selector"
     android:drawSelectorOnTop="true"
     android:stretchMode="columnWidth"
     android:columnWidth="@dimen/gallery_item_size"

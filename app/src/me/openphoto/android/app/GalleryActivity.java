@@ -15,10 +15,13 @@ import me.openphoto.android.app.ui.lib.ImageStorage;
 import me.openphoto.android.app.ui.widget.ActionBar;
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.GridView;
 import android.widget.ImageView;
 
@@ -27,10 +30,12 @@ import android.widget.ImageView;
  * 
  * @author pas
  */
-public class GalleryActivity extends Activity {
+public class GalleryActivity extends Activity implements OnItemClickListener {
     private static final String TAG = GalleryActivity.class.getSimpleName();
 
     private ActionBar mActionBar;
+
+    private PhotosEndlessAdapter mAdapter;
 
     /**
      * Called when Gallery Activity is first loaded
@@ -43,7 +48,16 @@ public class GalleryActivity extends Activity {
         setContentView(R.layout.gallery);
         mActionBar = (ActionBar) findViewById(R.id.actionbar);
         GridView photosGrid = (GridView) findViewById(R.id.grid_photos);
-        photosGrid.setAdapter(new PhotosEndlessAdapter());
+        mAdapter = new PhotosEndlessAdapter();
+        photosGrid.setAdapter(mAdapter);
+        photosGrid.setOnItemClickListener(this);
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> arg0, View arg1, int position, long arg3) {
+        Intent intent = new Intent(this, ViewPhotoActivity.class);
+        intent.putExtra(ViewPhotoActivity.EXTRA_PHOTO, (Photo) mAdapter.getItem(position));
+        startActivity(intent);
     }
 
     private class PhotosEndlessAdapter extends EndlessAdapter<Photo> {

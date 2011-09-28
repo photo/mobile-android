@@ -10,28 +10,31 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 /**
  * Class representing a Photo on OpenPhoto.
  * 
  * @author Patrick Boos
  */
-public class Photo {
+public class Photo implements Parcelable {
     public static final int PERMISSION_PUBLIC = 1;
     public static final int PERMISSION_PRIVATE = 0;
 
-    private String mId;
-    private final List<String> mTags;
-    private String mAppId;
-    private final Map<String, String> mUrls;
-    private String mTitle;
-    private String mDescription;
-    private int mPermission;
+    protected String mId;
+    protected final List<String> mTags;
+    protected String mAppId;
+    protected final Map<String, String> mUrls;
+    protected String mTitle;
+    protected String mDescription;
+    protected int mPermission;
 
     /**
      * Constructor which probably will not be used externally. Everything should
      * be done through fromJson().
      */
-    private Photo() {
+    protected Photo() {
         mTags = new ArrayList<String>();
         mUrls = new HashMap<String, String>();
     }
@@ -134,5 +137,60 @@ public class Photo {
      */
     public boolean isPrivate() {
         return mPermission == Photo.PERMISSION_PRIVATE;
+    }
+
+    /*****************************
+     * PARCELABLE IMPLEMENTATION *
+     *****************************/
+    private static final String PARCELABLE_SEPERATOR = "--SEPERATOR--";
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel out, int flags) {
+        out.writeString(mId);
+        out.writeString(mTitle);
+        out.writeString(mDescription);
+        out.writeString(mAppId);
+        out.writeStringList(mTags);
+        out.writeInt(mPermission);
+
+        List<String> urls = new ArrayList<String>(mUrls.size());
+        for (Map.Entry<String, String> e : mUrls.entrySet()) {
+            urls.add(e.getKey() + PARCELABLE_SEPERATOR + e.getValue());
+        }
+        out.writeStringList(urls);
+    }
+
+    public static final Parcelable.Creator<Photo> CREATOR = new Parcelable.Creator<Photo>() {
+        @Override
+        public Photo createFromParcel(Parcel in) {
+            return new Photo(in);
+        }
+
+        @Override
+        public Photo[] newArray(int size) {
+            return new Photo[size];
+        }
+    };
+
+    private Photo(Parcel in) {
+        this();
+        mId = in.readString();
+        mTitle = in.readString();
+        mDescription = in.readString();
+        mAppId = in.readString();
+        in.readStringList(mTags);
+        mPermission = in.readInt();
+
+        List<String> urls = new ArrayList<String>();
+        in.readStringList(urls);
+        for (String url : urls) {
+            String[] split = url.split(PARCELABLE_SEPERATOR);
+            mUrls.put(split[0], split[1]);
+        }
     }
 }

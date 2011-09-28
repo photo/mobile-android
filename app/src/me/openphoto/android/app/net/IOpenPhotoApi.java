@@ -9,6 +9,21 @@ import org.apache.http.client.ClientProtocolException;
 import org.json.JSONException;
 
 public interface IOpenPhotoApi {
+
+    /**
+     * Retrieve a single photo.
+     * 
+     * @param photoId id of the photo
+     * @param returnSize which sizes should be returned
+     * @return the photo
+     * @throws IOException
+     * @throws ClientProtocolException
+     * @throws JSONException
+     * @throws IllegalStateException
+     */
+    PhotoResponse getPhoto(String photoId, ReturnSize returnSize) throws ClientProtocolException,
+            IOException, IllegalStateException, JSONException;
+
     /**
      * Get photos.
      * 
@@ -90,5 +105,4 @@ public interface IOpenPhotoApi {
      */
     UploadResponse uploadPhoto(File imageFile, UploadMetaData metaData)
             throws ClientProtocolException, IOException, IllegalStateException, JSONException;
-
 }
