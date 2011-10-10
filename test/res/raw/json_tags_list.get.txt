@@ -1,0 +1,22 @@
+{
+   "message":"Tags for the user",
+   "code":200,
+   "result":[
+      {
+         "id":" conduit",
+         "count":"1"
+      },
+      {
+         "id":"anna",
+         "count":"4"
+      },
+      {
+         "id":"autoupload",
+         "count":"42"
+      },
+      {
+         "id":"baybridge",
+         "count":"1"
+      }
+   ]
+}

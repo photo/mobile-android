@@ -31,8 +31,8 @@ public class Photo implements Parcelable {
     protected int mPermission;
 
     /**
-     * Constructor which probably will not be used externally. Everything should
-     * be done through fromJson().
+     * Constructor which will not be used externally. Everything should be done
+     * through fromJson().
      */
     protected Photo() {
         mTags = new ArrayList<String>();

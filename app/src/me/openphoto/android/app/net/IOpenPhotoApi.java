@@ -11,6 +11,16 @@ import org.json.JSONException;
 public interface IOpenPhotoApi {
 
     /**
+     * @return tags which are used on the server
+     * @throws ClientProtocolException
+     * @throws IOException
+     * @throws IllegalStateException
+     * @throws JSONException
+     */
+    TagsResponse getTags() throws ClientProtocolException, IOException, IllegalStateException,
+            JSONException;
+
+    /**
      * Retrieve a single photo.
      * 
      * @param photoId id of the photo

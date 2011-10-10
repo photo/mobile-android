@@ -31,7 +31,10 @@
     <activity android:name=".GalleryActivity"></activity>
     <activity android:name=".PhotoDetailsActivity"></activity>
     <activity android:name=".PhotoTakenActivity"></activity>
-    <activity android:name=".SearchActivity"></activity>
+    <activity
+      android:name=".SearchActivity"
+      android:windowSoftInputMode="stateHidden"
+      />
     <activity android:name=".SettingsActivity"></activity>
     <activity
       android:name=".UploadActivity"

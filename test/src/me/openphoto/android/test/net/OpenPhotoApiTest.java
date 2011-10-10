@@ -8,6 +8,7 @@ import java.io.InputStream;
 import me.openphoto.android.app.net.IOpenPhotoApi;
 import me.openphoto.android.app.net.OpenPhotoApi;
 import me.openphoto.android.app.net.PhotosResponse;
+import me.openphoto.android.app.net.TagsResponse;
 import me.openphoto.android.app.net.UploadMetaData;
 import me.openphoto.android.app.net.UploadResponse;
 import me.openphoto.android.test.R;
@@ -27,6 +28,15 @@ public class OpenPhotoApiTest extends InstrumentationTestCase {
     protected void setUp() throws Exception {
         super.setUp();
         mApi = OpenPhotoApi.createInstance(OpenPhotoApiConstants.OPENPHOTO_BASE_URI);
+    }
+
+    public void testTags() throws ClientProtocolException, IllegalStateException, IOException,
+            JSONException {
+        TagsResponse resp = mApi.getTags();
+        assertNotNull(resp);
+        assertEquals(200, resp.getCode());
+        assertNotNull(resp.getTags());
+        assertNotSame(0, resp.getTags().size());
     }
 
     public void testPhotos() throws ClientProtocolException, IllegalStateException, IOException,

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
   <dimen name="site_padding">10dp</dimen>
+  <dimen name="site_padding_half">5dp</dimen>
 
   <!-- ActionBar -->
   <dimen name="actionbar_height">45dp</dimen>

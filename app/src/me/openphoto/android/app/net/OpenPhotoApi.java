@@ -36,6 +36,14 @@ public class OpenPhotoApi extends ApiBase implements IOpenPhotoApi {
         }
     }
 
+    @Override
+    public TagsResponse getTags() throws ClientProtocolException, IOException,
+            IllegalStateException, JSONException {
+        ApiRequest request = new ApiRequest(ApiRequest.GET, "/tags/list.json");
+        ApiResponse response = execute(request);
+        return new TagsResponse(new JSONObject(response.getContentAsString()));
+    }
+
     /*
      * (non-Javadoc)
      * @see

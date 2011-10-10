@@ -4,6 +4,9 @@
 
 package me.openphoto.android.app;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import me.openphoto.android.app.model.Photo;
 import me.openphoto.android.app.net.IOpenPhotoApi;
 import me.openphoto.android.app.net.OpenPhotoApi;
@@ -33,6 +36,8 @@ import android.widget.ImageView;
 public class GalleryActivity extends Activity implements OnItemClickListener {
     private static final String TAG = GalleryActivity.class.getSimpleName();
 
+    public static String EXTRA_TAG = "EXTRA_TAG";
+
     private ActionBar mActionBar;
 
     private PhotosEndlessAdapter mAdapter;
@@ -47,8 +52,14 @@ public class GalleryActivity extends Activity implements OnItemClickListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.gallery);
         mActionBar = (ActionBar) findViewById(R.id.actionbar);
+
+        if (getIntent() != null && getIntent().hasExtra(EXTRA_TAG)) {
+            mAdapter = new PhotosEndlessAdapter(getIntent().getStringExtra(EXTRA_TAG));
+        } else {
+            mAdapter = new PhotosEndlessAdapter();
+        }
+
         GridView photosGrid = (GridView) findViewById(R.id.grid_photos);
-        mAdapter = new PhotosEndlessAdapter();
         photosGrid.setAdapter(mAdapter);
         photosGrid.setOnItemClickListener(this);
     }
@@ -63,11 +74,20 @@ public class GalleryActivity extends Activity implements OnItemClickListener {
     private class PhotosEndlessAdapter extends EndlessAdapter<Photo> {
         private final IOpenPhotoApi mOpenPhotoApi;
         private final ImageStorage mStorage = new ImageStorage();
+        private final List<String> mTagFilter;
 
         public PhotosEndlessAdapter() {
+            this(null);
+        }
+
+        public PhotosEndlessAdapter(String tagFilter) {
             super();
             mOpenPhotoApi = OpenPhotoApi
                     .createInstance(Preferences.getServer(GalleryActivity.this));
+            mTagFilter = new ArrayList<String>(1);
+            if (tagFilter != null) {
+                mTagFilter.add(tagFilter);
+            }
         }
 
         @Override
@@ -91,7 +111,7 @@ public class GalleryActivity extends Activity implements OnItemClickListener {
         public LoadResponse loadItems(int page) {
             try {
                 PhotosResponse response = mOpenPhotoApi.getPhotos(new ReturnSize(200, 200),
-                        new Paging(page, 30));
+                        mTagFilter, new Paging(page, 30));
                 boolean hasNextPage = response.getCurrentPage() < response.getTotalPages();
                 return new LoadResponse(response.getPhotos(), hasNextPage);
             } catch (Exception e) {
