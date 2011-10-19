@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.Iterator;
 
+import oauth.signpost.OAuthConsumer;
+
 import org.apache.http.client.ClientProtocolException;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -36,6 +38,21 @@ public class OpenPhotoApi extends ApiBase implements IOpenPhotoApi {
         }
     }
 
+    /*
+     * (non-Javadoc)
+     * @see
+     * me.openphoto.android.app.net.IOpenPhotoApi#setOAuthConsumer(oauth.signpost
+     * .OAuthConsumer)
+     */
+    @Override
+    public void setOAuthConsumer(OAuthConsumer oAuthConsumer) {
+        super.setOAuthConsumer(oAuthConsumer);
+    }
+
+    /*
+     * (non-Javadoc)
+     * @see me.openphoto.android.app.net.IOpenPhotoApi#getTags()
+     */
     @Override
     public TagsResponse getTags() throws ClientProtocolException, IOException,
             IllegalStateException, JSONException {
@@ -68,7 +85,7 @@ public class OpenPhotoApi extends ApiBase implements IOpenPhotoApi {
      */
     @Override
     public String getOAuthUrl(String callback) {
-        return getBaseUrl() + "/v1/oauth/authorize";
+        return getBaseUrl() + "/v1/oauth/authorize?mobile=1&oauth_callback=" + callback;
     }
 
     /*

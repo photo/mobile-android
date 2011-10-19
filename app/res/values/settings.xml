@@ -12,6 +12,12 @@
   <string name="setting_account_loggedin_key">setting_loggedin</string>
   <string name="setting_account_loggedin_logout">Log out</string>
   <string name="setting_account_loggedin_login">Log in</string>
+  <string name="setting_account_loggedin_consumer_key">setting_loggedin</string>
+  <!-- OAuth store information -->
+  <string name="setting_oauth_consumer_key">setting_oauth_consumer_key</string>
+  <string name="setting_oauth_consumer_secret">setting_oauth_consumer_secret</string>
+  <string name="setting_oauth_token">setting_oauth_token</string>
+  <string name="setting_oauth_token_secret">setting_oauth_token_secret</string>
   
   <string name="setting_account_edit_account_title">Edit account</string>
   <string name="setting_account_change_profile_picture_title">Change profile picture</string>
@@ -22,4 +28,5 @@
 
   <string name="setting_autoupload_tag_key">setting_autoupload_tag</string>
   <string name="setting_autoupload_tag_default">autoupload</string>
+  
 </resources>

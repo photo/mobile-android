@@ -36,15 +36,23 @@ public class SettingsActivity extends PreferenceActivity implements OnPreference
     @Override
     protected void onResume() {
         super.onResume();
+        refreshLoginPreferenceTitle();
+    }
+
+    private void refreshLoginPreferenceTitle() {
         mLoginPreference.setTitle(Preferences.isLoggedIn(this) ?
                 R.string.setting_account_loggedin_logout : R.string.setting_account_loggedin_login);
     }
+
+    // TODO when server is changed it should delete the login information
 
     @Override
     public boolean onPreferenceClick(Preference preference) {
         if (getString(R.string.setting_account_loggedin_key).equals(preference.getKey())) {
             if (Preferences.isLoggedIn(this)) {
-
+                // TODO show logout confirmation dialog
+                Preferences.logout(this);
+                refreshLoginPreferenceTitle();
             } else {
                 startActivity(new Intent(this, OAuthActivity.class));
             }

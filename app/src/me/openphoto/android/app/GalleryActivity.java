@@ -9,7 +9,6 @@ import java.util.List;
 
 import me.openphoto.android.app.model.Photo;
 import me.openphoto.android.app.net.IOpenPhotoApi;
-import me.openphoto.android.app.net.OpenPhotoApi;
 import me.openphoto.android.app.net.Paging;
 import me.openphoto.android.app.net.PhotosResponse;
 import me.openphoto.android.app.net.ReturnSize;
@@ -82,8 +81,7 @@ public class GalleryActivity extends Activity implements OnItemClickListener {
 
         public PhotosEndlessAdapter(String tagFilter) {
             super();
-            mOpenPhotoApi = OpenPhotoApi
-                    .createInstance(Preferences.getServer(GalleryActivity.this));
+            mOpenPhotoApi = Preferences.getApi(GalleryActivity.this);
             mTagFilter = new ArrayList<String>(1);
             if (tagFilter != null) {
                 mTagFilter.add(tagFilter);

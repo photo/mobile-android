@@ -7,6 +7,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.List;
 
 import me.openphoto.android.app.net.ApiRequest.Parameter;
+import oauth.signpost.OAuthConsumer;
 
 import org.apache.http.HttpVersion;
 import org.apache.http.NameValuePair;
@@ -33,6 +34,7 @@ import org.apache.http.protocol.HTTP;
  */
 public class ApiBase {
     private final String mBaseUrl;
+    private OAuthConsumer mOAuthConsumer;
 
     /**
      * Instantiates a new ApiBase object.
@@ -44,6 +46,16 @@ public class ApiBase {
             baseUrl = baseUrl.substring(0, baseUrl.length() - 1);
         }
         mBaseUrl = baseUrl;
+    }
+
+    /**
+     * Sets the OAuthConsumer when the calls with the server need to be
+     * authenticated.
+     * 
+     * @param oAuthConsumer
+     */
+    public void setOAuthConsumer(OAuthConsumer oAuthConsumer) {
+        mOAuthConsumer = oAuthConsumer;
     }
 
     /**
@@ -70,7 +82,14 @@ public class ApiBase {
         HttpUriRequest httpRequest = createHttpRequest(request);
 
         httpRequest.getParams().setBooleanParameter("http.protocol.expect-continue", false);
-
+        if (mOAuthConsumer != null) {
+            try {
+                mOAuthConsumer.sign(httpRequest);
+            } catch (Exception e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
         return new ApiResponse(httpClient.execute(httpRequest));
     }
 

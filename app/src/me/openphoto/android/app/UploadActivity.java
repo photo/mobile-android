@@ -5,7 +5,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Date;
 
-import me.openphoto.android.app.net.OpenPhotoApi;
 import me.openphoto.android.app.net.UploadMetaData;
 import me.openphoto.android.app.net.UploadResponse;
 import me.openphoto.android.app.util.FileUtils;
@@ -188,8 +187,7 @@ public class UploadActivity extends Activity implements OnClickListener {
             // TODO add private and effects aviary
 
             try {
-                return OpenPhotoApi.createInstance(Preferences.getServer(UploadActivity.this))
-                        .uploadPhoto(params[0], metaData);
+                return Preferences.getApi(UploadActivity.this).uploadPhoto(params[0], metaData);
             } catch (Exception e) {
                 Log.e(TAG, "Error while uploading", e);
             }

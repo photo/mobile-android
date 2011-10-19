@@ -6,7 +6,6 @@ package me.openphoto.android.app;
 
 import me.openphoto.android.app.model.Tag;
 import me.openphoto.android.app.net.IOpenPhotoApi;
-import me.openphoto.android.app.net.OpenPhotoApi;
 import me.openphoto.android.app.net.TagsResponse;
 import me.openphoto.android.app.ui.adapter.EndlessAdapter;
 import me.openphoto.android.app.ui.widget.ActionBar;
@@ -88,8 +87,7 @@ public class SearchActivity extends Activity implements OnItemClickListener {
 
         public TagsAdapter() {
             super();
-            mOpenPhotoApi = OpenPhotoApi
-                    .createInstance(Preferences.getServer(SearchActivity.this));
+            mOpenPhotoApi = Preferences.getApi(SearchActivity.this);
         }
 
         @Override

@@ -1,28 +1,21 @@
 
 package me.openphoto.android.app;
 
-import java.net.URL;
-
-import me.openphoto.android.app.model.Photo;
 import me.openphoto.android.app.net.IOpenPhotoApi;
-import me.openphoto.android.app.net.OpenPhotoApi;
-import me.openphoto.android.app.net.Paging;
-import me.openphoto.android.app.net.ReturnSize;
 import me.openphoto.android.app.ui.widget.ActionBar;
+import oauth.signpost.OAuthConsumer;
+import oauth.signpost.OAuthProvider;
+import oauth.signpost.basic.DefaultOAuthConsumer;
 import android.app.Activity;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
-import android.webkit.CookieManager;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.widget.ImageView;
 import android.widget.Toast;
 
 /**
@@ -51,36 +44,34 @@ public class OAuthActivity extends Activity {
         setContentView(R.layout.oauth);
         mActionBar = (ActionBar) findViewById(R.id.actionbar);
 
+        // CookieSyncManager.createInstance(this);
+        // CookieSyncManager.getInstance().startSync();
+        // CookieManager cookieManager = CookieManager.getInstance();
+        // cookieManager.setAcceptCookie(true);
+
         mWebView = (WebView) findViewById(R.id.webview);
         WebSettings webSettings = mWebView.getSettings();
-        webSettings.setSavePassword(false);
         webSettings.setJavaScriptEnabled(true);
+        // webSettings.setSupportMultipleWindows(true);
+        // webSettings.setDatabaseEnabled(true);
+        // String databasePath = getApplicationContext().getDir("database",
+        // Context.MODE_PRIVATE)
+        // .getPath();
+        // webSettings.setDatabasePath(databasePath);
         mWebView.setWebChromeClient(mWebChromeClient);
         mWebView.setWebViewClient(mWebViewClient);
 
-        CookieManager cookieManager = CookieManager.getInstance();
-        cookieManager.setAcceptCookie(false);
-
-        mOpenPhoto = OpenPhotoApi.createInstance(Preferences.getServer(this));
+        mOpenPhoto = Preferences.getApi(this);
         String url = mOpenPhoto.getOAuthUrl(CALLBACK);
         mWebView.loadUrl(url);
     }
 
     private final WebChromeClient mWebChromeClient = new WebChromeClient() {
-        private boolean mIsLoading = false;
 
         @Override
-        public void onProgressChanged(WebView view, int newProgress) {
-            super.onProgressChanged(view, newProgress);
-            if (newProgress < 100) {
-                if (!mIsLoading) {
-                    mIsLoading = true;
-                    mActionBar.startLoading();
-                }
-            } else if (mIsLoading) {
-                mActionBar.stopLoading();
-                mIsLoading = false;
-            }
+        public void onConsoleMessage(String message, int lineNumber, String sourceID) {
+            Log.e(TAG, "Error: " + message);
+            super.onConsoleMessage(message, lineNumber, sourceID);
         }
 
     };
@@ -88,12 +79,24 @@ public class OAuthActivity extends Activity {
     private final WebViewClient mWebViewClient = new WebViewClient() {
 
         @Override
+        public void onPageFinished(WebView view, String url) {
+            super.onPageFinished(view, url);
+            mActionBar.stopLoading();
+        }
+
+        @Override
+        public void onPageStarted(WebView view, String url, Bitmap favicon) {
+            super.onPageStarted(view, url, favicon);
+            mActionBar.startLoading();
+        }
+
+        @Override
         public boolean shouldOverrideUrlLoading(WebView view, String url) {
             boolean result = true;
             if ((url != null) && (url.startsWith(CALLBACK))) {
                 Uri uri = Uri.parse(url);
-                if (uri.getQueryParameter("token") != null) {
-                    new PostTask().execute();
+                if (uri.getQueryParameter("oauth_token") != null) {
+                    new PostTask(uri).execute();
                 } else {
                     Toast.makeText(OAuthActivity.this, "Error: " + uri.getQueryParameter("error"),
                             Toast.LENGTH_LONG).show();
@@ -104,10 +107,15 @@ public class OAuthActivity extends Activity {
             }
             return result;
         }
-
     };
 
-    private class PostTask extends AsyncTask<Void, Void, Bitmap> {
+    private class PostTask extends AsyncTask<Void, Void, Boolean> {
+        private final Uri mUri;
+        private OAuthConsumer mUsedConsumer;
+
+        public PostTask(Uri uri) {
+            mUri = uri;
+        }
 
         @Override
         protected void onPreExecute() {
@@ -116,34 +124,33 @@ public class OAuthActivity extends Activity {
         }
 
         @Override
-        protected Bitmap doInBackground(Void... params) {
-            IOpenPhotoApi api = OpenPhotoApi
-                    .createInstance(Preferences.getServer(OAuthActivity.this));
+        protected Boolean doInBackground(Void... params) {
             try {
-                Photo photo = api.getPhotos(new ReturnSize(600, 600), null, new Paging(1, 1))
-                        .getPhotos().get(0);
-                // TODO do not use base, make getPhotos actually use a
-                // returnSize parameter that should be used then.
-                return BitmapFactory.decodeStream(new URL(photo
-                        .getUrl("600x600")).openStream());
+                String oAuthConsumerKey = mUri.getQueryParameter("oauth_consumer_key");
+                String oAuthConsumerSecret = mUri.getQueryParameter("oauth_consumer_secret");
+                String oAuthToken = mUri.getQueryParameter("oauth_token");
+                String oAuthTokenSecret = mUri.getQueryParameter("oauth_token_secret");
+                String oAuthVerifier = mUri.getQueryParameter("oauth_verifier");
+
+                mUsedConsumer = new DefaultOAuthConsumer(oAuthConsumerKey,
+                        oAuthConsumerSecret);
+                mUsedConsumer.setTokenWithSecret(oAuthToken, oAuthTokenSecret);
+
+                OAuthProvider provider = Preferences.getOAuthProvider(OAuthActivity.this);
+                provider.retrieveAccessToken(mUsedConsumer, oAuthVerifier);
+                return true;
             } catch (Exception e) {
-                Log.w(TAG, "Error while getting image", e);
-                return null;
+                return false;
             }
         }
 
         @Override
-        protected void onPostExecute(Bitmap result) {
+        protected void onPostExecute(Boolean result) {
             mActionBar.stopLoading();
-            if (result != null) {
-                ImageView image = (ImageView) findViewById(R.id.image);
-                image.setImageBitmap(result);
-                image.setVisibility(View.VISIBLE);
-            } else {
-                Toast.makeText(OAuthActivity.this, "Could not download image",
-                        Toast.LENGTH_LONG).show();
+            if (result.booleanValue()) {
+                Preferences.setLoginInformation(OAuthActivity.this, mUsedConsumer);
+                finish();
             }
         }
-
     }
 }

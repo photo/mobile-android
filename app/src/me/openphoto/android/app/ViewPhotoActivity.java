@@ -5,7 +5,6 @@
 package me.openphoto.android.app;
 
 import me.openphoto.android.app.model.Photo;
-import me.openphoto.android.app.net.OpenPhotoApi;
 import me.openphoto.android.app.net.PhotoResponse;
 import me.openphoto.android.app.net.ReturnSize;
 import me.openphoto.android.app.ui.lib.ImageStorage;
@@ -86,9 +85,8 @@ public class ViewPhotoActivity extends Activity implements OnClickListener {
         @Override
         protected Photo doInBackground(Void... params) {
             try {
-                PhotoResponse response = OpenPhotoApi.createInstance(
-                        Preferences.getServer(ViewPhotoActivity.this)).getPhoto(mPhoto.getId(),
-                        new ReturnSize(1024, 1024));
+                PhotoResponse response = Preferences.getApi(ViewPhotoActivity.this)
+                        .getPhoto(mPhoto.getId(), new ReturnSize(1024, 1024));
                 return response.getPhoto();
             } catch (Exception e) {
                 return null;

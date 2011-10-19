@@ -5,10 +5,20 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
 
+import oauth.signpost.OAuthConsumer;
+
 import org.apache.http.client.ClientProtocolException;
 import org.json.JSONException;
 
 public interface IOpenPhotoApi {
+
+    /**
+     * Sets the OAuthConsumer when the calls with the server need to be
+     * authenticated.
+     * 
+     * @param oAuthConsumer
+     */
+    void setOAuthConsumer(OAuthConsumer oAuthConsumer);
 
     /**
      * @return tags which are used on the server
