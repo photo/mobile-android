@@ -44,20 +44,9 @@ public class OAuthActivity extends Activity {
         setContentView(R.layout.oauth);
         mActionBar = (ActionBar) findViewById(R.id.actionbar);
 
-        // CookieSyncManager.createInstance(this);
-        // CookieSyncManager.getInstance().startSync();
-        // CookieManager cookieManager = CookieManager.getInstance();
-        // cookieManager.setAcceptCookie(true);
-
         mWebView = (WebView) findViewById(R.id.webview);
         WebSettings webSettings = mWebView.getSettings();
         webSettings.setJavaScriptEnabled(true);
-        // webSettings.setSupportMultipleWindows(true);
-        // webSettings.setDatabaseEnabled(true);
-        // String databasePath = getApplicationContext().getDir("database",
-        // Context.MODE_PRIVATE)
-        // .getPath();
-        // webSettings.setDatabasePath(databasePath);
         mWebView.setWebChromeClient(mWebChromeClient);
         mWebView.setWebViewClient(mWebViewClient);
 

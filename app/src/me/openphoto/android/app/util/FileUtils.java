@@ -22,6 +22,12 @@ public class FileUtils {
         }
     }
 
+    public static File getTempFolder() throws IOException {
+        File folder = new File(getStorageFolder(), ".tmp/");
+        folder.mkdirs();
+        return folder;
+    }
+
     private static boolean canWriteToStorage() {
         boolean mExternalStorageAvailable = false;
         boolean mExternalStorageWriteable = false;

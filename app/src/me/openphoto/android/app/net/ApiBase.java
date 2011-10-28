@@ -2,13 +2,17 @@
 package me.openphoto.android.app.net;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
 import java.util.List;
 
 import me.openphoto.android.app.net.ApiRequest.Parameter;
 import oauth.signpost.OAuthConsumer;
 
+import org.apache.http.HttpEntity;
 import org.apache.http.HttpVersion;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.ClientProtocolException;
@@ -19,12 +23,13 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.entity.mime.MultipartEntity;
-import org.apache.http.entity.mime.content.ContentBody;
-import org.apache.http.entity.mime.content.FileBody;
+import org.apache.http.entity.mime.content.InputStreamBody;
 import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.params.CoreProtocolPNames;
 import org.apache.http.protocol.HTTP;
+
+import android.util.Log;
 
 /**
  * ApiBase provides the basic functionality to call RESTful APIs using an
@@ -33,6 +38,7 @@ import org.apache.http.protocol.HTTP;
  * @author Patrick Boos
  */
 public class ApiBase {
+    private final static String TAG = ApiBase.class.getSimpleName();
     private final String mBaseUrl;
     private OAuthConsumer mOAuthConsumer;
 
@@ -114,17 +120,14 @@ public class ApiBase {
                 httpRequest = new HttpPost(mBaseUrl + request.getPath());
                 HttpPost httpPost = ((HttpPost) httpRequest);
                 if (request.isMime()) {
-                    MultipartEntity entity = new MultipartEntity();
-                    for (Parameter<?> parameter : request.getParametersMime()) {
-                        if (parameter.getValue() instanceof String) {
-                            entity.addPart(parameter.getName(),
-                                    new StringBody((String) parameter.getValue()));
-                        } else if (parameter.getValue() instanceof File) {
-                            ContentBody cbFile = new FileBody((File) parameter.getValue());
-                            entity.addPart(parameter.getName(), cbFile);
-                        }
-                    }
-                    httpPost.setEntity(entity);
+                    // TODO use the multipart when possible (currently server
+                    // handles it wrong)
+                    // HttpEntity entity = createMultipartEntity(request);
+                    // TODO remove this when doing correct multipart
+                    httpRequest = new HttpPost(addParamsToUrl(mBaseUrl + request.getPath(),
+                            request.getParameters()));
+                    httpPost = ((HttpPost) httpRequest);
+                    httpPost.setEntity(createFileOnlyMultipartEntity(request));
                 } else {
                     httpPost.setEntity(new UrlEncodedFormEntity(request.getParameters(), HTTP.UTF_8));
                 }
@@ -144,6 +147,53 @@ public class ApiBase {
         }
 
         return httpRequest;
+    }
+
+    private HttpEntity createFileOnlyMultipartEntity(ApiRequest request)
+            throws UnsupportedEncodingException {
+        Charset stringCharset = Charset.forName("UTF-8");
+        MultipartEntity entity = new MultipartEntity();
+        for (Parameter<?> parameter : request.getParametersMime()) {
+            if (parameter.getValue() instanceof File) {
+                File file = (File) parameter.getValue();
+                try {
+                    entity.addPart(
+                            parameter.getName(),
+                            new InputStreamBody(new FileInputStream(file), file
+                                    .getName()));
+                } catch (FileNotFoundException e) {
+                    Log.e(TAG,
+                            "Could not add file to mime body because file was not found.",
+                            e);
+                }
+            }
+        }
+        return entity;
+    }
+
+    private MultipartEntity createMultipartEntity(ApiRequest request)
+            throws UnsupportedEncodingException {
+        Charset stringCharset = Charset.forName("UTF-8");
+        MultipartEntity entity = new MultipartEntity();
+        for (Parameter<?> parameter : request.getParametersMime()) {
+            if (parameter.getValue() instanceof String) {
+                entity.addPart(parameter.getName(),
+                        new StringBody((String) parameter.getValue(), stringCharset));
+            } else if (parameter.getValue() instanceof File) {
+                File file = (File) parameter.getValue();
+                try {
+                    entity.addPart(
+                            parameter.getName(),
+                            new InputStreamBody(new FileInputStream(file), file
+                                    .getName()));
+                } catch (FileNotFoundException e) {
+                    Log.e(TAG,
+                            "Could not add file to mime body because file was not found.",
+                            e);
+                }
+            }
+        }
+        return entity;
     }
 
     /**
