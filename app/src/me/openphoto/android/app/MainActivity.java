@@ -62,6 +62,12 @@ public class MainActivity extends Activity implements OnClickListener {
         settingsBtn.setOnClickListener(this);
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        cameraBtn.setEnabled(Preferences.isLoggedIn(this));
+    }
+
     private class LoadImageTask extends AsyncTask<Void, Void, Bitmap> {
 
         @Override
