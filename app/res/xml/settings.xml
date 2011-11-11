@@ -6,10 +6,12 @@
       android:title="@string/setting_account_server_title"
       android:key="@string/setting_account_server_key"
       android:defaultValue="@string/setting_account_server_default" />
+    <!-- 
     <PreferenceScreen
       android:title="@string/setting_account_edit_account_title" />
     <PreferenceScreen
       android:title="@string/setting_account_change_profile_picture_title" />
+    -->
     <PreferenceScreen
       android:key="@string/setting_account_loggedin_key" />
   </PreferenceCategory>
