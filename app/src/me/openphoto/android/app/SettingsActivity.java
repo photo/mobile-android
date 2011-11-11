@@ -6,7 +6,9 @@ package me.openphoto.android.app;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.preference.EditTextPreference;
 import android.preference.Preference;
+import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceActivity;
 
@@ -31,20 +33,31 @@ public class SettingsActivity extends PreferenceActivity implements OnPreference
 
         mLoginPreference = findPreference(getString(R.string.setting_account_loggedin_key));
         mLoginPreference.setOnPreferenceClickListener(this);
+
+        findPreference(getString(R.string.setting_account_server_key))
+                .setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
+                    @Override
+                    public boolean onPreferenceChange(Preference preference, Object newValue) {
+                        String oldValue = ((EditTextPreference) preference).getText();
+                        if (!oldValue.equals(newValue)) {
+                            Preferences.logout(SettingsActivity.this);
+                            refresh();
+                        }
+                        return true;
+                    }
+                });
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        refreshLoginPreferenceTitle();
+        refresh();
     }
 
-    private void refreshLoginPreferenceTitle() {
+    private void refresh() {
         mLoginPreference.setTitle(Preferences.isLoggedIn(this) ?
                 R.string.setting_account_loggedin_logout : R.string.setting_account_loggedin_login);
     }
-
-    // TODO when server is changed it should delete the login information
 
     @Override
     public boolean onPreferenceClick(Preference preference) {
@@ -52,7 +65,7 @@ public class SettingsActivity extends PreferenceActivity implements OnPreference
             if (Preferences.isLoggedIn(this)) {
                 // TODO show logout confirmation dialog
                 Preferences.logout(this);
-                refreshLoginPreferenceTitle();
+                refresh();
             } else {
                 startActivity(new Intent(this, OAuthActivity.class));
             }
