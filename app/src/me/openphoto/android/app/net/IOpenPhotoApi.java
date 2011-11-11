@@ -48,11 +48,12 @@ public interface IOpenPhotoApi {
      * Will return the URL to which the user has to start the OAuth
      * authorization process.
      * 
+     * @param name Name of the app for which authorization is requested
      * @param callback Where the user should be forwarded after authorizing the
      *            app.
      * @return Url to which the user should be pointed in a WebView.
      */
-    String getOAuthUrl(String callback);
+    String getOAuthUrl(String name, String callback);
 
     /**
      * Get photos.

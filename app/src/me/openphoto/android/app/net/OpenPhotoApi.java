@@ -84,8 +84,9 @@ public class OpenPhotoApi extends ApiBase implements IOpenPhotoApi {
      * me.openphoto.android.app.net.IOpenPhotoApi#getOAuthUrl(java.lang.String)
      */
     @Override
-    public String getOAuthUrl(String callback) {
-        return getBaseUrl() + "/v1/oauth/authorize?mobile=1&oauth_callback=" + callback;
+    public String getOAuthUrl(String name, String callback) {
+        return getBaseUrl() + "/v1/oauth/authorize?mobile=1&name=" + name
+                + "&oauth_callback=" + callback;
     }
 
     /*
