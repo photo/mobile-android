@@ -10,6 +10,7 @@ import me.openphoto.android.app.model.Photo;
 import me.openphoto.android.app.net.IOpenPhotoApi;
 import me.openphoto.android.app.net.Paging;
 import me.openphoto.android.app.net.ReturnSize;
+import me.openphoto.android.app.service.UploaderService;
 import me.openphoto.android.app.ui.widget.ActionBar;
 import android.app.Activity;
 import android.content.Intent;
@@ -60,6 +61,8 @@ public class MainActivity extends Activity implements OnClickListener {
         cameraBtn.setOnClickListener(this);
         galleryBtn.setOnClickListener(this);
         settingsBtn.setOnClickListener(this);
+
+        startService(new Intent(this, UploaderService.class));
     }
 
     @Override

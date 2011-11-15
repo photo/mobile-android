@@ -60,6 +60,9 @@ public class ImageUtils {
      * @return file path of the given imageUri
      */
     public static String getRealPathFromURI(Context context, Uri imageUri) {
+        if (imageUri.getScheme().equals("file")) {
+            return imageUri.getPath();
+        }
         String[] proj = {
                 MediaStore.Images.Media.DATA
         };
