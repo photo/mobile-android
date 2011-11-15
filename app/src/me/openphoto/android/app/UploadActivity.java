@@ -187,7 +187,8 @@ public class UploadActivity extends Activity implements OnClickListener {
             // TODO add private and effects aviary
 
             try {
-                return Preferences.getApi(UploadActivity.this).uploadPhoto(params[0], metaData);
+                return Preferences.getApi(UploadActivity.this).uploadPhoto(params[0], metaData,
+                        null);
             } catch (Exception e) {
                 Log.e(TAG, "Error while uploading", e);
             }

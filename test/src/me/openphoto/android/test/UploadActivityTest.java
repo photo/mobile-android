@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import me.openphoto.android.app.UploadActivity;
+import me.openphoto.android.app.net.HttpEntityWithProgress.ProgressListener;
 import me.openphoto.android.app.net.UploadMetaData;
 import me.openphoto.android.app.net.UploadResponse;
 import me.openphoto.android.test.net.JSONUtils;
@@ -67,7 +68,8 @@ public class UploadActivityTest extends MockedInstrumentationTestCase<UploadActi
 
         // Test Upload button press
         PowerMock.reset(getApiMock());
-        getApiMock().uploadPhoto((File) EasyMock.notNull(), (UploadMetaData) EasyMock.notNull());
+        getApiMock().uploadPhoto((File) EasyMock.notNull(), (UploadMetaData) EasyMock.notNull(),
+                EasyMock.anyObject(ProgressListener.class));
         PowerMock
                 .expectLastCall()
                 .andReturn(

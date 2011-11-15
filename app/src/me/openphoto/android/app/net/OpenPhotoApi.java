@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.Iterator;
 
+import me.openphoto.android.app.net.HttpEntityWithProgress.ProgressListener;
 import oauth.signpost.OAuthConsumer;
 
 import org.apache.http.client.ClientProtocolException;
@@ -175,7 +176,8 @@ public class OpenPhotoApi extends ApiBase implements IOpenPhotoApi {
      * me.openphoto.android.app.net.UploadMetaData)
      */
     @Override
-    public UploadResponse uploadPhoto(File imageFile, UploadMetaData metaData)
+    public UploadResponse uploadPhoto(File imageFile, UploadMetaData metaData,
+            ProgressListener progressListener)
             throws ClientProtocolException, IOException, IllegalStateException, JSONException {
         ApiRequest request = new ApiRequest(ApiRequest.POST, "/photo/upload.json");
         request.setMime(true);
@@ -191,7 +193,7 @@ public class OpenPhotoApi extends ApiBase implements IOpenPhotoApi {
         request.addParameter("permission", Integer.toString(metaData.getPermission()));
 
         request.addFileParameter("photo", imageFile);
-        ApiResponse response = execute(request);
+        ApiResponse response = execute(request, progressListener);
         String responseString = response.getContentAsString();
         return new UploadResponse(new JSONObject(responseString));
     }

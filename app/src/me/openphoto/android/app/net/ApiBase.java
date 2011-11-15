@@ -2,14 +2,13 @@
 package me.openphoto.android.app.net;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 import java.util.List;
 
 import me.openphoto.android.app.net.ApiRequest.Parameter;
+import me.openphoto.android.app.net.HttpEntityWithProgress.ProgressListener;
 import oauth.signpost.OAuthConsumer;
 
 import org.apache.http.HttpEntity;
@@ -23,13 +22,11 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.entity.mime.MultipartEntity;
-import org.apache.http.entity.mime.content.InputStreamBody;
+import org.apache.http.entity.mime.content.FileBody;
 import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.params.CoreProtocolPNames;
 import org.apache.http.protocol.HTTP;
-
-import android.util.Log;
 
 /**
  * ApiBase provides the basic functionality to call RESTful APIs using an
@@ -82,10 +79,24 @@ public class ApiBase {
      * @throws IOException
      */
     public ApiResponse execute(ApiRequest request) throws ClientProtocolException, IOException {
+        return execute(request, null);
+    }
+
+    /**
+     * Execute a request to the API.
+     * 
+     * @param request request to perform
+     * @param listener Progress Listener with callback on progress
+     * @return the response from the API
+     * @throws ClientProtocolException
+     * @throws IOException
+     */
+    public ApiResponse execute(ApiRequest request, ProgressListener listener)
+            throws ClientProtocolException, IOException {
         DefaultHttpClient httpClient = new DefaultHttpClient();
         httpClient.getParams().setParameter(CoreProtocolPNames.PROTOCOL_VERSION,
                 HttpVersion.HTTP_1_1);
-        HttpUriRequest httpRequest = createHttpRequest(request);
+        HttpUriRequest httpRequest = createHttpRequest(request, listener);
 
         httpRequest.getParams().setBooleanParameter("http.protocol.expect-continue", false);
         if (mOAuthConsumer != null) {
@@ -104,11 +115,12 @@ public class ApiBase {
      * 
      * @param request the ApiRequest for which a HttpUriRequest should be
      *            created
+     * @param listener Progress Listener with callback on progress
      * @return HttpUriRequest object which will do the request as described in
      *         ApiRequest
      * @throws UnsupportedEncodingException
      */
-    private HttpUriRequest createHttpRequest(ApiRequest request)
+    private HttpUriRequest createHttpRequest(ApiRequest request, ProgressListener listener)
             throws UnsupportedEncodingException {
         HttpUriRequest httpRequest = null;
         switch (request.getMethod()) {
@@ -127,7 +139,12 @@ public class ApiBase {
                     httpRequest = new HttpPost(addParamsToUrl(mBaseUrl + request.getPath(),
                             request.getParameters()));
                     httpPost = ((HttpPost) httpRequest);
-                    httpPost.setEntity(createFileOnlyMultipartEntity(request));
+                    HttpEntity entity = createFileOnlyMultipartEntity(request);
+                    if (listener != null) {
+                        httpPost.setEntity(new HttpEntityWithProgress(entity, listener));
+                    } else {
+                        httpPost.setEntity(entity);
+                    }
                 } else {
                     httpPost.setEntity(new UrlEncodedFormEntity(request.getParameters(), HTTP.UTF_8));
                 }
@@ -151,21 +168,11 @@ public class ApiBase {
 
     private HttpEntity createFileOnlyMultipartEntity(ApiRequest request)
             throws UnsupportedEncodingException {
-        Charset stringCharset = Charset.forName("UTF-8");
         MultipartEntity entity = new MultipartEntity();
         for (Parameter<?> parameter : request.getParametersMime()) {
             if (parameter.getValue() instanceof File) {
                 File file = (File) parameter.getValue();
-                try {
-                    entity.addPart(
-                            parameter.getName(),
-                            new InputStreamBody(new FileInputStream(file), file
-                                    .getName()));
-                } catch (FileNotFoundException e) {
-                    Log.e(TAG,
-                            "Could not add file to mime body because file was not found.",
-                            e);
-                }
+                entity.addPart(parameter.getName(), new FileBody(file));
             }
         }
         return entity;
@@ -181,16 +188,7 @@ public class ApiBase {
                         new StringBody((String) parameter.getValue(), stringCharset));
             } else if (parameter.getValue() instanceof File) {
                 File file = (File) parameter.getValue();
-                try {
-                    entity.addPart(
-                            parameter.getName(),
-                            new InputStreamBody(new FileInputStream(file), file
-                                    .getName()));
-                } catch (FileNotFoundException e) {
-                    Log.e(TAG,
-                            "Could not add file to mime body because file was not found.",
-                            e);
-                }
+                entity.addPart(parameter.getName(), new FileBody(file));
             }
         }
         return entity;

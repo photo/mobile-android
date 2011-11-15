@@ -69,7 +69,7 @@ public class OpenPhotoApiTest extends InstrumentationTestCase {
         settings.setTags("test");
         settings.setPrivate(false);
         try {
-            UploadResponse resp = mApi.uploadPhoto(file, settings);
+            UploadResponse resp = mApi.uploadPhoto(file, settings, null);
             assertTrue(resp.isSuccess());
             assertNotNull(resp.getPhoto());
             assertEquals(1, resp.getPhoto().getTags().size());

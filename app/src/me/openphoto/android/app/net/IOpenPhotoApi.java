@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
 
+import me.openphoto.android.app.net.HttpEntityWithProgress.ProgressListener;
 import oauth.signpost.OAuthConsumer;
 
 import org.apache.http.client.ClientProtocolException;
@@ -128,12 +129,14 @@ public interface IOpenPhotoApi {
      * 
      * @param imageFile the image file
      * @param metaData MetaData which define title, ... of the photo
+     * @param progressListener Listener that will be called on progress
      * @return The response with which contains info about the uploaded photo
      * @throws IOException
      * @throws ClientProtocolException
      * @throws JSONException
      * @throws IllegalStateException
      */
-    UploadResponse uploadPhoto(File imageFile, UploadMetaData metaData)
+    UploadResponse uploadPhoto(File imageFile, UploadMetaData metaData,
+            ProgressListener progressListener)
             throws ClientProtocolException, IOException, IllegalStateException, JSONException;
 }

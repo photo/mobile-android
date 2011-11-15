@@ -8,6 +8,7 @@ import java.util.Calendar;
 import me.openphoto.android.app.MainActivity;
 import me.openphoto.android.app.Preferences;
 import me.openphoto.android.app.R;
+import me.openphoto.android.app.net.HttpEntityWithProgress.ProgressListener;
 import me.openphoto.android.app.net.IOpenPhotoApi;
 import me.openphoto.android.app.net.UploadMetaData;
 import me.openphoto.android.app.provider.UploadsProvider;
@@ -34,8 +35,10 @@ import android.os.IBinder;
 import android.os.Looper;
 import android.os.Message;
 import android.util.Log;
+import android.widget.RemoteViews;
 
 public class UploaderService extends Service {
+    private static final int NOTIFICATION_UPLOAD_PROGRESS = 42;
     private static final String TAG = UploaderService.class.getSimpleName();
     private IOpenPhotoApi mApi;
 
@@ -44,6 +47,8 @@ public class UploaderService extends Service {
 
     private volatile Looper mServiceLooper;
     private volatile ServiceHandler mServiceHandler;
+
+    private NotificationManager mNotificationManager;
 
     private final class ServiceHandler extends Handler {
         public ServiceHandler(Looper looper) {
@@ -59,6 +64,8 @@ public class UploaderService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
+
+        mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
         HandlerThread thread = new HandlerThread(TAG);
         thread.start();
@@ -100,7 +107,7 @@ public class UploaderService extends Service {
             Uri uri = Uri.parse(cursor.getString(UploadsProvider.URI_COLUMN));
             Log.i(TAG, "Starting upload to OpenPhoto: " + uri);
             File file = new File(ImageUtils.getRealPathFromURI(this, uri));
-            showUploadNotification(file);
+            final Notification notification = showUploadNotification(file);
 
             try {
                 UploadMetaData metaData = new UploadMetaData();
@@ -114,7 +121,19 @@ public class UploaderService extends Service {
                     // location?
                 }
 
-                mApi.uploadPhoto(file, metaData);
+                mApi.uploadPhoto(file, metaData, new ProgressListener() {
+                    private int mLastProgress = -1;
+
+                    @Override
+                    public void transferred(long transferedBytes, long totalBytes) {
+                        int newProgress = (int) (transferedBytes * 100 / totalBytes);
+                        if (mLastProgress < newProgress) {
+                            mLastProgress = newProgress;
+                            updateUploadNotification(notification, mLastProgress, 100);
+                        }
+                    }
+                });
+
                 Log.i(TAG, "Upload to OpenPhoto completed for: " + uri);
 
                 Uri contentUri = Uri.withAppendedPath(UploadsProvider.CONTENT_URI,
@@ -127,34 +146,45 @@ public class UploaderService extends Service {
                 continue;
             }
 
-            stopUploadNotification(file);
+            stopUploadNotification();
         }
     }
 
-    private void showUploadNotification(File file) {
-        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-
+    private Notification showUploadNotification(File file) {
         int icon = R.drawable.icon;
         CharSequence tickerText = getString(R.string.notification_uploading_photo, file.getName());
         long when = System.currentTimeMillis();
-        Context context = getApplicationContext();
-        CharSequence contentMessageTitle = getString(R.string.app_name);
-        CharSequence contentMessageText = getString(R.string.notification_uploading_photo,
+        CharSequence contentMessageTitle = getString(R.string.notification_uploading_photo,
                 file.getName());
 
         // TODO adjust this to show the upload manager
         Intent notificationIntent = new Intent(this, MainActivity.class);
         PendingIntent contentIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
         Notification notification = new Notification(icon, tickerText, when);
-        notification.setLatestEventInfo(context, contentMessageTitle, contentMessageText,
-                contentIntent);
 
-        notificationManager.notify(file.hashCode(), notification);
+        RemoteViews contentView = new RemoteViews(getPackageName(), R.layout.notification_upload);
+        contentView.setImageViewResource(R.id.image, icon);
+        contentView.setTextViewText(R.id.title, contentMessageTitle);
+        contentView.setProgressBar(R.id.progress, 100, 0, true);
+        notification.contentView = contentView;
+        notification.contentIntent = contentIntent;
+
+        mNotificationManager.notify(NOTIFICATION_UPLOAD_PROGRESS, notification);
+
+        return notification;
     }
 
-    private void stopUploadNotification(File file) {
-        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        notificationManager.cancel(file.hashCode());
+    protected void updateUploadNotification(final Notification notification, int progress, int max) {
+        if (progress < max) {
+            notification.contentView.setProgressBar(R.id.progress, max, progress, false);
+        } else {
+            notification.contentView.setProgressBar(R.id.progress, 0, 0, true);
+        }
+        mNotificationManager.notify(NOTIFICATION_UPLOAD_PROGRESS, notification);
+    }
+
+    private void stopUploadNotification() {
+        mNotificationManager.cancel(NOTIFICATION_UPLOAD_PROGRESS);
     }
 
     @Override
