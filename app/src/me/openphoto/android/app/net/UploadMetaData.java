@@ -33,12 +33,16 @@ public class UploadMetaData {
         return mTags;
     }
 
-    public void setPrivate(boolean setPrivate) {
-        mPermission = setPrivate ? Photo.PERMISSION_PRIVATE : Photo.PERMISSION_PUBLIC;
-    }
-
     public int getPermission() {
         return mPermission;
+    }
+
+    public void setPermission(int permission) {
+        mPermission = permission;
+    }
+
+    public void setPrivate(boolean setPrivate) {
+        setPermission(setPrivate ? Photo.PERMISSION_PRIVATE : Photo.PERMISSION_PUBLIC);
     }
 
     // TODO add dateUploaded, dateTaken, latitude, longitude, returnSizes

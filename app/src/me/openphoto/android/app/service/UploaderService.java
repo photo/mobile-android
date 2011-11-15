@@ -3,31 +3,25 @@ package me.openphoto.android.app.service;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Calendar;
+import java.util.List;
 
 import me.openphoto.android.app.MainActivity;
 import me.openphoto.android.app.Preferences;
 import me.openphoto.android.app.R;
 import me.openphoto.android.app.net.HttpEntityWithProgress.ProgressListener;
 import me.openphoto.android.app.net.IOpenPhotoApi;
-import me.openphoto.android.app.net.UploadMetaData;
-import me.openphoto.android.app.provider.UploadsProvider;
+import me.openphoto.android.app.provider.PhotoUpload;
+import me.openphoto.android.app.provider.UploadsProviderAccessor;
 import me.openphoto.android.app.util.ImageUtils;
-
-import org.json.JSONObject;
-
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.BroadcastReceiver;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.database.Cursor;
 import android.net.ConnectivityManager;
-import android.net.Uri;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.HandlerThread;
@@ -38,7 +32,7 @@ import android.util.Log;
 import android.widget.RemoteViews;
 
 public class UploaderService extends Service {
-    private static final int NOTIFICATION_UPLOAD_PROGRESS = 42;
+    private static final int NOTIFICATION_UPLOAD_PROGRESS = 1;
     private static final String TAG = UploaderService.class.getSimpleName();
     private IOpenPhotoApi mApi;
 
@@ -100,28 +94,14 @@ public class UploaderService extends Service {
         if (!isOnline(getBaseContext())) {
             return;
         }
-
-        Cursor cursor = getContentResolver().query(UploadsProvider.CONTENT_URI, null,
-                UploadsProvider.KEY_UPLOADED + "=0", null, null);
-        while (cursor.moveToNext()) {
-            Uri uri = Uri.parse(cursor.getString(UploadsProvider.URI_COLUMN));
-            Log.i(TAG, "Starting upload to OpenPhoto: " + uri);
-            File file = new File(ImageUtils.getRealPathFromURI(this, uri));
+        UploadsProviderAccessor uploads = new UploadsProviderAccessor(this);
+        List<PhotoUpload> pendingUploads = uploads.getPendingUploads();
+        for (PhotoUpload photoUpload : pendingUploads) {
+            Log.i(TAG, "Starting upload to OpenPhoto: " + photoUpload.getPhotoUri());
+            File file = new File(ImageUtils.getRealPathFromURI(this, photoUpload.getPhotoUri()));
             final Notification notification = showUploadNotification(file);
-
             try {
-                UploadMetaData metaData = new UploadMetaData();
-                String meta = cursor.getString(UploadsProvider.METADATA_JSON_COLUMN);
-                if (meta != null) {
-                    JSONObject jsonMeta = new JSONObject(meta);
-                    if (jsonMeta.has("tag")) {
-                        metaData.setTags(jsonMeta.optString("tag"));
-                    }
-                    // TODO get other meta data like title, description,
-                    // location?
-                }
-
-                mApi.uploadPhoto(file, metaData, new ProgressListener() {
+                mApi.uploadPhoto(file, photoUpload.getMetaData(), new ProgressListener() {
                     private int mLastProgress = -1;
 
                     @Override
@@ -133,17 +113,13 @@ public class UploaderService extends Service {
                         }
                     }
                 });
-
-                Log.i(TAG, "Upload to OpenPhoto completed for: " + uri);
-
-                Uri contentUri = Uri.withAppendedPath(UploadsProvider.CONTENT_URI,
-                        "" + cursor.getInt(UploadsProvider.ID_COLUMN));
-                ContentValues values = new ContentValues();
-                values.put(UploadsProvider.KEY_UPLOADED, Calendar.getInstance().getTimeInMillis());
-                getContentResolver().update(contentUri, values, null, null);
+                Log.i(TAG, "Upload to OpenPhoto completed for: " + photoUpload.getPhotoUri());
+                uploads.setUploaded(photoUpload.getId());
             } catch (Exception e) {
+                uploads.setError(photoUpload.getId(),
+                        e.getClass().getSimpleName() + ": " + e.getMessage());
                 Log.e(TAG, "Could not upload the photo taken", e);
-                continue;
+                showErrorNotification(photoUpload, file);
             }
 
             stopUploadNotification();
@@ -185,6 +161,24 @@ public class UploaderService extends Service {
 
     private void stopUploadNotification() {
         mNotificationManager.cancel(NOTIFICATION_UPLOAD_PROGRESS);
+    }
+
+    private void showErrorNotification(PhotoUpload photoUpload, File file) {
+        int icon = R.drawable.icon;
+        CharSequence titleText = getString(R.string.notification_upload_failed_title);
+        long when = System.currentTimeMillis();
+        CharSequence contentMessageTitle = getString(R.string.notification_upload_failed_text,
+                file.getName());
+
+        // TODO show upload activity and send URI of failed upload. in upload
+        // activity prefill fields
+        Intent notificationIntent = new Intent(this, MainActivity.class);
+        PendingIntent contentIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
+
+        Notification notification = new Notification(icon, titleText, when);
+        notification.setLatestEventInfo(this, titleText, contentMessageTitle, contentIntent);
+
+        mNotificationManager.notify(file.hashCode(), notification);
     }
 
     @Override

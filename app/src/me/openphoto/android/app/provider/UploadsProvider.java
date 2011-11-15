@@ -36,7 +36,7 @@ public class UploadsProvider extends ContentProvider {
 
     private static final String TAG = UploadsProvider.class.getSimpleName();
     private static final String DATABASE_NAME = "uploads.db";
-    private static final int DATABASE_VERSION = 2;
+    private static final int DATABASE_VERSION = 3;
     private static final String PHOTOS_TABLE = "uploads";
 
     // Column names
@@ -44,16 +44,21 @@ public class UploadsProvider extends ContentProvider {
     public static final String KEY_URI = "uri";
     public static final String KEY_METADATA_JSON = "metadata";
     public static final String KEY_UPLOADED = "timestamp";
+    public static final String KEY_ERROR = "error";
+    public static final String KEY_IS_AUTOUPLOAD = "is_autoupload";
 
     // Column indexes
     public static final int ID_COLUMN = 0;
     public static final int URI_COLUMN = 1;
     public static final int METADATA_JSON_COLUMN = 2;
     public static final int UPLOADED_COLUMN = 3;
+    public static final int ERROR_COLUMN = 4;
+    public static final int IS_AUTOUPLOAD_COLUMN = 5;
 
     private static final String DATABASE_CREATE = "CREATE TABLE " + PHOTOS_TABLE + " (" + KEY_ID
             + " INTEGER primary key autoincrement, " + KEY_URI + " VARCHAR(255) not null, "
-            + KEY_METADATA_JSON + " TEXT null, " + KEY_UPLOADED + " INTEGER not null);";
+            + KEY_METADATA_JSON + " TEXT null, " + KEY_UPLOADED + " INTEGER not null, " + KEY_ERROR
+            + " TEXT null, " + KEY_IS_AUTOUPLOAD + " INTEGER DEFAULT (0));";
 
     private SQLiteDatabase mDb;
 
@@ -181,62 +186,4 @@ public class UploadsProvider extends ContentProvider {
         getContext().getContentResolver().notifyChange(uri, null);
         return count;
     }
-
-    // public long insertEntry(HistoryEntry toInsert) {
-    // ContentValues values = new ContentValues();
-    // values.put(KEY_NAME, toInsert.name);
-    // values.put(KEY_DATE, toInsert.timestamp);
-    // values.put(KEY_LATITUDE, toInsert.latitude);
-    // values.put(KEY_LONGITUDE, toInsert.longitude);
-    // values.put(KEY_VCARD, toInsert.vcard);
-    // return db.insert(CONTACTS_TABLE, null, values);
-    // }
-    //
-    // public boolean removeEntry(long id) {
-    // return db.delete(CONTACTS_TABLE, KEY_ID + "=" + id, null) > 0;
-    // }
-    //
-    // public Cursor getAllEntries() {
-    // return getEntries(null);
-    // }
-    //
-    // public Cursor getEntries(String limit) {
-    // return db.query(CONTACTS_TABLE, new String[] {
-    // KEY_ID, KEY_NAME, KEY_DATE, KEY_LATITUDE, KEY_LONGITUDE, KEY_VCARD
-    // }, null, null, null, null, KEY_DATE + " DESC", limit);
-    // }
-    //
-    // public Cursor getEntriesLast10Minutes() {
-    // Calendar past = Calendar.getInstance();
-    // past.add(Calendar.MINUTE, -10);
-    //
-    // return db.query(CONTACTS_TABLE, new String[] {
-    // KEY_ID, KEY_NAME, KEY_DATE, KEY_LATITUDE, KEY_LONGITUDE, KEY_VCARD
-    // }, KEY_DATE + ">" + past.getTimeInMillis(), null, null, null, KEY_DATE +
-    // " DESC");
-    // }
-    //
-    // public HistoryEntry getEntry(long id) {
-    // Cursor cursor = db.query(CONTACTS_TABLE, new String[] {
-    // KEY_ID, KEY_NAME, KEY_DATE, KEY_LATITUDE, KEY_LONGITUDE, KEY_VCARD
-    // }, KEY_ID + "=" + id, null, null, null, null);
-    // if (cursor.moveToNext()) {
-    // HistoryEntry entry = HistoryEntry.createFromCursor(cursor);
-    // cursor.close();
-    // return entry;
-    // }
-    // cursor.close();
-    // return null;
-    // }
-    //
-    // public boolean updateEntry(long id, HistoryEntry newEntry) {
-    // ContentValues values = new ContentValues();
-    // values.put(KEY_ID, id);
-    // values.put(KEY_NAME, newEntry.name);
-    // values.put(KEY_DATE, newEntry.timestamp);
-    // values.put(KEY_LATITUDE, newEntry.latitude);
-    // values.put(KEY_LONGITUDE, newEntry.longitude);
-    // values.put(KEY_VCARD, newEntry.vcard);
-    // return db.update(CONTACTS_TABLE, values, KEY_ID + "=" + id, null) > 0;
-    // }
 }

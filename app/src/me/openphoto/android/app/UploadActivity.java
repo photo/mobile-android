@@ -6,21 +6,19 @@ import java.io.IOException;
 import java.util.Date;
 
 import me.openphoto.android.app.net.UploadMetaData;
-import me.openphoto.android.app.net.UploadResponse;
+import me.openphoto.android.app.provider.UploadsProviderAccessor;
+import me.openphoto.android.app.service.UploaderService;
 import me.openphoto.android.app.util.FileUtils;
 import me.openphoto.android.app.util.ImageUtils;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnCancelListener;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.EditText;
@@ -154,7 +152,7 @@ public class UploadActivity extends Activity implements OnClickListener {
         switch (v.getId()) {
             case R.id.button_upload:
                 if (mUploadImageFile != null) {
-                    new UploadTask().execute(mUploadImageFile);
+                    startUpload(mUploadImageFile);
                 }
                 break;
             case R.id.image_upload:
@@ -166,48 +164,19 @@ public class UploadActivity extends Activity implements OnClickListener {
         }
     }
 
-    private class UploadTask extends AsyncTask<File, Void, UploadResponse> {
+    private void startUpload(File uploadFile) {
+        UploadsProviderAccessor uploads = new UploadsProviderAccessor(this);
+        UploadMetaData metaData = new UploadMetaData();
 
-        private ProgressDialog mDialog;
+        metaData.setTitle(((EditText) findViewById(R.id.edit_title)).getText().toString());
+        metaData.setDescription(((EditText) findViewById(R.id.edit_description)).getText()
+                .toString());
+        metaData.setTags(((EditText) findViewById(R.id.edit_tags)).getText().toString());
+        metaData.setPrivate(mPrivateToggle.isChecked());
 
-        @Override
-        protected void onPreExecute() {
-            mDialog = ProgressDialog.show(UploadActivity.this, "",
-                    "Uploading image to openphoto...", true);
-        }
-
-        @Override
-        protected UploadResponse doInBackground(File... params) {
-            UploadMetaData metaData = new UploadMetaData();
-            metaData.setTitle(((EditText) findViewById(R.id.edit_title)).getText().toString());
-            metaData.setDescription(((EditText) findViewById(R.id.edit_description)).getText()
-                    .toString());
-            metaData.setTags(((EditText) findViewById(R.id.edit_tags)).getText().toString());
-            metaData.setPrivate(mPrivateToggle.isChecked());
-            // TODO add private and effects aviary
-
-            try {
-                return Preferences.getApi(UploadActivity.this).uploadPhoto(params[0], metaData,
-                        null);
-            } catch (Exception e) {
-                Log.e(TAG, "Error while uploading", e);
-            }
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(UploadResponse result) {
-            mDialog.dismiss();
-
-            if (result != null && result.isSuccess()) {
-                Toast.makeText(UploadActivity.this, "Uploaded", Toast.LENGTH_SHORT).show();
-                finish();
-            } else if (result != null) {
-                Toast.makeText(UploadActivity.this, "Upload failed: " + result.getMessage(),
-                        Toast.LENGTH_LONG).show();
-            } else {
-                Toast.makeText(UploadActivity.this, "Upload failed", Toast.LENGTH_LONG).show();
-            }
-        }
+        uploads.addPendingUpload(Uri.fromFile(uploadFile), metaData);
+        startService(new Intent(this, UploaderService.class));
+        Toast.makeText(this, R.string.uploading_in_background, Toast.LENGTH_LONG).show();
+        finish();
     }
 }

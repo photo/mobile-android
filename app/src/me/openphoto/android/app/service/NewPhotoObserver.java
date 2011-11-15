@@ -4,13 +4,8 @@ package me.openphoto.android.app.service;
 import java.io.File;
 
 import me.openphoto.android.app.Preferences;
-import me.openphoto.android.app.provider.UploadsProvider;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import android.content.ContentResolver;
-import android.content.ContentValues;
+import me.openphoto.android.app.net.UploadMetaData;
+import me.openphoto.android.app.provider.UploadsProviderAccessor;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -38,18 +33,10 @@ public class NewPhotoObserver extends FileObserver {
             if (!Preferences.isAutoUploadActive(mContext)) {
                 return;
             }
-            ContentResolver cp = mContext.getContentResolver();
-            ContentValues values = new ContentValues();
-            values.put(UploadsProvider.KEY_URI, Uri.fromFile(file).toString());
-            try {
-                JSONObject data = new JSONObject();
-                data.put("tag", Preferences.getAutoUploadTag(mContext));
-                values.put(UploadsProvider.KEY_METADATA_JSON, data.toString());
-            } catch (JSONException e) {
-            }
-            values.put(UploadsProvider.KEY_UPLOADED, 0);
-            cp.insert(UploadsProvider.CONTENT_URI, values);
-
+            UploadsProviderAccessor uploads = new UploadsProviderAccessor(mContext);
+            UploadMetaData metaData = new UploadMetaData();
+            metaData.setTags(Preferences.getAutoUploadTag(mContext));
+            uploads.addPendingUpload(Uri.fromFile(file), metaData);
             mContext.startService(new Intent(mContext, UploaderService.class));
         }
     }
