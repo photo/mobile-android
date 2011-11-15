@@ -5,18 +5,21 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Calendar;
 
+import me.openphoto.android.app.MainActivity;
 import me.openphoto.android.app.Preferences;
+import me.openphoto.android.app.R;
 import me.openphoto.android.app.net.IOpenPhotoApi;
 import me.openphoto.android.app.net.UploadMetaData;
 import me.openphoto.android.app.provider.UploadsProvider;
 import me.openphoto.android.app.util.ImageUtils;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.BroadcastReceiver;
-import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
@@ -25,7 +28,6 @@ import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.Environment;
-import android.os.FileObserver;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.IBinder;
@@ -80,11 +82,6 @@ public class UploaderService extends Service {
     }
 
     @Override
-    public IBinder onBind(Intent intent) {
-        return null;
-    }
-
-    @Override
     public void onStart(Intent intent, int startId) {
         Message msg = mServiceHandler.obtainMessage();
         msg.arg1 = startId;
@@ -100,11 +97,12 @@ public class UploaderService extends Service {
         Cursor cursor = getContentResolver().query(UploadsProvider.CONTENT_URI, null,
                 UploadsProvider.KEY_UPLOADED + "=0", null, null);
         while (cursor.moveToNext()) {
-            try {
-                Uri uri = Uri.parse(cursor.getString(UploadsProvider.URI_COLUMN));
-                Log.i(TAG, "Starting upload to OpenPhoto: " + uri);
-                File file = new File(ImageUtils.getRealPathFromURI(this, uri));
+            Uri uri = Uri.parse(cursor.getString(UploadsProvider.URI_COLUMN));
+            Log.i(TAG, "Starting upload to OpenPhoto: " + uri);
+            File file = new File(ImageUtils.getRealPathFromURI(this, uri));
+            showUploadNotification(file);
 
+            try {
                 UploadMetaData metaData = new UploadMetaData();
                 String meta = cursor.getString(UploadsProvider.METADATA_JSON_COLUMN);
                 if (meta != null) {
@@ -128,7 +126,40 @@ public class UploaderService extends Service {
                 Log.e(TAG, "Could not upload the photo taken", e);
                 continue;
             }
+
+            stopUploadNotification(file);
         }
+    }
+
+    private void showUploadNotification(File file) {
+        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
+        int icon = R.drawable.icon;
+        CharSequence tickerText = getString(R.string.notification_uploading_photo, file.getName());
+        long when = System.currentTimeMillis();
+        Context context = getApplicationContext();
+        CharSequence contentMessageTitle = getString(R.string.app_name);
+        CharSequence contentMessageText = getString(R.string.notification_uploading_photo,
+                file.getName());
+
+        // TODO adjust this to show the upload manager
+        Intent notificationIntent = new Intent(this, MainActivity.class);
+        PendingIntent contentIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
+        Notification notification = new Notification(icon, tickerText, when);
+        notification.setLatestEventInfo(context, contentMessageTitle, contentMessageText,
+                contentIntent);
+
+        notificationManager.notify(file.hashCode(), notification);
+    }
+
+    private void stopUploadNotification(File file) {
+        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationManager.cancel(file.hashCode());
+    }
+
+    @Override
+    public IBinder onBind(Intent intent) {
+        return null;
     }
 
     private void setUpConnectivityWatcher() {
@@ -145,7 +176,7 @@ public class UploaderService extends Service {
             for (String dir : dcim.list()) {
                 if (!dir.startsWith(".")) {
                     dir = dcim.getAbsolutePath() + "/" + dir;
-                    NewPhotoObserver observer = new NewPhotoObserver(dir, FileObserver.CREATE);
+                    NewPhotoObserver observer = new NewPhotoObserver(this, dir);
                     sNewPhotoObservers.add(observer);
                     observer.startWatching();
                     Log.d(TAG, "Started watching " + dir);
@@ -172,40 +203,6 @@ public class UploaderService extends Service {
             Log.d(TAG, "Connectivity changed to " + (online ? "online" : "offline"));
             if (online) {
                 context.startService(new Intent(context, UploaderService.class));
-            }
-        }
-    }
-
-    private class NewPhotoObserver extends FileObserver {
-        private final String mPath;
-
-        public NewPhotoObserver(String path, int mask) {
-            super(path, mask);
-            mPath = path;
-        }
-
-        @Override
-        public void onEvent(int event, String fileName) {
-            if (event == FileObserver.CREATE && !fileName.equals(".probe")) {
-                File file = new File(mPath + "/" + fileName);
-                Log.d(TAG, "File created [" + file.getAbsolutePath() + "]");
-
-                if (!Preferences.isAutoUploadActive(UploaderService.this)) {
-                    return;
-                }
-                ContentResolver cp = getContentResolver();
-                ContentValues values = new ContentValues();
-                values.put(UploadsProvider.KEY_URI, Uri.fromFile(file).toString());
-                try {
-                    JSONObject data = new JSONObject();
-                    data.put("tag", Preferences.getAutoUploadTag(UploaderService.this));
-                    values.put(UploadsProvider.KEY_METADATA_JSON, data.toString());
-                } catch (JSONException e) {
-                }
-                values.put(UploadsProvider.KEY_UPLOADED, 0);
-                cp.insert(UploadsProvider.CONTENT_URI, values);
-
-                startService(new Intent(UploaderService.this, UploaderService.class));
             }
         }
     }
