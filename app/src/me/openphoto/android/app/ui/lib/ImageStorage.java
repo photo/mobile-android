@@ -25,7 +25,7 @@ public class ImageStorage {
 
     /** The Constant FOLDER_DOMO. */
     public static final String APP_FOLDER = Environment.getExternalStorageDirectory()
-            + "/data/me.openphoto.android/";
+            + "/Android/data/me.openphoto.android/";
 
     /** The Constant FOLDER_TEMP. */
     public static final String FOLDER_TEMP = APP_FOLDER + ".tmp/";
