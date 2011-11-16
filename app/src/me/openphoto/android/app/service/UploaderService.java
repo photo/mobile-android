@@ -99,6 +99,7 @@ public class UploaderService extends Service {
         for (PhotoUpload photoUpload : pendingUploads) {
             Log.i(TAG, "Starting upload to OpenPhoto: " + photoUpload.getPhotoUri());
             File file = new File(ImageUtils.getRealPathFromURI(this, photoUpload.getPhotoUri()));
+            stopErrorNotification(file);
             final Notification notification = showUploadNotification(file);
             try {
                 mApi.uploadPhoto(file, photoUpload.getMetaData(), new ProgressListener() {
@@ -179,6 +180,10 @@ public class UploaderService extends Service {
         notification.setLatestEventInfo(this, titleText, contentMessageTitle, contentIntent);
 
         mNotificationManager.notify(file.hashCode(), notification);
+    }
+
+    private void stopErrorNotification(File file) {
+        mNotificationManager.cancel(file.hashCode());
     }
 
     @Override
