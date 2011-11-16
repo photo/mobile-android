@@ -4,6 +4,7 @@ package me.openphoto.android.app.net;
 import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.util.List;
 
@@ -210,7 +211,7 @@ public class ApiBase {
         newUrl.append(url.contains("?") ? '&' : '?');
 
         for (NameValuePair param : nameValuePairs) {
-            newUrl.append(param.getName() + "=" + param.getValue() + "&");
+            newUrl.append(param.getName() + "=" + URLEncoder.encode(param.getValue()) + "&");
         }
         newUrl.deleteCharAt(newUrl.length() - 1);
         return newUrl.toString();
