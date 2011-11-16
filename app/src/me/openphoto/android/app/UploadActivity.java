@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.util.Date;
 
 import me.openphoto.android.app.net.UploadMetaData;
+import me.openphoto.android.app.provider.PhotoUpload;
 import me.openphoto.android.app.provider.UploadsProviderAccessor;
 import me.openphoto.android.app.service.UploaderService;
 import me.openphoto.android.app.util.FileUtils;
@@ -34,6 +35,8 @@ import android.widget.ToggleButton;
 public class UploadActivity extends Activity implements OnClickListener {
     private static final String TAG = UploadActivity.class.getSimpleName();
 
+    public static final String EXTRA_PENDING_UPLOAD_URI = "pending_upload_uri";
+
     private static final int REQUEST_GALLERY = 0;
     private static final int REQUEST_CAMERA = 1;
 
@@ -60,6 +63,18 @@ public class UploadActivity extends Activity implements OnClickListener {
                 && getIntent().getExtras().containsKey(Intent.EXTRA_STREAM)) {
             Bundle extras = getIntent().getExtras();
             setSelectedImageUri((Uri) extras.getParcelable(Intent.EXTRA_STREAM));
+        } else if (getIntent() != null && getIntent().hasExtra(EXTRA_PENDING_UPLOAD_URI)) {
+            Uri uri = getIntent().getParcelableExtra(EXTRA_PENDING_UPLOAD_URI);
+            PhotoUpload pendingUpload = new UploadsProviderAccessor(this).getPendingUpload(uri);
+            new UploadsProviderAccessor(this).delete(pendingUpload.getId());
+            setSelectedImageUri(pendingUpload.getPhotoUri());
+            ((EditText) findViewById(R.id.edit_title)).setText(pendingUpload.getMetaData()
+                    .getTitle());
+            ((EditText) findViewById(R.id.edit_description)).setText(pendingUpload.getMetaData()
+                    .getDescription());
+            ((EditText) findViewById(R.id.edit_tags))
+                    .setText(pendingUpload.getMetaData().getTags());
+            mPrivateToggle.setChecked(pendingUpload.getMetaData().isPrivate());
         } else {
             showDialog(DIALOG_SELECT_IMAGE);
         }

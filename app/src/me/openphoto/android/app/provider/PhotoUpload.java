@@ -21,6 +21,10 @@ public class PhotoUpload {
         return mId;
     }
 
+    public Uri getUri() {
+        return Uri.withAppendedPath(UploadsProvider.CONTENT_URI, Long.toString(mId));
+    }
+
     public UploadMetaData getMetaData() {
         return mMetaData;
     }
@@ -44,4 +48,5 @@ public class PhotoUpload {
     public void setIsAutoUpload(boolean isAutoUpload) {
         mIsAutoUpload = isAutoUpload;
     }
+
 }

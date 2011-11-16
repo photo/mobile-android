@@ -23,7 +23,7 @@ public class ImageStorage {
 
     private static final String TAG = ImageStorage.class.getSimpleName();
 
-    /** The Constant FOLDER_DOMO. */
+    /** The Constant APP_FOLDER. */
     public static final String APP_FOLDER = Environment.getExternalStorageDirectory()
             + "/Android/data/me.openphoto.android/";
 

@@ -8,8 +8,11 @@ import java.util.List;
 import me.openphoto.android.app.MainActivity;
 import me.openphoto.android.app.Preferences;
 import me.openphoto.android.app.R;
+import me.openphoto.android.app.UploadActivity;
+import me.openphoto.android.app.ViewPhotoActivity;
 import me.openphoto.android.app.net.HttpEntityWithProgress.ProgressListener;
 import me.openphoto.android.app.net.IOpenPhotoApi;
+import me.openphoto.android.app.net.UploadResponse;
 import me.openphoto.android.app.provider.PhotoUpload;
 import me.openphoto.android.app.provider.UploadsProviderAccessor;
 import me.openphoto.android.app.util.ImageUtils;
@@ -28,6 +31,7 @@ import android.os.HandlerThread;
 import android.os.IBinder;
 import android.os.Looper;
 import android.os.Message;
+import android.text.TextUtils;
 import android.util.Log;
 import android.widget.RemoteViews;
 
@@ -102,25 +106,31 @@ public class UploaderService extends Service {
             stopErrorNotification(file);
             final Notification notification = showUploadNotification(file);
             try {
-                mApi.uploadPhoto(file, photoUpload.getMetaData(), new ProgressListener() {
-                    private int mLastProgress = -1;
+                UploadResponse uploadResponse = mApi.uploadPhoto(file, photoUpload.getMetaData(),
+                        new ProgressListener() {
+                            private int mLastProgress = -1;
 
-                    @Override
-                    public void transferred(long transferedBytes, long totalBytes) {
-                        int newProgress = (int) (transferedBytes * 100 / totalBytes);
-                        if (mLastProgress < newProgress) {
-                            mLastProgress = newProgress;
-                            updateUploadNotification(notification, mLastProgress, 100);
-                        }
-                    }
-                });
+                            @Override
+                            public void transferred(long transferedBytes, long totalBytes) {
+                                int newProgress = (int) (transferedBytes * 100 / totalBytes);
+                                if (mLastProgress < newProgress) {
+                                    mLastProgress = newProgress;
+                                    updateUploadNotification(notification, mLastProgress, 100);
+                                }
+                            }
+                        });
                 Log.i(TAG, "Upload to OpenPhoto completed for: " + photoUpload.getPhotoUri());
                 uploads.setUploaded(photoUpload.getId());
+                if (!photoUpload.isAutoUpload()) {
+                    showSuccessNotification(photoUpload, file, uploadResponse);
+                }
             } catch (Exception e) {
-                uploads.setError(photoUpload.getId(),
-                        e.getClass().getSimpleName() + ": " + e.getMessage());
-                Log.e(TAG, "Could not upload the photo taken", e);
-                showErrorNotification(photoUpload, file);
+                if (!photoUpload.isAutoUpload()) {
+                    uploads.setError(photoUpload.getId(),
+                            e.getClass().getSimpleName() + ": " + e.getMessage());
+                    Log.e(TAG, "Could not upload the photo taken", e);
+                    showErrorNotification(photoUpload, file);
+                }
             }
 
             stopUploadNotification();
@@ -171,12 +181,12 @@ public class UploaderService extends Service {
         CharSequence contentMessageTitle = getString(R.string.notification_upload_failed_text,
                 file.getName());
 
-        // TODO show upload activity and send URI of failed upload. in upload
-        // activity prefill fields
-        Intent notificationIntent = new Intent(this, MainActivity.class);
+        Intent notificationIntent = new Intent(this, UploadActivity.class);
+        notificationIntent.putExtra(UploadActivity.EXTRA_PENDING_UPLOAD_URI, photoUpload.getUri());
         PendingIntent contentIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
 
         Notification notification = new Notification(icon, titleText, when);
+        notification.flags |= Notification.FLAG_AUTO_CANCEL;
         notification.setLatestEventInfo(this, titleText, contentMessageTitle, contentIntent);
 
         mNotificationManager.notify(file.hashCode(), notification);
@@ -184,6 +194,29 @@ public class UploaderService extends Service {
 
     private void stopErrorNotification(File file) {
         mNotificationManager.cancel(file.hashCode());
+    }
+
+    private void showSuccessNotification(PhotoUpload photoUpload, File file,
+            UploadResponse uploadResponse) {
+        int icon = R.drawable.icon;
+        CharSequence titleText = getString(R.string.notification_upload_success_title);
+        long when = System.currentTimeMillis();
+        String imageName = file.getName();
+        if (!TextUtils.isEmpty(photoUpload.getMetaData().getTitle())) {
+            imageName = photoUpload.getMetaData().getTitle();
+        }
+        CharSequence contentMessageTitle = getString(R.string.notification_upload_success_text,
+                imageName);
+
+        Intent notificationIntent = new Intent(this, ViewPhotoActivity.class);
+        notificationIntent.putExtra(ViewPhotoActivity.EXTRA_PHOTO, uploadResponse.getPhoto());
+        PendingIntent contentIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
+
+        Notification notification = new Notification(icon, titleText, when);
+        notification.flags |= Notification.FLAG_AUTO_CANCEL;
+        notification.setLatestEventInfo(this, titleText, contentMessageTitle, contentIntent);
+
+        mNotificationManager.notify(file.hashCode(), notification);
     }
 
     @Override

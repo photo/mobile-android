@@ -69,40 +69,56 @@ public class UploadsProviderAccessor {
         List<PhotoUpload> pendingUploads = new ArrayList<PhotoUpload>(cursor.getCount());
 
         while (cursor.moveToNext()) {
-            try {
-                long id = cursor.getInt(UploadsProvider.ID_COLUMN);
-                Uri photoUri = Uri.parse(cursor.getString(UploadsProvider.URI_COLUMN));
-
-                UploadMetaData metaData = new UploadMetaData();
-                String metaJson = cursor.getString(UploadsProvider.METADATA_JSON_COLUMN);
-                if (metaJson != null) {
-                    JSONObject jsonMeta = new JSONObject(metaJson);
-                    if (jsonMeta.has(JSON_TAGS)) {
-                        metaData.setTags(jsonMeta.optString(JSON_TAGS));
-                    }
-                    if (jsonMeta.has(JSON_TITLE)) {
-                        metaData.setTitle(jsonMeta.optString(JSON_TITLE));
-                    }
-                    if (jsonMeta.has(JSON_DESCRIPTION)) {
-                        metaData.setDescription(jsonMeta.optString(JSON_DESCRIPTION));
-                    }
-                    if (jsonMeta.has(JSON_PERMISSION)) {
-                        metaData.setPermission(jsonMeta.optInt(JSON_PERMISSION));
-                    }
-                    // TODO get other meta data like title, description,
-                    // location?
-                }
-                PhotoUpload pendingUpload = new PhotoUpload(id, photoUri, metaData);
-                pendingUpload.setError(cursor.getString(UploadsProvider.ERROR_COLUMN));
-                pendingUpload
-                        .setIsAutoUpload(cursor.getInt(UploadsProvider.IS_AUTOUPLOAD_COLUMN) != 0);
+            PhotoUpload pendingUpload = extractPhotoUpload(cursor);
+            if (pendingUpload != null) {
                 pendingUploads.add(pendingUpload);
-            } catch (Exception e) {
-                Log.e(TAG, "Could not get pending upload", e);
-                continue;
             }
         }
         return pendingUploads;
+    }
+
+    public PhotoUpload getPendingUpload(Uri uri) {
+        Cursor cursor = mContext.getContentResolver().query(uri, null, null, null, null);
+        if (cursor.moveToNext()) {
+            return extractPhotoUpload(cursor);
+        } else {
+            return null;
+        }
+    }
+
+    private PhotoUpload extractPhotoUpload(Cursor cursor) {
+        try {
+            long id = cursor.getInt(UploadsProvider.ID_COLUMN);
+            Uri photoUri = Uri.parse(cursor.getString(UploadsProvider.URI_COLUMN));
+
+            UploadMetaData metaData = new UploadMetaData();
+            String metaJson = cursor.getString(UploadsProvider.METADATA_JSON_COLUMN);
+            if (metaJson != null) {
+                JSONObject jsonMeta = new JSONObject(metaJson);
+                if (jsonMeta.has(JSON_TAGS)) {
+                    metaData.setTags(jsonMeta.optString(JSON_TAGS));
+                }
+                if (jsonMeta.has(JSON_TITLE)) {
+                    metaData.setTitle(jsonMeta.optString(JSON_TITLE));
+                }
+                if (jsonMeta.has(JSON_DESCRIPTION)) {
+                    metaData.setDescription(jsonMeta.optString(JSON_DESCRIPTION));
+                }
+                if (jsonMeta.has(JSON_PERMISSION)) {
+                    metaData.setPermission(jsonMeta.optInt(JSON_PERMISSION));
+                }
+                // TODO get other meta data like title, description,
+                // location?
+            }
+            PhotoUpload pendingUpload = new PhotoUpload(id, photoUri, metaData);
+            pendingUpload.setError(cursor.getString(UploadsProvider.ERROR_COLUMN));
+            pendingUpload
+                    .setIsAutoUpload(cursor.getInt(UploadsProvider.IS_AUTOUPLOAD_COLUMN) != 0);
+            return pendingUpload;
+        } catch (Exception e) {
+            Log.e(TAG, "Could not get pending upload", e);
+            return null;
+        }
     }
 
     public void setUploaded(long id) {
@@ -117,5 +133,10 @@ public class UploadsProviderAccessor {
         ContentValues values = new ContentValues();
         values.put(UploadsProvider.KEY_ERROR, error);
         mContext.getContentResolver().update(contentUri, values, null, null);
+    }
+
+    public void delete(long id) {
+        Uri contentUri = Uri.withAppendedPath(UploadsProvider.CONTENT_URI, "" + id);
+        mContext.getContentResolver().delete(contentUri, null, null);
     }
 }

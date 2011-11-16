@@ -8,4 +8,6 @@
   <string name="notification_uploading_photo">Uploading %1$s</string>
   <string name="notification_upload_failed_title">Upload failed</string>
   <string name="notification_upload_failed_text">%1$s</string>
+  <string name="notification_upload_success_title">Upload finished</string>
+  <string name="notification_upload_success_text">%1$s</string>
 </resources>

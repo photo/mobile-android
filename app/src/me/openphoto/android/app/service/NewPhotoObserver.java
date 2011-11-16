@@ -36,7 +36,7 @@ public class NewPhotoObserver extends FileObserver {
             UploadsProviderAccessor uploads = new UploadsProviderAccessor(mContext);
             UploadMetaData metaData = new UploadMetaData();
             metaData.setTags(Preferences.getAutoUploadTag(mContext));
-            uploads.addPendingUpload(Uri.fromFile(file), metaData);
+            uploads.addPendingAutoUpload(Uri.fromFile(file), metaData);
             mContext.startService(new Intent(mContext, UploaderService.class));
         }
     }
