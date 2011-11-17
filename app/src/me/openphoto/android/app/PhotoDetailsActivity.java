@@ -47,7 +47,7 @@ public class PhotoDetailsActivity extends Activity implements OnClickListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.photo_details);
 
-        mStorage = new ImageStorage();
+        mStorage = new ImageStorage(this);
         mPhoto = getIntent().getParcelableExtra(EXTRA_PHOTO);
 
         mImageView = (ImageView) findViewById(R.id.image);
@@ -86,8 +86,7 @@ public class PhotoDetailsActivity extends Activity implements OnClickListener {
                             .getPhoto(mPhoto.getId(), new ReturnSize(1024, 1024));
                     mPhoto = response.getPhoto();
                 }
-                return mStorage
-                        .getBitmap(mPhoto.getUrl("1024x1024"), "1024x1024_" + mPhoto.getId());
+                return mStorage.getBitmap(mPhoto.getUrl("1024x1024"));
             } catch (Exception e) {
                 Log.e(TAG, "Could not get photo", e);
                 return null;

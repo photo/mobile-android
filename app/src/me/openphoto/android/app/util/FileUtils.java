@@ -4,26 +4,39 @@ package me.openphoto.android.app.util;
 import java.io.File;
 import java.io.IOException;
 
+import android.content.Context;
 import android.os.Environment;
 
 public class FileUtils {
+    public static String STORAGE_FOLDER = null;
+
     /**
      * @return External storage folder for this application.
      * @throws IOException if external storage can not be accessed or written to
      */
-    public static File getStorageFolder() throws IOException {
+    public static File getStorageFolder(Context context) throws IOException {
         if (canWriteToStorage()) {
-            File sdCard = Environment.getExternalStorageDirectory();
-            File folder = new File(sdCard, "Android/data/me.openphoto.android.app/");
-            folder.mkdirs();
-            return folder;
+            if (STORAGE_FOLDER == null) {
+                STORAGE_FOLDER = Environment.getExternalStorageDirectory() + "/Android/data/"
+                        + context.getApplicationInfo().packageName + "/";
+                File folder = new File(STORAGE_FOLDER);
+                folder.mkdirs();
+            }
+
+            return new File(STORAGE_FOLDER);
         } else {
             throw new IOException("Can not write to external storage.");
         }
     }
 
-    public static File getTempFolder() throws IOException {
-        File folder = new File(getStorageFolder(), ".tmp/");
+    public static File getTempFolder(Context context) throws IOException {
+        File folder = new File(getStorageFolder(context), ".tmp/");
+        folder.mkdirs();
+        return folder;
+    }
+
+    public static File getImageCacheFolder(Context context) throws IOException {
+        File folder = new File(getStorageFolder(context), ".img/");
         folder.mkdirs();
         return folder;
     }

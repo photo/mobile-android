@@ -86,7 +86,7 @@ public class SearchActivity extends Activity implements OnItemClickListener {
         private final IOpenPhotoApi mOpenPhotoApi;
 
         public TagsAdapter() {
-            super();
+            super(Integer.MAX_VALUE);
             mOpenPhotoApi = Preferences.getApi(SearchActivity.this);
         }
 

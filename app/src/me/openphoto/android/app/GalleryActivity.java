@@ -72,7 +72,7 @@ public class GalleryActivity extends Activity implements OnItemClickListener {
 
     private class PhotosEndlessAdapter extends EndlessAdapter<Photo> {
         private final IOpenPhotoApi mOpenPhotoApi;
-        private final ImageStorage mStorage = new ImageStorage();
+        private final ImageStorage mStorage = new ImageStorage(GalleryActivity.this);
         private final List<String> mTagFilter;
 
         public PhotosEndlessAdapter() {
@@ -80,7 +80,7 @@ public class GalleryActivity extends Activity implements OnItemClickListener {
         }
 
         public PhotosEndlessAdapter(String tagFilter) {
-            super();
+            super(30);
             mOpenPhotoApi = Preferences.getApi(GalleryActivity.this);
             mTagFilter = new ArrayList<String>(1);
             if (tagFilter != null) {
@@ -101,7 +101,7 @@ public class GalleryActivity extends Activity implements OnItemClickListener {
             }
             ImageView image = (ImageView) convertView.findViewById(R.id.image);
             image.setImageBitmap(null); // TODO maybe a loading image
-            mStorage.displayImageFor(image, photo.getUrl("200x200"), photo.getId() + "_200x200");
+            mStorage.displayImageFor(image, photo.getUrl("200x200"));
             return convertView;
         }
 
@@ -109,7 +109,7 @@ public class GalleryActivity extends Activity implements OnItemClickListener {
         public LoadResponse loadItems(int page) {
             try {
                 PhotosResponse response = mOpenPhotoApi.getPhotos(new ReturnSize(200, 200),
-                        mTagFilter, new Paging(page, 30));
+                        mTagFilter, new Paging(page, getPageSize()));
                 boolean hasNextPage = response.getCurrentPage() < response.getTotalPages();
                 return new LoadResponse(response.getPhotos(), hasNextPage);
             } catch (Exception e) {

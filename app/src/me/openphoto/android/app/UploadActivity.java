@@ -118,7 +118,8 @@ public class UploadActivity extends Activity implements OnClickListener {
                         switch (item) {
                             case 0:
                                 try {
-                                    mUploadImageFile = new File(FileUtils.getStorageFolder(),
+                                    mUploadImageFile = new File(FileUtils
+                                            .getStorageFolder(UploadActivity.this),
                                             "upload_" + new Date().getTime() + ".jpg");
                                     Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                                     intent.putExtra(android.provider.MediaStore.EXTRA_OUTPUT,

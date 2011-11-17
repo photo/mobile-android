@@ -6,9 +6,11 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.MalformedURLException;
 
+import me.openphoto.android.app.util.FileUtils;
+import android.content.Context;
 import android.graphics.Bitmap;
-import android.os.Environment;
 import android.text.TextUtils;
+import android.util.Log;
 import android.widget.ImageView;
 
 /**
@@ -23,20 +25,14 @@ public class ImageStorage {
 
     private static final String TAG = ImageStorage.class.getSimpleName();
 
-    /** The Constant APP_FOLDER. */
-    public static final String APP_FOLDER = Environment.getExternalStorageDirectory()
-            + "/Android/data/me.openphoto.android/";
-
-    /** The Constant FOLDER_TEMP. */
-    public static final String FOLDER_TEMP = APP_FOLDER + ".tmp/";
-    private static final String FOLDER_IMAGES = APP_FOLDER + ".img/";
-
     private final ImageDownloader mDownloader;
     private final ImageFromDiskReader mDiskReader;
+    private final Context mContext;
 
-    public ImageStorage() {
+    public ImageStorage(Context context) {
         mDiskReader = new ImageFromDiskReader();
         mDownloader = new ImageDownloader();
+        mContext = context;
     }
 
     /**
@@ -48,8 +44,8 @@ public class ImageStorage {
      * @param imageUrl the image url
      * @param uniqueName the unique name (without .png)
      */
-    public void displayImageFor(ImageView imageView, String imageUrl, String uniqueName) {
-        String path = getPath(uniqueName);
+    public void displayImageFor(ImageView imageView, String imageUrl) {
+        String path = getPath(imageUrl);
 
         mDownloader.stopTasksFor(imageView);
         mDiskReader.stop(imageView);
@@ -63,9 +59,15 @@ public class ImageStorage {
         }
     }
 
-    private String getPath(String uniqueName) {
-        String path = FOLDER_IMAGES + uniqueName + ".png";
-        return path;
+    private String getPath(String url) {
+        url = url.replace("://", "/");
+        url = url.replace("/", "-");
+        try {
+            return FileUtils.getImageCacheFolder(mContext) + "/" + url;
+        } catch (IOException e) {
+            Log.e(TAG, "Can not get storage path", e);
+            return null;
+        }
     }
 
     /**
@@ -78,9 +80,9 @@ public class ImageStorage {
      * @throws FileNotFoundException
      * @throws MalformedURLException
      */
-    public Bitmap getBitmap(String imageUrl, String uniqueName) throws MalformedURLException,
-            FileNotFoundException, IOException {
-        String path = getPath(uniqueName);
+    public Bitmap getBitmap(String imageUrl) throws MalformedURLException, FileNotFoundException,
+            IOException {
+        String path = getPath(imageUrl);
 
         if (fileExistsOnSdCard(path)) {
             return mDiskReader.getBitmap(path);

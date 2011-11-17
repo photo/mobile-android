@@ -27,13 +27,25 @@ public abstract class EndlessAdapter<T> extends BaseAdapter {
 
     private final AtomicBoolean mKeepOnAppending = new AtomicBoolean(true);
 
-    private final List<T> mItems;
+    private final ArrayList<T> mItems;
 
-    public int mCurrentPage = 1;
+    private int mCurrentPage = 1;
+    private final int mPageSize;
 
-    public EndlessAdapter() {
-        mItems = new ArrayList<T>();
-        new LoadNextTask().execute();
+    public EndlessAdapter(int pageSize) {
+        this(pageSize, null);
+    }
+
+    public EndlessAdapter(int pageSize, ArrayList<T> items) {
+        mItems = items != null ? items : new ArrayList<T>();
+        mPageSize = pageSize;
+
+        if (mItems.isEmpty()) {
+            // TODO maybe this should be invoked manually with "loadFirstPage"?
+            new LoadNextTask().execute();
+        } else {
+            mCurrentPage = 1 + mItems.size() / mPageSize;
+        }
     }
 
     @Override
@@ -52,6 +64,10 @@ public abstract class EndlessAdapter<T> extends BaseAdapter {
             new LoadNextTask().execute();
         }
         return getView((T) getItem(position), convertView);
+    }
+
+    public int getPageSize() {
+        return mPageSize;
     }
 
     private class LoadNextTask extends AsyncTask<Void, Void, List<T>> {

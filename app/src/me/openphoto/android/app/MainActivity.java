@@ -4,18 +4,15 @@
 
 package me.openphoto.android.app;
 
-import java.net.URL;
-
 import me.openphoto.android.app.model.Photo;
 import me.openphoto.android.app.net.IOpenPhotoApi;
 import me.openphoto.android.app.net.Paging;
 import me.openphoto.android.app.net.ReturnSize;
 import me.openphoto.android.app.service.UploaderService;
+import me.openphoto.android.app.ui.lib.ImageStorage;
 import me.openphoto.android.app.ui.widget.ActionBar;
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -71,7 +68,7 @@ public class MainActivity extends Activity implements OnClickListener {
         cameraBtn.setEnabled(Preferences.isLoggedIn(this));
     }
 
-    private class LoadImageTask extends AsyncTask<Void, Void, Bitmap> {
+    private class LoadImageTask extends AsyncTask<Void, Void, Photo> {
 
         @Override
         protected void onPreExecute() {
@@ -80,15 +77,11 @@ public class MainActivity extends Activity implements OnClickListener {
         }
 
         @Override
-        protected Bitmap doInBackground(Void... params) {
+        protected Photo doInBackground(Void... params) {
             IOpenPhotoApi api = Preferences.getApi(MainActivity.this);
             try {
-                Photo photo = api.getPhotos(new ReturnSize(600, 600), null, new Paging(1, 1))
+                return api.getPhotos(new ReturnSize(600, 600), null, new Paging(1, 1))
                         .getPhotos().get(0);
-                // TODO do not use base, make getPhotos actually use a
-                // returnSize parameter that should be used then.
-                return BitmapFactory.decodeStream(new URL(photo
-                        .getUrl("600x600")).openStream());
             } catch (Exception e) {
                 Log.w(TAG, "Error while getting image", e);
                 return null;
@@ -96,18 +89,18 @@ public class MainActivity extends Activity implements OnClickListener {
         }
 
         @Override
-        protected void onPostExecute(Bitmap result) {
+        protected void onPostExecute(Photo result) {
             mActionBar.stopLoading();
             if (result != null) {
                 ImageView image = (ImageView) findViewById(R.id.image);
-                image.setImageBitmap(result);
-                image.setVisibility(View.VISIBLE);
+
+                new ImageStorage(MainActivity.this)
+                        .displayImageFor(image, result.getUrl("600x600"));
             } else {
                 Toast.makeText(MainActivity.this, "Could not download image",
                         Toast.LENGTH_LONG).show();
             }
         }
-
     }
 
     /**
