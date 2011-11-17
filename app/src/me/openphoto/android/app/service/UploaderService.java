@@ -9,7 +9,7 @@ import me.openphoto.android.app.MainActivity;
 import me.openphoto.android.app.Preferences;
 import me.openphoto.android.app.R;
 import me.openphoto.android.app.UploadActivity;
-import me.openphoto.android.app.ViewPhotoActivity;
+import me.openphoto.android.app.PhotoDetailsActivity;
 import me.openphoto.android.app.net.HttpEntityWithProgress.ProgressListener;
 import me.openphoto.android.app.net.IOpenPhotoApi;
 import me.openphoto.android.app.net.UploadResponse;
@@ -208,8 +208,8 @@ public class UploaderService extends Service {
         CharSequence contentMessageTitle = getString(R.string.notification_upload_success_text,
                 imageName);
 
-        Intent notificationIntent = new Intent(this, ViewPhotoActivity.class);
-        notificationIntent.putExtra(ViewPhotoActivity.EXTRA_PHOTO, uploadResponse.getPhoto());
+        Intent notificationIntent = new Intent(this, PhotoDetailsActivity.class);
+        notificationIntent.putExtra(PhotoDetailsActivity.EXTRA_PHOTO, uploadResponse.getPhoto());
         PendingIntent contentIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
 
         Notification notification = new Notification(icon, titleText, when);

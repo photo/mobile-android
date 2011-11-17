@@ -65,8 +65,8 @@ public class GalleryActivity extends Activity implements OnItemClickListener {
 
     @Override
     public void onItemClick(AdapterView<?> arg0, View arg1, int position, long arg3) {
-        Intent intent = new Intent(this, ViewPhotoActivity.class);
-        intent.putExtra(ViewPhotoActivity.EXTRA_PHOTO, (Photo) mAdapter.getItem(position));
+        Intent intent = new Intent(this, PhotoDetailsActivity.class);
+        intent.putExtra(PhotoDetailsActivity.EXTRA_PHOTO, (Photo) mAdapter.getItem(position));
         startActivity(intent);
     }
 

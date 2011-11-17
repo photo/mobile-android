@@ -69,8 +69,12 @@ public class Photo implements Parcelable {
         // Urls
         for (int i = 0; i < json.names().length(); i++) {
             String name = json.names().optString(i);
+            String url = json.getString(name);
+            if (!url.startsWith("http")) {
+                url = host + url;
+            }
             if (name.startsWith("path") && name.charAt(4) >= '0' && name.charAt(4) <= '9') {
-                photo.mUrls.put(name.substring(4), json.getString(name));
+                photo.mUrls.put(name.substring(4), url);
             }
         }
 

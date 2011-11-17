@@ -48,7 +48,7 @@
                 <data android:mimeType="image/*" />
             </intent-filter>
         </activity>
-        <activity android:name=".ViewPhotoActivity" >
+        <activity android:name=".PhotoDetailsActivity" >
         </activity>
         <activity android:name=".SettingsActivity" >
         </activity>
