@@ -4,22 +4,14 @@
 
 package me.openphoto.android.app;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import me.openphoto.android.app.model.Photo;
-import me.openphoto.android.app.net.IOpenPhotoApi;
-import me.openphoto.android.app.net.Paging;
-import me.openphoto.android.app.net.PhotosResponse;
-import me.openphoto.android.app.net.ReturnSize;
-import me.openphoto.android.app.ui.adapter.EndlessAdapter;
+import me.openphoto.android.app.ui.adapter.PhotosEndlessAdapter;
 import me.openphoto.android.app.ui.lib.ImageStorage;
 import me.openphoto.android.app.ui.widget.ActionBar;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
@@ -38,8 +30,8 @@ public class GalleryActivity extends Activity implements OnItemClickListener {
     public static String EXTRA_TAG = "EXTRA_TAG";
 
     private ActionBar mActionBar;
-
-    private PhotosEndlessAdapter mAdapter;
+    private GalleryAdapter mAdapter;
+    private String mTags;
 
     /**
      * Called when Gallery Activity is first loaded
@@ -52,10 +44,11 @@ public class GalleryActivity extends Activity implements OnItemClickListener {
         setContentView(R.layout.gallery);
         mActionBar = (ActionBar) findViewById(R.id.actionbar);
 
-        if (getIntent() != null && getIntent().hasExtra(EXTRA_TAG)) {
-            mAdapter = new PhotosEndlessAdapter(getIntent().getStringExtra(EXTRA_TAG));
+        mTags = getIntent() != null ? getIntent().getStringExtra(EXTRA_TAG) : null;
+        if (mTags != null) {
+            mAdapter = new GalleryAdapter(mTags);
         } else {
-            mAdapter = new PhotosEndlessAdapter();
+            mAdapter = new GalleryAdapter();
         }
 
         GridView photosGrid = (GridView) findViewById(R.id.grid_photos);
@@ -66,31 +59,22 @@ public class GalleryActivity extends Activity implements OnItemClickListener {
     @Override
     public void onItemClick(AdapterView<?> arg0, View arg1, int position, long arg3) {
         Intent intent = new Intent(this, PhotoDetailsActivity.class);
-        intent.putExtra(PhotoDetailsActivity.EXTRA_PHOTO, (Photo) mAdapter.getItem(position));
+        intent.putParcelableArrayListExtra(PhotoDetailsActivity.EXTRA_ADAPTER_PHOTOS,
+                mAdapter.getItems());
+        intent.putExtra(PhotoDetailsActivity.EXTRA_ADAPTER_POSITION, position);
+        intent.putExtra(PhotoDetailsActivity.EXTRA_ADAPTER_TAGS, mTags);
         startActivity(intent);
     }
 
-    private class PhotosEndlessAdapter extends EndlessAdapter<Photo> {
-        private final IOpenPhotoApi mOpenPhotoApi;
+    private class GalleryAdapter extends PhotosEndlessAdapter {
         private final ImageStorage mStorage = new ImageStorage(GalleryActivity.this);
-        private final List<String> mTagFilter;
 
-        public PhotosEndlessAdapter() {
-            this(null);
+        public GalleryAdapter() {
+            super(GalleryActivity.this);
         }
 
-        public PhotosEndlessAdapter(String tagFilter) {
-            super(30);
-            mOpenPhotoApi = Preferences.getApi(GalleryActivity.this);
-            mTagFilter = new ArrayList<String>(1);
-            if (tagFilter != null) {
-                mTagFilter.add(tagFilter);
-            }
-        }
-
-        @Override
-        public long getItemId(int position) {
-            return ((Photo) getItem(position)).getId().hashCode();
+        public GalleryAdapter(String tagFilter) {
+            super(GalleryActivity.this, tagFilter);
         }
 
         @Override
@@ -101,21 +85,8 @@ public class GalleryActivity extends Activity implements OnItemClickListener {
             }
             ImageView image = (ImageView) convertView.findViewById(R.id.image);
             image.setImageBitmap(null); // TODO maybe a loading image
-            mStorage.displayImageFor(image, photo.getUrl("200x200"));
+            mStorage.displayImageFor(image, photo.getUrl(SIZE_SMALL));
             return convertView;
-        }
-
-        @Override
-        public LoadResponse loadItems(int page) {
-            try {
-                PhotosResponse response = mOpenPhotoApi.getPhotos(new ReturnSize(200, 200),
-                        mTagFilter, new Paging(page, getPageSize()));
-                boolean hasNextPage = response.getCurrentPage() < response.getTotalPages();
-                return new LoadResponse(response.getPhotos(), hasNextPage);
-            } catch (Exception e) {
-                Log.e(TAG, "Could not load next photos in list", e);
-            }
-            return new LoadResponse(null, false);
         }
 
         @Override

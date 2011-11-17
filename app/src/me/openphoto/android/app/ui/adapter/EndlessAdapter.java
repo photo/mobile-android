@@ -58,12 +58,22 @@ public abstract class EndlessAdapter<T> extends BaseAdapter {
         return mItems.get(position);
     }
 
+    public ArrayList<T> getItems() {
+        return mItems;
+    }
+
     @Override
     public final View getView(int position, View convertView, ViewGroup parent) {
-        if (position == getCount() - 1 && mKeepOnAppending.get()) {
-            new LoadNextTask().execute();
+        if (position == getCount() - 1) {
+            loadNextPage();
         }
         return getView((T) getItem(position), convertView);
+    }
+
+    public void loadNextPage() {
+        if (mKeepOnAppending.getAndSet(false)) {
+            new LoadNextTask().execute();
+        }
     }
 
     public int getPageSize() {

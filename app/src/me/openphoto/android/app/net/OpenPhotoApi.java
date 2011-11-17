@@ -69,7 +69,7 @@ public class OpenPhotoApi extends ApiBase implements IOpenPhotoApi {
      * me.openphoto.android.app.net.ReturnSize)
      */
     @Override
-    public PhotoResponse getPhoto(String photoId, ReturnSize returnSize)
+    public PhotoResponse getPhoto(String photoId, ReturnSizes returnSize)
             throws ClientProtocolException, IOException, IllegalStateException, JSONException {
         ApiRequest request = new ApiRequest(ApiRequest.GET, "/photo/" + photoId + "/view.json");
         if (returnSize != null) {
@@ -107,7 +107,7 @@ public class OpenPhotoApi extends ApiBase implements IOpenPhotoApi {
      * .app.net.ReturnSize)
      */
     @Override
-    public PhotosResponse getPhotos(ReturnSize resize)
+    public PhotosResponse getPhotos(ReturnSizes resize)
             throws ClientProtocolException, IllegalStateException, IOException, JSONException {
         return getPhotos(resize, null, null);
     }
@@ -119,7 +119,7 @@ public class OpenPhotoApi extends ApiBase implements IOpenPhotoApi {
      * .app.net.ReturnSize, int)
      */
     @Override
-    public PhotosResponse getPhotos(ReturnSize resize, Paging paging)
+    public PhotosResponse getPhotos(ReturnSizes resize, Paging paging)
             throws ClientProtocolException, IllegalStateException, IOException, JSONException {
         return getPhotos(resize, null, paging);
     }
@@ -131,7 +131,7 @@ public class OpenPhotoApi extends ApiBase implements IOpenPhotoApi {
      * .app.net.ReturnSize, java.util.Collection)
      */
     @Override
-    public PhotosResponse getPhotos(ReturnSize resize, Collection<String> tags)
+    public PhotosResponse getPhotos(ReturnSizes resize, Collection<String> tags)
             throws ClientProtocolException, IllegalStateException, IOException, JSONException {
         return getPhotos(resize, tags, null);
     }
@@ -144,7 +144,7 @@ public class OpenPhotoApi extends ApiBase implements IOpenPhotoApi {
      * me.openphoto.android.app.net.Paging)
      */
     @Override
-    public PhotosResponse getPhotos(ReturnSize resize, Collection<String> tags, Paging paging)
+    public PhotosResponse getPhotos(ReturnSizes resize, Collection<String> tags, Paging paging)
             throws ClientProtocolException, IOException, IllegalStateException, JSONException {
         ApiRequest request = new ApiRequest(ApiRequest.GET, "/photos/list.json");
         if (resize != null) {

@@ -6,7 +6,7 @@ import java.io.IOException;
 import me.openphoto.android.app.GalleryActivity;
 import me.openphoto.android.app.net.Paging;
 import me.openphoto.android.app.net.PhotosResponse;
-import me.openphoto.android.app.net.ReturnSize;
+import me.openphoto.android.app.net.ReturnSizes;
 import me.openphoto.android.test.net.JSONUtils;
 
 import org.apache.http.client.ClientProtocolException;
@@ -26,7 +26,7 @@ public class GalleryActivityTest extends MockedInstrumentationTestCase<GalleryAc
             IOException, JSONException {
         // Setup mock calls and their responses
         PowerMock.reset(getApiMock());
-        getApiMock().getPhotos((ReturnSize) EasyMock.anyObject(), (Paging) EasyMock.anyObject());
+        getApiMock().getPhotos((ReturnSizes) EasyMock.anyObject(), (Paging) EasyMock.anyObject());
         PowerMock
                 .expectLastCall()
                 .andReturn(

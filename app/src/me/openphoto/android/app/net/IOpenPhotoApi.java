@@ -42,7 +42,7 @@ public interface IOpenPhotoApi {
      * @throws JSONException
      * @throws IllegalStateException
      */
-    PhotoResponse getPhoto(String photoId, ReturnSize returnSize) throws ClientProtocolException,
+    PhotoResponse getPhoto(String photoId, ReturnSizes returnSize) throws ClientProtocolException,
             IOException, IllegalStateException, JSONException;
 
     /**
@@ -78,7 +78,7 @@ public interface IOpenPhotoApi {
      * @throws IllegalStateException
      * @throws JSONException
      */
-    PhotosResponse getPhotos(ReturnSize resize)
+    PhotosResponse getPhotos(ReturnSizes resize)
             throws ClientProtocolException, IllegalStateException, IOException, JSONException;
 
     /**
@@ -92,7 +92,7 @@ public interface IOpenPhotoApi {
      * @throws IllegalStateException
      * @throws JSONException
      */
-    PhotosResponse getPhotos(ReturnSize resize, Paging paging)
+    PhotosResponse getPhotos(ReturnSizes resize, Paging paging)
             throws ClientProtocolException, IllegalStateException, IOException, JSONException;
 
     /**
@@ -106,7 +106,7 @@ public interface IOpenPhotoApi {
      * @throws IllegalStateException
      * @throws JSONException
      */
-    PhotosResponse getPhotos(ReturnSize resize, Collection<String> tags)
+    PhotosResponse getPhotos(ReturnSizes resize, Collection<String> tags)
             throws ClientProtocolException, IllegalStateException, IOException, JSONException;
 
     /**
@@ -121,7 +121,7 @@ public interface IOpenPhotoApi {
      * @throws IllegalStateException
      * @throws JSONException
      */
-    PhotosResponse getPhotos(ReturnSize resize, Collection<String> tags, Paging paging)
+    PhotosResponse getPhotos(ReturnSizes resize, Collection<String> tags, Paging paging)
             throws ClientProtocolException, IOException, IllegalStateException, JSONException;
 
     /**

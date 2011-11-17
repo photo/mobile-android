@@ -7,7 +7,7 @@ package me.openphoto.android.app;
 import me.openphoto.android.app.model.Photo;
 import me.openphoto.android.app.net.IOpenPhotoApi;
 import me.openphoto.android.app.net.Paging;
-import me.openphoto.android.app.net.ReturnSize;
+import me.openphoto.android.app.net.ReturnSizes;
 import me.openphoto.android.app.service.UploaderService;
 import me.openphoto.android.app.ui.lib.ImageStorage;
 import me.openphoto.android.app.ui.lib.ImageStorage.OnImageDisplayedCallback;
@@ -81,7 +81,7 @@ public class MainActivity extends Activity implements OnClickListener, OnImageDi
         protected Photo doInBackground(Void... params) {
             IOpenPhotoApi api = Preferences.getApi(MainActivity.this);
             try {
-                return api.getPhotos(new ReturnSize(600, 600), null, new Paging(1, 1))
+                return api.getPhotos(new ReturnSizes(600, 600), null, new Paging(1, 1))
                         .getPhotos().get(0);
             } catch (Exception e) {
                 Log.w(TAG, "Error while getting image", e);
