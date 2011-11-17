@@ -73,6 +73,7 @@ public class PhotoDetailsActivity extends Activity {
         }
 
         mActionBar = (ActionBar) findViewById(R.id.actionbar);
+        mActionBar.setVisibility(View.GONE);
         mViewPager = (ViewPager) findViewById(R.id.photos);
         mViewPager.setAdapter(mAdapter);
 
@@ -115,7 +116,7 @@ public class PhotoDetailsActivity extends Activity {
 
         @Override
         public Object instantiateItem(View collection, int position) {
-            if (getCount() > 1 && position > getCount() - 3) {
+            if (getCount() > 1 && position > getCount() - 6) {
                 mAdapter.loadNextPage();
             }
             Photo photo = (Photo) mAdapter.getItem(position);
