@@ -5,7 +5,17 @@
     <string name="openphoto">OpenPhoto</string>
     <string name="loading">Loading...</string>
     <string name="take_photo">Take Photo</string>
+
+    <!-- MainActivity -->
+    <string name="menu_preferences">Preferences</string>
+    <string name="menu_photos">Photos</string>
+    <string name="menu_tags">Tags</string>
+    <string name="menu_upload">Upload</string>
+
+    <!-- UploadActivity -->
     <string name="uploading_in_background">Started upload in background</string>
+
+    <!-- Notifications -->
     <string name="notification_uploading_photo">Uploading %1$s</string>
     <string name="notification_upload_failed_title">Upload failed</string>
     <string name="notification_upload_failed_text">%1$s</string>

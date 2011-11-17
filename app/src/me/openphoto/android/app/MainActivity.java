@@ -17,9 +17,11 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -31,10 +33,9 @@ import android.widget.Toast;
 public class MainActivity extends Activity implements OnClickListener, OnImageDisplayedCallback {
     public static final String TAG = MainActivity.class.getSimpleName();
 
-    private ImageButton searchBtn;
-    private ImageButton cameraBtn;
-    private ImageButton galleryBtn;
-    private ImageButton settingsBtn;
+    private View tagButton;
+    private View uploadButton;
+    private View galleryButton;
 
     private ActionBar mActionBar;
 
@@ -51,14 +52,12 @@ public class MainActivity extends Activity implements OnClickListener, OnImageDi
         new LoadImageTask().execute();
 
         // Get references to navigation buttons
-        searchBtn = (ImageButton) findViewById(R.id.main_search_btn);
-        cameraBtn = (ImageButton) findViewById(R.id.main_camera_btn);
-        galleryBtn = (ImageButton) findViewById(R.id.main_gallery_btn);
-        settingsBtn = (ImageButton) findViewById(R.id.main_settings_btn);
-        searchBtn.setOnClickListener(this);
-        cameraBtn.setOnClickListener(this);
-        galleryBtn.setOnClickListener(this);
-        settingsBtn.setOnClickListener(this);
+        tagButton = findViewById(R.id.tags);
+        uploadButton = findViewById(R.id.upload);
+        galleryButton = findViewById(R.id.photos);
+        tagButton.setOnClickListener(this);
+        uploadButton.setOnClickListener(this);
+        galleryButton.setOnClickListener(this);
 
         startService(new Intent(this, UploaderService.class));
     }
@@ -66,7 +65,27 @@ public class MainActivity extends Activity implements OnClickListener, OnImageDi
     @Override
     protected void onResume() {
         super.onResume();
-        cameraBtn.setEnabled(Preferences.isLoggedIn(this));
+        uploadButton.setEnabled(Preferences.isLoggedIn(this));
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle item selection
+        switch (item.getItemId()) {
+            case R.id.settings:
+                Intent i = new Intent(this, SettingsActivity.class);
+                startActivity(i);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     private class LoadImageTask extends AsyncTask<Void, Void, Photo> {
@@ -107,14 +126,12 @@ public class MainActivity extends Activity implements OnClickListener, OnImageDi
     @Override
     public void onClick(View v) {
         Class<?> nextScreen = null;
-        if (v.equals(searchBtn)) {
+        if (v.equals(tagButton)) {
             nextScreen = SearchActivity.class;
-        } else if (v.equals(cameraBtn)) {
+        } else if (v.equals(uploadButton)) {
             nextScreen = UploadActivity.class;
-        } else if (v.equals(galleryBtn)) {
+        } else if (v.equals(galleryButton)) {
             nextScreen = GalleryActivity.class;
-        } else if (v.equals(settingsBtn)) {
-            nextScreen = SettingsActivity.class;
         }
 
         if (nextScreen != null) {
