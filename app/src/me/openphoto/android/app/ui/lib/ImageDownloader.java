@@ -1,3 +1,4 @@
+
 package me.openphoto.android.app.ui.lib;
 
 import java.io.BufferedInputStream;
@@ -13,6 +14,7 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+import me.openphoto.android.app.ui.lib.ImageStorage.OnImageDisplayedCallback;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Handler;
@@ -32,12 +34,12 @@ class ImageDownloader {
     private static final String TAG = ImageDownloader.class.getSimpleName();
     private static final int MAX_RUNNING_TASKS = 5;
 
-    private ConcurrentLinkedQueue<Task> mQueue;
-    private Dictionary<Integer, Task> mTasks;
+    private final ConcurrentLinkedQueue<Task> mQueue;
+    private final Dictionary<Integer, Task> mTasks;
     private int mRunningTasks = 0;
     private int mAsyncTaskIdIncrementor = 0;
-    private Object mLock = new Object();
-    private Hashtable<String, List<Task>> mFileLocks;
+    private final Object mLock = new Object();
+    private final Hashtable<String, List<Task>> mFileLocks;
 
     public ImageDownloader() {
         mQueue = new ConcurrentLinkedQueue<Task>();
@@ -51,14 +53,17 @@ class ImageDownloader {
      * @param imageView the ImageView in which the image should be displayed
      * @param imageFileLocation the location where the image should be stored
      * @param downloadUrl the download url
+     * @param listener
      * @param manipulation the manipulation which should be done to the image
      *            before saving and displaying
      */
-    public void runInQueue(ImageView imageView, String imageFileLocation, String downloadUrl) {
+    public void runInQueue(ImageView imageView, String imageFileLocation, String downloadUrl,
+            OnImageDisplayedCallback listener) {
         Task task = new Task();
         task.imageViewReference = new WeakReference<ImageView>(imageView);
         task.saveLocation = imageFileLocation;
         task.imageUrl = downloadUrl;
+        task.listener = listener;
 
         task.id = ++mAsyncTaskIdIncrementor;
         imageView.setTag(task.id);
@@ -129,6 +134,8 @@ class ImageDownloader {
      * The Class Task represents a download task
      */
     private static class Task {
+
+        public OnImageDisplayedCallback listener;
 
         /** The handler. */
         Handler handler;
@@ -263,6 +270,9 @@ class ImageDownloader {
                                 && Integer.valueOf(task.id).equals(imageView.getTag())) {
                             imageView.setImageBitmap(bitmap);
                             imageView.setVisibility(View.VISIBLE);
+                            if (task.listener != null) {
+                                task.listener.onImageDisplayed(imageView);
+                            }
                         }
                     }
                 }

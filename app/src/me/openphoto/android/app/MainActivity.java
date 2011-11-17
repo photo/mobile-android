@@ -10,6 +10,7 @@ import me.openphoto.android.app.net.Paging;
 import me.openphoto.android.app.net.ReturnSize;
 import me.openphoto.android.app.service.UploaderService;
 import me.openphoto.android.app.ui.lib.ImageStorage;
+import me.openphoto.android.app.ui.lib.ImageStorage.OnImageDisplayedCallback;
 import me.openphoto.android.app.ui.widget.ActionBar;
 import android.app.Activity;
 import android.content.Intent;
@@ -27,7 +28,7 @@ import android.widget.Toast;
  * 
  * @author pas
  */
-public class MainActivity extends Activity implements OnClickListener {
+public class MainActivity extends Activity implements OnClickListener, OnImageDisplayedCallback {
     public static final String TAG = MainActivity.class.getSimpleName();
 
     private ImageButton searchBtn;
@@ -92,10 +93,7 @@ public class MainActivity extends Activity implements OnClickListener {
         protected void onPostExecute(Photo result) {
             mActionBar.stopLoading();
             if (result != null) {
-                ImageView image = (ImageView) findViewById(R.id.image);
-
-                new ImageStorage(MainActivity.this)
-                        .displayImageFor(image, result.getUrl("600x600"));
+                showImage(result);
             } else {
                 Toast.makeText(MainActivity.this, "Could not download image",
                         Toast.LENGTH_LONG).show();
@@ -124,5 +122,17 @@ public class MainActivity extends Activity implements OnClickListener {
             Intent i = new Intent(this, nextScreen);
             startActivity(i);
         }
+    }
+
+    public void showImage(Photo photo) {
+        mActionBar.startLoading();
+        ImageView image = (ImageView) findViewById(R.id.image);
+        new ImageStorage(MainActivity.this).displayImageFor(image, photo.getUrl("600x600"),
+                MainActivity.this);
+    }
+
+    @Override
+    public void onImageDisplayed(ImageView view) {
+        mActionBar.stopLoading();
     }
 }

@@ -42,19 +42,32 @@ public class ImageStorage {
      * 
      * @param imageView the ImageView in which the image should be displayed.
      * @param imageUrl the image url
-     * @param uniqueName the unique name (without .png)
      */
     public void displayImageFor(ImageView imageView, String imageUrl) {
+        displayImageFor(imageView, imageUrl, null);
+    }
+
+    /**
+     * Display image for the given path or downloadUrl. If image is already
+     * available, show immediatly. Otherwise download and show it after
+     * download.
+     * 
+     * @param imageView the ImageView in which the image should be displayed.
+     * @param imageUrl the image url
+     * @param listener callback when image is displayed
+     */
+    public void displayImageFor(ImageView imageView, String imageUrl,
+            OnImageDisplayedCallback listener) {
         String path = getPath(imageUrl);
 
         mDownloader.stopTasksFor(imageView);
         mDiskReader.stop(imageView);
 
         if (fileExistsOnSdCard(path)) {
-            mDiskReader.displayImage(path, imageView);
+            mDiskReader.displayImage(path, imageView, listener);
         } else {
             if (!TextUtils.isEmpty(imageUrl)) {
-                mDownloader.runInQueue(imageView, path, imageUrl);
+                mDownloader.runInQueue(imageView, path, imageUrl, listener);
             }
         }
     }
@@ -105,4 +118,7 @@ public class ImageStorage {
         return new File(filePath).exists();
     }
 
+    public interface OnImageDisplayedCallback {
+        void onImageDisplayed(ImageView view);
+    }
 }

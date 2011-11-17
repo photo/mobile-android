@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+import me.openphoto.android.app.ui.lib.ImageStorage.OnImageDisplayedCallback;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Handler;
@@ -13,20 +14,22 @@ import android.view.View;
 import android.widget.ImageView;
 
 class ImageFromDiskReader {
-    private Handler mHandler;
-    private Queue<DiskTask> mQueue = new ConcurrentLinkedQueue<DiskTask>();
-    private Map<View, DiskTask> mMap = new HashMap<View, DiskTask>();
+    private final Handler mHandler;
+    private final Queue<DiskTask> mQueue = new ConcurrentLinkedQueue<DiskTask>();
+    private final Map<View, DiskTask> mMap = new HashMap<View, DiskTask>();
     private ExecutorThread mExector;
 
     public ImageFromDiskReader() {
         mHandler = new Handler();
     }
 
-    public synchronized void displayImage(String path, ImageView view) {
+    public synchronized void displayImage(String path, ImageView view,
+            OnImageDisplayedCallback listener) {
         DiskTask task = new DiskTask();
         task.path = path;
         task.view = view;
         task.stopped = false;
+        task.listener = listener;
 
         mQueue.add(task);
         mMap.put(view, task);
@@ -81,6 +84,9 @@ class ImageFromDiskReader {
                     if (!task.stopped) {
                         task.view.setImageBitmap(bitmap);
                         task.view.setVisibility(View.VISIBLE);
+                        if (task.listener != null) {
+                            task.listener.onImageDisplayed(task.view);
+                        }
                     }
                 }
             });
@@ -92,6 +98,7 @@ class ImageFromDiskReader {
         public String path;
         public ImageView view;
         public boolean stopped;
+        public OnImageDisplayedCallback listener;
     }
 
 }
