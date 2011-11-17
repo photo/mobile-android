@@ -34,7 +34,7 @@ public abstract class PhotosEndlessAdapter extends EndlessAdapter<Photo> {
     }
 
     public PhotosEndlessAdapter(Context context, String tagFilter) {
-        this(context, null, null);
+        this(context, null, tagFilter);
     }
 
     public PhotosEndlessAdapter(Context context, ArrayList<Photo> photos) {
