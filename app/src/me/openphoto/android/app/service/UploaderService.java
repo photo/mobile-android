@@ -6,10 +6,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import me.openphoto.android.app.MainActivity;
+import me.openphoto.android.app.PhotoDetailsActivity;
 import me.openphoto.android.app.Preferences;
 import me.openphoto.android.app.R;
 import me.openphoto.android.app.UploadActivity;
-import me.openphoto.android.app.PhotoDetailsActivity;
 import me.openphoto.android.app.net.HttpEntityWithProgress.ProgressListener;
 import me.openphoto.android.app.net.IOpenPhotoApi;
 import me.openphoto.android.app.net.UploadResponse;
@@ -47,6 +47,7 @@ public class UploaderService extends Service {
     private volatile ServiceHandler mServiceHandler;
 
     private NotificationManager mNotificationManager;
+    private long mNotificationLastUpdateTime;
 
     private final class ServiceHandler extends Handler {
         public ServiceHandler(Looper looper) {
@@ -163,6 +164,12 @@ public class UploaderService extends Service {
 
     protected void updateUploadNotification(final Notification notification, int progress, int max) {
         if (progress < max) {
+            long now = System.currentTimeMillis();
+            if (now - mNotificationLastUpdateTime < 500) {
+                return;
+            }
+            mNotificationLastUpdateTime = now;
+
             notification.contentView.setProgressBar(R.id.progress, max, progress, false);
         } else {
             notification.contentView.setProgressBar(R.id.progress, 0, 0, true);
