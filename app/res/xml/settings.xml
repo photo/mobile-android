@@ -5,7 +5,8 @@
     <EditTextPreference
       android:title="@string/setting_account_server_title"
       android:key="@string/setting_account_server_key"
-      android:defaultValue="@string/setting_account_server_default" />
+      android:defaultValue="@string/setting_account_server_default" 
+      android:inputType="textUri" />
     <!-- 
     <PreferenceScreen
       android:title="@string/setting_account_edit_account_title" />
