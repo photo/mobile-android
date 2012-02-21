@@ -90,6 +90,24 @@ public class ActionBar extends LinearLayout implements OnClickListener {
         mActionsLayout.addView(action);
     }
 
+    public void removeAction(int deleteActionId) {
+        View view = getActionView(deleteActionId);
+        if (view != null) {
+            mActionsLayout.removeView(view);
+        }
+    }
+
+    public View getActionView(int actionId) {
+        for (int i = 0; i < mActionsLayout.getChildCount(); i++) {
+            View action = mActionsLayout.getChildAt(i);
+            int viewActionId = ((Integer) action.getTag()).intValue();
+            if (viewActionId == actionId) {
+                return action;
+            }
+        }
+        return null;
+    }
+
     public void setRefreshActionVisible(boolean visible) {
         mRefreshActionVisible = visible;
         showRefreshAction(visible);

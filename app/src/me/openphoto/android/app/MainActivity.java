@@ -6,15 +6,14 @@ package me.openphoto.android.app;
 
 import me.openphoto.android.app.service.UploaderService;
 import me.openphoto.android.app.ui.widget.ActionBar;
+import me.openphoto.android.app.ui.widget.ActionBar.ActionClickListener;
 import android.app.TabActivity;
 import android.content.Intent;
-import android.content.res.Resources;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.widget.ImageView;
 import android.widget.TabHost.TabSpec;
 
@@ -23,7 +22,7 @@ import android.widget.TabHost.TabSpec;
  * 
  * @author pas, pboos
  */
-public class MainActivity extends TabActivity implements OnClickListener {
+public class MainActivity extends TabActivity implements ActionClickListener {
     public static final String TAG = MainActivity.class.getSimpleName();
 
     private View tagButton;
@@ -42,6 +41,7 @@ public class MainActivity extends TabActivity implements OnClickListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mActionBar = (ActionBar) findViewById(R.id.actionbar);
+        mActionBar.setOnActionClickListener(this);
 
         // To make sure the service is initialized
         startService(new Intent(this, UploaderService.class));
@@ -50,8 +50,6 @@ public class MainActivity extends TabActivity implements OnClickListener {
     }
 
     private void setUpTabs() {
-        Resources res = getResources();
-
         TabSpec tabSpec = getTabHost().newTabSpec("home")
                 .setIndicator(newTabIndicator(R.drawable.tab_home))
                 .setContent(new Intent(this, HomeActivity.class));
@@ -77,7 +75,10 @@ public class MainActivity extends TabActivity implements OnClickListener {
     @Override
     protected void onResume() {
         super.onResume();
-        // uploadButton.setEnabled(Preferences.isLoggedIn(this));
+        mActionBar.removeAction(R.id.action_add);
+        if (Preferences.isLoggedIn(this)) {
+            mActionBar.addAction(R.drawable.action_add, 0, R.id.action_add);
+        }
     }
 
     @Override
@@ -100,24 +101,9 @@ public class MainActivity extends TabActivity implements OnClickListener {
         }
     }
 
-    /**
-     * Handle clicks on the navigation buttons
-     */
     @Override
-    public void onClick(View v) {
-        Class<?> nextScreen = null;
-        if (v.equals(tagButton)) {
-            nextScreen = TagsActivity.class;
-        } else if (v.equals(uploadButton)) {
-            nextScreen = UploadActivity.class;
-        } else if (v.equals(galleryButton)) {
-            nextScreen = GalleryActivity.class;
-        }
-
-        if (nextScreen != null) {
-            // Go to the next screen, but keep this Activity in the stack
-            Intent i = new Intent(this, nextScreen);
-            startActivity(i);
-        }
+    public void onActionClick(int id) {
+        Intent i = new Intent(this, UploadActivity.class);
+        startActivity(i);
     }
 }

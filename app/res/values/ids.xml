@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-	<item type="id" name="action_refresh" />    
+
+    <item name="action_refresh" type="id"/>
+    <item name="action_add" type="id"/>
+
 </resources>
