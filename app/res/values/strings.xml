@@ -8,9 +8,9 @@
 
     <!-- MainActivity -->
     <string name="menu_preferences">Preferences</string>
-    <string name="menu_photos">Photos</string>
-    <string name="menu_tags">Tags</string>
-    <string name="menu_upload">Upload</string>
+    <string name="tab_home">Home</string>
+    <string name="tab_gallery">Photos</string>
+    <string name="tab_tags">Tags</string>
 
     <!-- UploadActivity -->
     <string name="uploading_in_background">Started upload in background</string>
