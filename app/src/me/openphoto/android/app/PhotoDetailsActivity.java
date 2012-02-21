@@ -22,10 +22,13 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.ImageView;
+import android.widget.ImageView.ScaleType;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -123,9 +126,31 @@ public class PhotoDetailsActivity extends Activity {
 
             final View view = mInflator.inflate(R.layout.photo_details_item,
                     ((ViewPager) collection), false);
-            ImageView imageView = (ImageView) view.findViewById(R.id.image);
-            ((TextView) view.findViewById(R.id.image_title)).setText(photo.getTitle());
-            ((TextView) view.findViewById(R.id.image_description)).setText(photo.getDescription());
+            final ImageView imageView = (ImageView) view.findViewById(R.id.image);
+            view.setOnClickListener(new OnClickListener() {
+
+                @Override
+                public void onClick(View arg0) {
+                    ScaleType newScaleType = imageView.getScaleType() == ScaleType.CENTER_CROP ?
+                            ScaleType.FIT_CENTER : ScaleType.CENTER_CROP;
+                    imageView.setScaleType(newScaleType);
+                }
+            });
+
+            TextView titleText = (TextView) view.findViewById(R.id.image_title);
+            TextView descriptionText = (TextView) view.findViewById(R.id.image_description);
+            titleText.setText(photo.getTitle());
+            descriptionText.setText(photo.getDescription());
+            if (TextUtils.isEmpty(photo.getTitle())) {
+                titleText.setVisibility(View.GONE);
+                if (TextUtils.isEmpty(photo.getDescription())) {
+                    view.findViewById(R.id.image_details).setVisibility(View.GONE);
+                }
+            }
+            if (TextUtils.isEmpty(photo.getDescription())) {
+                descriptionText.setVisibility(view.GONE);
+            }
+
             OnImageDisplayedCallback callback = new OnImageDisplayedCallback() {
 
                 @Override
