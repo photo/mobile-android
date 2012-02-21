@@ -5,56 +5,75 @@
     android:orientation="vertical"
     android:weightSum="1" >
 
+    <include layout="@layout/actionbar" />
+
     <ScrollView
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1" >
+        android:layout_weight="1"
+        android:padding="@dimen/site_padding" >
 
         <LinearLayout
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical" >
 
-            <RelativeLayout
-                android:id="@+id/linearLayout1"
-                android:layout_width="90dp"
-                android:layout_height="90dp" >
-
-                <ImageView
-                    android:id="@+id/image_upload"
-                    android:layout_width="fill_parent"
-                    android:layout_height="fill_parent"
-                    android:scaleType="centerCrop"
-                    android:src="@drawable/icon" />
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentBottom="true"
-                    android:layout_alignParentRight="true"
-                    android:src="@android:drawable/ic_menu_zoom" />
-            </RelativeLayout>
-
-            <EditText
-                android:id="@+id/edit_title"
+            <LinearLayout
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:hint="Title"
-                android:inputType="textMultiLine" />
+                android:orientation="horizontal" >
+
+                <RelativeLayout
+                    android:layout_width="70dp"
+                    android:layout_height="70dp"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginRight="5dp" >
+
+                    <ImageView
+                        android:id="@+id/image_upload"
+                        android:layout_width="fill_parent"
+                        android:layout_height="fill_parent"
+                        android:scaleType="centerCrop"
+                        android:src="@drawable/icon" />
+
+                    <ImageView
+                        android:layout_width="25dp"
+                        android:layout_height="25dp"
+                        android:layout_alignParentBottom="true"
+                        android:layout_alignParentRight="true"
+                        android:src="@android:drawable/ic_menu_zoom" />
+                </RelativeLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical" >
+
+                    <EditText
+                        android:id="@+id/edit_title"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="Title"
+                        android:inputType="textCapWords" />
+
+                    <EditText
+                        android:id="@+id/edit_tags"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="Tags"
+                        android:inputType="textMultiLine" />
+                </LinearLayout>
+            </LinearLayout>
 
             <EditText
                 android:id="@+id/edit_description"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:hint="Description"
-                android:inputType="textMultiLine" />
-
-            <EditText
-                android:id="@+id/edit_tags"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:hint="Tags"
-                android:inputType="textMultiLine" />
+                android:inputType="textMultiLine|textCapSentences|textLongMessage"
+                android:minLines="3"
+                android:gravity="left|top" />
 
             <View
                 android:layout_width="fill_parent"
