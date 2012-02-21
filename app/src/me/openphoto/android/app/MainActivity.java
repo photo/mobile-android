@@ -65,6 +65,8 @@ public class MainActivity extends TabActivity implements ActionClickListener {
                 .setIndicator(newTabIndicator(R.drawable.tab_tags, R.string.tab_tags))
                 .setContent(new Intent(this, TagsActivity.class));
         getTabHost().addTab(tabSpec);
+
+        getTabHost().setCurrentTabByTag("gallery");
     }
 
     private View newTabIndicator(int drawableResId, int textResId) {
