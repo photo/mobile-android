@@ -13,7 +13,8 @@ public class UploadResponse extends PhotoResponse {
     /**
      * @return true if the upload was successful
      */
+    @Override
     public boolean isSuccess() {
-        return getCode() == 202;
+        return getCode() == 201;
     }
 }

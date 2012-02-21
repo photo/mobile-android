@@ -5,8 +5,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class OpenPhotoResponse {
-    private String mMessage;
-    private int mCode;
+    private final String mMessage;
+    private final int mCode;
 
     public OpenPhotoResponse(JSONObject json) throws JSONException {
         mMessage = json.getString("message");
@@ -19,5 +19,9 @@ public class OpenPhotoResponse {
 
     public int getCode() {
         return mCode;
+    }
+
+    public boolean isSuccess() {
+        return mCode >= 200 && mCode < 300;
     }
 }
