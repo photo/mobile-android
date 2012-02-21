@@ -52,7 +52,7 @@ public class UploadActivity extends Activity implements OnClickListener {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.photo_upload);
+        setContentView(R.layout.activity_upload);
         findViewById(R.id.button_upload).setOnClickListener(this);
         findViewById(R.id.image_upload).setOnClickListener(this);
         mPrivateToggle = (ToggleButton) findViewById(R.id.toggle_private);

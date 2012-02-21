@@ -41,7 +41,7 @@ public class OAuthActivity extends Activity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.oauth);
+        setContentView(R.layout.activity_oauth);
         mActionBar = (ActionBar) findViewById(R.id.actionbar);
 
         mWebView = (WebView) findViewById(R.id.webview);

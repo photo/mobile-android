@@ -4,33 +4,26 @@
 
 package me.openphoto.android.app;
 
-import me.openphoto.android.app.model.Photo;
-import me.openphoto.android.app.net.IOpenPhotoApi;
-import me.openphoto.android.app.net.Paging;
-import me.openphoto.android.app.net.ReturnSizes;
 import me.openphoto.android.app.service.UploaderService;
-import me.openphoto.android.app.ui.lib.ImageStorage;
-import me.openphoto.android.app.ui.lib.ImageStorage.OnImageDisplayedCallback;
 import me.openphoto.android.app.ui.widget.ActionBar;
-import android.app.Activity;
+import android.app.TabActivity;
 import android.content.Intent;
-import android.os.AsyncTask;
+import android.content.res.Resources;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ImageView;
-import android.widget.Toast;
+import android.widget.TabHost.TabSpec;
 
 /**
  * The Main screen of OpenPhoto
  * 
- * @author pas
+ * @author pas, pboos
  */
-public class MainActivity extends Activity implements OnClickListener, OnImageDisplayedCallback {
+public class MainActivity extends TabActivity implements OnClickListener {
     public static final String TAG = MainActivity.class.getSimpleName();
 
     private View tagButton;
@@ -47,25 +40,44 @@ public class MainActivity extends Activity implements OnClickListener, OnImageDi
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.main);
+        setContentView(R.layout.activity_main);
         mActionBar = (ActionBar) findViewById(R.id.actionbar);
-        new LoadImageTask().execute();
 
-        // Get references to navigation buttons
-        tagButton = findViewById(R.id.tags);
-        uploadButton = findViewById(R.id.upload);
-        galleryButton = findViewById(R.id.photos);
-        tagButton.setOnClickListener(this);
-        uploadButton.setOnClickListener(this);
-        galleryButton.setOnClickListener(this);
-
+        // To make sure the service is initialized
         startService(new Intent(this, UploaderService.class));
+
+        setUpTabs();
+    }
+
+    private void setUpTabs() {
+        Resources res = getResources();
+
+        TabSpec tabSpec = getTabHost().newTabSpec("home")
+                .setIndicator(newTabIndicator(R.drawable.tab_home))
+                .setContent(new Intent(this, HomeActivity.class));
+        getTabHost().addTab(tabSpec);
+
+        tabSpec = getTabHost().newTabSpec("gallery")
+                .setIndicator(newTabIndicator(R.drawable.tab_gallery))
+                .setContent(new Intent(this, GalleryActivity.class));
+        getTabHost().addTab(tabSpec);
+
+        tabSpec = getTabHost().newTabSpec("tags")
+                .setIndicator(newTabIndicator(R.drawable.tab_tags))
+                .setContent(new Intent(this, TagsActivity.class));
+        getTabHost().addTab(tabSpec);
+    }
+
+    private View newTabIndicator(int drawableResId) {
+        View view = getLayoutInflater().inflate(R.layout.tab, null);
+        ((ImageView) view.findViewById(R.id.image)).setImageResource(drawableResId);
+        return view;
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        uploadButton.setEnabled(Preferences.isLoggedIn(this));
+        // uploadButton.setEnabled(Preferences.isLoggedIn(this));
     }
 
     @Override
@@ -88,38 +100,6 @@ public class MainActivity extends Activity implements OnClickListener, OnImageDi
         }
     }
 
-    private class LoadImageTask extends AsyncTask<Void, Void, Photo> {
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            mActionBar.startLoading();
-        }
-
-        @Override
-        protected Photo doInBackground(Void... params) {
-            IOpenPhotoApi api = Preferences.getApi(MainActivity.this);
-            try {
-                return api.getPhotos(new ReturnSizes(600, 600), null, new Paging(1, 1))
-                        .getPhotos().get(0);
-            } catch (Exception e) {
-                Log.w(TAG, "Error while getting image", e);
-                return null;
-            }
-        }
-
-        @Override
-        protected void onPostExecute(Photo result) {
-            mActionBar.stopLoading();
-            if (result != null) {
-                showImage(result);
-            } else {
-                Toast.makeText(MainActivity.this, "Could not download image",
-                        Toast.LENGTH_LONG).show();
-            }
-        }
-    }
-
     /**
      * Handle clicks on the navigation buttons
      */
@@ -127,7 +107,7 @@ public class MainActivity extends Activity implements OnClickListener, OnImageDi
     public void onClick(View v) {
         Class<?> nextScreen = null;
         if (v.equals(tagButton)) {
-            nextScreen = SearchActivity.class;
+            nextScreen = TagsActivity.class;
         } else if (v.equals(uploadButton)) {
             nextScreen = UploadActivity.class;
         } else if (v.equals(galleryButton)) {
@@ -139,17 +119,5 @@ public class MainActivity extends Activity implements OnClickListener, OnImageDi
             Intent i = new Intent(this, nextScreen);
             startActivity(i);
         }
-    }
-
-    public void showImage(Photo photo) {
-        mActionBar.startLoading();
-        ImageView image = (ImageView) findViewById(R.id.image);
-        new ImageStorage(MainActivity.this).displayImageFor(image, photo.getUrl("600x600"),
-                MainActivity.this);
-    }
-
-    @Override
-    public void onImageDisplayed(ImageView view) {
-        mActionBar.stopLoading();
     }
 }

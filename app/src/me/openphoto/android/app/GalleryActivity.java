@@ -41,8 +41,14 @@ public class GalleryActivity extends Activity implements OnItemClickListener {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.gallery);
-        mActionBar = (ActionBar) findViewById(R.id.actionbar);
+        setContentView(R.layout.activity_gallery);
+
+        if (getParent() != null) {
+            mActionBar = (ActionBar) getParent().findViewById(R.id.actionbar);
+            findViewById(R.id.actionbar).setVisibility(View.GONE);
+        } else {
+            mActionBar = (ActionBar) findViewById(R.id.actionbar);
+        }
 
         mTags = getIntent() != null ? getIntent().getStringExtra(EXTRA_TAG) : null;
         if (mTags != null) {
@@ -81,7 +87,7 @@ public class GalleryActivity extends Activity implements OnItemClickListener {
         public View getView(Photo photo, View convertView) {
             if (convertView == null) {
                 final LayoutInflater layoutInflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                convertView = layoutInflater.inflate(R.layout.gallery_image, null);
+                convertView = layoutInflater.inflate(R.layout.item_gallery_image, null);
             }
             ImageView image = (ImageView) convertView.findViewById(R.id.image);
             image.setImageBitmap(null); // TODO maybe a loading image

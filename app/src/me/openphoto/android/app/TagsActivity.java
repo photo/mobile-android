@@ -25,27 +25,27 @@ import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 
 /**
- * The search screen
+ * The tags screen
  * 
  * @author Patrick Boos
  */
-public class SearchActivity extends Activity implements OnItemClickListener {
-    public static final String TAG = SearchActivity.class.getSimpleName();
+public class TagsActivity extends Activity implements OnItemClickListener {
+    public static final String TAG = TagsActivity.class.getSimpleName();
 
     private ActionBar mActionBar;
 
     private TagsAdapter mAdapter;
 
     /**
-     * Called when Search Activity is first loaded
+     * Called when Tags Activity is first loaded
      * 
      * @see android.app.Activity#onCreate(android.os.Bundle)
      */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.search);
-        mActionBar = (ActionBar) findViewById(R.id.actionbar);
+        setContentView(R.layout.activity_tags);
+        mActionBar = (ActionBar) getParent().findViewById(R.id.actionbar);
 
         mAdapter = new TagsAdapter();
         ListView list = (ListView) findViewById(R.id.list_tags);
@@ -87,7 +87,7 @@ public class SearchActivity extends Activity implements OnItemClickListener {
 
         public TagsAdapter() {
             super(Integer.MAX_VALUE);
-            mOpenPhotoApi = Preferences.getApi(SearchActivity.this);
+            mOpenPhotoApi = Preferences.getApi(TagsActivity.this);
         }
 
         @Override
@@ -99,7 +99,7 @@ public class SearchActivity extends Activity implements OnItemClickListener {
         public View getView(Tag tag, View convertView) {
             if (convertView == null) {
                 final LayoutInflater layoutInflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                convertView = layoutInflater.inflate(R.layout.tag_line, null);
+                convertView = layoutInflater.inflate(R.layout.list_item_tag, null);
             }
             ((TextView) convertView.findViewById(R.id.text_tag)).setText(tag.getTag());
             ((TextView) convertView.findViewById(R.id.text_count)).setText(Integer.toString(tag

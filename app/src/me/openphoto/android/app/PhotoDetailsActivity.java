@@ -60,7 +60,7 @@ public class PhotoDetailsActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.photo_details);
+        setContentView(R.layout.activity_photo_details);
 
         mStorage = new ImageStorage(this);
 
@@ -124,7 +124,7 @@ public class PhotoDetailsActivity extends Activity {
             }
             Photo photo = (Photo) mAdapter.getItem(position);
 
-            final View view = mInflator.inflate(R.layout.photo_details_item,
+            final View view = mInflator.inflate(R.layout.item_photo_detail,
                     ((ViewPager) collection), false);
             final ImageView imageView = (ImageView) view.findViewById(R.id.image);
             view.setOnClickListener(new OnClickListener() {
