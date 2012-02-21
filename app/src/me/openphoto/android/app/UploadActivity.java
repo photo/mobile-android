@@ -82,6 +82,11 @@ public class UploadActivity extends Activity implements OnClickListener {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode != RESULT_OK) {
+            showDialog(DIALOG_SELECT_IMAGE);
+            return;
+        }
+
         switch (requestCode) {
             case REQUEST_GALLERY:
                 if (resultCode == RESULT_OK && data.getData() != null) {
