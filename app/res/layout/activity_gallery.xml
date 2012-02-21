@@ -15,6 +15,7 @@
         android:drawSelectorOnTop="true"
         android:listSelector="@drawable/grid_selector"
         android:numColumns="auto_fit"
+        android:padding="2dp"
         android:stretchMode="columnWidth" />
 
 </LinearLayout>
