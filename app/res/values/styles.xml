@@ -2,7 +2,9 @@
 <resources>
 
     <style name="Theme.OpenPhoto.Light" parent="android:Theme.Light.NoTitleBar">
-        <!-- Add our theme customizations here -->
+        <item name="android:windowBackground">@drawable/bg</item>
+        <item name="android:listViewStyle">@style/TransparentListView</item>
+        <item name="android:expandableListViewStyle">@style/TransparentExpandableListView</item>
     </style>
 
     <style name="NotificationText" parent="android:TextAppearance.Small" />
@@ -12,6 +14,14 @@
     <style name="TextTitle">
         <item name="android:textSize">18dp</item>
         <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="TransparentListView" parent="@android:style/Widget.ListView">
+        <item name="android:cacheColorHint">@android:color/transparent</item>
+    </style>
+
+    <style name="TransparentExpandableListView" parent="@android:style/Widget.ExpandableListView">
+        <item name="android:cacheColorHint">@android:color/transparent</item>
     </style>
 
 </resources>
