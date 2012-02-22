@@ -8,7 +8,7 @@
     <FrameLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:background="#999"
+        android:background="#000"
         android:padding="1dp" >
 
         <ImageView

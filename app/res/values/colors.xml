@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
     <color name="actionbar_text">#cfcfcf</color>
-    <color name="actionbar_divider">#cfcfcf</color>
-    <color name="actionbar_background">#efefef</color>
-    <color name="actionbar_line_bottom">#cfcfcf</color>
-    
+    <color name="actionbar_divider">#55000000</color>
+    <color name="actionbar_line_bottom">#222</color>
     <color name="grid_selector">#99cfcfcf</color>
+
 </resources>

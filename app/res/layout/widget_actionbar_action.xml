@@ -1,19 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-	android:layout_width="wrap_content" android:layout_height="fill_parent"
-	android:orientation="horizontal">
-	<View android:layout_width="1dp" android:layout_height="fill_parent"
-		android:background="@color/actionbar_divider" />
-	<LinearLayout android:layout_width="wrap_content"
-		android:layout_height="fill_parent" android:orientation="horizontal"
-		android:padding="5dp">
-		<ImageView android:id="@+id/image" android:layout_height="wrap_content"
-			android:layout_width="wrap_content" android:layout_margin="3dp"
-			android:layout_gravity="center_vertical" android:src="@drawable/icon" />
-		<TextView android:id="@+id/text" android:layout_width="wrap_content"
-			android:layout_height="wrap_content" android:layout_marginLeft="5dp"
-			android:layout_marginRight="5dp" android:layout_gravity="center_vertical"
-			android:textColor="@color/actionbar_text" android:textStyle="bold"
-			android:textSize="@dimen/actionbar_action_text_size" />
-	</LinearLayout>
+    android:layout_width="wrap_content"
+    android:layout_height="fill_parent"
+    android:orientation="horizontal" >
+
+    <View
+        android:layout_width="1dp"
+        android:layout_height="fill_parent"
+        android:background="@color/actionbar_divider" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="fill_parent"
+        android:orientation="horizontal"
+        android:padding="5dp" >
+
+        <ImageView
+            android:id="@+id/image"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_margin="3dp"
+            android:src="@drawable/icon" />
+
+        <TextView
+            android:id="@+id/text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:textColor="@color/actionbar_text"
+            android:textSize="@dimen/actionbar_action_text_size"
+            android:textStyle="bold" />
+    </LinearLayout>
+
 </LinearLayout>
