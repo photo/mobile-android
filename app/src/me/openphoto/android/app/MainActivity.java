@@ -7,6 +7,7 @@ package me.openphoto.android.app;
 import me.openphoto.android.app.service.UploaderService;
 import me.openphoto.android.app.ui.widget.ActionBar;
 import me.openphoto.android.app.ui.widget.ActionBar.ActionClickListener;
+import android.app.Activity;
 import android.app.TabActivity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -25,10 +26,6 @@ import android.widget.TextView;
  */
 public class MainActivity extends TabActivity implements ActionClickListener {
     public static final String TAG = MainActivity.class.getSimpleName();
-
-    private View tagButton;
-    private View uploadButton;
-    private View galleryButton;
 
     private ActionBar mActionBar;
 
@@ -76,6 +73,12 @@ public class MainActivity extends TabActivity implements ActionClickListener {
         return view;
     }
 
+    private Activity getCurrentTabActivity() {
+        String currentTab = getTabHost().getCurrentTabTag();
+        Activity tabActivity = getLocalActivityManager().getActivity(currentTab);
+        return tabActivity;
+    }
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -93,12 +96,23 @@ public class MainActivity extends TabActivity implements ActionClickListener {
     }
 
     @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        Activity tabActivity = getCurrentTabActivity();
+        boolean showRefresh = tabActivity instanceof Refreshable;
+        menu.findItem(R.id.menu_refresh).setVisible(showRefresh);
+        return super.onPrepareOptionsMenu(menu);
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle item selection
         switch (item.getItemId()) {
-            case R.id.settings:
+            case R.id.menu_settings:
                 Intent i = new Intent(this, SettingsActivity.class);
                 startActivity(i);
+                return true;
+            case R.id.menu_refresh:
+                ((Refreshable) getCurrentActivity()).refresh();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

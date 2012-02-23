@@ -24,7 +24,7 @@ import android.widget.ImageView;
  * 
  * @author pas
  */
-public class GalleryActivity extends Activity implements OnItemClickListener {
+public class GalleryActivity extends Activity implements OnItemClickListener, Refreshable {
     private static final String TAG = GalleryActivity.class.getSimpleName();
 
     public static String EXTRA_TAG = "EXTRA_TAG";
@@ -50,6 +50,11 @@ public class GalleryActivity extends Activity implements OnItemClickListener {
             mActionBar = (ActionBar) findViewById(R.id.actionbar);
         }
 
+        refresh();
+    }
+
+    @Override
+    public void refresh() {
         mTags = getIntent() != null ? getIntent().getStringExtra(EXTRA_TAG) : null;
         if (mTags != null) {
             mAdapter = new GalleryAdapter(mTags);

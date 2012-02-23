@@ -175,8 +175,4 @@ public class ActionBar extends LinearLayout implements OnClickListener {
         void onActionClick(int id);
     }
 
-    public static interface Refreshable {
-        void refresh();
-    }
-
 }
