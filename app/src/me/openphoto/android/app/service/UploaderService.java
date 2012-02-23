@@ -103,7 +103,14 @@ public class UploaderService extends Service {
         List<PhotoUpload> pendingUploads = uploads.getPendingUploads();
         for (PhotoUpload photoUpload : pendingUploads) {
             Log.i(TAG, "Starting upload to OpenPhoto: " + photoUpload.getPhotoUri());
-            File file = new File(ImageUtils.getRealPathFromURI(this, photoUpload.getPhotoUri()));
+            String filePath = ImageUtils.getRealPathFromURI(this, photoUpload.getPhotoUri());
+            if (filePath == null || !(new File(filePath).exists())) {
+                uploads.delete(photoUpload.getId());
+                // TODO: Maybe set error, and set as "do not try again"
+                Log.i(TAG, "Upload canceled, because file does not exist anymore.");
+                continue;
+            }
+            File file = new File(filePath);
             stopErrorNotification(file);
             final Notification notification = showUploadNotification(file);
             try {
@@ -215,8 +222,14 @@ public class UploaderService extends Service {
         CharSequence contentMessageTitle = getString(R.string.notification_upload_success_text,
                 imageName);
 
-        Intent notificationIntent = new Intent(this, PhotoDetailsActivity.class);
-        notificationIntent.putExtra(PhotoDetailsActivity.EXTRA_PHOTO, uploadResponse.getPhoto());
+        Intent notificationIntent;
+        if (uploadResponse.getPhoto() != null) {
+            notificationIntent = new Intent(this, PhotoDetailsActivity.class);
+            notificationIntent
+                    .putExtra(PhotoDetailsActivity.EXTRA_PHOTO, uploadResponse.getPhoto());
+        } else {
+            notificationIntent = new Intent(this, MainActivity.class);
+        }
         PendingIntent contentIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
 
         Notification notification = new Notification(icon, titleText, when);

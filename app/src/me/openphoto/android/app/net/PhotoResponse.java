@@ -11,7 +11,7 @@ public class PhotoResponse extends OpenPhotoResponse {
 
     public PhotoResponse(JSONObject json) throws JSONException {
         super(json);
-        if (isSuccess()) {
+        if (isSuccess() && json.get("result") instanceof JSONObject) {
             mPhoto = Photo.fromJson(json.getJSONObject("result"));
         } else {
             mPhoto = null;

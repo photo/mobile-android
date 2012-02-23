@@ -68,9 +68,12 @@ public class ImageUtils {
         };
         Cursor cursor = context.getContentResolver().query(imageUri, proj, null, null, null);
         int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
-        cursor.moveToFirst();
-        String path = cursor.getString(column_index);
-        cursor.close();
-        return path;
+        if (cursor.moveToFirst()) {
+            String path = cursor.getString(column_index);
+            cursor.close();
+            return path;
+        } else {
+            return null;
+        }
     }
 }
