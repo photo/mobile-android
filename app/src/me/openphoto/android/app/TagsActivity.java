@@ -88,6 +88,7 @@ public class TagsActivity extends Activity implements OnItemClickListener {
         public TagsAdapter() {
             super(Integer.MAX_VALUE);
             mOpenPhotoApi = Preferences.getApi(TagsActivity.this);
+            loadFirstPage();
         }
 
         @Override

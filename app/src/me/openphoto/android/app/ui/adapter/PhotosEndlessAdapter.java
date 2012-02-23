@@ -49,6 +49,9 @@ public abstract class PhotosEndlessAdapter extends EndlessAdapter<Photo> {
         if (tagFilter != null) {
             mTagFilter.add(tagFilter);
         }
+        if (isEmpty()) {
+            loadFirstPage();
+        }
     }
 
     @Override

@@ -39,13 +39,7 @@ public abstract class EndlessAdapter<T> extends BaseAdapter {
     public EndlessAdapter(int pageSize, ArrayList<T> items) {
         mItems = items != null ? items : new ArrayList<T>();
         mPageSize = pageSize;
-
-        if (mItems.isEmpty()) {
-            // TODO maybe this should be invoked manually with "loadFirstPage"?
-            new LoadNextTask().execute();
-        } else {
-            mCurrentPage = 1 + mItems.size() / mPageSize;
-        }
+        mCurrentPage = 1 + mItems.size() / mPageSize;
     }
 
     @Override
@@ -68,6 +62,12 @@ public abstract class EndlessAdapter<T> extends BaseAdapter {
             loadNextPage();
         }
         return getView((T) getItem(position), convertView);
+    }
+
+    public void loadFirstPage() {
+        mItems.clear();
+        mCurrentPage = 1;
+        loadNextPage();
     }
 
     public void loadNextPage() {
