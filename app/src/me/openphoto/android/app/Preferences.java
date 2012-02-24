@@ -33,6 +33,16 @@ public class Preferences {
                         context.getString(R.string.setting_account_server_default));
     }
 
+    public static boolean setServer(Context context, String server) {
+        if (!server.startsWith("http")) {
+            server = "http://" + server;
+        }
+        return PreferenceManager.getDefaultSharedPreferences(context)
+                .edit()
+                .putString(context.getString(R.string.setting_account_server_key), server)
+                .commit();
+    }
+
     public static boolean isLoggedIn(Context context) {
         return PreferenceManager.getDefaultSharedPreferences(context)
                 .getBoolean(context.getString(R.string.setting_account_loggedin_key), false);

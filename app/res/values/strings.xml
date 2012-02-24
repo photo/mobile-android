@@ -10,6 +10,11 @@
     <string name="menu_refresh">Refresh</string>
     <string name="menu_preferences">Preferences</string>
 
+    <!-- SetupActivity -->
+    <string name="hint_server">username.openphoto.me</string>
+    <string name="login">Login</string>
+    <string name="get_openphoto_account">Get an openphoto account</string>
+
     <!-- MainActivity -->
     <string name="tab_home">Home</string>
     <string name="tab_gallery">Photos</string>

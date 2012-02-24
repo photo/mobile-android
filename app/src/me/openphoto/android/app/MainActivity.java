@@ -86,6 +86,11 @@ public class MainActivity extends TabActivity implements ActionClickListener {
         if (Preferences.isLoggedIn(this)) {
             mActionBar.addAction(R.drawable.action_add, 0, R.id.action_add);
         }
+
+        if (!Preferences.isLoggedIn(this)) {
+            startActivity(new Intent(this, SetupActivity.class));
+            finish();
+        }
     }
 
     @Override

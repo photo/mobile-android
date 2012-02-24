@@ -1,5 +1,5 @@
 /**
- * The search screen
+ * The home screen
  */
 
 package me.openphoto.android.app;

@@ -138,6 +138,7 @@ public class OAuthActivity extends Activity {
             mActionBar.stopLoading();
             if (result.booleanValue()) {
                 Preferences.setLoginInformation(OAuthActivity.this, mUsedConsumer);
+                setResult(RESULT_OK);
                 finish();
             }
         }
