@@ -50,8 +50,15 @@ public class Photo implements Parcelable {
         Photo photo = new Photo();
         photo.mId = json.optString("id");
         photo.mAppId = json.optString("appId");
-        photo.mTitle = json.optString("title");
-        photo.mDescription = json.optString("description");
+        
+        // check if field is null for Title and Description
+        if (!json.isNull("title")){
+            photo.mTitle = json.optString("title");        	
+        }
+        if (!json.isNull("description")){
+            photo.mDescription = json.optString("description");        	
+        }
+        
         photo.mPermission = json.optInt("permission", PERMISSION_PRIVATE);
 
         String host = "http://" + json.optString("host");
