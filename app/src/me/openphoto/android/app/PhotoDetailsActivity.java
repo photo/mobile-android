@@ -1,7 +1,3 @@
-/**
- * The general photo viewing screen
- */
-
 package me.openphoto.android.app;
 
 import java.util.ArrayList;
@@ -148,7 +144,7 @@ public class PhotoDetailsActivity extends Activity {
                 }
             }
             if (TextUtils.isEmpty(photo.getDescription())) {
-                descriptionText.setVisibility(view.GONE);
+                descriptionText.setVisibility(View.GONE);
             }
 
             OnImageDisplayedCallback callback = new OnImageDisplayedCallback() {

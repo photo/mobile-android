@@ -1,4 +1,3 @@
-
 package me.openphoto.android.app;
 
 import java.io.File;
@@ -33,7 +32,7 @@ import android.widget.ToggleButton;
  * @author Patrick Boos
  */
 public class UploadActivity extends Activity implements OnClickListener {
-    private static final String TAG = UploadActivity.class.getSimpleName();
+    public static final String TAG = UploadActivity.class.getSimpleName();
 
     public static final String EXTRA_PENDING_UPLOAD_URI = "pending_upload_uri";
 

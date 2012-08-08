@@ -1,7 +1,3 @@
-/**
- * The Main screen of OpenPhoto
- */
-
 package me.openphoto.android.app;
 
 import me.openphoto.android.app.service.UploaderService;

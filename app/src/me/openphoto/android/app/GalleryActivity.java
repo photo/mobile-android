@@ -1,7 +1,3 @@
-/**
- * The photo gallery screen
- */
-
 package me.openphoto.android.app;
 
 import me.openphoto.android.app.model.Photo;
@@ -25,7 +21,7 @@ import android.widget.ImageView;
  * @author pas
  */
 public class GalleryActivity extends Activity implements OnItemClickListener, Refreshable {
-    private static final String TAG = GalleryActivity.class.getSimpleName();
+    public static final String TAG = GalleryActivity.class.getSimpleName();
 
     public static String EXTRA_TAG = "EXTRA_TAG";
 

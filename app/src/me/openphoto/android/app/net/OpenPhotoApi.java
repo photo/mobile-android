@@ -204,7 +204,7 @@ public class OpenPhotoApi extends ApiBase implements IOpenPhotoApi {
      * 
      * @param mock Mock to be used for OpenPhotoApi
      */
-    private static void injectMock(IOpenPhotoApi mock) {
+    public static void injectMock(IOpenPhotoApi mock) {
         OpenPhotoApi.sMock = mock;
     }
 }

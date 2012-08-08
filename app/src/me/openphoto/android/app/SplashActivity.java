@@ -1,7 +1,3 @@
-/**
- * The splash/loading screen before you get to the Main screen
- */
-
 package me.openphoto.android.app;
 
 import android.app.Activity;

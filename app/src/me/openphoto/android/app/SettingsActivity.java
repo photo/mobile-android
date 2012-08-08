@@ -1,7 +1,3 @@
-/**
- * The settings screen
- */
-
 package me.openphoto.android.app;
 
 import android.content.Intent;

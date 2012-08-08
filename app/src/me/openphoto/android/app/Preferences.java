@@ -1,4 +1,3 @@
-
 package me.openphoto.android.app;
 
 import me.openphoto.android.app.net.IOpenPhotoApi;

@@ -17,7 +17,6 @@ public abstract class PhotosEndlessAdapter extends EndlessAdapter<Photo> {
     private static final String TAG = null;
     private final IOpenPhotoApi mOpenPhotoApi;
     private final List<String> mTagFilter;
-    private final Context mContext;
     private static final ReturnSizes mSizes;
     public static String SIZE_SMALL;
     public static String SIZE_BIG;
@@ -43,7 +42,6 @@ public abstract class PhotosEndlessAdapter extends EndlessAdapter<Photo> {
 
     public PhotosEndlessAdapter(Context context, ArrayList<Photo> photos, String tagFilter) {
         super(30, photos);
-        mContext = context;
         mOpenPhotoApi = Preferences.getApi(context);
         mTagFilter = new ArrayList<String>(1);
         if (tagFilter != null) {

@@ -34,7 +34,7 @@ public class UploadsProvider extends ContentProvider {
     private static final String packageName = "me.openphoto.android.app";
     public static final Uri CONTENT_URI = Uri.parse("content://" + packageName + "/uploads");
 
-    private static final String TAG = UploadsProvider.class.getSimpleName();
+    public static final String TAG = UploadsProvider.class.getSimpleName();
     private static final String DATABASE_NAME = "uploads.db";
     private static final int DATABASE_VERSION = 3;
     private static final String PHOTOS_TABLE = "uploads";

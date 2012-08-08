@@ -1,7 +1,3 @@
-/**
- * The search screen
- */
-
 package me.openphoto.android.app;
 
 import me.openphoto.android.app.model.Tag;

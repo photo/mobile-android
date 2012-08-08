@@ -1,7 +1,3 @@
-/**
- * The setup screen
- */
-
 package me.openphoto.android.app;
 
 import android.app.Activity;
@@ -14,7 +10,7 @@ import android.widget.EditText;
 
 /**
  * The activity that gets presented to the user in case the user is not logged
- * in to a server.
+ * in to a server. - setup screen
  * 
  * @author Patrick Boos
  */
