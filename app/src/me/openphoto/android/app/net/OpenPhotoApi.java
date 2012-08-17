@@ -6,12 +6,14 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.Iterator;
 
+import me.openphoto.android.app.R;
 import me.openphoto.android.app.net.HttpEntityWithProgress.ProgressListener;
-import oauth.signpost.OAuthConsumer;
 
 import org.apache.http.client.ClientProtocolException;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import android.content.Context;
 
 /**
  * OpenPhotoApi provides access to the acOpenPhoto API.
@@ -22,38 +24,18 @@ public class OpenPhotoApi extends ApiBase implements IOpenPhotoApi {
 
     private static IOpenPhotoApi sMock;
 
-    /**
-     * Constructor
-     * 
-     * @param baseUrl the base URL of the used OpenPhoto
-     */
-    protected OpenPhotoApi(String baseUrl) {
-        super(baseUrl);
-    }
-
-    public static IOpenPhotoApi createInstance(String baseUrl) {
+    public static IOpenPhotoApi createInstance(Context context) {
         if (sMock != null) {
             return sMock;
         } else {
-            return new OpenPhotoApi(baseUrl);
+            return new OpenPhotoApi(context);
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * @see
-     * me.openphoto.android.app.net.IOpenPhotoApi#setOAuthConsumer(oauth.signpost
-     * .OAuthConsumer)
-     */
-    @Override
-    public void setOAuthConsumer(OAuthConsumer oAuthConsumer) {
-        super.setOAuthConsumer(oAuthConsumer);
+    public OpenPhotoApi(Context context) {
+        super(context);
     }
 
-    /*
-     * (non-Javadoc)
-     * @see me.openphoto.android.app.net.IOpenPhotoApi#getTags()
-     */
     @Override
     public TagsResponse getTags() throws ClientProtocolException, IOException,
             IllegalStateException, JSONException {
@@ -62,16 +44,12 @@ public class OpenPhotoApi extends ApiBase implements IOpenPhotoApi {
         return new TagsResponse(new JSONObject(response.getContentAsString()));
     }
 
-    /*
-     * (non-Javadoc)
-     * @see
-     * me.openphoto.android.app.net.IOpenPhotoApi#getPhoto(java.lang.String,
-     * me.openphoto.android.app.net.ReturnSize)
-     */
     @Override
     public PhotoResponse getPhoto(String photoId, ReturnSizes returnSize)
-            throws ClientProtocolException, IOException, IllegalStateException, JSONException {
-        ApiRequest request = new ApiRequest(ApiRequest.GET, "/photo/" + photoId + "/view.json");
+            throws ClientProtocolException, IOException, IllegalStateException,
+            JSONException {
+        ApiRequest request = new ApiRequest(ApiRequest.GET, "/photo/" + photoId
+                + "/view.json");
         if (returnSize != null) {
             request.addParameter("returnSizes", returnSize.toString());
         }
@@ -86,7 +64,8 @@ public class OpenPhotoApi extends ApiBase implements IOpenPhotoApi {
      */
     @Override
     public String getOAuthUrl(String name, String callback) {
-        return getBaseUrl() + "/v1/oauth/authorize?mobile=1&name=" + name
+        return R.string.setting_account_server_default + "/v1/oauth/authorize?mobile=1&name="
+                + name
                 + "&oauth_callback=" + callback;
     }
 
@@ -95,8 +74,8 @@ public class OpenPhotoApi extends ApiBase implements IOpenPhotoApi {
      * @see me.openphoto.android.app.net.IOpenPhotoApi#getPhotos()
      */
     @Override
-    public PhotosResponse getPhotos()
-            throws ClientProtocolException, IllegalStateException, IOException, JSONException {
+    public PhotosResponse getPhotos() throws ClientProtocolException,
+            IllegalStateException, IOException, JSONException {
         return getPhotos(null, null, null);
     }
 
@@ -108,7 +87,8 @@ public class OpenPhotoApi extends ApiBase implements IOpenPhotoApi {
      */
     @Override
     public PhotosResponse getPhotos(ReturnSizes resize)
-            throws ClientProtocolException, IllegalStateException, IOException, JSONException {
+            throws ClientProtocolException, IllegalStateException, IOException,
+            JSONException {
         return getPhotos(resize, null, null);
     }
 
@@ -120,7 +100,8 @@ public class OpenPhotoApi extends ApiBase implements IOpenPhotoApi {
      */
     @Override
     public PhotosResponse getPhotos(ReturnSizes resize, Paging paging)
-            throws ClientProtocolException, IllegalStateException, IOException, JSONException {
+            throws ClientProtocolException, IllegalStateException, IOException,
+            JSONException {
         return getPhotos(resize, null, paging);
     }
 
@@ -132,7 +113,8 @@ public class OpenPhotoApi extends ApiBase implements IOpenPhotoApi {
      */
     @Override
     public PhotosResponse getPhotos(ReturnSizes resize, Collection<String> tags)
-            throws ClientProtocolException, IllegalStateException, IOException, JSONException {
+            throws ClientProtocolException, IllegalStateException, IOException,
+            JSONException {
         return getPhotos(resize, tags, null);
     }
 
@@ -144,8 +126,10 @@ public class OpenPhotoApi extends ApiBase implements IOpenPhotoApi {
      * me.openphoto.android.app.net.Paging)
      */
     @Override
-    public PhotosResponse getPhotos(ReturnSizes resize, Collection<String> tags, Paging paging)
-            throws ClientProtocolException, IOException, IllegalStateException, JSONException {
+    public PhotosResponse getPhotos(ReturnSizes resize,
+            Collection<String> tags, Paging paging)
+            throws ClientProtocolException, IOException, IllegalStateException,
+            JSONException {
         ApiRequest request = new ApiRequest(ApiRequest.GET, "/photos/list.json");
         if (resize != null) {
             request.addParameter("returnSizes", resize.toString());
@@ -163,7 +147,8 @@ public class OpenPhotoApi extends ApiBase implements IOpenPhotoApi {
                 request.addParameter("page", Integer.toString(paging.getPage()));
             }
             if (paging.hasPageSize()) {
-                request.addParameter("pageSize", Integer.toString(paging.getPageSize()));
+                request.addParameter("pageSize",
+                        Integer.toString(paging.getPageSize()));
             }
         }
         ApiResponse response = execute(request);
@@ -177,9 +162,10 @@ public class OpenPhotoApi extends ApiBase implements IOpenPhotoApi {
      */
     @Override
     public UploadResponse uploadPhoto(File imageFile, UploadMetaData metaData,
-            ProgressListener progressListener)
-            throws ClientProtocolException, IOException, IllegalStateException, JSONException {
-        ApiRequest request = new ApiRequest(ApiRequest.POST, "/photo/upload.json");
+            ProgressListener progressListener) throws ClientProtocolException,
+            IOException, IllegalStateException, JSONException {
+        ApiRequest request = new ApiRequest(ApiRequest.POST,
+                "/photo/upload.json");
         request.setMime(true);
         if (metaData.getTags() != null) {
             request.addParameter("tags", metaData.getTags());
@@ -190,7 +176,8 @@ public class OpenPhotoApi extends ApiBase implements IOpenPhotoApi {
         if (metaData.getDescription() != null) {
             request.addParameter("description", metaData.getDescription());
         }
-        request.addParameter("permission", Integer.toString(metaData.getPermission()));
+        request.addParameter("permission",
+                Integer.toString(metaData.getPermission()));
 
         request.addFileParameter("photo", imageFile);
         ApiResponse response = execute(request, progressListener);

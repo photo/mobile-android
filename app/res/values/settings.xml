@@ -5,7 +5,7 @@
   <!--#########-->
   <string name="setting_account_server_title">Server URL</string>
   <string name="setting_account_server_key">setting_server</string>
-  <string name="setting_account_server_default">http://current.openphoto.me</string>
+  <string name="setting_account_server_default">https://openphoto.me</string>
   
   <string name="setting_account_title">Account</string>
   

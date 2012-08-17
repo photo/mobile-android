@@ -1,3 +1,4 @@
+
 package me.openphoto.android.app;
 
 import me.openphoto.android.app.net.IOpenPhotoApi;
@@ -36,6 +37,12 @@ public class Preferences {
         if (!server.startsWith("http")) {
             server = "http://" + server;
         }
+
+        if (server.endsWith("/")) {
+            server = server.substring(0,
+                    server.length() - 1);
+        }
+
         return PreferenceManager.getDefaultSharedPreferences(context)
                 .edit()
                 .putString(context.getString(R.string.setting_account_server_key), server)
@@ -86,26 +93,23 @@ public class Preferences {
         return provider;
     }
 
-    public static IOpenPhotoApi getApi(Context context) {
-        IOpenPhotoApi api = OpenPhotoApi.createInstance(getServer(context));
-        if (isLoggedIn(context)) {
-            api.setOAuthConsumer(getOAuthConsumer(context));
-        }
-        return api;
-    }
-
-    private static OAuthConsumer getOAuthConsumer(Context context) {
+    public static OAuthConsumer getOAuthConsumer(Context context) {
         if (!isLoggedIn(context)) {
-            throw new IllegalAccessError("User is not logged in, so can not call this method!");
+            return null;
         }
 
         SharedPreferences prefs = context.getSharedPreferences("oauth", Context.MODE_PRIVATE);
         OAuthConsumer consumer = new CommonsHttpOAuthConsumer(
                 prefs.getString(context.getString(R.string.setting_oauth_consumer_key), null),
-                prefs.getString(context.getString(R.string.setting_oauth_consumer_secret), null));
+                prefs.getString(context.getString(R.string.setting_oauth_consumer_secret),
+                        null));
         consumer.setTokenWithSecret(
                 prefs.getString(context.getString(R.string.setting_oauth_token), null),
                 prefs.getString(context.getString(R.string.setting_oauth_token_secret), null));
         return consumer;
+    }
+
+    public static IOpenPhotoApi getApi(Context context) {
+        return OpenPhotoApi.createInstance(context);
     }
 }
