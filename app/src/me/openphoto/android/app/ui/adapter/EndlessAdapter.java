@@ -57,7 +57,7 @@ public abstract class EndlessAdapter<T> extends BaseAdapter {
     }
 
     @SuppressWarnings("unchecked")
-	@Override
+    @Override
     public final View getView(int position, View convertView, ViewGroup parent) {
         if (position == getCount() - 1) {
             loadNextPage();
