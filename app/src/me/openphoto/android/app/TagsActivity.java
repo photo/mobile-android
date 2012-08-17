@@ -1,5 +1,10 @@
 package me.openphoto.android.app;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import com.bugsense.trace.BugSenseHandler;
+
 import me.openphoto.android.app.model.Tag;
 import me.openphoto.android.app.net.IOpenPhotoApi;
 import me.openphoto.android.app.net.TagsResponse;
@@ -111,6 +116,9 @@ public class TagsActivity extends Activity implements OnItemClickListener {
                 return new LoadResponse(response.getTags(), false);
             } catch (Exception e) {
                 Log.e(TAG, "Could not load next photos in list", e);
+				Map<String, String> extraData = new HashMap<String, String>();
+				extraData.put("message", "Could not load next photos in list");
+				BugSenseHandler.log(TAG, extraData, e);
             }
             return new LoadResponse(null, false);
         }

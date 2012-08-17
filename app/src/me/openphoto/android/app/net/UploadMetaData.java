@@ -48,6 +48,4 @@ public class UploadMetaData {
     public boolean isPrivate() {
         return getPermission() == Photo.PERMISSION_PRIVATE;
     }
-
-    // TODO add dateUploaded, dateTaken, latitude, longitude, returnSizes
 }

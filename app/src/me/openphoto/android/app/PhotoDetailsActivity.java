@@ -1,6 +1,10 @@
 package me.openphoto.android.app;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+
+import com.bugsense.trace.BugSenseHandler;
 
 import me.openphoto.android.app.model.Photo;
 import me.openphoto.android.app.net.PhotoResponse;
@@ -244,6 +248,9 @@ public class PhotoDetailsActivity extends Activity {
                 return mStorage.getBitmap(mPhoto.getUrl(PhotosEndlessAdapter.SIZE_BIG));
             } catch (Exception e) {
                 Log.e(TAG, "Could not get photo", e);
+				Map<String, String> extraData = new HashMap<String, String>();
+				extraData.put("message", "Error with load photos");
+				BugSenseHandler.log(TAG, extraData, e);
                 return null;
             }
         }
