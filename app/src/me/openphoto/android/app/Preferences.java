@@ -59,6 +59,10 @@ public class Preferences {
                 .edit()
                 .putBoolean(context.getString(R.string.setting_account_loggedin_key), false)
                 .commit();
+        PreferenceManager.getDefaultSharedPreferences(context).edit()
+                .putString(context.getString(R.string.setting_account_server_key),
+                        context.getString(R.string.setting_account_server_default)).commit();
+
         context.getSharedPreferences("oauth", Context.MODE_PRIVATE)
                 .edit()
                 .clear()
