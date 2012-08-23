@@ -135,4 +135,17 @@ public interface IOpenPhotoApi {
     UploadResponse uploadPhoto(File imageFile, UploadMetaData metaData,
             ProgressListener progressListener) throws ClientProtocolException,
             IOException, IllegalStateException, JSONException;
+
+    /**
+     * Return Newest Photos to be used in the Home Screen
+     * 
+     * @param paging paging for the newest hone screen
+     * @return a list of photos to be displayed inthe home screen
+     * @throws ClientProtocolException
+     * @throws IOException
+     * @throws IllegalStateException
+     * @throws JSONException
+     */
+    PhotosResponse getNewestPhotos(Paging paging) throws ClientProtocolException, IOException,
+            IllegalStateException, JSONException;
 }

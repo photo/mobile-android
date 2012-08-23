@@ -14,6 +14,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.content.Context;
+import android.util.Log;
 
 /**
  * OpenPhotoApi provides access to the acOpenPhoto API.
@@ -57,11 +58,6 @@ public class OpenPhotoApi extends ApiBase implements IOpenPhotoApi {
         return new PhotoResponse(new JSONObject(response.getContentAsString()));
     }
 
-    /*
-     * (non-Javadoc)
-     * @see
-     * me.openphoto.android.app.net.IOpenPhotoApi#getOAuthUrl(java.lang.String)
-     */
     @Override
     public String getOAuthUrl(String name, String callback) {
         return R.string.setting_account_server_default + "/v1/oauth/authorize?mobile=1&name="
@@ -69,22 +65,12 @@ public class OpenPhotoApi extends ApiBase implements IOpenPhotoApi {
                 + "&oauth_callback=" + callback;
     }
 
-    /*
-     * (non-Javadoc)
-     * @see me.openphoto.android.app.net.IOpenPhotoApi#getPhotos()
-     */
     @Override
     public PhotosResponse getPhotos() throws ClientProtocolException,
             IllegalStateException, IOException, JSONException {
         return getPhotos(null, null, null);
     }
 
-    /*
-     * (non-Javadoc)
-     * @see
-     * me.openphoto.android.app.net.IOpenPhotoApi#getPhotos(me.openphoto.android
-     * .app.net.ReturnSize)
-     */
     @Override
     public PhotosResponse getPhotos(ReturnSizes resize)
             throws ClientProtocolException, IllegalStateException, IOException,
@@ -92,12 +78,6 @@ public class OpenPhotoApi extends ApiBase implements IOpenPhotoApi {
         return getPhotos(resize, null, null);
     }
 
-    /*
-     * (non-Javadoc)
-     * @see
-     * me.openphoto.android.app.net.IOpenPhotoApi#getPhotos(me.openphoto.android
-     * .app.net.ReturnSize, int)
-     */
     @Override
     public PhotosResponse getPhotos(ReturnSizes resize, Paging paging)
             throws ClientProtocolException, IllegalStateException, IOException,
@@ -105,12 +85,6 @@ public class OpenPhotoApi extends ApiBase implements IOpenPhotoApi {
         return getPhotos(resize, null, paging);
     }
 
-    /*
-     * (non-Javadoc)
-     * @see
-     * me.openphoto.android.app.net.IOpenPhotoApi#getPhotos(me.openphoto.android
-     * .app.net.ReturnSize, java.util.Collection)
-     */
     @Override
     public PhotosResponse getPhotos(ReturnSizes resize, Collection<String> tags)
             throws ClientProtocolException, IllegalStateException, IOException,
@@ -183,6 +157,29 @@ public class OpenPhotoApi extends ApiBase implements IOpenPhotoApi {
         ApiResponse response = execute(request, progressListener);
         String responseString = response.getContentAsString();
         return new UploadResponse(new JSONObject(responseString));
+    }
+
+    @Override
+    public PhotosResponse getNewestPhotos(Paging paging) throws ClientProtocolException,
+            IOException,
+            IllegalStateException, JSONException {
+        ApiRequest request = new ApiRequest(ApiRequest.GET, "/photos/list.json");
+        request.addParameter("returnSizes", "305x265xCR");
+        request.addParameter("sortBy", "dateUploaded,DESC");
+
+        if (paging != null) {
+            if (paging.hasPage()) {
+                request.addParameter("page", Integer.toString(paging.getPage()));
+            }
+            if (paging.hasPageSize()) {
+                request.addParameter("pageSize",
+                        Integer.toString(paging.getPageSize()));
+            }
+        }
+        ApiResponse response = execute(request);
+        String result = response.getContentAsString();
+        Log.e(TAG, "Result = " + result);
+        return new PhotosResponse(new JSONObject(result));
     }
 
     /**

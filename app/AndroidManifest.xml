@@ -32,7 +32,6 @@
         <activity
             android:name=".TagsActivity"
             android:windowSoftInputMode="stateHidden" />
-        <activity android:name=".SettingsActivity" />
         <activity
             android:name=".UploadActivity"
             android:configChanges="orientation" >

@@ -29,6 +29,7 @@ public class Photo implements Parcelable {
     protected String mTitle;
     protected String mDescription;
     protected int mPermission;
+    protected String mDateUploaded;
 
     /**
      * Constructor which will not be used externally. Everything should be done
@@ -60,6 +61,8 @@ public class Photo implements Parcelable {
         }
 
         photo.mPermission = json.optInt("permission", PERMISSION_PRIVATE);
+
+        photo.mDateUploaded = json.optString("dateUploaded");
 
         String host = "http://" + json.optString("host");
         String base = json.optString("pathBase");
@@ -148,6 +151,10 @@ public class Photo implements Parcelable {
      */
     public boolean isPrivate() {
         return mPermission == Photo.PERMISSION_PRIVATE;
+    }
+
+    public String getDateUploaded() {
+        return mDateUploaded;
     }
 
     /*****************************

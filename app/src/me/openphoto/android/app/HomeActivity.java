@@ -1,13 +1,25 @@
 
 package me.openphoto.android.app;
 
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
+import me.openphoto.android.app.model.Photo;
+import me.openphoto.android.app.net.IOpenPhotoApi;
+import me.openphoto.android.app.net.Paging;
+import me.openphoto.android.app.net.PhotosResponse;
+import me.openphoto.android.app.ui.adapter.EndlessAdapter;
+import me.openphoto.android.app.ui.widget.ActionBar;
 import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
-import android.widget.ArrayAdapter;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
 import android.widget.ListView;
+import android.widget.TextView;
+
+import com.bugsense.trace.BugSenseHandler;
 
 /**
  * The home activity - screen
@@ -17,8 +29,8 @@ import android.widget.ListView;
 public class HomeActivity extends Activity {
     public static final String TAG = HomeActivity.class.getSimpleName();
 
-    private ListView mainListView;
-    private ArrayAdapter<String> listAdapter;
+    private ActionBar mActionBar;
+    private NewestPhotosAdapter mAdapter;
 
     /**
      * Called when Home Activity is first loaded
@@ -29,32 +41,67 @@ public class HomeActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
+        mActionBar = (ActionBar) getParent().findViewById(R.id.actionbar);
 
-        // Find the ListView resource.
-        mainListView = (ListView) findViewById(R.id.grid_newest_photos);
+        mAdapter = new NewestPhotosAdapter();
+        ListView list = (ListView) findViewById(R.id.list_newest_photos);
+        list.setAdapter(mAdapter);
+    }
 
-        // Create and populate a List of planet names.
-        String[] planets = new String[] {
-                "Mercury", "Venus", "Earth", "Mars",
-                "Jupiter", "Saturn", "Uranus", "Neptune"
-        };
-        ArrayList<String> planetList = new ArrayList<String>();
-        planetList.addAll(Arrays.asList(planets));
+    private class NewestPhotosAdapter extends EndlessAdapter<Photo> {
+        private final IOpenPhotoApi mOpenPhotoApi;
 
-        // Create ArrayAdapter using the planet list.
-        listAdapter = new ArrayAdapter<String>(this, R.layout.activity_home_newest_photos,
-                planetList);
+        public NewestPhotosAdapter() {
+            super(Integer.MAX_VALUE);
+            mOpenPhotoApi = Preferences.getApi(HomeActivity.this);
+            loadFirstPage();
+        }
 
-        // Add more planets. If you passed a String[] instead of a List<String>
-        // into the ArrayAdapter constructor, you must not add more items.
-        // Otherwise an exception will occur.
-        listAdapter.add("Ceres");
-        listAdapter.add("Pluto");
-        listAdapter.add("Haumea");
-        listAdapter.add("Makemake");
-        listAdapter.add("Eris");
+        @Override
+        public long getItemId(int position) {
+            return ((Photo) getItem(position)).getId().hashCode();
+        }
 
-        // Set the ArrayAdapter as the ListView's adapter.
-        mainListView.setAdapter(listAdapter);
+        @Override
+        public View getView(Photo photo, View convertView) {
+
+            if (convertView == null) {
+                final LayoutInflater layoutInflater =
+                        (LayoutInflater)
+                        getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                convertView =
+                        layoutInflater.inflate(R.layout.list_item_newest_photos, null);
+            }
+
+            ((TextView) convertView.findViewById(R.id.text_newest))
+                    .setText(photo.getDateUploaded());
+            ((TextView) convertView.findViewById(R.id.text_newest_count)).setText("1");
+
+            return convertView;
+        }
+
+        @Override
+        public LoadResponse loadItems(int page) {
+            try {
+                PhotosResponse response = mOpenPhotoApi.getNewestPhotos(new Paging(page, 25));
+                return new LoadResponse(response.getPhotos(), false);
+            } catch (Exception e) {
+                Log.e(TAG, "Could not load next photos in list", e);
+                Map<String, String> extraData = new HashMap<String, String>();
+                extraData.put("message", "Could not load next photos in list for HomeActivity");
+                BugSenseHandler.log(TAG, extraData, e);
+            }
+            return new LoadResponse(null, false);
+        }
+
+        @Override
+        protected void onStartLoading() {
+            mActionBar.startLoading();
+        }
+
+        @Override
+        protected void onStoppedLoading() {
+            mActionBar.stopLoading();
+        }
     }
 }
