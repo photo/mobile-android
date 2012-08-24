@@ -81,6 +81,8 @@ public class ApiBase {
 
         httpRequest.getParams().setBooleanParameter(
                 "http.protocol.expect-continue", false);
+        httpRequest.setHeader("User-Agent", "OpenPhoto Android");
+
         OAuthConsumer consumer = Preferences.getOAuthConsumer(context);
         if (consumer != null) {
             try {
