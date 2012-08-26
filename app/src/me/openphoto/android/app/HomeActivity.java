@@ -1,6 +1,7 @@
 
 package me.openphoto.android.app;
 
+import java.text.DateFormat;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -43,17 +44,19 @@ public class HomeActivity extends Activity {
         setContentView(R.layout.activity_home);
         mActionBar = (ActionBar) getParent().findViewById(R.id.actionbar);
 
-        mAdapter = new NewestPhotosAdapter();
+        mAdapter = new NewestPhotosAdapter(this);
         ListView list = (ListView) findViewById(R.id.list_newest_photos);
         list.setAdapter(mAdapter);
     }
 
     private class NewestPhotosAdapter extends EndlessAdapter<Photo> {
         private final IOpenPhotoApi mOpenPhotoApi;
+        private final Context mContext;
 
-        public NewestPhotosAdapter() {
+        public NewestPhotosAdapter(Context context) {
             super(Integer.MAX_VALUE);
             mOpenPhotoApi = Preferences.getApi(HomeActivity.this);
+            mContext = context;
             loadFirstPage();
         }
 
@@ -73,9 +76,26 @@ public class HomeActivity extends Activity {
                         layoutInflater.inflate(R.layout.list_item_newest_photos, null);
             }
 
-            ((TextView) convertView.findViewById(R.id.text_newest))
-                    .setText(photo.getDateUploaded());
-            ((TextView) convertView.findViewById(R.id.text_newest_count)).setText("1");
+            /*
+             * set image try { ImageView i = (ImageView)
+             * findViewById(R.id.newest_image); Bitmap bitmap =
+             * BitmapFactory.decodeStream((InputStream) new URL(photo
+             * .getUrl("305x265xCR")) .getContent()); i.setImageBitmap(bitmap);
+             * } catch (MalformedURLException e) { e.printStackTrace(); } catch
+             * (IOException e) { e.printStackTrace(); }
+             */
+
+            // set title or file's name
+            if (photo.getTitle() != null && photo.getTitle().trim().length() > 0)
+                ((TextView) convertView.findViewById(R.id.newest_title)).setText(photo.getTitle());
+            else
+                ((TextView) convertView.findViewById(R.id.newest_title)).setText(photo
+                        .getFilenameOriginal());
+
+            // set the date
+            DateFormat df = DateFormat.getDateTimeInstance();
+            ((TextView) convertView.findViewById(R.id.newest_date))
+                    .setText(df.format(photo.getDataTaken()));
 
             return convertView;
         }

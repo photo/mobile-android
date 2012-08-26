@@ -1,28 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-  xmlns:android="http://schemas.android.com/apk/res/android"
-  android:orientation="horizontal"
-  android:layout_width="fill_parent"
-  android:layout_height="wrap_content"
-  android:gravity="center_vertical"
-  android:paddingLeft="@dimen/site_padding"
-  android:paddingRight="@dimen/site_padding"
-  android:paddingTop="@dimen/site_padding_half"
-  android:paddingBottom="@dimen/site_padding_half">
-    <TextView
-      android:id="@+id/text_newest"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:layout_weight="1"
-      android:text="newest" />
-    <TextView
-      android:id="@+id/text_newest_count"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:layout_marginRight="5dp"
-      android:text="0" />
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center_vertical"
+    android:orientation="vertical"
+    android:paddingBottom="@dimen/site_padding_half"
+    android:paddingLeft="@dimen/site_padding"
+    android:paddingRight="@dimen/site_padding"
+    android:paddingTop="@dimen/site_padding_half" >
+
     <ImageView
-      android:layout_height="wrap_content"
-      android:layout_width="wrap_content"
-      android:src="@drawable/ic_right" />
+        android:id="@+id/newest_image"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:src="@drawable/icon" />
+
+    <TextView
+        android:id="@+id/newest_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Large Text"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+
+    <TextView
+        android:id="@+id/newest_date"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="newest" />
+    
 </LinearLayout>

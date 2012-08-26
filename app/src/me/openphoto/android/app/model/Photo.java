@@ -2,6 +2,7 @@
 package me.openphoto.android.app.model;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,7 +30,11 @@ public class Photo implements Parcelable {
     protected String mTitle;
     protected String mDescription;
     protected int mPermission;
-    protected String mDateUploaded;
+    protected Date mDateUploaded;
+    private Date mDataTaken;
+    private String mLatitude;
+    private String mLongitude;
+    private String mFilenameOriginal;
 
     /**
      * Constructor which will not be used externally. Everything should be done
@@ -60,15 +65,17 @@ public class Photo implements Parcelable {
             photo.mDescription = json.optString("description");
         }
 
-        photo.mPermission = json.optInt("permission", PERMISSION_PRIVATE);
-
-        photo.mDateUploaded = json.optString("dateUploaded");
-
         String host = "http://" + json.optString("host");
-        String base = json.optString("pathBase");
-        String original = json.optString("pathOriginal");
-        photo.mUrls.put("base", host + base);
-        photo.mUrls.put("original", host + original);
+
+        photo.mUrls.put("base", host + json.optString("pathBase"));
+        photo.mUrls.put("original", host + json.optString("pathOriginal"));
+        photo.mUrls.put("url", json.optString("url"));
+        photo.mPermission = json.optInt("permission", PERMISSION_PRIVATE);
+        photo.mDateUploaded = new Date(Long.parseLong(json.optString("dateUploaded")));
+        photo.mDataTaken = new Date(Long.parseLong(json.optString("dateTaken")));
+        photo.mFilenameOriginal = json.optString("filenameOriginal");
+        photo.mLatitude = json.optString("latitude");
+        photo.mLongitude = json.optString("longitude");
 
         // Tags
         JSONArray tags = json.getJSONArray("tags");
@@ -88,17 +95,9 @@ public class Photo implements Parcelable {
             }
         }
 
-        // TODO: pathBase, exifCameraMake, height, creativeCommons,
-        // dateUploaded, dateUploadedDay,dateUploadedMonth, dateUploadedYear,
-        // latitude, longitude, host, hash, status, width, dateTaken,
-        // dateTakenDay, dateTakenMonth, dateTakenYear, permission,
-        // pathOriginal, size, views, exifCameraModel
         return photo;
     }
 
-    /**
-     * @return id
-     */
     public String getId() {
         return mId;
     }
@@ -132,16 +131,10 @@ public class Photo implements Parcelable {
         return mUrls.get(size);
     }
 
-    /**
-     * @return title of the photo
-     */
     public String getTitle() {
         return mTitle;
     }
 
-    /**
-     * @return description of the photo
-     */
     public String getDescription() {
         return mDescription;
     }
@@ -153,8 +146,24 @@ public class Photo implements Parcelable {
         return mPermission == Photo.PERMISSION_PRIVATE;
     }
 
-    public String getDateUploaded() {
+    public Date getDateUploaded() {
         return mDateUploaded;
+    }
+
+    public Date getDataTaken() {
+        return mDataTaken;
+    }
+
+    public String getFilenameOriginal() {
+        return mFilenameOriginal;
+    }
+
+    public String getLatitude() {
+        return mLatitude;
+    }
+
+    public String getLongitude() {
+        return mLongitude;
     }
 
     /*****************************
