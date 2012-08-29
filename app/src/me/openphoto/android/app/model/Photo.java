@@ -71,8 +71,8 @@ public class Photo implements Parcelable {
         photo.mUrls.put("original", host + json.optString("pathOriginal"));
         photo.mUrls.put("url", json.optString("url"));
         photo.mPermission = json.optInt("permission", PERMISSION_PRIVATE);
-        photo.mDateUploaded = new Date(Long.parseLong(json.optString("dateUploaded")));
-        photo.mDataTaken = new Date(Long.parseLong(json.optString("dateTaken")));
+        photo.mDateUploaded = new Date(Long.parseLong(json.optString("dateUploaded")) * 1000);
+        photo.mDataTaken = new Date(Long.parseLong(json.optString("dateTaken")) * 1000);
         photo.mFilenameOriginal = json.optString("filenameOriginal");
         photo.mLatitude = json.optString("latitude");
         photo.mLongitude = json.optString("longitude");

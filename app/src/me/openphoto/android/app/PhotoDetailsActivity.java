@@ -26,6 +26,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ImageView.ScaleType;
 import android.widget.TextView;
@@ -223,7 +224,7 @@ public class PhotoDetailsActivity extends Activity {
         }
 
         @Override
-        public View getView(Photo item, View convertView) {
+        public View getView(Photo item, View convertView, ViewGroup parent) {
             return null;
         }
 

@@ -3,13 +3,14 @@
 
     <string name="app_name">OpenPhoto</string>
     <string name="openphoto">OpenPhoto</string>
-    <string name="loading">Loading...</string>
+    <string name="loading">Loading&#8230;</string>
     <string name="take_photo">Take Photo</string>
     
     <!-- Menu -->
     <string name="menu_refresh">Refresh</string>
     <string name="menu_preferences">Preferences</string>
-
+    <string name="menu_exit">Exit</string>
+    
     <!-- SetupActivity -->
     <string name="hint_server">username.openphoto.me</string>
     <string name="login">Login</string>

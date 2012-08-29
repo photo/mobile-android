@@ -11,6 +11,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.GridView;
@@ -86,7 +87,7 @@ public class GalleryActivity extends Activity implements OnItemClickListener, Re
         }
 
         @Override
-        public View getView(Photo photo, View convertView) {
+        public View getView(Photo photo, View convertView, ViewGroup parent) {
             if (convertView == null) {
                 final LayoutInflater layoutInflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                 convertView = layoutInflater.inflate(R.layout.item_gallery_image, null);

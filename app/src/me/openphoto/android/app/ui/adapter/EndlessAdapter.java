@@ -14,7 +14,7 @@ public abstract class EndlessAdapter<T> extends BaseAdapter {
     @Override
     public abstract long getItemId(int position);
 
-    public abstract View getView(T item, View convertView);
+    public abstract View getView(T item, View convertView, ViewGroup parent);
 
     /**
      * Called when the next page is loaded. In this method load the items.
@@ -62,7 +62,7 @@ public abstract class EndlessAdapter<T> extends BaseAdapter {
         if (position == getCount() - 1) {
             loadNextPage();
         }
-        return getView((T) getItem(position), convertView);
+        return getView((T) getItem(position), convertView, parent);
     }
 
     public void loadFirstPage() {

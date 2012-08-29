@@ -164,7 +164,7 @@ public class OpenPhotoApi extends ApiBase implements IOpenPhotoApi {
             IOException,
             IllegalStateException, JSONException {
         ApiRequest request = new ApiRequest(ApiRequest.GET, "/photos/list.json");
-        request.addParameter("returnSizes", "305x265xCR");
+        request.addParameter("returnSizes", "700x650xCR");
         request.addParameter("sortBy", "dateUploaded,DESC");
 
         if (paging != null) {

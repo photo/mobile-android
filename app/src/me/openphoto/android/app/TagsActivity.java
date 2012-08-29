@@ -17,6 +17,7 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.EditText;
@@ -99,7 +100,7 @@ public class TagsActivity extends Activity implements OnItemClickListener {
         }
 
         @Override
-        public View getView(Tag tag, View convertView) {
+        public View getView(Tag tag, View convertView, ViewGroup parent) {
             if (convertView == null) {
                 final LayoutInflater layoutInflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                 convertView = layoutInflater.inflate(R.layout.list_item_tag, null);
