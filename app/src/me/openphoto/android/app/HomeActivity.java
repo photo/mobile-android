@@ -134,15 +134,17 @@ public class HomeActivity extends Activity {
 
         @Override
         public LoadResponse loadItems(int page) {
-            try {
-                PhotosResponse response = mOpenPhotoApi.getNewestPhotos(new Paging(page, 25));
-                return new LoadResponse(response.getPhotos(), false);
-            } catch (Exception e) {
-                Log.e(TAG, "Could not load next photos in list", e);
-                Map<String, String> extraData = new HashMap<String, String>();
-                extraData.put("message", "Could not load next photos in list for HomeActivity");
-                BugSenseHandler.log(TAG, extraData, e);
-                alert("Could not load next photos in list");
+            if (Preferences.isLoggedIn(mContext)) {
+                try {
+                    PhotosResponse response = mOpenPhotoApi.getNewestPhotos(new Paging(page, 25));
+                    return new LoadResponse(response.getPhotos(), false);
+                } catch (Exception e) {
+                    Log.e(TAG, "Could not load next photos in list", e);
+                    Map<String, String> extraData = new HashMap<String, String>();
+                    extraData.put("message", "Could not load next photos in list for HomeActivity");
+                    BugSenseHandler.log(TAG, extraData, e);
+                    alert("Could not load next photos in list");
+                }
             }
             return new LoadResponse(null, false);
         }
