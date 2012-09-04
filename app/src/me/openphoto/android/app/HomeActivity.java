@@ -171,19 +171,7 @@ public class HomeActivity extends Activity {
             ((TextView) convertView.findViewById(R.id.newest_date))
                     .setText(text);
 
-            // tags
-            /*
-             * LinearLayout linearLayout = (LinearLayout) convertView
-             * .findViewById(R.id.newest_tag_layout); List<String> list = new
-             * ArrayList<String>(); list.add("2012"); list.add("Bla Bla");
-             * LinearLayout linearLayoutButton = (LinearLayout) convertView
-             * .findViewById(R.layout.my_special_button); if (linearLayoutButton
-             * == null) linearLayoutButton = (LinearLayout)
-             * mInflater.inflate(R.layout.my_special_button, null, false);
-             * Button btn = (Button)
-             * linearLayoutButton.findViewById(R.id.special_button);
-             * btn.setText("tag2"); linearLayout.addView(btn);
-             */
+            // TODO: tags
             return convertView;
         }
 
