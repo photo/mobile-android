@@ -1,7 +1,7 @@
 
 package me.openphoto.android.app;
 
-import java.text.DateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -14,6 +14,7 @@ import me.openphoto.android.app.ui.widget.ActionBar;
 import me.openphoto.android.app.util.ImageWorker;
 import android.app.Activity;
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
@@ -118,17 +119,71 @@ public class HomeActivity extends Activity {
             photoView.setImageDrawable(dr);
 
             // set title or file's name
-            if (photo.getTitle() != null && photo.getTitle().trim().length() > 0)
-                ((TextView) convertView.findViewById(R.id.newest_title)).setText(photo.getTitle());
-            else
+            if (photo.getTitle() != null && photo.getTitle().trim().length()
+                    > 0) {
+                ((TextView) convertView.findViewById(R.id.newest_title)).setText
+                        (photo.getTitle());
+            } else {
                 ((TextView) convertView.findViewById(R.id.newest_title)).setText(photo
                         .getFilenameOriginal());
+            }
 
-            // set the date
-            DateFormat df = DateFormat.getDateTimeInstance();
+            /*
+             * set the date
+             */
+            Resources res = getResources();
+            String text = null;
+
+            long milliseconds = new Date().getTime() - photo.getDateTaken().getTime();
+            long days = milliseconds / (24 * 60 * 60 * 1000);
+
+            if (days >= 2) {
+                if (days > 365) {
+                    // show in years
+                    text = days / 365 == 1 ? String.format(
+                            res.getString(R.string.newest_this_photo_was_taken), days / 365,
+                            res.getString(R.string.year)) :
+                            String.format(res.getString(R.string.newest_this_photo_was_taken),
+                                    days / 365, res.getString(R.string.years));
+                } else {
+                    // lets show in days
+                    text = String.format(res.getString(R.string.newest_this_photo_was_taken), days,
+                            res.getString(R.string.days));
+                }
+            } else {
+                // lets show in hours
+                Long hours = days * 24;
+                if (hours < 1) {
+                    text = String.format(res
+                            .getString(R.string.newest_this_photo_was_taken_less_one_hour));
+                } else {
+                    if (hours == 1) {
+                        text = String.format(res.getString(R.string.newest_this_photo_was_taken),
+                                1, res.getString(R.string.hour));
+                    } else {
+                        text = String.format(res.getString(R.string.newest_this_photo_was_taken),
+                                hours, res.getString(R.string.hours));
+                    }
+                }
+            }
+
+            // set the correct text in the textview
             ((TextView) convertView.findViewById(R.id.newest_date))
-                    .setText(df.format(photo.getDataTaken()));
+                    .setText(text);
 
+            // tags
+            /*
+             * LinearLayout linearLayout = (LinearLayout) convertView
+             * .findViewById(R.id.newest_tag_layout); List<String> list = new
+             * ArrayList<String>(); list.add("2012"); list.add("Bla Bla");
+             * LinearLayout linearLayoutButton = (LinearLayout) convertView
+             * .findViewById(R.layout.my_special_button); if (linearLayoutButton
+             * == null) linearLayoutButton = (LinearLayout)
+             * mInflater.inflate(R.layout.my_special_button, null, false);
+             * Button btn = (Button)
+             * linearLayoutButton.findViewById(R.id.special_button);
+             * btn.setText("tag2"); linearLayout.addView(btn);
+             */
             return convertView;
         }
 

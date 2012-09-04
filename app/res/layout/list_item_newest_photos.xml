@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
+    android:clickable="false"
     android:gravity="center_vertical"
     android:orientation="vertical"
     android:paddingBottom="@dimen/site_padding_half"
@@ -13,19 +14,60 @@
         android:id="@+id/newest_image"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="center"
         android:src="@drawable/icon" />
 
-    <TextView
-        android:id="@+id/newest_title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Large Text"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
-
-    <TextView
-        android:id="@+id/newest_date"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="newest" />
-    
+        android:background="#FFFFFF"
+        android:clickable="false"
+        android:longClickable="false"
+        android:orientation="vertical"
+        android:padding="5dp" >
+
+        <TextView
+            android:id="@+id/newest_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:clickable="false"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
+
+        <TextView
+            android:id="@+id/newest_date"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clickable="false"
+            android:text="@string/newest_this_photo_was_taken"
+            android:textColor="#545557"
+            android:textSize="12dp" />
+
+        <LinearLayout
+            android:id="@+id/newest_tag_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clickable="false" >
+
+            <Button
+                style="@style/button_text"
+                android:layout_width="wrap_content"
+                android:layout_height="20dp"
+                android:background="@drawable/button_tag"
+                android:clickable="false"
+                android:focusable="false"
+                android:linksClickable="false"
+                android:text="tomato" />
+
+            <Button
+                style="@style/button_text"
+                android:layout_width="wrap_content"
+                android:layout_height="20dp"
+                android:background="@drawable/button_tag"
+                android:clickable="false"
+                android:focusable="false"
+                android:linksClickable="false"
+                android:text="house" />
+        </LinearLayout>
+    </LinearLayout>
+
 </LinearLayout>

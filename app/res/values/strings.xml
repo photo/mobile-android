@@ -5,12 +5,12 @@
     <string name="openphoto">OpenPhoto</string>
     <string name="loading">Loading&#8230;</string>
     <string name="take_photo">Take Photo</string>
-    
+
     <!-- Menu -->
     <string name="menu_refresh">Refresh</string>
     <string name="menu_preferences">Preferences</string>
     <string name="menu_exit">Exit</string>
-    
+
     <!-- SetupActivity -->
     <string name="hint_server">username.openphoto.me</string>
     <string name="login">Login</string>
@@ -30,5 +30,17 @@
     <string name="notification_upload_failed_text">%1$s</string>
     <string name="notification_upload_success_title">Upload finished</string>
     <string name="notification_upload_success_text">%1$s</string>
+
+    <!-- Newest Home -->
+    <string name="newest_this_photo_was_taken">This photo was taken %1$d %2$s ago.</string>
+    <string name="newest_this_photo_was_taken_less_one_hour">This photo was taken less than one hour ago.</string>
+
+    <!-- general -->
+    <string name="day">day</string>
+    <string name="days">days</string>
+    <string name="hour">hour</string>
+    <string name="hours">hours</string>
+    <string name="year">year</string>
+    <string name="years">years</string>
 
 </resources>

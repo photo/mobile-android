@@ -31,7 +31,7 @@ public class Photo implements Parcelable {
     protected String mDescription;
     protected int mPermission;
     protected Date mDateUploaded;
-    private Date mDataTaken;
+    private Date mDateTaken;
     private String mLatitude;
     private String mLongitude;
     private String mFilenameOriginal;
@@ -71,8 +71,13 @@ public class Photo implements Parcelable {
         photo.mUrls.put("original", host + json.optString("pathOriginal"));
         photo.mUrls.put("url", json.optString("url"));
         photo.mPermission = json.optInt("permission", PERMISSION_PRIVATE);
-        photo.mDateUploaded = new Date(Long.parseLong(json.optString("dateUploaded")) * 1000);
-        photo.mDataTaken = new Date(Long.parseLong(json.optString("dateTaken")) * 1000);
+
+        // dates
+        Long dateUploadedInSeconds = Long.parseLong(json.optString("dateUploaded"));
+        photo.mDateUploaded = new Date(dateUploadedInSeconds.longValue() * 1000L);
+        Long dateTakenInSeconds = Long.parseLong(json.optString("dateTaken"));
+        photo.mDateTaken = new Date(dateTakenInSeconds.longValue() * 1000L);
+
         photo.mFilenameOriginal = json.optString("filenameOriginal");
         photo.mLatitude = json.optString("latitude");
         photo.mLongitude = json.optString("longitude");
@@ -150,8 +155,8 @@ public class Photo implements Parcelable {
         return mDateUploaded;
     }
 
-    public Date getDataTaken() {
-        return mDataTaken;
+    public Date getDateTaken() {
+        return mDateTaken;
     }
 
     public String getFilenameOriginal() {
