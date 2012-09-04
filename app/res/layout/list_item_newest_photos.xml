@@ -5,32 +5,35 @@
     android:clickable="false"
     android:gravity="center_vertical"
     android:orientation="vertical"
-    android:paddingBottom="@dimen/site_padding_half"
-    android:paddingLeft="@dimen/site_padding"
-    android:paddingRight="@dimen/site_padding"
-    android:paddingTop="@dimen/site_padding_half" >
+    android:paddingBottom="5dp"
+    android:paddingLeft="5dp"
+    android:paddingRight="5dp"
+    android:paddingTop="5dp" >
 
     <ImageView
         android:id="@+id/newest_image"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
+        android:baselineAlignBottom="false"
+        android:paddingBottom="0dp"
         android:src="@drawable/icon" />
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="fill_parent"
         android:background="#FFFFFF"
         android:clickable="false"
         android:longClickable="false"
         android:orientation="vertical"
-        android:padding="5dp" >
+        android:paddingTop="0dp" >
 
         <TextView
             android:id="@+id/newest_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:clickable="false"
+            android:padding="2dp"
             android:textAppearance="?android:attr/textAppearanceLarge" />
 
         <TextView
@@ -38,6 +41,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:clickable="false"
+            android:padding="2dp"
             android:text="@string/newest_this_photo_was_taken"
             android:textColor="#545557"
             android:textSize="12dp" />
