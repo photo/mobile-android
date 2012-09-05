@@ -19,8 +19,6 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -35,9 +33,8 @@ import com.bugsense.trace.BugSenseHandler;
  * 
  * @author Patrick Boos
  */
-public class HomeActivity extends Activity {
+public class HomeActivity extends Activity implements Refreshable {
     public static final String TAG = HomeActivity.class.getSimpleName();
-    static final private int EXIT_ID = Menu.FIRST;
 
     private ActionBar mActionBar;
     private NewestPhotosAdapter mAdapter;
@@ -57,30 +54,17 @@ public class HomeActivity extends Activity {
         mActionBar = (ActionBar) getParent().findViewById(R.id.actionbar);
         findViewById(R.id.actionbar).setVisibility(View.GONE);
 
-        mAdapter = new NewestPhotosAdapter(this);
-        ListView list = (ListView) findViewById(R.id.list_newest_photos);
-        list.setAdapter(mAdapter);
+        // table with newest photos
+        refresh();
 
         iw = new ImageWorker(this, mActionBar);
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        super.onCreateOptionsMenu(menu);
-
-        /* the context menu currently has only one option */
-        menu.add(0, EXIT_ID, 0, R.string.menu_exit);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case EXIT_ID:
-                finish(); /* terminate the application */
-                return true;
-        }
-        return super.onOptionsItemSelected(item);
+    public void refresh() {
+        mAdapter = new NewestPhotosAdapter(this);
+        ListView list = (ListView) findViewById(R.id.list_newest_photos);
+        list.setAdapter(mAdapter);
     }
 
     private void alert(String msg)
