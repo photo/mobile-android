@@ -1,32 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-  <PreferenceCategory
-    android:title="@string/setting_account_title">
-    <EditTextPreference
-      android:title="@string/setting_account_server_title"
-      android:key="@string/setting_account_server_key"
-      android:defaultValue="@string/setting_account_server_default" 
-      android:inputType="textUri" />
-    <!-- 
-    <PreferenceScreen
-      android:title="@string/setting_account_edit_account_title" />
-    <PreferenceScreen
-      android:title="@string/setting_account_change_profile_picture_title" />
-    -->
-    <PreferenceScreen
-      android:key="@string/setting_account_loggedin_key" />
-  </PreferenceCategory>
-  <PreferenceCategory
-    android:title="Auto upload of taken pictures">
-    <CheckBoxPreference
-      android:title="Auto upload taken pictures"
-      android:defaultValue="@bool/setting_autoupload_on_default"
-      android:key="@string/setting_autoupload_on_key" />
-    <EditTextPreference
-      android:dialogTitle="Set tag for uploaded pictures:"
-      android:title="Tag"
-      android:key="@string/setting_autoupload_tag_key"
-      android:dependency="@string/setting_autoupload_on_key"
-      android:defaultValue="@string/setting_autoupload_tag_default" />
-  </PreferenceCategory>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <PreferenceCategory android:title="@string/setting_account_title" >
+        <Preference
+            android:defaultValue="@string/setting_account_server_default"
+            android:key="@string/setting_account_server_key"
+            android:selectable="false"
+            android:title="@string/setting_account_server_title" />
+
+        <PreferenceScreen android:key="@string/setting_account_loggedin_key" />
+    </PreferenceCategory>
+    
+    <PreferenceCategory android:title="Auto upload of taken pictures" >
+        <CheckBoxPreference
+            android:defaultValue="@bool/setting_autoupload_on_default"
+            android:key="@string/setting_autoupload_on_key"
+            android:title="Auto upload taken pictures" />
+
+        <EditTextPreference
+            android:defaultValue="@string/setting_autoupload_tag_default"
+            android:dependency="@string/setting_autoupload_on_key"
+            android:dialogTitle="Set tag for uploaded pictures:"
+            android:key="@string/setting_autoupload_tag_key"
+            android:title="Tag" />
+    </PreferenceCategory>
+
 </PreferenceScreen>

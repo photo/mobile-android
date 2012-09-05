@@ -17,6 +17,7 @@ import android.preference.PreferenceActivity;
  */
 public class SettingsActivity extends PreferenceActivity implements OnPreferenceClickListener {
     private Preference mLoginPreference;
+    private Preference mServerUrl;
 
     /**
      * Called when Settings Activity is first loaded
@@ -30,12 +31,13 @@ public class SettingsActivity extends PreferenceActivity implements OnPreference
 
         mLoginPreference = findPreference(getString(R.string.setting_account_loggedin_key));
         mLoginPreference.setOnPreferenceClickListener(this);
-
         findPreference(getString(R.string.setting_account_server_key))
                 .setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
                     @Override
-                    public boolean onPreferenceChange(Preference preference, Object newValue) {
-                        String oldValue = ((EditTextPreference) preference).getText();
+                    public boolean onPreferenceChange(Preference preference,
+                            Object newValue) {
+                        String oldValue = ((EditTextPreference)
+                                preference).getText();
                         if (!oldValue.equals(newValue)) {
                             Preferences.logout(SettingsActivity.this);
                             refresh();
@@ -43,6 +45,10 @@ public class SettingsActivity extends PreferenceActivity implements OnPreference
                         return true;
                     }
                 });
+
+        // set url
+        mServerUrl = findPreference(getString(R.string.setting_account_server_key));
+        mServerUrl.setSummary(Preferences.getServer(this));
     }
 
     @Override
