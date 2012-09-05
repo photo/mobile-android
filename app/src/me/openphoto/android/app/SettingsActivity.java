@@ -1,6 +1,8 @@
 
 package me.openphoto.android.app;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.preference.EditTextPreference;
@@ -66,9 +68,22 @@ public class SettingsActivity extends PreferenceActivity implements OnPreference
     public boolean onPreferenceClick(Preference preference) {
         if (getString(R.string.setting_account_loggedin_key).equals(preference.getKey())) {
             if (Preferences.isLoggedIn(this)) {
-                // TODO show logout confirmation dialog
-                Preferences.logout(this);
-                refresh();
+
+                // confirm if user wants to log out
+                new AlertDialog.Builder(this)
+                        .setTitle("Log out")
+                        .setMessage("Are you sure?")
+                        .setIcon(android.R.drawable.ic_dialog_alert)
+                        .setPositiveButton(android.R.string.yes,
+                                new DialogInterface.OnClickListener() {
+
+                                    public void onClick(DialogInterface dialog, int whichButton) {
+                                        Preferences.logout(SettingsActivity.this);
+                                        refresh();
+                                    }
+                                })
+                        .setNegativeButton(android.R.string.no, null).show();
+
             } else {
                 startActivity(new Intent(this, OAuthActivity.class));
             }
