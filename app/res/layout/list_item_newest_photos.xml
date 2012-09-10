@@ -46,32 +46,16 @@
             android:textColor="#545557"
             android:textSize="12dp" />
 
-        <LinearLayout
-            android:id="@+id/newest_tag_layout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:clickable="false" >
-
-            <Button
-                style="@style/button_text"
-                android:layout_width="wrap_content"
-                android:layout_height="20dp"
-                android:background="@drawable/button_tag"
-                android:clickable="false"
-                android:focusable="false"
-                android:linksClickable="false"
-                android:text="tomato" />
-
-            <Button
-                style="@style/button_text"
-                android:layout_width="wrap_content"
-                android:layout_height="20dp"
-                android:background="@drawable/button_tag"
-                android:clickable="false"
-                android:focusable="false"
-                android:linksClickable="false"
-                android:text="house" />
-        </LinearLayout>
+         <HorizontalScrollView 
+             android:id="@+id/horizontalScrollView1" 
+             android:layout_width="wrap_content" 
+             android:layout_height="wrap_content">
+	        <LinearLayout
+	            android:id="@+id/newest_tag_layout"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:clickable="false" />
+        </HorizontalScrollView>
     </LinearLayout>
 
 </LinearLayout>
