@@ -3,6 +3,7 @@ package me.openphoto.android.app;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import me.openphoto.android.app.model.Photo;
@@ -21,6 +22,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -155,7 +157,21 @@ public class HomeActivity extends Activity implements Refreshable {
             ((TextView) convertView.findViewById(R.id.newest_date))
                     .setText(text);
 
-            // TODO: tags
+			// tags
+			List<String> tags = photo.getTags();
+			if (tags != null)
+			{
+				ViewGroup tagsView = (ViewGroup) convertView
+						.findViewById(R.id.newest_tag_layout);
+				tagsView.removeAllViews();
+				for (String tag : tags)
+				{
+					Button tagBtn = (Button) mInflater.inflate(
+							R.layout.tag_btn, tagsView, false);
+					tagBtn.setText(tag);
+					tagsView.addView(tagBtn);
+				}
+			}
             return convertView;
         }
 
