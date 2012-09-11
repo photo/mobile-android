@@ -56,14 +56,15 @@ public class MainActivity extends TabActivity implements ActionClickListener {
         TabSpec tabSpec = getTabHost()
                 .newTabSpec("home")
                 .setIndicator(
-                        newTabIndicator(R.drawable.tab_home, R.string.tab_home))
+						newTabIndicator(R.drawable.tab_home_2states,
+								R.string.tab_home))
                 .setContent(new Intent(this, HomeActivity.class));
         getTabHost().addTab(tabSpec);
 
         tabSpec = getTabHost()
                 .newTabSpec("gallery")
                 .setIndicator(
-                        newTabIndicator(R.drawable.tab_gallery,
+						newTabIndicator(R.drawable.tab_gallery_2states,
                                 R.string.tab_gallery))
                 .setContent(new Intent(this, GalleryActivity.class));
         getTabHost().addTab(tabSpec);
@@ -71,11 +72,12 @@ public class MainActivity extends TabActivity implements ActionClickListener {
         tabSpec = getTabHost()
                 .newTabSpec("tags")
                 .setIndicator(
-                        newTabIndicator(R.drawable.tab_tags, R.string.tab_tags))
+						newTabIndicator(R.drawable.tab_tags_2states,
+								R.string.tab_tags))
                 .setContent(new Intent(this, TagsActivity.class));
         getTabHost().addTab(tabSpec);
 
-        getTabHost().setCurrentTabByTag("gallery");
+		getTabHost().setCurrentTabByTag("gallery");
     }
 
     private View newTabIndicator(int drawableResId, int textResId) {
