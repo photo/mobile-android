@@ -16,15 +16,14 @@
 
 package me.openphoto.android.app.util;
 
+import java.io.File;
+
 import android.annotation.SuppressLint;
 import android.app.ActivityManager;
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.Environment;
 import android.os.StatFs;
-
-import java.io.File;
 
 /**
  * Class containing some static utility methods.
@@ -45,19 +44,6 @@ public class Utils {
         }
     }
 
-    /**
-     * Get the size in bytes of a bitmap.
-     * @param bitmap
-     * @return size in bytes
-     */
-    @SuppressLint("NewApi")
-    public static int getBitmapSize(Bitmap bitmap) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR1) {
-            return bitmap.getByteCount();
-        }
-        // Pre HC-MR1
-        return bitmap.getRowBytes() * bitmap.getHeight();
-    }
 
     /**
      * Check if external storage is built-in or removable.
@@ -133,14 +119,5 @@ public class Utils {
      */
     public static boolean hasExternalCacheDir() {
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO;
-    }
-
-    /**
-     * Check if ActionBar is available.
-     *
-     * @return
-     */
-    public static boolean hasActionBar() {
-        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB;
     }
 }
