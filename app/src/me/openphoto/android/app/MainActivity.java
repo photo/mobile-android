@@ -100,7 +100,7 @@ public class MainActivity extends TabActivity implements ActionClickListener {
         super.onResume();
         mActionBar.removeAction(R.id.action_add);
         if (Preferences.isLoggedIn(this)) {
-            mActionBar.addAction(R.drawable.action_add, 0, R.id.action_add);
+			mActionBar.addAction(R.drawable.button_camera, 0, R.id.action_add);
         }
 
         if (!Preferences.isLoggedIn(this)) {
