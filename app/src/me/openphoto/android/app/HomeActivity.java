@@ -172,6 +172,10 @@ public class HomeActivity extends Activity implements Refreshable {
 					tagsView.addView(tagBtn);
 				}
 			}
+
+			View privateButton = convertView.findViewById(R.id.button_private);
+			privateButton.setVisibility(photo.isPrivate() ? View.VISIBLE
+					: View.INVISIBLE);
             return convertView;
         }
 
