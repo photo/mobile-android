@@ -1,61 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
-    android:layout_height="wrap_content"
-    android:clickable="false"
-    android:gravity="center_vertical"
-    android:orientation="vertical"
-    android:paddingBottom="5dp"
-    android:paddingLeft="5dp"
-    android:paddingRight="5dp"
-    android:paddingTop="5dp" >
+	android:layout_width="fill_parent" android:layout_height="wrap_content"
+	android:clickable="false" android:gravity="center_vertical"
+	android:orientation="vertical" android:paddingBottom="5dp"
+	android:paddingLeft="5dp" android:paddingRight="5dp"
+	android:paddingTop="5dp">
+	<FrameLayout android:layout_width="wrap_content"
+		android:layout_gravity="center" android:layout_height="wrap_content">
+		<ImageView android:id="@+id/newest_image"
+			android:layout_width="wrap_content" android:layout_height="wrap_content"
+			android:baselineAlignBottom="false" android:paddingBottom="0dp"
+			android:src="@drawable/icon" />
+		<ImageView android:id="@+id/button_private"
+			android:layout_width="wrap_content" android:layout_height="wrap_content"
+			android:layout_gravity="bottom|right" android:layout_margin="5dip"
+			android:src="@drawable/button_private" />
+	</FrameLayout>
 
-    <ImageView
-        android:id="@+id/newest_image"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:baselineAlignBottom="false"
-        android:paddingBottom="0dp"
-        android:src="@drawable/icon" />
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="fill_parent"
-        android:background="#FFFFFF"
-        android:clickable="false"
-        android:longClickable="false"
-        android:orientation="vertical"
-        android:paddingTop="0dp" >
+	<LinearLayout android:layout_width="match_parent"
+		android:layout_height="fill_parent" android:background="#FFFFFF"
+		android:clickable="false" android:longClickable="false"
+		android:orientation="vertical" android:paddingTop="0dp">
 
-        <TextView
-            android:id="@+id/newest_title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:clickable="false"
-            android:padding="2dp"
-            android:textAppearance="?android:attr/textAppearanceLarge" />
+		<TextView android:id="@+id/newest_title"
+			android:layout_width="wrap_content" android:layout_height="wrap_content"
+			android:clickable="false" android:padding="2dp"
+			android:textAppearance="?android:attr/textAppearanceLarge" />
 
-        <TextView
-            android:id="@+id/newest_date"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:clickable="false"
-            android:padding="2dp"
-            android:text="@string/newest_this_photo_was_taken"
-            android:textColor="#545557"
-            android:textSize="12dp" />
+		<TextView android:id="@+id/newest_date" android:layout_width="match_parent"
+			android:layout_height="wrap_content" android:clickable="false"
+			android:padding="2dp" android:text="@string/newest_this_photo_was_taken"
+			android:textColor="#545557" android:textSize="12dp" />
 
-         <HorizontalScrollView 
-             android:id="@+id/horizontalScrollView1" 
-             android:layout_width="wrap_content" 
-             android:layout_height="wrap_content">
-	        <LinearLayout
-	            android:id="@+id/newest_tag_layout"
-	            android:layout_width="wrap_content"
-	            android:layout_height="wrap_content"
-	            android:clickable="false" />
-        </HorizontalScrollView>
-    </LinearLayout>
+		<HorizontalScrollView android:id="@+id/horizontalScrollView1"
+			android:layout_width="wrap_content" android:layout_height="wrap_content">
+			<LinearLayout android:id="@+id/newest_tag_layout"
+				android:layout_width="wrap_content" android:layout_height="wrap_content"
+				android:clickable="false" />
+		</HorizontalScrollView>
+	</LinearLayout>
 
 </LinearLayout>
