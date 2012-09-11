@@ -1,14 +1,17 @@
 
 package me.openphoto.android.app.util;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
 
+import me.openphoto.android.app.BuildConfig;
 import me.openphoto.android.app.ui.widget.ActionBar;
 import android.content.Context;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.util.Log;
@@ -17,10 +20,15 @@ import android.widget.ImageView;
 
 public class ImageWorker {
 
+	private static final int HTTP_CACHE_SIZE = 10 * 1024 * 1024; // 10MB
+    public static final String HTTP_CACHE_DIR = "http";
+	public static final String TAG = "HSD";
+    
     private HashMap<String, Drawable> imageCache;
     private static Drawable DEFAULT_ICON = null;
     private BaseAdapter adapt;
     private ActionBar mActionBar;
+	private final DiskLruCache diskCache;
 
     static {
         // DEFAULT_ICON =
@@ -31,6 +39,10 @@ public class ImageWorker {
     {
         imageCache = new HashMap<String, Drawable>();
         mActionBar = actionBar;
+		final File cacheDir = DiskLruCache.getDiskCacheDir(ctx,
+				HTTP_CACHE_DIR);
+		diskCache =
+				DiskLruCache.openCache(ctx, cacheDir, HTTP_CACHE_SIZE);
     }
 
     public Drawable loadImage(BaseAdapter adapt, ImageView view)
@@ -64,20 +76,32 @@ public class ImageWorker {
         @Override
         protected Drawable doInBackground(String... params) {
             s_url = params[0];
+
+			File cachedFile = getCachedFile(s_url);
+			if (cachedFile != null)
+			{
+				return Drawable.createFromPath(cachedFile.getAbsolutePath());
+			}
+
             InputStream istr;
             try {
                 URL url = new URL(s_url);
                 istr = url.openStream();
             } catch (MalformedURLException e) {
-                Log.d("HSD", "Malformed: " + e.getMessage());
+				Log.d(TAG, "Malformed: " + e.getMessage());
                 throw new RuntimeException(e);
             } catch (IOException e)
             {
-                Log.d("HSD", "I/O : " + e.getMessage());
+				Log.d(TAG, "I/O : " + e.getMessage());
                 throw new RuntimeException(e);
 
             }
-            return Drawable.createFromStream(istr, "src");
+			Drawable result = Drawable.createFromStream(istr, "src");
+			if (result instanceof BitmapDrawable)
+			{
+				diskCache.put(s_url, ((BitmapDrawable) result).getBitmap());
+			}
+			return result;
         }
 
         @Override
@@ -91,5 +115,21 @@ public class ImageWorker {
             }
             adapt.notifyDataSetChanged();
         }
+
+		protected File getCachedFile(String urlString)
+		{
+			final File cacheFile = new File(diskCache.createFilePath(urlString));
+
+			if (diskCache.containsKey(urlString))
+			{
+				if (BuildConfig.DEBUG)
+				{
+					Log.d(TAG, "downloadBitmap - found in http cache - "
+							+ urlString);
+				}
+				return cacheFile;
+			}
+			return null;
+		}
     }
 }
