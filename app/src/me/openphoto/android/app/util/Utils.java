@@ -16,15 +16,14 @@
 
 package me.openphoto.android.app.util;
 
+import java.io.File;
+
 import android.annotation.SuppressLint;
 import android.app.ActivityManager;
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.Environment;
 import android.os.StatFs;
-
-import java.io.File;
 
 /**
  * Class containing some static utility methods.
@@ -32,7 +31,8 @@ import java.io.File;
 public class Utils {
     public static final int IO_BUFFER_SIZE = 8 * 1024;
 
-    private Utils() {};
+    private Utils() {
+    };
 
     /**
      * Workaround for bug pre-Froyo, see here for more info:
@@ -46,22 +46,8 @@ public class Utils {
     }
 
     /**
-     * Get the size in bytes of a bitmap.
-     * @param bitmap
-     * @return size in bytes
-     */
-    @SuppressLint("NewApi")
-    public static int getBitmapSize(Bitmap bitmap) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR1) {
-            return bitmap.getByteCount();
-        }
-        // Pre HC-MR1
-        return bitmap.getRowBytes() * bitmap.getHeight();
-    }
-
-    /**
      * Check if external storage is built-in or removable.
-     *
+     * 
      * @return True if external storage is removable (like an SD card), false
      *         otherwise.
      */
@@ -75,7 +61,7 @@ public class Utils {
 
     /**
      * Get the external app cache directory.
-     *
+     * 
      * @param context The context to use
      * @return The external cache dir
      */
@@ -92,7 +78,7 @@ public class Utils {
 
     /**
      * Check how much usable space is available at a given path.
-     *
+     * 
      * @param path The path to check
      * @return The space available in bytes
      */
@@ -107,7 +93,7 @@ public class Utils {
 
     /**
      * Get the memory class of this device (approx. per-app memory limit)
-     *
+     * 
      * @param context
      * @return
      */
@@ -117,9 +103,10 @@ public class Utils {
     }
 
     /**
-     * Check if OS version has a http URLConnection bug. See here for more information:
+     * Check if OS version has a http URLConnection bug. See here for more
+     * information:
      * http://android-developers.blogspot.com/2011/09/androids-http-clients.html
-     *
+     * 
      * @return
      */
     public static boolean hasHttpConnectionBug() {
@@ -128,19 +115,10 @@ public class Utils {
 
     /**
      * Check if OS version has built-in external cache dir method.
-     *
+     * 
      * @return
      */
     public static boolean hasExternalCacheDir() {
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO;
-    }
-
-    /**
-     * Check if ActionBar is available.
-     *
-     * @return
-     */
-    public static boolean hasActionBar() {
-        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB;
     }
 }
