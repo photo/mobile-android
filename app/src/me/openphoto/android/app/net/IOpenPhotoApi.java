@@ -10,6 +10,8 @@ import me.openphoto.android.app.net.HttpEntityWithProgress.ProgressListener;
 import org.apache.http.client.ClientProtocolException;
 import org.json.JSONException;
 
+import android.content.Context;
+
 public interface IOpenPhotoApi {
 
     /**
@@ -44,9 +46,10 @@ public interface IOpenPhotoApi {
      * @param name Name of the app for which authorization is requested
      * @param callback Where the user should be forwarded after authorizing the
      *            app.
+     * @param context
      * @return Url to which the user should be pointed in a WebView.
      */
-    String getOAuthUrl(String name, String callback);
+    String getOAuthUrl(String name, String callback, Context context);
 
     /**
      * Get photos.

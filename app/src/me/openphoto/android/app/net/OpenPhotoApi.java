@@ -6,7 +6,7 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.Iterator;
 
-import me.openphoto.android.app.R;
+import me.openphoto.android.app.Preferences;
 import me.openphoto.android.app.net.HttpEntityWithProgress.ProgressListener;
 
 import org.apache.http.client.ClientProtocolException;
@@ -59,8 +59,8 @@ public class OpenPhotoApi extends ApiBase implements IOpenPhotoApi {
     }
 
     @Override
-    public String getOAuthUrl(String name, String callback) {
-        return R.string.setting_account_server_default + "/v1/oauth/authorize?mobile=1&name="
+    public String getOAuthUrl(String name, String callback, Context context) {
+        return Preferences.getServer(context) + "/v1/oauth/authorize?mobile=1&name="
                 + name
                 + "&oauth_callback=" + callback;
     }

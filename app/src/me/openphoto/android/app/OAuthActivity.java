@@ -56,7 +56,7 @@ public class OAuthActivity extends Activity {
         mWebView.setWebViewClient(mWebViewClient);
 
         mOpenPhoto = Preferences.getApi(this);
-        String url = mOpenPhoto.getOAuthUrl("OpenPhoto Android App", CALLBACK);
+        String url = mOpenPhoto.getOAuthUrl("OpenPhoto Android App", CALLBACK, this);
         mWebView.loadUrl(url);
     }
 
