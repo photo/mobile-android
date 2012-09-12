@@ -55,7 +55,8 @@
             android:paddingLeft="5dp"
             android:paddingRight="5dp"
             android:paddingTop="2dp"
-            android:text="@string/get_openphoto_account" />
+            android:text="@string/get_openphoto_account" 
+            android:id="@+id/button_create_account"/>
     </LinearLayout>
 
 </RelativeLayout>

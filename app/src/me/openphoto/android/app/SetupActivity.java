@@ -3,6 +3,7 @@ package me.openphoto.android.app;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -30,6 +31,7 @@ public class SetupActivity extends Activity implements OnClickListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_setup);
         ((Button) findViewById(R.id.button_login)).setOnClickListener(this);
+        ((Button) findViewById(R.id.button_create_account)).setOnClickListener(this);
     }
 
     @Override
@@ -49,10 +51,20 @@ public class SetupActivity extends Activity implements OnClickListener {
     }
 
     @Override
-    public void onClick(View arg0) {
-        String server = ((EditText) findViewById(R.id.edit_server)).getText().toString();
-        Preferences.setServer(this, server);
-        startActivityForResult(new Intent(this, OAuthActivity.class), REQUEST_LOGIN);
-    }
+    public void onClick(View v) {
 
+        switch (v.getId()) {
+            case R.id.button_login:
+                String server = ((EditText) findViewById(R.id.edit_server)).getText().toString();
+                Preferences.setServer(this, server);
+                startActivityForResult(new Intent(this, OAuthActivity.class), REQUEST_LOGIN);
+                break;
+            case R.id.button_create_account:
+                Intent browserIntent = new Intent(Intent.ACTION_VIEW,
+                        Uri.parse("https://openphoto.me/"));
+                startActivity(browserIntent);
+                break;
+        }
+
+    }
 }
