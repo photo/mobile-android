@@ -126,6 +126,7 @@ public class OpenPhotoApi extends ApiBase implements IOpenPhotoApi {
             }
         }
         ApiResponse response = execute(request);
+        // TODO: Fix null pointer exception at this place.
         return new PhotosResponse(new JSONObject(response.getContentAsString()));
     }
 

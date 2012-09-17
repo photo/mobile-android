@@ -15,8 +15,10 @@ import me.openphoto.android.app.ui.widget.ActionBar;
 import me.openphoto.android.app.util.ImageWorker;
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -176,6 +178,25 @@ public class HomeActivity extends Activity implements Refreshable {
 			View privateButton = convertView.findViewById(R.id.button_private);
 			privateButton.setVisibility(photo.isPrivate() ? View.VISIBLE
 					: View.INVISIBLE);
+			
+			if(photo.getLongitude().length()!=0 && photo.getLatitude().length()!=0) {
+				ImageView geoButton = (ImageView) convertView.findViewById(R.id.geo_button);
+				geoButton.setImageResource(R.drawable.button_location_share);
+				geoButton.setTag(photo);
+				geoButton.setOnClickListener(new View.OnClickListener() {
+					  @Override
+					  public void onClick(View view) {
+						  Photo photo = (Photo) view.getTag();
+						  Uri uri = Uri.parse("geo:"+photo.getLatitude()+","+photo.getLongitude());
+						  Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+						  try {
+							  startActivity(intent);
+						  } catch(Exception e) {
+							  Log.e(TAG, "Could not use Intent to open maps", e);
+						  } 
+					  }
+				});
+			} 
             return convertView;
         }
 
