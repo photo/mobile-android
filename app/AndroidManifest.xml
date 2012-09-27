@@ -19,7 +19,8 @@
         android:theme="@style/Theme.OpenPhoto.Light" >
         <activity android:name=".SplashActivity" />
         <activity android:name=".SetupActivity" />
-        <activity android:name=".MainActivity" >
+        <activity android:name=".MainActivity" 
+            android:logo="@drawable/actionbar_logo">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

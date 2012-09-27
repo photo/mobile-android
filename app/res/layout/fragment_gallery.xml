@@ -4,8 +4,6 @@
     android:layout_height="fill_parent"
     android:orientation="vertical" >
 
-    <include layout="@layout/actionbar" />
-
     <GridView
         android:id="@+id/grid_photos"
         android:layout_width="fill_parent"
