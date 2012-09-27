@@ -1,148 +1,274 @@
-
 package me.openphoto.android.app;
 
 import me.openphoto.android.app.service.UploaderService;
-import me.openphoto.android.app.ui.widget.ActionBar;
-import me.openphoto.android.app.ui.widget.ActionBar.ActionClickListener;
-import android.app.Activity;
-import android.app.TabActivity;
+import me.openphoto.android.app.util.GalleryOpenControl;
+import me.openphoto.android.app.util.LoadingControl;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
-import android.view.View;
-import android.widget.ImageView;
-import android.widget.TabHost.TabSpec;
-import android.widget.TextView;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 
+import com.actionbarsherlock.app.ActionBar;
+import com.actionbarsherlock.app.ActionBar.Tab;
+import com.actionbarsherlock.app.SherlockFragmentActivity;
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuInflater;
+import com.actionbarsherlock.view.MenuItem;
+import com.actionbarsherlock.view.Window;
 import com.bugsense.trace.BugSenseHandler;
 
-/**
- * The Main screen of OpenPhoto
- * 
- * @author pas, pboos
- */
-public class MainActivity extends TabActivity implements ActionClickListener {
-    public static final String TAG = MainActivity.class.getSimpleName();
+public class MainActivity extends SherlockFragmentActivity
+		implements LoadingControl, GalleryOpenControl
+{
+	public static final String TAG = MainActivity.class.getSimpleName();
+	public static final String ACTIVE_TAB = "ActiveTab";
 
-    private static final String BUG_SENSE_API_KEY = null;
+	private static final String BUG_SENSE_API_KEY = null;
+	private ActionBar mActionBar;
+	private Menu mMenu;
+	private int mLoaders = 0;
 
-    private ActionBar mActionBar;
+	/**
+	 * Called when Main Activity is first loaded
+	 * 
+	 * @see android.app.Activity#onCreate(android.os.Bundle)
+	 */
+	@Override
+	public void onCreate(Bundle savedInstanceState)
+	{
+		super.onCreate(savedInstanceState);
+		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
+		setContentView(R.layout.activity_main);
+		mActionBar = getSupportActionBar();
+		mActionBar.setDisplayUseLogoEnabled(true);
+		mActionBar.setDisplayShowTitleEnabled(false);
+		// To make sure the service is initialized
+		startService(new Intent(this, UploaderService.class));
 
-    /**
-     * Called when Main Activity is first loaded
-     * 
-     * @see android.app.Activity#onCreate(android.os.Bundle)
-     */
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        mActionBar = (ActionBar) findViewById(R.id.actionbar);
-        mActionBar.setOnActionClickListener(this);
+		// This has to be called before setContentView and you must use the
+		// class in com.actionbarsherlock.view and NOT android.view
 
-        // To make sure the service is initialized
-        startService(new Intent(this, UploaderService.class));
+		setUpTabs(savedInstanceState == null ? 1 : savedInstanceState.getInt(
+				ACTIVE_TAB, 1));
 
-        setUpTabs();
+		if (BUG_SENSE_API_KEY != null)
+		{
+			BugSenseHandler.setup(this, BUG_SENSE_API_KEY);
+		}
+	}
 
-        if (BUG_SENSE_API_KEY != null) {
-            BugSenseHandler.setup(this, BUG_SENSE_API_KEY);
-        }
-    }
+	private void setUpTabs(int activeTab)
+	{
+		addTab(R.drawable.tab_home_2states,
+				R.string.tab_home,
+				new TabListener<HomeFragment>("home", HomeFragment.class, null));
+		addTab(R.drawable.tab_gallery_2states,
+				R.string.tab_gallery,
+				new TabListener<GalleryFragment>("gallery",
+						GalleryFragment.class, null));
+		addTab(R.drawable.tab_tags_2states,
+				R.string.tab_tags,
+				new TabListener<TagsFragment>("tags",
+						TagsFragment.class, null));
+		mActionBar.selectTab(mActionBar.getTabAt(activeTab));
+	}
 
-    private void setUpTabs() {
-        TabSpec tabSpec = getTabHost()
-                .newTabSpec("home")
-                .setIndicator(
-						newTabIndicator(R.drawable.tab_home_2states,
-								R.string.tab_home))
-                .setContent(new Intent(this, HomeActivity.class));
-        getTabHost().addTab(tabSpec);
+	@Override
+	protected void onSaveInstanceState(Bundle outState) {
+		outState.putInt(ACTIVE_TAB, mActionBar.getSelectedNavigationIndex());
+	}
+	private <T extends Fragment> void addTab(int drawableResId,
+			int textResId,
+			TabListener<T> tabListener)
+	{
+		Tab tab = mActionBar
+				.newTab()
+				.setText(textResId)
+				// .setIcon(drawableResId)
+				.setTabListener(tabListener);
+		mActionBar.addTab(tab);
+	}
 
-        tabSpec = getTabHost()
-                .newTabSpec("gallery")
-                .setIndicator(
-						newTabIndicator(R.drawable.tab_gallery_2states,
-                                R.string.tab_gallery))
-                .setContent(new Intent(this, GalleryActivity.class));
-        getTabHost().addTab(tabSpec);
+	@Override
+	protected void onResume()
+	{
+		super.onResume();
+		mActionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+		reinitMenu();
 
-        tabSpec = getTabHost()
-                .newTabSpec("tags")
-                .setIndicator(
-						newTabIndicator(R.drawable.tab_tags_2states,
-								R.string.tab_tags))
-                .setContent(new Intent(this, TagsActivity.class));
-        getTabHost().addTab(tabSpec);
+		if (!Preferences.isLoggedIn(this))
+		{
+			startActivity(new Intent(this, SetupActivity.class));
+			finish();
+		}
+	}
 
-		getTabHost().setCurrentTabByTag("gallery");
-    }
+	public void reinitMenu()
+	{
+		if (mMenu != null)
+		{
+			mMenu.findItem(R.id.menu_camera).setVisible(
+					Preferences.isLoggedIn(this));
+			Fragment currentFragment = getCurrentFragment();
+			showRefreshAction(
+					currentFragment != null
+					&& currentFragment instanceof Refreshable
+					&& mLoaders == 0);
+		}
+	}
 
-    private View newTabIndicator(int drawableResId, int textResId) {
-        View view = getLayoutInflater().inflate(R.layout.tab, null);
-        ((ImageView) view.findViewById(R.id.image))
-                .setImageResource(drawableResId);
-        ((TextView) view.findViewById(R.id.text)).setText(textResId);
-        return view;
-    }
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu)
+	{
+		mMenu = menu;
+		MenuInflater inflater = getSupportMenuInflater();
+		inflater.inflate(R.menu.main, menu);
+		reinitMenu();
+		return true;
+	}
 
-    private Activity getCurrentTabActivity() {
-        String currentTab = getTabHost().getCurrentTabTag();
-        Activity tabActivity = getLocalActivityManager()
-                .getActivity(currentTab);
-        return tabActivity;
-    }
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item)
+	{
+		// Handle item selection
+		switch (item.getItemId())
+		{
+			case R.id.menu_settings:
+			{
+				Intent i = new Intent(this, SettingsActivity.class);
+				startActivity(i);
+				return true;
+			}
+			case R.id.menu_refresh:
+				((Refreshable) getCurrentFragment()).refresh();
+				return true;
+			case R.id.menu_camera:
+			{
+				Intent i = new Intent(this, UploadActivity.class);
+				startActivity(i);
+				return true;
+			}
+			default:
+				return super.onOptionsItemSelected(item);
+		}
+	}
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        mActionBar.removeAction(R.id.action_add);
-        if (Preferences.isLoggedIn(this)) {
-			mActionBar.addAction(R.drawable.button_camera, 0, R.id.action_add);
-        }
+	Fragment getCurrentFragment()
+	{
+		return getSupportFragmentManager().findFragmentById(
+				android.R.id.content);
+	}
 
-        if (!Preferences.isLoggedIn(this)) {
-            startActivity(new Intent(this, SetupActivity.class));
-            finish();
-        }
-    }
+	@Override
+	public void openGallery(String tag)
+	{
+		Intent intent = getIntent();
+		if (intent == null)
+		{
+			intent = new Intent();
+			setIntent(intent);
+		}
+		intent.putExtra(GalleryFragment.EXTRA_TAG, tag);
+		mActionBar.selectTab(mActionBar.getTabAt(1));
+	}
+	@Override
+	public void startLoading()
+	{
+		if (mLoaders++ == 0)
+		{
+			showLoading(true);
+			showRefreshAction(false);
+		}
+	}
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.main, menu);
-        return true;
-    }
+	@Override
+	public void stopLoading()
+	{
+		if (--mLoaders == 0)
+		{
+			showLoading(false);
+			reinitMenu();
+		}
+	}
+	private void showRefreshAction(boolean show)
+	{
+		if (mMenu != null)
+		{
+			mMenu.findItem(R.id.menu_refresh).setVisible(show);
+		}
+	}
 
-    @Override
-    public boolean onPrepareOptionsMenu(Menu menu) {
-        Activity tabActivity = getCurrentTabActivity();
-        boolean showRefresh = tabActivity instanceof Refreshable;
-        menu.findItem(R.id.menu_refresh).setVisible(showRefresh);
-        return super.onPrepareOptionsMenu(menu);
-    }
+	private void showLoading(boolean show)
+	{
+		setSupportProgressBarIndeterminateVisibility(show);
+	}
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle item selection
-        switch (item.getItemId()) {
-            case R.id.menu_settings:
-                Intent i = new Intent(this, SettingsActivity.class);
-                startActivity(i);
-                return true;
-            case R.id.menu_refresh:
-                ((Refreshable) getCurrentActivity()).refresh();
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-    }
+	public class TabListener<T extends Fragment> implements
+			ActionBar.TabListener
+	{
+		private final String mTag;
+		private final Class<T> mClass;
+		private final Bundle mArgs;
+		private Fragment mFragment;
 
-    @Override
-    public void onActionClick(int id) {
-        Intent i = new Intent(this, UploadActivity.class);
-        startActivity(i);
-    }
+		public TabListener(String tag, Class<T> clz,
+				Bundle args)
+		{
+			mTag = tag;
+			mClass = clz;
+			mArgs = args;
+			FragmentTransaction ft = getSupportFragmentManager()
+					.beginTransaction();
+
+			// Check to see if we already have a fragment for this tab, probably
+			// from a previously saved state. If so, deactivate it, because our
+			// initial state is that a tab isn't shown.
+			mFragment = getSupportFragmentManager()
+					.findFragmentByTag(mTag);
+			if (mFragment != null && !mFragment.isDetached())
+			{
+				ft.detach(mFragment);
+			}
+		}
+
+		@Override
+		public void onTabSelected(Tab tab, FragmentTransaction ft)
+		{
+			ft = getSupportFragmentManager()
+					.beginTransaction();
+
+			if (mFragment == null)
+			{
+				mFragment = Fragment.instantiate(MainActivity.this,
+						mClass.getName(),
+						mArgs);
+				ft.add(android.R.id.content, mFragment, mTag);
+				ft.commit();
+			} else
+			{
+				ft.attach(mFragment);
+				ft.commit();
+			}
+
+		}
+
+		@Override
+		public void onTabUnselected(Tab tab, FragmentTransaction ft)
+		{
+			ft = getSupportFragmentManager()
+					.beginTransaction();
+
+			if (mFragment != null)
+			{
+				ft.detach(mFragment);
+				ft.commitAllowingStateLoss();
+			}
+
+		}
+
+		@Override
+		public void onTabReselected(Tab tab, FragmentTransaction ft)
+		{
+		}
+	}
 }

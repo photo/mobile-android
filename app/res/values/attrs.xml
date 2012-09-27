@@ -2,8 +2,8 @@
 <resources>
 
     <declare-styleable name="ActionBar">
-        <attr name="icon" format="reference" />
-        <attr name="title" format="string" />
+        <attr name="icon" />
+        <attr name="title" />
     </declare-styleable>
 
 </resources>
