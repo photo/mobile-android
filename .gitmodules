@@ -4,3 +4,6 @@
 [submodule "submodules/facebook-android-sdk"]
 	path = submodules/facebook-android-sdk
 	url = git://github.com/facebook/facebook-android-sdk.git
+[submodule "submodules/ActionBarSherlock"]
+	path = submodules/ActionBarSherlock
+	url = https://github.com/JakeWharton/ActionBarSherlock.git

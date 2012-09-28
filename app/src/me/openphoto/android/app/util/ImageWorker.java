@@ -9,7 +9,6 @@ import java.net.URL;
 import java.util.HashMap;
 
 import me.openphoto.android.app.BuildConfig;
-import me.openphoto.android.app.ui.widget.ActionBar;
 import android.content.Context;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
@@ -27,20 +26,20 @@ public class ImageWorker {
     private HashMap<String, Drawable> imageCache;
     private static Drawable DEFAULT_ICON = null;
     private BaseAdapter adapt;
-    private ActionBar mActionBar;
 	private final DiskLruCache diskCache;
+	private LoadingControl loadingControl;
 
     static {
         // DEFAULT_ICON =
         // Resources.getSystem().getDrawable(R.drawable.newest_photo_noimage);
     }
 
-    public ImageWorker(Context ctx, ActionBar actionBar)
+	public ImageWorker(Context ctx, LoadingControl loadingControl)
     {
         imageCache = new HashMap<String, Drawable>();
-        mActionBar = actionBar;
 		final File cacheDir = DiskLruCache.getDiskCacheDir(ctx,
 				HTTP_CACHE_DIR);
+		this.loadingControl = loadingControl;
 		diskCache =
 				DiskLruCache.openCache(ctx, cacheDir, HTTP_CACHE_SIZE);
     }
@@ -61,7 +60,6 @@ public class ImageWorker {
             return DEFAULT_ICON;
         }
     }
-
     private class ImageTask extends AsyncTask<String, Void, Drawable>
     {
         private String s_url;
@@ -69,8 +67,8 @@ public class ImageWorker {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            if (mActionBar != null)
-                mActionBar.startLoading();
+			if (loadingControl != null)
+				loadingControl.startLoading();
         }
 
         @Override
@@ -107,8 +105,8 @@ public class ImageWorker {
         @Override
         protected void onPostExecute(Drawable result) {
             super.onPostExecute(result);
-            if (mActionBar != null)
-                mActionBar.stopLoading();
+			if (loadingControl != null)
+				loadingControl.stopLoading();
 
             synchronized (this) {
                 imageCache.put(s_url, result);
