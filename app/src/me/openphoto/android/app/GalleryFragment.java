@@ -18,6 +18,12 @@ import android.widget.ImageView;
 
 import com.actionbarsherlock.app.SherlockFragment;
 
+/**
+ * @version
+ *          02.10.2012
+ *          <br>- added clearing tag information in the parent activity
+ *          intent when loading images for tag first time.
+ */
 public class GalleryFragment extends SherlockFragment implements Refreshable,
 		OnItemClickListener
 {
@@ -34,7 +40,7 @@ public class GalleryFragment extends SherlockFragment implements Refreshable,
 			Bundle savedInstanceState)
 	{
 		View v = inflater.inflate(R.layout.fragment_gallery, container, false);
-
+		mTags = null;
 		refresh(v);
 		return v;
 	}
@@ -55,15 +61,20 @@ public class GalleryFragment extends SherlockFragment implements Refreshable,
 
 	void refresh(View v)
 	{
-		mTags = getActivity().getIntent() != null ? getActivity().getIntent()
-				.getStringExtra(EXTRA_TAG)
-				: null;
-		if (mTags != null)
+		if (mTags == null)
 		{
-			mAdapter = new GalleryAdapter(mTags);
-		} else
-		{
-			mAdapter = new GalleryAdapter();
+			mTags = getActivity().getIntent() != null ? getActivity()
+					.getIntent()
+					.getStringExtra(EXTRA_TAG)
+					: null;
+			if (mTags != null)
+			{
+				mAdapter = new GalleryAdapter(mTags);
+				getActivity().getIntent().removeExtra(EXTRA_TAG);
+			} else
+			{
+				mAdapter = new GalleryAdapter();
+			}
 		}
 
 		GridView photosGrid = (GridView) v.findViewById(R.id.grid_photos);
