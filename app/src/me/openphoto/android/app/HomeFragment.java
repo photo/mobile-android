@@ -32,6 +32,12 @@ import android.widget.Toast;
 import com.actionbarsherlock.app.SherlockFragment;
 import com.bugsense.trace.BugSenseHandler;
 
+/**
+ * @version
+ *          02.10.2012
+ *          <br>- fixed alert method. Now toast creation is performed in the UI
+ *          thread
+ */
 public class HomeFragment extends SherlockFragment implements Refreshable
 {
 	public static final String TAG = HomeFragment.class.getSimpleName();
@@ -77,9 +83,16 @@ public class HomeFragment extends SherlockFragment implements Refreshable
 		list.setAdapter(mAdapter);
 	}
 
-	private void alert(String msg)
+	private void alert(final String msg)
 	{
-		Toast.makeText(getActivity(), msg, Toast.LENGTH_LONG).show();
+		getActivity().runOnUiThread(new Runnable()
+		{
+			@Override
+			public void run()
+			{
+				Toast.makeText(getActivity(), msg, Toast.LENGTH_LONG).show();
+			}
+		});
 	}
 
 	private class NewestPhotosAdapter extends EndlessAdapter<Photo>
