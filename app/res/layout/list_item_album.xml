@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="fill_parent" android:layout_height="wrap_content"
+	android:gravity="center_vertical" android:orientation="horizontal"
+	android:paddingBottom="@dimen/site_padding_half" android:paddingLeft="@dimen/site_padding"
+	android:paddingRight="@dimen/site_padding" android:paddingTop="@dimen/site_padding_half">
+
+	<ImageView android:id="@+id/cover" android:layout_width="wrap_content"
+		android:layout_height="wrap_content" 
+		android:src="@drawable/icon"
+		android:paddingRight="5dip"/>
+	<LinearLayout android:layout_width="0dip" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical">
+		<TextView android:id="@+id/text_name" android:layout_width="wrap_content"
+			android:layout_height="wrap_content" 
+			android:textAppearance="?android:attr/textAppearanceLarge"
+			android:text="name" />
+		<TextView android:id="@+id/text_owner" android:layout_width="wrap_content"
+			android:layout_height="wrap_content" 
+			android:textAppearance="?android:attr/textAppearanceMedium"
+			android:text="owner" />
+	</LinearLayout>
+	<TextView android:id="@+id/text_count" android:layout_width="wrap_content"
+		android:layout_height="wrap_content" android:layout_marginRight="5dp"
+		android:text="5" />
+
+	<ImageView android:layout_width="wrap_content"
+		android:layout_height="wrap_content" android:src="@drawable/ic_right" />
+
+</LinearLayout>
