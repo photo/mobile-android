@@ -3,79 +3,56 @@ package me.openphoto.android.app;
 import java.util.HashMap;
 import java.util.Map;
 
-import me.openphoto.android.app.model.Tag;
+import me.openphoto.android.app.model.Album;
+import me.openphoto.android.app.net.AlbumsResponse;
 import me.openphoto.android.app.net.IOpenPhotoApi;
-import me.openphoto.android.app.net.TagsResponse;
 import me.openphoto.android.app.ui.adapter.EndlessAdapter;
+import me.openphoto.android.app.ui.lib.ImageStorage;
 import me.openphoto.android.app.util.GalleryOpenControl;
 import me.openphoto.android.app.util.LoadingControl;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.TextView.OnEditorActionListener;
 
 import com.actionbarsherlock.app.SherlockFragment;
 import com.bugsense.trace.BugSenseHandler;
 
 /**
+ * The fragment which displays albums list
+ * 
+ * @author Eugene Popovich
  * @version
  *          03.10.2012
- *          <br>- changed galleryOpenControl.openGallery calls
- *          because of method changed its signature
- * 
+ *          <br>- created
  */
-public class TagsFragment extends SherlockFragment implements
+public class AlbumsFragment extends SherlockFragment implements
 		OnItemClickListener
 {
-	public static final String TAG = TagsFragment.class.getSimpleName();
+	public static final String TAG = AlbumsFragment.class.getSimpleName();
 
 	private LoadingControl loadingControl;
 	private GalleryOpenControl galleryOpenControl;
 
-	private TagsAdapter mAdapter;
+	private AlbumsAdapter mAdapter;
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState)
 	{
-		View v = inflater.inflate(R.layout.fragment_tags, container, false);
+		View v = inflater.inflate(R.layout.fragment_albums, container, false);
 
-		mAdapter = new TagsAdapter();
-		ListView list = (ListView) v.findViewById(R.id.list_tags);
+		mAdapter = new AlbumsAdapter();
+		ListView list = (ListView) v.findViewById(R.id.list_albums);
 		list.setAdapter(mAdapter);
 		list.setOnItemClickListener(this);
-
-		final EditText search = (EditText) v.findViewById(R.id.edit_search);
-		search.setOnEditorActionListener(new OnEditorActionListener()
-		{
-
-			@Override
-			public boolean onEditorAction(TextView v, int actionId,
-					KeyEvent event)
-			{
-				switch (event.getKeyCode())
-				{
-					case KeyEvent.KEYCODE_ENTER:
-						if (KeyEvent.ACTION_DOWN == actionId)
-						{
-							galleryOpenControl.openGallery(search.getText()
-									.toString().trim(), null);
-							return true;
-						}
-					break;
-				}
-				return false;
-			}
-		});
 
 		return v;
 	}
@@ -93,16 +70,18 @@ public class TagsFragment extends SherlockFragment implements
 	public void onItemClick(AdapterView<?> adapterView, View view,
 			int position, long id)
 	{
-		Tag tag = (Tag) mAdapter.getItem(position);
-		galleryOpenControl.openGallery(tag.getTag(), null);
+		Album album = (Album) mAdapter.getItem(position);
+		galleryOpenControl.openGallery(null, album.getId());
 	}
 
 
-	private class TagsAdapter extends EndlessAdapter<Tag>
+	private class AlbumsAdapter extends EndlessAdapter<Album>
 	{
 		private final IOpenPhotoApi mOpenPhotoApi;
+		private final ImageStorage mStorage = new ImageStorage(
+				getActivity());
 
-		public TagsAdapter()
+		public AlbumsAdapter()
 		{
 			super(Integer.MAX_VALUE);
 			mOpenPhotoApi = Preferences.getApi(getActivity());
@@ -112,24 +91,36 @@ public class TagsFragment extends SherlockFragment implements
 		@Override
 		public long getItemId(int position)
 		{
-			return ((Tag) getItem(position)).getTag().hashCode();
+			// return ((Album) getItem(position)).getAlbum().hashCode();
+			return position;
 		}
 
 		@Override
-		public View getView(Tag tag, View convertView, ViewGroup parent)
+		public View getView(Album album, View convertView, ViewGroup parent)
 		{
 			if (convertView == null)
 			{
 				final LayoutInflater layoutInflater = (LayoutInflater) getActivity()
 						.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-				convertView = layoutInflater.inflate(R.layout.list_item_tag,
+				convertView = layoutInflater.inflate(R.layout.list_item_album,
 						null);
 			}
-			((TextView) convertView.findViewById(R.id.text_tag)).setText(tag
-					.getTag());
+			((TextView) convertView.findViewById(R.id.text_name))
+					.setText(album
+							.getName());
+			((TextView) convertView.findViewById(R.id.text_owner))
+					.setText(album
+							.getOwner());
 			((TextView) convertView.findViewById(R.id.text_count))
-					.setText(Integer.toString(tag
+					.setText(Integer.toString(album
 							.getCount()));
+			ImageView image = (ImageView) convertView.findViewById(R.id.cover);
+			image.setImageBitmap(null); // TODO maybe a loading image
+			if (album.getCover() != null)
+			{
+				mStorage.displayImageFor(image,
+						album.getCover().getUrl("200x200"));
+			}
 			return convertView;
 		}
 
@@ -138,13 +129,13 @@ public class TagsFragment extends SherlockFragment implements
 		{
 			try
 			{
-				TagsResponse response = mOpenPhotoApi.getTags();
-				return new LoadResponse(response.getTags(), false);
+				AlbumsResponse response = mOpenPhotoApi.getAlbums();
+				return new LoadResponse(response.getAlbums(), false);
 			} catch (Exception e)
 			{
-				Log.e(TAG, "Could not load next photos in list", e);
+				Log.e(TAG, "Could not load next albums in list", e);
 				Map<String, String> extraData = new HashMap<String, String>();
-				extraData.put("message", "Could not load next photos in list");
+				extraData.put("message", "Could not load next albums in list");
 				BugSenseHandler.log(TAG, extraData, e);
 			}
 			return new LoadResponse(null, false);

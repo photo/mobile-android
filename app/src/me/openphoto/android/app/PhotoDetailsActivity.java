@@ -38,6 +38,9 @@ import com.bugsense.trace.BugSenseHandler;
  * The general photo viewing screen
  * 
  * @author pboos
+ * @version
+ *          03.10.2012
+ *          <br>- added initial support for album photos filter
  */
 public class PhotoDetailsActivity extends Activity {
     private static final String TAG = PhotoDetailsActivity.class.getSimpleName();
@@ -47,6 +50,7 @@ public class PhotoDetailsActivity extends Activity {
     public static final String EXTRA_ADAPTER_PHOTOS = "EXTRA_ADAPTER_PHOTOS";
     public static final String EXTRA_ADAPTER_POSITION = "EXTRA_ADAPTER_POSITION";
     public static final String EXTRA_ADAPTER_TAGS = "EXTRA_ADAPTER_TAGS";
+	public static final String EXTRA_ADAPTER_ALBUM = "EXTRA_ADAPTER_ALBUM";
 
     private ImageStorage mStorage;
 
@@ -74,7 +78,9 @@ public class PhotoDetailsActivity extends Activity {
         } else if (getIntent().hasExtra(EXTRA_ADAPTER_PHOTOS)) {
             ArrayList<Photo> photos = getIntent().getParcelableArrayListExtra(EXTRA_ADAPTER_PHOTOS);
             String tags = getIntent().getStringExtra(EXTRA_ADAPTER_TAGS);
-            mAdapter = new PhotoDetailPagerAdapter(new PhotosAdapter(this, photos, tags));
+			String album = getIntent().getStringExtra(EXTRA_ADAPTER_ALBUM);
+			mAdapter = new PhotoDetailPagerAdapter(new PhotosAdapter(this,
+					photos, tags, album));
         }
 
         mActionBar = (ActionBar) findViewById(R.id.actionbar);
@@ -209,8 +215,11 @@ public class PhotoDetailsActivity extends Activity {
             super(context, photos);
         }
 
-        public PhotosAdapter(Context context, ArrayList<Photo> photos, String tags) {
-            super(context, photos, tags);
+		public PhotosAdapter(Context context, ArrayList<Photo> photos,
+				String tags,
+				String album)
+		{
+			super(context, photos, tags, album);
         }
 
         @Override
