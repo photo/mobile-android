@@ -3,7 +3,11 @@ package me.openphoto.android.app;
 import me.openphoto.android.app.service.UploaderService;
 import me.openphoto.android.app.util.GalleryOpenControl;
 import me.openphoto.android.app.util.LoadingControl;
+import me.openphoto.android.app.util.NetworkAccessControl;
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -21,13 +25,16 @@ import com.bugsense.trace.BugSenseHandler;
 /**
  * @version
  *          03.10.2012
+ *          <br>- now it implements NetworkAccessControl interface
+ *          <br>- added isOnline method implementation
  *          <br>- added new "Albums" tab
  *          <br>- changed openGallery method signature because
  *          of parent GalleryOpenControl interface changed
  * 
  */
 public class MainActivity extends SherlockFragmentActivity
-		implements LoadingControl, GalleryOpenControl
+		implements LoadingControl, GalleryOpenControl,
+		NetworkAccessControl
 {
 	public static final String TAG = MainActivity.class.getSimpleName();
 	public static final String ACTIVE_TAB = "ActiveTab";
@@ -220,6 +227,18 @@ public class MainActivity extends SherlockFragmentActivity
 		setSupportProgressBarIndeterminateVisibility(show);
 	}
 
+	@Override
+	public boolean isOnline()
+	{
+		ConnectivityManager cm =
+				(ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+		NetworkInfo netInfo = cm.getActiveNetworkInfo();
+		if (netInfo != null && netInfo.isConnectedOrConnecting())
+		{
+			return true;
+		}
+		return false;
+	}
 	public class TabListener<T extends Fragment> implements
 			ActionBar.TabListener
 	{

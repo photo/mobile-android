@@ -23,7 +23,6 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.actionbarsherlock.app.SherlockFragment;
 import com.bugsense.trace.BugSenseHandler;
 
 /**
@@ -32,9 +31,14 @@ import com.bugsense.trace.BugSenseHandler;
  * @author Eugene Popovich
  * @version
  *          03.10.2012
+ *          <br>- added internet availability check to the
+ *          loadItems method
+ *          <br>- added onDestroyView handler to force close
+ *          loading task
+ *          <br>- changed parent class to CommonFragment
  *          <br>- created
  */
-public class AlbumsFragment extends SherlockFragment implements
+public class AlbumsFragment extends CommonFragment implements
 		OnItemClickListener
 {
 	public static final String TAG = AlbumsFragment.class.getSimpleName();
@@ -74,7 +78,12 @@ public class AlbumsFragment extends SherlockFragment implements
 		galleryOpenControl.openGallery(null, album.getId());
 	}
 
-
+	@Override
+	public void onDestroyView()
+	{
+		super.onDestroyView();
+		mAdapter.forceStopLoadingIfNecessary();
+	}
 	private class AlbumsAdapter extends EndlessAdapter<Album>
 	{
 		private final IOpenPhotoApi mOpenPhotoApi;
@@ -127,16 +136,20 @@ public class AlbumsFragment extends SherlockFragment implements
 		@Override
 		public LoadResponse loadItems(int page)
 		{
-			try
+			if (checkOnline())
 			{
-				AlbumsResponse response = mOpenPhotoApi.getAlbums();
-				return new LoadResponse(response.getAlbums(), false);
-			} catch (Exception e)
-			{
-				Log.e(TAG, "Could not load next albums in list", e);
-				Map<String, String> extraData = new HashMap<String, String>();
-				extraData.put("message", "Could not load next albums in list");
-				BugSenseHandler.log(TAG, extraData, e);
+				try
+				{
+					AlbumsResponse response = mOpenPhotoApi.getAlbums();
+					return new LoadResponse(response.getAlbums(), false);
+				} catch (Exception e)
+				{
+					Log.e(TAG, "Could not load next albums in list", e);
+					Map<String, String> extraData = new HashMap<String, String>();
+					extraData.put("message",
+							"Could not load next albums in list");
+					BugSenseHandler.log(TAG, extraData, e);
+				}
 			}
 			return new LoadResponse(null, false);
 		}
