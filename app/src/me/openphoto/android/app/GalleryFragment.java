@@ -20,6 +20,9 @@ import com.actionbarsherlock.app.SherlockFragment;
 
 /**
  * @version
+ *          03.10.2012
+ *          <br>- added initial support for album photos filter
+ *          <p>
  *          02.10.2012
  *          <br>- added clearing tag information in the parent activity
  *          intent when loading images for tag first time.
@@ -30,10 +33,12 @@ public class GalleryFragment extends SherlockFragment implements Refreshable,
 	public static final String TAG = GalleryFragment.class.getSimpleName();
 
 	public static String EXTRA_TAG = "EXTRA_TAG";
+	public static String EXTRA_ALBUM = "EXTRA_ALBUM";
 
 	private LoadingControl loadingControl;
 	private GalleryAdapter mAdapter;
 	private String mTags;
+	private String mAlbum;
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -41,6 +46,7 @@ public class GalleryFragment extends SherlockFragment implements Refreshable,
 	{
 		View v = inflater.inflate(R.layout.fragment_gallery, container, false);
 		mTags = null;
+		mAlbum = null;
 		refresh(v);
 		return v;
 	}
@@ -61,16 +67,18 @@ public class GalleryFragment extends SherlockFragment implements Refreshable,
 
 	void refresh(View v)
 	{
-		if (mTags == null)
+		if (mTags == null && mAlbum == null)
 		{
-			mTags = getActivity().getIntent() != null ? getActivity()
-					.getIntent()
+			Intent intent = getActivity().getIntent();
+			mTags = intent != null ? intent
 					.getStringExtra(EXTRA_TAG)
 					: null;
-			if (mTags != null)
+			mAlbum = intent != null ? intent.getStringExtra(EXTRA_ALBUM) : null;
+			if (mTags != null || mAlbum != null)
 			{
-				mAdapter = new GalleryAdapter(mTags);
+				mAdapter = new GalleryAdapter(mTags, mAlbum);
 				getActivity().getIntent().removeExtra(EXTRA_TAG);
+				getActivity().getIntent().removeExtra(EXTRA_ALBUM);
 			} else
 			{
 				mAdapter = new GalleryAdapter();
@@ -105,9 +113,9 @@ public class GalleryFragment extends SherlockFragment implements Refreshable,
 			super(getActivity());
 		}
 
-		public GalleryAdapter(String tagFilter)
+		public GalleryAdapter(String tagFilter, String albumFilter)
 		{
-			super(getActivity(), tagFilter);
+			super(getActivity(), tagFilter, albumFilter);
 		}
 
 		@Override

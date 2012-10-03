@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.view.View;
 
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.ActionBar.Tab;
@@ -17,6 +18,14 @@ import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.view.Window;
 import com.bugsense.trace.BugSenseHandler;
 
+/**
+ * @version
+ *          03.10.2012
+ *          <br>- added new "Albums" tab
+ *          <br>- changed openGallery method signature because
+ *          of parent GalleryOpenControl interface changed
+ * 
+ */
 public class MainActivity extends SherlockFragmentActivity
 		implements LoadingControl, GalleryOpenControl
 {
@@ -70,13 +79,19 @@ public class MainActivity extends SherlockFragmentActivity
 				R.string.tab_tags,
 				new TabListener<TagsFragment>("tags",
 						TagsFragment.class, null));
+		addTab(View.NO_ID,
+				R.string.tab_albums,
+				new TabListener<AlbumsFragment>("albums",
+						AlbumsFragment.class, null));
 		mActionBar.selectTab(mActionBar.getTabAt(activeTab));
 	}
 
 	@Override
-	protected void onSaveInstanceState(Bundle outState) {
+	protected void onSaveInstanceState(Bundle outState)
+	{
 		outState.putInt(ACTIVE_TAB, mActionBar.getSelectedNavigationIndex());
 	}
+
 	private <T extends Fragment> void addTab(int drawableResId,
 			int textResId,
 			TabListener<T> tabListener)
@@ -110,8 +125,7 @@ public class MainActivity extends SherlockFragmentActivity
 			mMenu.findItem(R.id.menu_camera).setVisible(
 					Preferences.isLoggedIn(this));
 			Fragment currentFragment = getCurrentFragment();
-			showRefreshAction(
-					currentFragment != null
+			showRefreshAction(currentFragment != null
 					&& currentFragment instanceof Refreshable
 					&& mLoaders == 0);
 		}
@@ -160,7 +174,7 @@ public class MainActivity extends SherlockFragmentActivity
 	}
 
 	@Override
-	public void openGallery(String tag)
+	public void openGallery(String tag, String album)
 	{
 		Intent intent = getIntent();
 		if (intent == null)
@@ -169,8 +183,10 @@ public class MainActivity extends SherlockFragmentActivity
 			setIntent(intent);
 		}
 		intent.putExtra(GalleryFragment.EXTRA_TAG, tag);
+		intent.putExtra(GalleryFragment.EXTRA_ALBUM, album);
 		mActionBar.selectTab(mActionBar.getTabAt(1));
 	}
+
 	@Override
 	public void startLoading()
 	{
@@ -190,6 +206,7 @@ public class MainActivity extends SherlockFragmentActivity
 			reinitMenu();
 		}
 	}
+
 	private void showRefreshAction(boolean show)
 	{
 		if (mMenu != null)
