@@ -7,10 +7,12 @@
 	android:paddingTop="5dp">
 	<FrameLayout android:layout_width="wrap_content"
 		android:layout_gravity="center" android:layout_height="wrap_content">
-		<ImageView android:id="@+id/newest_image"
-			android:layout_width="wrap_content" android:layout_height="wrap_content"
+		<me.openphoto.android.app.ui.widget.AspectRatioImageView android:id="@+id/newest_image"
+			android:layout_width="match_parent" android:layout_height="wrap_content"
 			android:layout_margin="0dp" android:padding="0dp"
-			android:layout_gravity="center" android:src="@drawable/icon" />
+			android:layout_gravity="center" android:src="@drawable/icon" 
+			android:adjustViewBounds="true"
+			/>
 
 		<RelativeLayout android:layout_width="match_parent"
 			android:layout_gravity="bottom" android:layout_height="wrap_content"

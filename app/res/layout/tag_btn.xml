@@ -3,4 +3,5 @@
 	style="@style/button_text" android:layout_width="wrap_content"
 	android:layout_height="20dp" android:background="@drawable/button_tag"
 	android:clickable="false" android:focusable="false"
-	android:linksClickable="false" />
+	android:linksClickable="false" 
+	android:minWidth="10dip"/>
