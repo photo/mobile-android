@@ -24,17 +24,21 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 
-import com.actionbarsherlock.app.SherlockFragment;
 import com.bugsense.trace.BugSenseHandler;
 
 /**
  * @version
  *          03.10.2012
+ *          <br>- added internet availability check to the
+ *          loadItems method
+ *          <br>- added onDestroyView handler to force close
+ *          loading task
+ *          <br>- changed parent class to CommonFragment
  *          <br>- changed galleryOpenControl.openGallery calls
  *          because of method changed its signature
  * 
  */
-public class TagsFragment extends SherlockFragment implements
+public class TagsFragment extends CommonFragment implements
 		OnItemClickListener
 {
 	public static final String TAG = TagsFragment.class.getSimpleName();
@@ -97,7 +101,12 @@ public class TagsFragment extends SherlockFragment implements
 		galleryOpenControl.openGallery(tag.getTag(), null);
 	}
 
-
+	@Override
+	public void onDestroyView()
+	{
+		super.onDestroyView();
+		mAdapter.forceStopLoadingIfNecessary();
+	}
 	private class TagsAdapter extends EndlessAdapter<Tag>
 	{
 		private final IOpenPhotoApi mOpenPhotoApi;
@@ -136,16 +145,20 @@ public class TagsFragment extends SherlockFragment implements
 		@Override
 		public LoadResponse loadItems(int page)
 		{
-			try
+			if (checkOnline())
 			{
-				TagsResponse response = mOpenPhotoApi.getTags();
-				return new LoadResponse(response.getTags(), false);
-			} catch (Exception e)
-			{
-				Log.e(TAG, "Could not load next photos in list", e);
-				Map<String, String> extraData = new HashMap<String, String>();
-				extraData.put("message", "Could not load next photos in list");
-				BugSenseHandler.log(TAG, extraData, e);
+				try
+				{
+					TagsResponse response = mOpenPhotoApi.getTags();
+					return new LoadResponse(response.getTags(), false);
+				} catch (Exception e)
+				{
+					Log.e(TAG, "Could not load next photos in list", e);
+					Map<String, String> extraData = new HashMap<String, String>();
+					extraData.put("message",
+							"Could not load next photos in list");
+					BugSenseHandler.log(TAG, extraData, e);
+				}
 			}
 			return new LoadResponse(null, false);
 		}

@@ -27,18 +27,23 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.actionbarsherlock.app.SherlockFragment;
 import com.bugsense.trace.BugSenseHandler;
 
 /**
  * @version
+ *          03.10.2012
+ *          <br>- alert method moved to CommonFragment
+ *          <br>- added internet availability check to the
+ *          loadItems method
+ *          <br>- added onDestroyView handler to force close
+ *          loading task
+ *          <br>- changed parent class to CommonFragment
  *          02.10.2012
  *          <br>- fixed alert method. Now toast creation is performed in the UI
  *          thread
  */
-public class HomeFragment extends SherlockFragment implements Refreshable
+public class HomeFragment extends CommonFragment implements Refreshable
 {
 	public static final String TAG = HomeFragment.class.getSimpleName();
 
@@ -83,18 +88,12 @@ public class HomeFragment extends SherlockFragment implements Refreshable
 		list.setAdapter(mAdapter);
 	}
 
-	private void alert(final String msg)
+	@Override
+	public void onDestroyView()
 	{
-		getActivity().runOnUiThread(new Runnable()
-		{
-			@Override
-			public void run()
-			{
-				Toast.makeText(getActivity(), msg, Toast.LENGTH_LONG).show();
-			}
-		});
+		super.onDestroyView();
+		mAdapter.forceStopLoadingIfNecessary();
 	}
-
 	private class NewestPhotosAdapter extends EndlessAdapter<Photo>
 	{
 		private final IOpenPhotoApi mOpenPhotoApi;
@@ -261,7 +260,7 @@ public class HomeFragment extends SherlockFragment implements Refreshable
 		@Override
 		public LoadResponse loadItems(int page)
 		{
-			if (Preferences.isLoggedIn(mContext))
+			if (checkOnline() && Preferences.isLoggedIn(mContext))
 			{
 				try
 				{

@@ -16,18 +16,21 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.GridView;
 import android.widget.ImageView;
 
-import com.actionbarsherlock.app.SherlockFragment;
-
 /**
  * @version
  *          03.10.2012
+ *          <br>- added internet availability check to the
+ *          loadItems method
+ *          <br>- added onDestroyView handler to force close
+ *          loading task
+ *          <br>- changed parent class to CommonFragment
  *          <br>- added initial support for album photos filter
  *          <p>
  *          02.10.2012
  *          <br>- added clearing tag information in the parent activity
  *          intent when loading images for tag first time.
  */
-public class GalleryFragment extends SherlockFragment implements Refreshable,
+public class GalleryFragment extends CommonFragment implements Refreshable,
 		OnItemClickListener
 {
 	public static final String TAG = GalleryFragment.class.getSimpleName();
@@ -103,6 +106,12 @@ public class GalleryFragment extends SherlockFragment implements Refreshable,
 		startActivity(intent);
 	}
 
+	@Override
+	public void onDestroyView()
+	{
+		super.onDestroyView();
+		mAdapter.forceStopLoadingIfNecessary();
+	}
 	private class GalleryAdapter extends PhotosEndlessAdapter
 	{
 		private final ImageStorage mStorage = new ImageStorage(
@@ -144,6 +153,19 @@ public class GalleryFragment extends SherlockFragment implements Refreshable,
 		protected void onStoppedLoading()
 		{
 			loadingControl.stopLoading();
+		}
+
+		@Override
+		public LoadResponse loadItems(
+				int page)
+		{
+			if (checkOnline())
+			{
+				return super.loadItems(page);
+			} else
+			{
+				return new LoadResponse(null, false);
+			}
 		}
 	}
 
