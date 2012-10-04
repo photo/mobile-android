@@ -6,23 +6,18 @@
 	android:paddingRight="@dimen/site_padding" android:paddingTop="@dimen/site_padding_half">
 
 	<ImageView android:id="@+id/cover" android:layout_width="wrap_content"
-		android:layout_height="wrap_content" 
-		android:src="@drawable/icon"
-		android:layout_marginRight="5dip"
-		android:background="#000"
-        android:padding="1dp"
+		android:layout_height="wrap_content" android:src="@drawable/icon"
+		android:layout_marginRight="5dip" android:background="#33000000"
+		android:padding="1dp" 
 		android:adjustViewBounds="true"
-        android:scaleType="centerCrop"/>
+		android:scaleType="centerCrop" />
 	<TextView android:id="@+id/text_name" android:layout_width="wrap_content"
-		android:layout_height="wrap_content" 
-		android:textAppearance="?android:attr/textAppearanceLarge"
-		android:layout_weight="1" 
-		android:layout_marginRight="5dip"
+		android:layout_height="wrap_content" android:textAppearance="?android:attr/textAppearanceMedium"
+		android:layout_weight="1" android:layout_marginRight="5dip"
 		android:text="very very very very very very very very very very very very long name" />
 	<TextView android:id="@+id/text_count" android:layout_width="wrap_content"
 		android:layout_height="wrap_content" android:layout_marginRight="5dp"
-		android:text="5" 
-		android:textAppearance="?android:attr/textAppearanceMedium"/>
+		android:text="5" android:textAppearance="?android:attr/textAppearanceMedium" />
 
 	<ImageView android:layout_width="wrap_content"
 		android:layout_height="wrap_content" android:src="@drawable/ic_right" />

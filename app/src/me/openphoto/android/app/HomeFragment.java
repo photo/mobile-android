@@ -33,6 +33,8 @@ import com.bugsense.trace.BugSenseHandler;
 /**
  * @version
  *          04.10.2012
+ *          <br>- added null check on longtitude and latitude
+ *          while checking geo position information
  *          <br>- added show proper disabled image on
  *          geo position button if no geo position information
  *          available.
@@ -235,7 +237,9 @@ public class HomeFragment extends CommonFragment implements Refreshable
 
 			ImageView geoButton = (ImageView) convertView
 					.findViewById(R.id.geo_button);
-			if (photo.getLongitude().length() != 0
+			if (photo.getLongitude() != null &&
+					photo.getLatitude() != null &&
+					photo.getLongitude().length() != 0
 					&& photo.getLatitude().length() != 0)
 			{
 				geoButton.setImageResource(R.drawable.button_location_share);
