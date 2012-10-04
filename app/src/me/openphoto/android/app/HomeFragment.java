@@ -32,6 +32,11 @@ import com.bugsense.trace.BugSenseHandler;
 
 /**
  * @version
+ *          04.10.2012
+ *          <br>- added show proper disabled image on
+ *          geo position button if no geo position information
+ *          available.
+ *          <p>
  *          03.10.2012
  *          <br>- alert method moved to CommonFragment
  *          <br>- added internet availability check to the
@@ -228,11 +233,11 @@ public class HomeFragment extends CommonFragment implements Refreshable
 			privateButton.setVisibility(photo.isPrivate() ? View.VISIBLE
 					: View.INVISIBLE);
 
+			ImageView geoButton = (ImageView) convertView
+					.findViewById(R.id.geo_button);
 			if (photo.getLongitude().length() != 0
 					&& photo.getLatitude().length() != 0)
 			{
-				ImageView geoButton = (ImageView) convertView
-						.findViewById(R.id.geo_button);
 				geoButton.setImageResource(R.drawable.button_location_share);
 				geoButton.setTag(photo);
 				geoButton.setOnClickListener(new View.OnClickListener()
@@ -253,6 +258,9 @@ public class HomeFragment extends CommonFragment implements Refreshable
 						}
 					}
 				});
+			} else
+			{
+				geoButton.setImageResource(R.drawable.button_nolocation_share);
 			}
 			return convertView;
 		}

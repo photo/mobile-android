@@ -30,6 +30,10 @@ import com.bugsense.trace.BugSenseHandler;
  * 
  * @author Eugene Popovich
  * @version
+ *          04.10.2012
+ *          <br>- changed album thumb size to 100x100xCR
+ *          <br>- removed album owner from album details
+ *          <p>
  *          03.10.2012
  *          <br>- added internet availability check to the
  *          loadItems method
@@ -117,9 +121,6 @@ public class AlbumsFragment extends CommonFragment implements
 			((TextView) convertView.findViewById(R.id.text_name))
 					.setText(album
 							.getName());
-			((TextView) convertView.findViewById(R.id.text_owner))
-					.setText(album
-							.getOwner());
 			((TextView) convertView.findViewById(R.id.text_count))
 					.setText(Integer.toString(album
 							.getCount()));
@@ -128,7 +129,7 @@ public class AlbumsFragment extends CommonFragment implements
 			if (album.getCover() != null)
 			{
 				mStorage.displayImageFor(image,
-						album.getCover().getUrl("200x200"));
+						album.getCover().getUrl("100x100xCR"));
 			}
 			return convertView;
 		}
