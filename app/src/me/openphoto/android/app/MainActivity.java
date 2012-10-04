@@ -24,6 +24,9 @@ import com.bugsense.trace.BugSenseHandler;
 
 /**
  * @version
+ *          04.10.2012
+ *          <br>- rearranged tab tags and albums
+ *          <p>
  *          03.10.2012
  *          <br>- now it implements NetworkAccessControl interface
  *          <br>- added isOnline method implementation
@@ -82,14 +85,14 @@ public class MainActivity extends SherlockFragmentActivity
 				R.string.tab_gallery,
 				new TabListener<GalleryFragment>("gallery",
 						GalleryFragment.class, null));
-		addTab(R.drawable.tab_tags_2states,
-				R.string.tab_tags,
-				new TabListener<TagsFragment>("tags",
-						TagsFragment.class, null));
 		addTab(View.NO_ID,
 				R.string.tab_albums,
 				new TabListener<AlbumsFragment>("albums",
 						AlbumsFragment.class, null));
+		addTab(R.drawable.tab_tags_2states,
+				R.string.tab_tags,
+				new TabListener<TagsFragment>("tags",
+						TagsFragment.class, null));
 		mActionBar.selectTab(mActionBar.getTabAt(activeTab));
 	}
 
