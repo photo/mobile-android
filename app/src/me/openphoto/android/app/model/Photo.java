@@ -79,8 +79,13 @@ public class Photo implements Parcelable {
         photo.mDateTaken = new Date(dateTakenInSeconds.longValue() * 1000L);
 
         photo.mFilenameOriginal = json.optString("filenameOriginal");
-        photo.mLatitude = json.optString("latitude");
-        photo.mLongitude = json.optString("longitude");
+
+        // geolocation
+        if (!json.isNull("latitude"))
+            photo.mLatitude = json.optString("latitude");
+
+        if (!json.isNull("longitude"))
+            photo.mLongitude = json.optString("longitude");
 
         // Tags
         JSONArray tags = json.getJSONArray("tags");
