@@ -45,4 +45,7 @@
     <string name="year">year</string>
     <string name="years">years</string>
 
+    <!-- Preferences -->
+    <string name="upload_preference_category">Upload of taken pictures</string>
+    <string name="wifi_only_upload">Upload only if WiFi network used</string>
 </resources>
