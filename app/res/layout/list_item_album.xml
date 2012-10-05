@@ -7,8 +7,11 @@
 
 	<ImageView android:id="@+id/cover" android:layout_width="wrap_content"
 		android:layout_height="wrap_content" android:src="@drawable/icon"
-		android:layout_marginRight="5dip" android:background="#33000000"
-		android:padding="1dp" 
+		android:layout_marginRight="5dip" android:background="@drawable/shadow_border"
+		android:paddingTop="1dp" 
+		android:paddingLeft="1dp" 
+		android:paddingRight="2dp" 
+		android:paddingBottom="2dp" 
 		android:adjustViewBounds="true"
 		android:scaleType="centerCrop" />
 	<TextView android:id="@+id/text_name" android:layout_width="wrap_content"
