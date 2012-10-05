@@ -11,7 +11,6 @@ import me.openphoto.android.app.net.ReturnSizes;
 import me.openphoto.android.app.ui.adapter.PhotosEndlessAdapter;
 import me.openphoto.android.app.ui.lib.ImageStorage;
 import me.openphoto.android.app.ui.lib.ImageStorage.OnImageDisplayedCallback;
-import me.openphoto.android.app.ui.widget.ActionBar;
 import android.app.Activity;
 import android.content.Context;
 import android.database.DataSetObserver;
@@ -25,10 +24,8 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.ImageView.ScaleType;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -39,6 +36,10 @@ import com.bugsense.trace.BugSenseHandler;
  * 
  * @author pboos
  * @version
+ *          05.10.2012
+ *          <br>- removed action bar reference
+ *          <br>- removed custom onClick listener from the ImageView
+ *          <p>
  *          03.10.2012
  *          <br>- added initial support for album photos filter
  */
@@ -54,7 +55,6 @@ public class PhotoDetailsActivity extends Activity {
 
     private ImageStorage mStorage;
 
-    private ActionBar mActionBar;
     private ViewPager mViewPager;
 
     private PhotoDetailPagerAdapter mAdapter;
@@ -83,8 +83,6 @@ public class PhotoDetailsActivity extends Activity {
 					photos, tags, album));
         }
 
-        mActionBar = (ActionBar) findViewById(R.id.actionbar);
-        mActionBar.setVisibility(View.GONE);
         mViewPager = (ViewPager) findViewById(R.id.photos);
         mViewPager.setAdapter(mAdapter);
 
@@ -135,15 +133,6 @@ public class PhotoDetailsActivity extends Activity {
             final View view = mInflator.inflate(R.layout.item_photo_detail,
                     ((ViewPager) collection), false);
             final ImageView imageView = (ImageView) view.findViewById(R.id.image);
-            view.setOnClickListener(new OnClickListener() {
-
-                @Override
-                public void onClick(View arg0) {
-                    ScaleType newScaleType = imageView.getScaleType() == ScaleType.CENTER_CROP ?
-                            ScaleType.FIT_CENTER : ScaleType.CENTER_CROP;
-                    imageView.setScaleType(newScaleType);
-                }
-            });
 
             TextView titleText = (TextView) view.findViewById(R.id.image_title);
             TextView descriptionText = (TextView) view.findViewById(R.id.image_description);
@@ -224,12 +213,10 @@ public class PhotoDetailsActivity extends Activity {
 
         @Override
         protected void onStartLoading() {
-            mActionBar.startLoading();
         }
 
         @Override
         protected void onStoppedLoading() {
-            mActionBar.stopLoading();
         }
 
         @Override
