@@ -23,9 +23,10 @@
 				android:layout_alignParentLeft="true"
 				android:clickable="true"
 				android:src="@drawable/button_nolocation_share" />
-			<ImageView android:id="@+id/geo_share"
+			<ImageView android:id="@+id/share_button"
 				android:layout_width="wrap_content" android:layout_height="wrap_content"
 				android:layout_toRightOf="@id/geo_button"
+				android:clickable="true"
 				android:src="@drawable/button_share" />
 
 			<ImageView android:id="@+id/button_private"

@@ -21,15 +21,24 @@ import java.io.File;
 import android.annotation.SuppressLint;
 import android.app.ActivityManager;
 import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Environment;
 import android.os.StatFs;
+import android.util.Log;
 
 /**
  * Class containing some static utility methods.
+ * 
+ * @version
+ *          05.10.2012
+ *          <br>- added new methods isOnline and isWiFiActive
+ * 
  */
 public class Utils {
     public static final int IO_BUFFER_SIZE = 8 * 1024;
+	private static final String TAG = Utils.class.getSimpleName();
 
     private Utils() {
     };
@@ -121,4 +130,62 @@ public class Utils {
     public static boolean hasExternalCacheDir() {
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO;
     }
+
+	/**
+	 * Check whether the device is connected to any network
+	 * 
+	 * @param context
+	 * @return true if device is connected to any network, otherwise
+	 *         return false
+	 */
+	public static boolean isOnline(
+			Context context)
+	{
+		boolean result = false;
+		try
+		{
+			ConnectivityManager cm =
+					(ConnectivityManager) context
+							.getSystemService(Context.CONNECTIVITY_SERVICE);
+			NetworkInfo netInfo = cm.getActiveNetworkInfo();
+			if (netInfo != null && netInfo.isConnectedOrConnecting())
+			{
+				result = true;
+			}
+		} catch (Exception ex)
+		{
+			Log.e(TAG, "Error", ex);
+		}
+		return result;
+	}
+
+	/**
+	 * Check whether the device is connected to WiFi network and it
+	 * is active connection
+	 * 
+	 * @param context
+	 * @return true if device is connected to WiFi network and it is active,
+	 *         otherwise return false
+	 */
+	public static boolean isWiFiActive(Context context)
+	{
+		boolean result = false;
+		try
+		{
+			ConnectivityManager cm =
+					(ConnectivityManager) context
+							.getSystemService(Context.CONNECTIVITY_SERVICE);
+			NetworkInfo netInfo = cm.getActiveNetworkInfo();
+			if (netInfo != null
+					&& netInfo.getType() == ConnectivityManager.TYPE_WIFI
+					&& netInfo.isConnectedOrConnecting())
+			{
+				result = true;
+			}
+		} catch (Exception ex)
+		{
+			Log.e(TAG, "Error", ex);
+		}
+		return result;
+	}
 }
