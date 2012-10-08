@@ -19,6 +19,7 @@ import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.Html;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
@@ -38,6 +39,7 @@ import com.bugsense.trace.BugSenseHandler;
 /**
  * @version
  *          08.10.2012
+ *          <br>- added share via e-mail functionality implementation
  *          <br>- added context menu plug to the share button
  *          <p>
  *          04.10.2012
@@ -132,9 +134,7 @@ public class HomeFragment extends CommonFragment implements Refreshable
 		switch (menuItemIndex)
 		{
 			case R.id.menu_share_email:
-				// TODO
-				alert("E-Mail share for item: "
-						+ mAdapter.activePhoto.getId());
+				shareViaEMail(mAdapter.activePhoto);
 			break;
 			case R.id.menu_share_twitter:
 				// TODO
@@ -149,6 +149,25 @@ public class HomeFragment extends CommonFragment implements Refreshable
 		}
 		return true;
 	}
+
+	private void shareViaEMail(Photo photo)
+	{
+		String mailId = "";
+		Intent emailIntent = new Intent(Intent.ACTION_SENDTO,
+				Uri.fromParts("mailto", mailId, null));
+		emailIntent.putExtra(android.content.Intent.EXTRA_SUBJECT,
+				getString(R.string.share_email_default_title));
+		String url = photo.getUrl(Photo.ORIGINAL_SIZE);
+		String bodyText = String.format(getString(R.string.share_email_default_body), 
+				url, url);
+		emailIntent.putExtra(
+				Intent.EXTRA_TEXT,
+				Html.fromHtml(bodyText)
+				);
+		startActivity(Intent.createChooser(emailIntent,
+				getString(R.string.share_email_send_title)));
+	}
+
 	private class NewestPhotosAdapter extends EndlessAdapter<Photo>
 	{
 		private final IOpenPhotoApi mOpenPhotoApi;

@@ -15,6 +15,11 @@
     <string name="menu_share_email">E-Mail</string>
     <string name="menu_share_twitter">Twitter</string>
     <string name="menu_share_facebook">Facebook</string>
+    
+    <!--  Share E-Mail -->
+    <string name="share_email_default_title">I\'m using OpenPhoto to share my moments</string>
+    <string name="share_email_default_body">View the photo &lt;a href="%1$s">%1$s&lt;/a></string>
+    <string name="share_email_send_title">Send E-Mail…</string>
 
     <!-- SetupActivity -->
     <string name="hint_server">username.openphoto.me</string>
