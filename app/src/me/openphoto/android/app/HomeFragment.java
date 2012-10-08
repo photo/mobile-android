@@ -20,8 +20,13 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -32,6 +37,9 @@ import com.bugsense.trace.BugSenseHandler;
 
 /**
  * @version
+ *          08.10.2012
+ *          <br>- added context menu plug to the share button
+ *          <p>
  *          04.10.2012
  *          <br>- added null check on longtitude and latitude
  *          while checking geo position information
@@ -101,10 +109,51 @@ public class HomeFragment extends CommonFragment implements Refreshable
 		super.onDestroyView();
 		mAdapter.forceStopLoadingIfNecessary();
 	}
+
+	@Override
+	public void onCreateContextMenu(ContextMenu menu, View v,
+			ContextMenuInfo menuInfo)
+	{
+		if (v.getId() == R.id.share_button)
+		{
+			MenuInflater inflater = getActivity().getMenuInflater();
+			inflater.inflate(R.menu.share, menu);
+			super.onCreateContextMenu(menu, v, menuInfo);
+		} else
+		{
+			super.onCreateContextMenu(menu, v, menuInfo);
+		}
+	}
+
+	@Override
+	public boolean onContextItemSelected(MenuItem item)
+	{
+		int menuItemIndex = item.getItemId();
+		switch (menuItemIndex)
+		{
+			case R.id.menu_share_email:
+				// TODO
+				alert("E-Mail share for item: "
+						+ mAdapter.activePhoto.getId());
+			break;
+			case R.id.menu_share_twitter:
+				// TODO
+				alert("Twitter share for item: "
+						+ mAdapter.activePhoto.getId());
+			break;
+			case R.id.menu_share_facebook:
+				// TODO
+				alert("Facebook share for item: "
+						+ mAdapter.activePhoto.getId());
+			break;
+		}
+		return true;
+	}
 	private class NewestPhotosAdapter extends EndlessAdapter<Photo>
 	{
 		private final IOpenPhotoApi mOpenPhotoApi;
 		private final Context mContext;
+		private Photo activePhoto;
 
 		public NewestPhotosAdapter(Context context)
 		{
@@ -121,7 +170,8 @@ public class HomeFragment extends CommonFragment implements Refreshable
 		}
 
 		@Override
-		public View getView(Photo photo, View convertView, ViewGroup parent)
+		public View getView(final Photo photo, View convertView,
+				ViewGroup parent)
 		{
 			if (convertView == null)
 			{
@@ -266,6 +316,18 @@ public class HomeFragment extends CommonFragment implements Refreshable
 			{
 				geoButton.setImageResource(R.drawable.button_nolocation_share);
 			}
+			final ImageView shareButton = (ImageView) convertView
+					.findViewById(R.id.share_button);
+			registerForContextMenu(shareButton);
+			shareButton.setOnClickListener(new OnClickListener()
+			{
+				@Override
+				public void onClick(View v)
+				{
+					activePhoto = photo;
+					getActivity().openContextMenu(shareButton);
+				}
+			});
 			return convertView;
 		}
 
