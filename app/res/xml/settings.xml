@@ -11,6 +11,12 @@
         <PreferenceScreen android:key="@string/setting_account_loggedin_key" />
     </PreferenceCategory>
     
+    <PreferenceCategory android:title="@string/upload_preference_category" >
+        <CheckBoxPreference
+            android:defaultValue="@bool/setting_wifi_only_upload_on_default"
+            android:key="@string/setting_wifi_only_upload_on_key"
+            android:title="@string/wifi_only_upload" />
+    </PreferenceCategory>
     <PreferenceCategory android:title="Auto upload of taken pictures" >
         <CheckBoxPreference
             android:defaultValue="@bool/setting_autoupload_on_default"

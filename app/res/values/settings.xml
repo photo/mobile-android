@@ -25,6 +25,10 @@
   <!-- AutoUpload -->
   <string name="setting_autoupload_on_key">setting_autoupload_on</string>
   <bool   name="setting_autoupload_on_default">false</bool>
+  
+  <!-- Upload -->
+  <string name="setting_wifi_only_upload_on_key">setting_wifi_only_upload_on</string>
+  <bool   name="setting_wifi_only_upload_on_default">false</bool>
 
   <string name="setting_autoupload_tag_key">setting_autoupload_tag</string>
   <string name="setting_autoupload_tag_default">autoupload</string>

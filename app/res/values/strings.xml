@@ -10,6 +10,16 @@
     <string name="menu_refresh">Refresh</string>
     <string name="menu_preferences">Preferences</string>
     <string name="menu_exit">Exit</string>
+    
+    <!-- Share Menu -->
+    <string name="menu_share_email">E-Mail</string>
+    <string name="menu_share_twitter">Twitter</string>
+    <string name="menu_share_facebook">Facebook</string>
+    
+    <!--  Share E-Mail -->
+    <string name="share_email_default_title">I\'m using OpenPhoto to share my moments</string>
+    <string name="share_email_default_body">View the photo &lt;a href="%1$s">%1$s&lt;/a></string>
+    <string name="share_email_send_title">Send E-Mail…</string>
 
     <!-- SetupActivity -->
     <string name="hint_server">username.openphoto.me</string>
@@ -45,4 +55,7 @@
     <string name="year">year</string>
     <string name="years">years</string>
 
+    <!-- Preferences -->
+    <string name="upload_preference_category">Upload of taken pictures</string>
+    <string name="wifi_only_upload">Upload only if WiFi network used</string>
 </resources>

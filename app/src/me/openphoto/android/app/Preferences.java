@@ -11,6 +11,12 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
+/**
+ * @version
+ *          05.10.2012
+ *          <br>- added isWiFiOnlyUploadActive method
+ * 
+ */
 public class Preferences {
     public static boolean isAutoUploadActive(Context context) {
         return PreferenceManager.getDefaultSharedPreferences(context)
@@ -19,6 +25,15 @@ public class Preferences {
                         context.getResources().getBoolean(R.bool.setting_autoupload_on_default));
     }
 
+	public static boolean isWiFiOnlyUploadActive(Context context)
+	{
+		return PreferenceManager
+				.getDefaultSharedPreferences(context)
+				.getBoolean(
+						context.getString(R.string.setting_wifi_only_upload_on_key),
+						context.getResources().getBoolean(
+								R.bool.setting_wifi_only_upload_on_default));
+	}
     public static String getAutoUploadTag(Context context) {
         return PreferenceManager.getDefaultSharedPreferences(context)
                 .getString(

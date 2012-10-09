@@ -18,10 +18,16 @@ import android.os.Parcelable;
  * Class representing a Photo on OpenPhoto.
  * 
  * @author Patrick Boos
+ * 
+ * @version
+ *          08.10.2012
+ *          <br>- added original path check before appending host
+ *          prefix
  */
 public class Photo implements Parcelable {
     public static final int PERMISSION_PUBLIC = 1;
     public static final int PERMISSION_PRIVATE = 0;
+	public static final String ORIGINAL_SIZE = "original";
 
     protected String mId;
     protected final List<String> mTags;
@@ -68,7 +74,12 @@ public class Photo implements Parcelable {
         String host = "http://" + json.optString("host");
 
         photo.mUrls.put("base", host + json.optString("pathBase"));
-        photo.mUrls.put("original", host + json.optString("pathOriginal"));
+		String pathOriginal = json.optString("pathOriginal");
+		if (!pathOriginal.startsWith("http"))
+		{
+			pathOriginal = host + pathOriginal;
+		}
+		photo.mUrls.put(ORIGINAL_SIZE, pathOriginal);
         photo.mUrls.put("url", json.optString("url"));
         photo.mPermission = json.optInt("permission", PERMISSION_PRIVATE);
 
