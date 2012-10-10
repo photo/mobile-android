@@ -10,15 +10,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 
-/**
- * 
- * 03.10.2012
- * <br>- added initial possibility to force stop loading
- * task. For a now it only releases endless progress
- * bar in the main activity action bar not really stops
- * the task
- * 
- */
 public abstract class EndlessAdapter<T> extends BaseAdapter {
     @Override
     public abstract long getItemId(int position);
@@ -41,7 +32,7 @@ public abstract class EndlessAdapter<T> extends BaseAdapter {
     private int mCurrentPage = 1;
     private final int mPageSize;
 
-	private LoadNextTask loadNextTask;
+    private LoadNextTask loadNextTask;
 
     public EndlessAdapter(int pageSize) {
         this(pageSize, null);
@@ -84,8 +75,8 @@ public abstract class EndlessAdapter<T> extends BaseAdapter {
 
     public void loadNextPage() {
         if (mKeepOnAppending.getAndSet(false)) {
-			loadNextTask = new LoadNextTask();
-			loadNextTask.execute();
+            loadNextTask = new LoadNextTask();
+            loadNextTask.execute();
         }
     }
 
@@ -93,16 +84,17 @@ public abstract class EndlessAdapter<T> extends BaseAdapter {
         return mPageSize;
     }
 
-	public void forceStopLoadingIfNecessary()
-	{
-		if (loadNextTask != null)
-		{
-			if (loadNextTask.cancel(true))
-			{
-				onStoppedLoading();
-			}
-		}
-	}
+    public void forceStopLoadingIfNecessary()
+    {
+        if (loadNextTask != null)
+        {
+            if (loadNextTask.cancel(true))
+            {
+                onStoppedLoading();
+            }
+        }
+    }
+
     private class LoadNextTask extends AsyncTask<Void, Void, List<T>> {
 
         @Override
@@ -117,9 +109,9 @@ public abstract class EndlessAdapter<T> extends BaseAdapter {
             return response.items;
         }
 
-		@Override
+        @Override
         protected void onPostExecute(List<T> result) {
-			loadNextTask = null;
+            loadNextTask = null;
             onStoppedLoading();
             if (result != null) {
                 mItems.addAll(result);

@@ -12,29 +12,26 @@ import org.json.JSONObject;
 
 /**
  * @author Eugene Popovich
- * @version
- *          02.10.2012
- *          <br>-created
  */
 public class AlbumsResponse extends OpenPhotoResponse
 {
-	private final List<Album> mAlbums;
+    private final List<Album> mAlbums;
 
-	public AlbumsResponse(JSONObject json) throws JSONException
-	{
+    public AlbumsResponse(JSONObject json) throws JSONException
+    {
         super(json);
         JSONArray data = json.getJSONArray("result");
-		mAlbums = new ArrayList<Album>(data.length());
+        mAlbums = new ArrayList<Album>(data.length());
         for (int i = 0; i < data.length(); i++) {
-			mAlbums.add(Album.fromJson(data.getJSONObject(i)));
+            mAlbums.add(Album.fromJson(data.getJSONObject(i)));
         }
     }
 
     /**
      * @return the tags retrieved from the server
      */
-	public List<Album> getAlbums()
-	{
-		return mAlbums;
+    public List<Album> getAlbums()
+    {
+        return mAlbums;
     }
 }

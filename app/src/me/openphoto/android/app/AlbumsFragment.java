@@ -1,3 +1,4 @@
+
 package me.openphoto.android.app;
 
 import java.util.HashMap;
@@ -29,143 +30,133 @@ import com.bugsense.trace.BugSenseHandler;
  * The fragment which displays albums list
  * 
  * @author Eugene Popovich
- * @version
- *          04.10.2012
- *          <br>- changed album thumb size to 100x100xCR
- *          <br>- removed album owner from album details
- *          <p>
- *          03.10.2012
- *          <br>- added internet availability check to the
- *          loadItems method
- *          <br>- added onDestroyView handler to force close
- *          loading task
- *          <br>- changed parent class to CommonFragment
- *          <br>- created
  */
 public class AlbumsFragment extends CommonFragment implements
-		OnItemClickListener
+        OnItemClickListener
 {
-	public static final String TAG = AlbumsFragment.class.getSimpleName();
+    public static final String TAG = AlbumsFragment.class.getSimpleName();
 
-	private LoadingControl loadingControl;
-	private GalleryOpenControl galleryOpenControl;
+    private LoadingControl loadingControl;
+    private GalleryOpenControl galleryOpenControl;
 
-	private AlbumsAdapter mAdapter;
-	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container,
-			Bundle savedInstanceState)
-	{
-		View v = inflater.inflate(R.layout.fragment_albums, container, false);
+    private AlbumsAdapter mAdapter;
 
-		mAdapter = new AlbumsAdapter();
-		ListView list = (ListView) v.findViewById(R.id.list_albums);
-		list.setAdapter(mAdapter);
-		list.setOnItemClickListener(this);
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+            Bundle savedInstanceState)
+    {
+        View v = inflater.inflate(R.layout.fragment_albums, container, false);
 
-		return v;
-	}
+        mAdapter = new AlbumsAdapter();
+        ListView list = (ListView) v.findViewById(R.id.list_albums);
+        list.setAdapter(mAdapter);
+        list.setOnItemClickListener(this);
 
-	@Override
-	public void onAttach(Activity activity)
-	{
-		super.onAttach(activity);
-		loadingControl = ((LoadingControl) activity);
-		galleryOpenControl = ((GalleryOpenControl) activity);
+        return v;
+    }
 
-	}
+    @Override
+    public void onAttach(Activity activity)
+    {
+        super.onAttach(activity);
+        loadingControl = ((LoadingControl) activity);
+        galleryOpenControl = ((GalleryOpenControl) activity);
 
-	@Override
-	public void onItemClick(AdapterView<?> adapterView, View view,
-			int position, long id)
-	{
-		Album album = (Album) mAdapter.getItem(position);
-		galleryOpenControl.openGallery(null, album.getId());
-	}
+    }
 
-	@Override
-	public void onDestroyView()
-	{
-		super.onDestroyView();
-		mAdapter.forceStopLoadingIfNecessary();
-	}
-	private class AlbumsAdapter extends EndlessAdapter<Album>
-	{
-		private final IOpenPhotoApi mOpenPhotoApi;
-		private final ImageStorage mStorage = new ImageStorage(
-				getActivity());
+    @Override
+    public void onItemClick(AdapterView<?> adapterView, View view,
+            int position, long id)
+    {
+        Album album = (Album) mAdapter.getItem(position);
+        galleryOpenControl.openGallery(null, album.getId());
+    }
 
-		public AlbumsAdapter()
-		{
-			super(Integer.MAX_VALUE);
-			mOpenPhotoApi = Preferences.getApi(getActivity());
-			loadFirstPage();
-		}
+    @Override
+    public void onDestroyView()
+    {
+        super.onDestroyView();
+        mAdapter.forceStopLoadingIfNecessary();
+    }
 
-		@Override
-		public long getItemId(int position)
-		{
-			// return ((Album) getItem(position)).getAlbum().hashCode();
-			return position;
-		}
+    private class AlbumsAdapter extends EndlessAdapter<Album>
+    {
+        private final IOpenPhotoApi mOpenPhotoApi;
+        private final ImageStorage mStorage = new ImageStorage(
+                getActivity());
 
-		@Override
-		public View getView(Album album, View convertView, ViewGroup parent)
-		{
-			if (convertView == null)
-			{
-				final LayoutInflater layoutInflater = (LayoutInflater) getActivity()
-						.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-				convertView = layoutInflater.inflate(R.layout.list_item_album,
-						null);
-			}
-			((TextView) convertView.findViewById(R.id.text_name))
-					.setText(album
-							.getName());
-			((TextView) convertView.findViewById(R.id.text_count))
-					.setText(Integer.toString(album
-							.getCount()));
-			ImageView image = (ImageView) convertView.findViewById(R.id.cover);
-			image.setImageBitmap(null); // TODO maybe a loading image
-			if (album.getCover() != null)
-			{
-				mStorage.displayImageFor(image,
-						album.getCover().getUrl("100x100xCR"));
-			}
-			return convertView;
-		}
+        public AlbumsAdapter()
+        {
+            super(Integer.MAX_VALUE);
+            mOpenPhotoApi = Preferences.getApi(getActivity());
+            loadFirstPage();
+        }
 
-		@Override
-		public LoadResponse loadItems(int page)
-		{
-			if (checkOnline())
-			{
-				try
-				{
-					AlbumsResponse response = mOpenPhotoApi.getAlbums();
-					return new LoadResponse(response.getAlbums(), false);
-				} catch (Exception e)
-				{
-					Log.e(TAG, "Could not load next albums in list", e);
-					Map<String, String> extraData = new HashMap<String, String>();
-					extraData.put("message",
-							"Could not load next albums in list");
-					BugSenseHandler.log(TAG, extraData, e);
-				}
-			}
-			return new LoadResponse(null, false);
-		}
+        @Override
+        public long getItemId(int position)
+        {
+            // return ((Album) getItem(position)).getAlbum().hashCode();
+            return position;
+        }
 
-		@Override
-		protected void onStartLoading()
-		{
-			loadingControl.startLoading();
-		}
+        @Override
+        public View getView(Album album, View convertView, ViewGroup parent)
+        {
+            if (convertView == null)
+            {
+                final LayoutInflater layoutInflater = (LayoutInflater) getActivity()
+                        .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                convertView = layoutInflater.inflate(R.layout.list_item_album,
+                        null);
+            }
+            ((TextView) convertView.findViewById(R.id.text_name))
+                    .setText(album
+                            .getName());
+            ((TextView) convertView.findViewById(R.id.text_count))
+                    .setText(Integer.toString(album
+                            .getCount()));
+            ImageView image = (ImageView) convertView.findViewById(R.id.cover);
+            image.setImageBitmap(null); // TODO maybe a loading image
+            if (album.getCover() != null)
+            {
+                mStorage.displayImageFor(image,
+                        album.getCover().getUrl("100x100xCR"));
+            }
+            return convertView;
+        }
 
-		@Override
-		protected void onStoppedLoading()
-		{
-			loadingControl.stopLoading();
-		}
-	}
+        @Override
+        public LoadResponse loadItems(int page)
+        {
+            if (checkOnline())
+            {
+                try
+                {
+                    AlbumsResponse response = mOpenPhotoApi.getAlbums();
+                    return new LoadResponse(response.getAlbums(), false);
+                } catch (Exception e)
+                {
+                    Log.e(TAG, "Could not load next albums in list", e);
+                    Map<String, String> extraData = new HashMap<String, String>();
+                    extraData.put("message",
+                            "Could not load next albums in list");
+                    BugSenseHandler.log(TAG, extraData, e);
+                }
+            }
+            return new LoadResponse(null, false);
+        }
+
+        @Override
+        protected void onStartLoading()
+        {
+            loadingControl.startLoading();
+        }
+
+        @Override
+        protected void onStoppedLoading()
+        {
+            loadingControl.stopLoading();
+        }
+    }
 
 }

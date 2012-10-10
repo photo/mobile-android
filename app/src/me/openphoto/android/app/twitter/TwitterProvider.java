@@ -1,3 +1,4 @@
+
 package me.openphoto.android.app.twitter;
 
 import oauth.signpost.OAuthProvider;
@@ -9,59 +10,57 @@ import android.content.Context;
  * The class which provides access to the Twitter api
  * 
  * @author Eugene Popovich
- * @version
- *          10.10.2012
- *          <br>- created
  */
 public class TwitterProvider
 {
-	private Twitter twitter;
-	private CommonsHttpOAuthConsumer consumer;
-	private OAuthProvider provider;
-	static TwitterProvider instance = new TwitterProvider();
+    private Twitter twitter;
+    private CommonsHttpOAuthConsumer consumer;
+    private OAuthProvider provider;
+    static TwitterProvider instance = new TwitterProvider();
 
-	static TwitterProvider getInstance()
-	{
-		return instance;
-	}
-	public static Twitter getTwitter(Context context)
-	{
-		TwitterProvider provider = getInstance();
-		if (provider.getTwitter() == null)
-		{
-			provider.setTwitter(TwitterUtils.instantiateTwitter(context));
-		}
-		return provider.getTwitter();
-	}
+    static TwitterProvider getInstance()
+    {
+        return instance;
+    }
 
-	Twitter getTwitter()
-	{
-		return twitter;
-	}
+    public static Twitter getTwitter(Context context)
+    {
+        TwitterProvider provider = getInstance();
+        if (provider.getTwitter() == null)
+        {
+            provider.setTwitter(TwitterUtils.instantiateTwitter(context));
+        }
+        return provider.getTwitter();
+    }
 
-	void setTwitter(Twitter twitter)
-	{
-		this.twitter = twitter;
-	}
+    Twitter getTwitter()
+    {
+        return twitter;
+    }
 
-	CommonsHttpOAuthConsumer getConsumer()
-	{
-		return consumer;
-	}
+    void setTwitter(Twitter twitter)
+    {
+        this.twitter = twitter;
+    }
 
-	void setConsumer(CommonsHttpOAuthConsumer consumer)
-	{
-		this.consumer = consumer;
-	}
+    CommonsHttpOAuthConsumer getConsumer()
+    {
+        return consumer;
+    }
 
-	OAuthProvider getProvider()
-	{
-		return provider;
-	}
+    void setConsumer(CommonsHttpOAuthConsumer consumer)
+    {
+        this.consumer = consumer;
+    }
 
-	void setProvider(OAuthProvider provider)
-	{
-		this.provider = provider;
-	}
+    OAuthProvider getProvider()
+    {
+        return provider;
+    }
+
+    void setProvider(OAuthProvider provider)
+    {
+        this.provider = provider;
+    }
 
 }

@@ -20,13 +20,6 @@ import android.util.Log;
  * OpenPhotoApi provides access to the acOpenPhoto API.
  * 
  * @author Patrick Boos
- * @version
- *          03.10.2012
- *          <br>- changes because of some interface methods changed
- *          their signature
- *          <br>- updated implementation of getPhotos method with
- *          album filtering support
- *          <br>- added getAlbums method implementation
  */
 public class OpenPhotoApi extends ApiBase implements IOpenPhotoApi {
 
@@ -52,16 +45,16 @@ public class OpenPhotoApi extends ApiBase implements IOpenPhotoApi {
         return new TagsResponse(new JSONObject(response.getContentAsString()));
     }
 
-	@Override
-	public AlbumsResponse getAlbums() throws ClientProtocolException,
-			IOException,
-			IllegalStateException, JSONException
-	{
-		ApiRequest request = new ApiRequest(ApiRequest.GET, "/albums/list.json");
-		ApiResponse response = execute(request);
-		String content = response.getContentAsString();
-		return new AlbumsResponse(new JSONObject(content));
-	}
+    @Override
+    public AlbumsResponse getAlbums() throws ClientProtocolException,
+            IOException,
+            IllegalStateException, JSONException
+    {
+        ApiRequest request = new ApiRequest(ApiRequest.GET, "/albums/list.json");
+        ApiResponse response = execute(request);
+        String content = response.getContentAsString();
+        return new AlbumsResponse(new JSONObject(content));
+    }
 
     @Override
     public PhotoResponse getPhoto(String photoId, ReturnSizes returnSize)
@@ -104,12 +97,12 @@ public class OpenPhotoApi extends ApiBase implements IOpenPhotoApi {
     }
 
     @Override
-	public PhotosResponse getPhotos(ReturnSizes resize,
-			Collection<String> tags,
-			String album)
+    public PhotosResponse getPhotos(ReturnSizes resize,
+            Collection<String> tags,
+            String album)
             throws ClientProtocolException, IllegalStateException, IOException,
             JSONException {
-		return getPhotos(resize, tags, album, null);
+        return getPhotos(resize, tags, album, null);
     }
 
     /*
@@ -121,19 +114,19 @@ public class OpenPhotoApi extends ApiBase implements IOpenPhotoApi {
      */
     @Override
     public PhotosResponse getPhotos(ReturnSizes resize,
-			Collection<String> tags,
-			String album, Paging paging)
+            Collection<String> tags,
+            String album, Paging paging)
             throws ClientProtocolException, IOException, IllegalStateException,
             JSONException {
-		ApiRequest request;
-		if (album != null && album.length() > 0)
-		{
-			request = new ApiRequest(ApiRequest.GET, "/photos/album-" + album
-					+ "/list.json");
-		} else
-		{
-			request = new ApiRequest(ApiRequest.GET, "/photos/list.json");
-		}
+        ApiRequest request;
+        if (album != null && album.length() > 0)
+        {
+            request = new ApiRequest(ApiRequest.GET, "/photos/album-" + album
+                    + "/list.json");
+        } else
+        {
+            request = new ApiRequest(ApiRequest.GET, "/photos/list.json");
+        }
         if (resize != null) {
             request.addParameter("returnSizes", resize.toString());
         }

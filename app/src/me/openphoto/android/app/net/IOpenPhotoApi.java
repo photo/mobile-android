@@ -12,13 +12,6 @@ import org.json.JSONException;
 
 import android.content.Context;
 
-/**
- * @version
- *          03.10.2012
- *          <br>- added getAlbums method
- *          <br>- changed signature of some getPhotos method variations:
- *          added album parameter
- */
 public interface IOpenPhotoApi {
 
     /**
@@ -31,15 +24,15 @@ public interface IOpenPhotoApi {
     TagsResponse getTags() throws ClientProtocolException, IOException,
             IllegalStateException, JSONException;
 
-	/**
-	 * @return albums which are used on the server
-	 * @throws ClientProtocolException
-	 * @throws IOException
-	 * @throws IllegalStateException
-	 * @throws JSONException
-	 */
-	AlbumsResponse getAlbums() throws ClientProtocolException, IOException,
-			IllegalStateException, JSONException;
+    /**
+     * @return albums which are used on the server
+     * @throws ClientProtocolException
+     * @throws IOException
+     * @throws IllegalStateException
+     * @throws JSONException
+     */
+    AlbumsResponse getAlbums() throws ClientProtocolException, IOException,
+            IllegalStateException, JSONException;
 
     /**
      * Retrieve a single photo.
@@ -110,44 +103,37 @@ public interface IOpenPhotoApi {
             JSONException;
 
     /**
-	 * Get photos.
-	 * 
-	 * @param resize
-	 *            which sizes should be returned
-	 * @param tags
-	 *            filter potos by these tags
-	 * @param album
-	 *            filter potos by this album
-	 * @return the photos
-	 * @throws ClientProtocolException
-	 * @throws IOException
-	 * @throws IllegalStateException
-	 * @throws JSONException
-	 */
-	PhotosResponse getPhotos(ReturnSizes resize, Collection<String> tags,
-			String album)
+     * Get photos.
+     * 
+     * @param resize which sizes should be returned
+     * @param tags filter potos by these tags
+     * @param album filter potos by this album
+     * @return the photos
+     * @throws ClientProtocolException
+     * @throws IOException
+     * @throws IllegalStateException
+     * @throws JSONException
+     */
+    PhotosResponse getPhotos(ReturnSizes resize, Collection<String> tags,
+            String album)
             throws ClientProtocolException, IllegalStateException, IOException,
             JSONException;
 
     /**
-	 * Get photos.
-	 * 
-	 * @param resize
-	 *            which sizes should be returned
-	 * @param tags
-	 *            filter potos by these tags
-	 * @param album
-	 *            filter potos by this album
-	 * @param pageing
-	 *            page and pageSize to be retrieved
-	 * @return the photos
-	 * @throws ClientProtocolException
-	 * @throws IOException
-	 * @throws IllegalStateException
-	 * @throws JSONException
-	 */
+     * Get photos.
+     * 
+     * @param resize which sizes should be returned
+     * @param tags filter potos by these tags
+     * @param album filter potos by this album
+     * @param pageing page and pageSize to be retrieved
+     * @return the photos
+     * @throws ClientProtocolException
+     * @throws IOException
+     * @throws IllegalStateException
+     * @throws JSONException
+     */
     PhotosResponse getPhotos(ReturnSizes resize, Collection<String> tags,
-			String album,
+            String album,
             Paging paging) throws ClientProtocolException, IOException,
             IllegalStateException, JSONException;
 
