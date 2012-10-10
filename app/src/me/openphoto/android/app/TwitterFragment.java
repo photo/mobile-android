@@ -23,6 +23,7 @@ import android.widget.TextView;
  * @author Eugene Popovich
  * @version
  *          10.10.2012
+ *          <br>- fixed showing of current twitter user. Switched to AsyncTask
  *          <br>- created
  */
 public class TwitterFragment extends CommonDialogFragment
@@ -60,31 +61,7 @@ public class TwitterFragment extends CommonDialogFragment
 	{
 		try
 		{
-			final TextView loggedInAsText = (TextView) view
-					.findViewById(R.id.loggedInAs);
-			loggedInAsText.setText(null);
-			// should to invoke it in the new thread to avoid network in
-			// main thread exception
-			new Thread(new Runnable()
-			{
-
-				@Override
-				public void run()
-				{
-					try
-					{
-						Twitter twitter = TwitterProvider
-								.getTwitter(getActivity());
-						loggedInAsText.setText(String.format(
-								getString(R.string.share_twitter_logged_in_as),
-								twitter.getScreenName()));
-					} catch (Exception ex)
-					{
-						GuiUtils.error(TAG, null, ex,
-								getActivity());
-					}
-				}
-			}).start();
+			new ShowCurrentlyLoggedInUserTask(view).execute();
 			messageEt = (EditText) view.findViewById(R.id.message);
 			messageEt.setText(String.format(
 					getString(R.string.share_twitter_default_msg),
@@ -135,6 +112,54 @@ public class TwitterFragment extends CommonDialogFragment
 		return result;
 	}
 
+	private class ShowCurrentlyLoggedInUserTask extends
+	AsyncTask<Void, Void, Boolean>
+	{
+		TextView loggedInAsText;
+		String name;
+		ShowCurrentlyLoggedInUserTask(View view)
+		{
+			loggedInAsText = (TextView) view
+					.findViewById(R.id.loggedInAs);
+		}
+		@Override
+		protected void onPreExecute()
+		{
+			super.onPreExecute();
+			loggedInAsText.setText(null);
+			loadingControl.startLoading();
+		}
+		@Override
+		protected Boolean doInBackground(Void... params)
+		{
+			try
+			{
+				Twitter twitter = TwitterProvider.getTwitter(getActivity());
+				name = twitter.getScreenName();
+				return true;
+			} catch (Exception ex)
+			{
+				GuiUtils.error(TAG, "Could not retrieve twitter screen name",
+						ex,
+						getActivity());
+			}
+			return false;
+		}
+
+		@Override
+		protected void onPostExecute(Boolean result)
+		{
+			super.onPostExecute(result);
+			loadingControl.stopLoading();
+			if (result.booleanValue())
+			{
+				loggedInAsText.setText(String
+						.format(
+								getString(R.string.share_twitter_logged_in_as),
+								name));
+			}
+		}
+	}
 	private class TweetTask extends
 			AsyncTask<Void, Void, Boolean>
 	{
@@ -177,4 +202,5 @@ public class TwitterFragment extends CommonDialogFragment
 			TwitterFragment.this.dismiss();
 		}
 	}
+	
 }
