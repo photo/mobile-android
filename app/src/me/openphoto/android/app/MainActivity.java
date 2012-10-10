@@ -1,9 +1,11 @@
 package me.openphoto.android.app;
 
 import me.openphoto.android.app.service.UploaderService;
+import me.openphoto.android.app.twitter.TwitterUtils;
 import me.openphoto.android.app.util.GalleryOpenControl;
 import me.openphoto.android.app.util.LoadingControl;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -20,6 +22,11 @@ import com.bugsense.trace.BugSenseHandler;
 
 /**
  * @version
+ *          10.10.2012
+ *          <br>- overrode onNewIntent method where application handles
+ *          oAuth response
+ *          <br>- removed custom transaction management from TabListener
+ *          <p>
  *          05.10.2012
  *          <br>- removed implementation of NetworkAccessControl
  *          <p>
@@ -123,6 +130,17 @@ public class MainActivity extends SherlockFragmentActivity
 		{
 			startActivity(new Intent(this, SetupActivity.class));
 			finish();
+		}
+	}
+
+	@Override
+	protected void onNewIntent(Intent intent)
+	{
+		super.onNewIntent(intent);
+		if (intent != null && intent.getData() != null)
+		{
+			Uri uri = intent.getData();
+			TwitterUtils.verifyOAuthResponse(this, uri);
 		}
 	}
 
@@ -259,20 +277,15 @@ public class MainActivity extends SherlockFragmentActivity
 		@Override
 		public void onTabSelected(Tab tab, FragmentTransaction ft)
 		{
-			ft = getSupportFragmentManager()
-					.beginTransaction();
-
 			if (mFragment == null)
 			{
 				mFragment = Fragment.instantiate(MainActivity.this,
 						mClass.getName(),
 						mArgs);
 				ft.add(android.R.id.content, mFragment, mTag);
-				ft.commit();
 			} else
 			{
 				ft.attach(mFragment);
-				ft.commit();
 			}
 
 		}
@@ -280,13 +293,9 @@ public class MainActivity extends SherlockFragmentActivity
 		@Override
 		public void onTabUnselected(Tab tab, FragmentTransaction ft)
 		{
-			ft = getSupportFragmentManager()
-					.beginTransaction();
-
 			if (mFragment != null)
 			{
 				ft.detach(mFragment);
-				ft.commitAllowingStateLoss();
 			}
 
 		}
