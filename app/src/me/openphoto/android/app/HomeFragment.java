@@ -9,16 +9,22 @@ import me.openphoto.android.app.model.Photo;
 import me.openphoto.android.app.net.IOpenPhotoApi;
 import me.openphoto.android.app.net.Paging;
 import me.openphoto.android.app.net.PhotosResponse;
+import me.openphoto.android.app.twitter.TwitterProvider;
+import me.openphoto.android.app.twitter.TwitterUtils;
 import me.openphoto.android.app.ui.adapter.EndlessAdapter;
+import me.openphoto.android.app.ui.widget.YesNoDialogFragment;
+import me.openphoto.android.app.ui.widget.YesNoDialogFragment.YesNoButtonPressedHandler;
 import me.openphoto.android.app.util.ImageWorker;
 import me.openphoto.android.app.util.LoadingControl;
 import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.app.FragmentManager;
 import android.text.Html;
 import android.util.Log;
 import android.view.ContextMenu;
@@ -38,6 +44,9 @@ import com.bugsense.trace.BugSenseHandler;
 
 /**
  * @version
+ *          10.10.2012
+ *          <br>- added share via twitter functionality implementation
+ *          <p>
  *          08.10.2012
  *          <br>- added share via e-mail functionality implementation
  *          <br>- added context menu plug to the share button
@@ -137,9 +146,7 @@ public class HomeFragment extends CommonFragment implements Refreshable
 				shareViaEMail(mAdapter.activePhoto);
 			break;
 			case R.id.menu_share_twitter:
-				// TODO
-				alert("Twitter share for item: "
-						+ mAdapter.activePhoto.getId());
+				shareViaTwitter(mAdapter.activePhoto);
 			break;
 			case R.id.menu_share_facebook:
 				// TODO
@@ -166,6 +173,41 @@ public class HomeFragment extends CommonFragment implements Refreshable
 				);
 		startActivity(Intent.createChooser(emailIntent,
 				getString(R.string.share_email_send_title)));
+	}
+
+	private void shareViaTwitter(Photo photo)
+	{
+		if (TwitterProvider.getTwitter(getActivity()) == null)
+		{
+			YesNoDialogFragment dialogFragment = YesNoDialogFragment
+					.newInstance(R.string.share_twitter_authorisation_question,
+							new YesNoButtonPressedHandler()
+							{
+								private static final long serialVersionUID = 1L;
+
+								@Override
+								public void yesButtonPressed(
+										DialogInterface dialog)
+								{
+									TwitterUtils.askOAuth(getActivity());
+								}
+
+								@Override
+								public void noButtonPressed(
+										DialogInterface dialog)
+								{
+									// do nothing
+								}
+							});
+			dialogFragment.show(getActivity().getSupportFragmentManager(),
+					"dialog");
+		} else
+		{
+			FragmentManager fm = getActivity().getSupportFragmentManager();
+			TwitterFragment twitterDialog = new TwitterFragment();
+			twitterDialog.setPhoto(photo);
+			twitterDialog.show(fm, "Twitter");
+		}
 	}
 
 	private class NewestPhotosAdapter extends EndlessAdapter<Photo>
