@@ -17,6 +17,14 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.util.Log;
 
+/**
+ * @version
+ *          10.10.2012
+ *          <br>- added new method closeCursor
+ *          <br>- added cursor closing to the getPendingUpload and
+ *          getPendingUploads methods
+ *          <p>
+ */
 public class UploadsProviderAccessor {
     private static final String TAG = UploadsProviderAccessor.class.getSimpleName();
 
@@ -66,24 +74,52 @@ public class UploadsProviderAccessor {
     public List<PhotoUpload> getPendingUploads() {
         Cursor cursor = mContext.getContentResolver().query(UploadsProvider.CONTENT_URI, null,
                 UploadsProvider.KEY_UPLOADED + "=0", null, null);
-        List<PhotoUpload> pendingUploads = new ArrayList<PhotoUpload>(cursor.getCount());
+		try
+		{
+			List<PhotoUpload> pendingUploads = new ArrayList<PhotoUpload>(
+					cursor.getCount());
 
-        while (cursor.moveToNext()) {
-            PhotoUpload pendingUpload = extractPhotoUpload(cursor);
-            if (pendingUpload != null) {
-                pendingUploads.add(pendingUpload);
-            }
-        }
-        return pendingUploads;
+			while (cursor.moveToNext())
+			{
+				PhotoUpload pendingUpload = extractPhotoUpload(cursor);
+				if (pendingUpload != null)
+				{
+					pendingUploads.add(pendingUpload);
+				}
+			}
+			return pendingUploads;
+		} finally
+		{
+			closeCursor(cursor);
+		}
     }
+
+	public void closeCursor(Cursor cursor)
+	{
+		try
+		{
+			cursor.close();
+		} catch (Exception ex)
+		{
+			ex.printStackTrace();
+		}
+	}
 
     public PhotoUpload getPendingUpload(Uri uri) {
         Cursor cursor = mContext.getContentResolver().query(uri, null, null, null, null);
-        if (cursor.moveToNext()) {
-            return extractPhotoUpload(cursor);
-        } else {
-            return null;
-        }
+		try
+		{
+			if (cursor.moveToNext())
+			{
+				return extractPhotoUpload(cursor);
+			} else
+			{
+				return null;
+			}
+		} finally
+		{
+			closeCursor(cursor);
+		}
     }
 
     private PhotoUpload extractPhotoUpload(Cursor cursor) {
