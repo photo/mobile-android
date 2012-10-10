@@ -1,8 +1,8 @@
 package me.openphoto.android.app;
 
+import me.openphoto.android.app.util.GuiUtils;
 import me.openphoto.android.app.util.Utils;
 import android.app.Activity;
-import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockFragment;
 
@@ -12,6 +12,9 @@ import com.actionbarsherlock.app.SherlockFragment;
  * 
  * @author Eugene Popovich
  * @version
+ *          10.10.2012
+ *          <br>- alert method functionality moved to GuiUtils
+ *          <p>
  *          05.10.2012
  *          <br>- removed reference to NetworkAccessControl. Now Utils.isOnline
  *          method is used instead
@@ -24,14 +27,7 @@ public class CommonFragment extends SherlockFragment
 {
 	protected void alert(final String msg)
 	{
-		getActivity().runOnUiThread(new Runnable()
-		{
-			@Override
-			public void run()
-			{
-				Toast.makeText(getActivity(), msg, Toast.LENGTH_LONG).show();
-			}
-		});
+		GuiUtils.alert(msg, getActivity());
 	}
 
 	@Override
