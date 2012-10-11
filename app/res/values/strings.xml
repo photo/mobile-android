@@ -23,18 +23,19 @@
     
     <!--  Share Twitter -->
     <string name="share_twitter_authorise_ask">Please authorize this app!</string>
-    <string name="share_twitter_authorisation_question">You do not authorize OpenPhoto to access your Twitter account yet. Do you want to do it now?</string>
+    <string name="share_twitter_authorisation_question">You have not authorized OpenPhoto to access your Twitter account. Do you want to do it now?</string>
     <string name="share_twitter_logged_in_as">Logged in as %1$s</string>
     <string name="share_twitter_send_tweet">Post a Tweet</string>
     <string name="share_twitter_dialog_title">Twitter share</string>
     <string name="share_twitter_logout">Logout</string>
-    <string name="share_twitter_default_msg">Shared via OpenPhoto %1$s</string>
+    <string name="share_twitter_default_msg">Shared via @openphoto %1$s</string>
     <string name="share_twitter_success_message">Photo has been shared successfully</string>
 
     <!-- SetupActivity -->
     <string name="hint_server">username.openphoto.me</string>
     <string name="login">Login</string>
     <string name="get_openphoto_account">Get an openphoto account</string>
+    <string name="logging_in_message">Please wait. Logging you in...</string>
 
     <!-- MainActivity -->
     <string name="tab_home">Home</string>
