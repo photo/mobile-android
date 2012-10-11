@@ -3,7 +3,6 @@ package me.openphoto.android.app;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
 import android.preference.EditTextPreference;
 import android.preference.Preference;
@@ -77,7 +76,10 @@ public class SettingsActivity extends PreferenceActivity implements OnPreference
                         .setPositiveButton(android.R.string.yes,
                                 new DialogInterface.OnClickListener() {
 
-                                    public void onClick(DialogInterface dialog, int whichButton) {
+									@Override
+									public void onClick(DialogInterface dialog,
+											int whichButton)
+									{
                                         Preferences.logout(SettingsActivity.this);
                                         refresh();
                                     }
@@ -85,7 +87,7 @@ public class SettingsActivity extends PreferenceActivity implements OnPreference
                         .setNegativeButton(android.R.string.no, null).show();
 
             } else {
-                startActivity(new Intent(this, OAuthActivity.class));
+				finish();
             }
         }
         return false;
