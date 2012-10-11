@@ -7,6 +7,9 @@
         <item name="android:expandableListViewStyle">@style/TransparentExpandableListView</item>
         <item name="actionBarStyle">@style/solid_ActionBar</item>
     </style>
+    <style name="Theme.OpenPhoto.Light.NoActionBar" parent="Theme.Sherlock.Light.NoActionBar">
+        <item name="android:windowBackground">@drawable/bg</item>
+    </style>
     <style name="solid_ActionBar" parent="@style/Widget.Sherlock.Light.ActionBar.Solid">
         <item name="background">@drawable/bg_actionbar</item>
         <item name="backgroundStacked">@drawable/bg_tab</item>
