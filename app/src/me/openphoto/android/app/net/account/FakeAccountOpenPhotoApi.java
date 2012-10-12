@@ -51,6 +51,11 @@ public class FakeAccountOpenPhotoApi extends ApiBase implements
                 "\"userSecret\":\"6d1e8fc274\"," +
                 "\"owner\":\"hello@openphoto.me\"}}");
 
+        /*
+         * For a Fake error, this is the message:
+         * {"message":"Invalid username or password.","code":403,"result":0}
+         */
+
         return new AccountOpenPhotoResponse(jsonObjFake);
     }
 }
