@@ -48,7 +48,6 @@ public class SetupActivity extends SherlockFragmentActivity implements
 	protected void onNewIntent(Intent intent)
 	{
 		super.onNewIntent(intent);
-		super.onNewIntent(intent);
 		if (intent != null && intent.getData() != null)
 		{
 			Uri uri = intent.getData();
