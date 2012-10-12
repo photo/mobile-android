@@ -11,7 +11,7 @@
         <PreferenceScreen android:key="@string/setting_account_loggedin_key" />
     </PreferenceCategory>
     
-    <PreferenceCategory android:title="@string/upload_preference_category" >
+    <!-- PreferenceCategory android:title="@string/upload_preference_category" >
         <CheckBoxPreference
             android:defaultValue="@bool/setting_wifi_only_upload_on_default"
             android:key="@string/setting_wifi_only_upload_on_key"
@@ -29,6 +29,6 @@
             android:dialogTitle="Set tag for uploaded pictures:"
             android:key="@string/setting_autoupload_tag_key"
             android:title="Tag" />
-    </PreferenceCategory>
+    </PreferenceCategory-->
 
 </PreferenceScreen>
