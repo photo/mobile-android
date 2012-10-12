@@ -23,6 +23,7 @@ public class Photo implements Parcelable {
     public static final int PERMISSION_PUBLIC = 1;
     public static final int PERMISSION_PRIVATE = 0;
     public static final String ORIGINAL_SIZE = "original";
+    public static final String PATH_ORIGINAL = "pathOriginal";
 
     protected String mId;
     protected final List<String> mTags;
@@ -76,6 +77,7 @@ public class Photo implements Parcelable {
         }
         photo.mUrls.put(ORIGINAL_SIZE, pathOriginal);
         photo.mUrls.put("url", json.optString("url"));
+        photo.mUrls.put(PATH_ORIGINAL, json.optString(PATH_ORIGINAL));
         photo.mPermission = json.optInt("permission", PERMISSION_PRIVATE);
 
         // dates

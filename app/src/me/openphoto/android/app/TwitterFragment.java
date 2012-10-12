@@ -63,7 +63,7 @@ public class TwitterFragment extends CommonDialogFragment
             messageEt = (EditText) view.findViewById(R.id.message);
             messageEt.setText(String.format(
                     getString(R.string.share_twitter_default_msg),
-                    photo.getUrl(Photo.ORIGINAL_SIZE)));
+                    photo.getUrl(Photo.PATH_ORIGINAL)));
             Button logOutButton = (Button) view.findViewById(R.id.logoutBtn);
             logOutButton.setOnClickListener(new OnClickListener()
             {
