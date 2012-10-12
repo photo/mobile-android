@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="me.openphoto.android.app"
+    android:installLocation="auto"
     android:versionCode="1"
-    android:versionName="0.1"
-    android:installLocation="auto">
+    android:versionName="0.1" >
 
-    <uses-sdk android:minSdkVersion="7" android:targetSdkVersion="14"/>
+    <uses-sdk
+        android:minSdkVersion="7"
+        android:targetSdkVersion="14" />
 
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.INTERNET" />
@@ -18,43 +20,59 @@
         android:label="@string/app_name"
         android:theme="@style/Theme.OpenPhoto.Light" >
         <activity android:name=".SplashActivity" />
-        <activity android:name=".SetupActivity"
-            android:theme="@style/Theme.OpenPhoto.Light.NoActionBar"
-            android:launchMode="singleTask">
+        <activity
+            android:name=".SetupActivity"
+            android:launchMode="singleTask"
+            android:theme="@style/Theme.OpenPhoto.Light.NoActionBar" >
             <intent-filter>
-				<action android:name="android.intent.action.VIEW" />
-				<category android:name="android.intent.category.DEFAULT" />
-				<category android:name="android.intent.category.BROWSABLE" />
-				<data android:scheme="openphoto" />
-			</intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data android:scheme="openphoto" />
+            </intent-filter>
         </activity>
-        <activity android:name=".MainActivity" 
-            android:logo="@drawable/actionbar_logo"
-            android:launchMode="singleTask">
+        <activity
+            android:name=".MainActivity"
+            android:launchMode="singleTask"
+            android:logo="@drawable/actionbar_logo" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
             <intent-filter>
-				<action android:name="android.intent.action.VIEW" />
-				<category android:name="android.intent.category.DEFAULT" />
-				<category android:name="android.intent.category.BROWSABLE" />
-				<data android:scheme="openphoto-t" />
-			</intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data android:scheme="openphoto-t" />
+            </intent-filter>
         </activity>
-        <activity android:name=".PhotoDetailsActivity"
+        <activity
+            android:name=".PhotoDetailsActivity"
             android:theme="@style/Theme.OpenPhoto.Light.NoActionBar" />
         <activity
             android:name=".UploadActivity"
             android:configChanges="orientation" >
             <intent-filter>
                 <action android:name="android.intent.action.SEND" />
-
                 <data android:mimeType="image/*" />
             </intent-filter>
         </activity>
         <activity android:name=".SettingsActivity" />
+
+        <activity
+            android:name=".AccountLogin"
+            android:noHistory="true" />
+        <activity
+            android:name=".AccountSignup"
+            android:noHistory="true" />
+        <activity
+            android:name=".AccountActivity"
+            android:noHistory="true" />
 
         <!-- AutoUpload things -->
         <!-- Stuff for auto uploading photos -->

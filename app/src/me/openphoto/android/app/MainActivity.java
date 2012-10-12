@@ -27,7 +27,7 @@ public class MainActivity extends SherlockFragmentActivity
     public static final String TAG = MainActivity.class.getSimpleName();
     public static final String ACTIVE_TAB = "ActiveTab";
 
-    private static final String BUG_SENSE_API_KEY = null;
+    private static final String BUG_SENSE_API_KEY = "16a061fa";
     private ActionBar mActionBar;
     private Menu mMenu;
     private int mLoaders = 0;
@@ -55,10 +55,7 @@ public class MainActivity extends SherlockFragmentActivity
         setUpTabs(savedInstanceState == null ? 1 : savedInstanceState.getInt(
                 ACTIVE_TAB, 1));
 
-        if (BUG_SENSE_API_KEY != null)
-        {
-            BugSenseHandler.setup(this, BUG_SENSE_API_KEY);
-        }
+        BugSenseHandler.setup(this, BUG_SENSE_API_KEY);
     }
 
     private void setUpTabs(int activeTab)
@@ -108,7 +105,8 @@ public class MainActivity extends SherlockFragmentActivity
 
         if (!Preferences.isLoggedIn(this))
         {
-            startActivity(new Intent(this, SetupActivity.class));
+            // startActivity(new Intent(this, SetupActivity.class));
+            startActivity(new Intent(this, AccountActivity.class));
             finish();
         }
     }
