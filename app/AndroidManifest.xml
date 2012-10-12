@@ -25,7 +25,7 @@
 				<action android:name="android.intent.action.VIEW" />
 				<category android:name="android.intent.category.DEFAULT" />
 				<category android:name="android.intent.category.BROWSABLE" />
-				<data android:scheme="openphoto" android:host="callback" />
+				<data android:scheme="openphoto" />
 			</intent-filter>
         </activity>
         <activity android:name=".MainActivity" 
@@ -40,7 +40,7 @@
 				<action android:name="android.intent.action.VIEW" />
 				<category android:name="android.intent.category.DEFAULT" />
 				<category android:name="android.intent.category.BROWSABLE" />
-				<data android:scheme="openphoto" android:host="twitter-callback" />
+				<data android:scheme="openphoto-t" />
 			</intent-filter>
         </activity>
         <activity android:name=".PhotoDetailsActivity"

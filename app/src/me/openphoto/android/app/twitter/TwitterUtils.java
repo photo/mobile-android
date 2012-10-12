@@ -30,7 +30,7 @@ public class TwitterUtils
 
     private static final String CONSUMER_KEY = "Z0EVWNVma30RFZH8nJphog";
     private static final String CONSUMER_SECRET = "wt2PQuFHwai0ffPvAnlPsQc8W0DIUjeUyvnCOvbQb3E";
-    private static final String CALLBACK_URL = "openphoto://twitter-callback";
+    private static final String CALLBACK_URL = "openphoto-t://twitter-callback";
 
     /**
      * This method checks the shared prefs to see if we have persisted a user
