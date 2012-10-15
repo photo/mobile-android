@@ -35,4 +35,12 @@ public class AccountActivity extends Activity {
         Intent intent = new Intent(this, AccountLogin.class);
         startActivity(intent);
     }
+
+	public void accountOwnServerButtonAction(View view)
+	{
+		Log.d(TAG, "Start own server button action");
+		Intent intent = new Intent(this, SetupActivity.class);
+		startActivity(intent);
+	}
+
 }
