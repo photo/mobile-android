@@ -138,7 +138,7 @@ public class HomeFragment extends CommonFragment implements Refreshable
                 Uri.fromParts("mailto", mailId, null));
         emailIntent.putExtra(android.content.Intent.EXTRA_SUBJECT,
                 getString(R.string.share_email_default_title));
-        String url = photo.getUrl(Photo.ORIGINAL_SIZE);
+		String url = photo.getUrl(Photo.PATH_ORIGINAL);
         String bodyText = String.format(getString(R.string.share_email_default_body),
                 url, url);
         emailIntent.putExtra(
