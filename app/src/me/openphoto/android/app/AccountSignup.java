@@ -4,6 +4,7 @@ import me.openphoto.android.app.net.account.AccountOpenPhotoResponse;
 import me.openphoto.android.app.net.account.FakeAccountOpenPhotoApi;
 import me.openphoto.android.app.net.account.IAccountOpenPhotoApi;
 import me.openphoto.android.app.util.GuiUtils;
+import me.openphoto.android.app.util.LoginUtils;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -125,6 +126,7 @@ public class AccountSignup extends Activity
 					if (result.isSuccess())
 					{
 						activity.setResult(RESULT_OK);
+						LoginUtils.sendLoggedInBroadcast(activity);
 						startActivity(new Intent(activity, MainActivity.class));
 						activity.finish();
 					}

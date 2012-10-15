@@ -4,6 +4,7 @@ import me.openphoto.android.app.net.account.AccountOpenPhotoResponse;
 import me.openphoto.android.app.net.account.FakeAccountOpenPhotoApi;
 import me.openphoto.android.app.net.account.IAccountOpenPhotoApi;
 import me.openphoto.android.app.util.GuiUtils;
+import me.openphoto.android.app.util.LoginUtils;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -118,6 +119,7 @@ public class AccountLogin extends Activity
 						setResult(RESULT_OK);
 						startActivity(new Intent(this.activity,
 								MainActivity.class));
+						LoginUtils.sendLoggedInBroadcast(activity);
 						this.activity.finish();
 					} else if (result.isInvalidCredentials())
 					{
