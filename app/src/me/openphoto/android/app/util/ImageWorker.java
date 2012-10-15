@@ -2,13 +2,12 @@
 package me.openphoto.android.app.util;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
 
 import me.openphoto.android.app.BuildConfig;
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
@@ -44,7 +43,8 @@ public class ImageWorker {
 				DiskLruCache.openCache(ctx, cacheDir, HTTP_CACHE_SIZE);
     }
 
-    public Drawable loadImage(BaseAdapter adapt, ImageView view)
+	public Drawable loadImage(BaseAdapter adapt, ImageView view,
+			Activity activity)
     {
         this.adapt = adapt;
         String url = (String) view.getTag();
@@ -56,13 +56,19 @@ public class ImageWorker {
             synchronized (this) {
                 imageCache.put(url, DEFAULT_ICON);
             }
-            new ImageTask().execute(url);
+			new ImageTask(activity).execute(url);
             return DEFAULT_ICON;
         }
     }
     private class ImageTask extends AsyncTask<String, Void, Drawable>
     {
         private String s_url;
+		private Activity activity;
+
+		public ImageTask(Activity activity)
+		{
+			this.activity = activity;
+		}
 
         @Override
         protected void onPreExecute() {
@@ -73,33 +79,34 @@ public class ImageWorker {
 
         @Override
         protected Drawable doInBackground(String... params) {
-            s_url = params[0];
-
-			File cachedFile = getCachedFile(s_url);
-			if (cachedFile != null)
+			try
 			{
-				return Drawable.createFromPath(cachedFile.getAbsolutePath());
-			}
+				s_url = params[0];
 
-            InputStream istr;
-            try {
-                URL url = new URL(s_url);
-                istr = url.openStream();
-            } catch (MalformedURLException e) {
-				Log.d(TAG, "Malformed: " + e.getMessage());
-                throw new RuntimeException(e);
-            } catch (IOException e)
-            {
-				Log.d(TAG, "I/O : " + e.getMessage());
-                throw new RuntimeException(e);
+				File cachedFile = getCachedFile(s_url);
+				if (cachedFile != null)
+				{
+					return Drawable
+							.createFromPath(cachedFile.getAbsolutePath());
+				}
 
-            }
-			Drawable result = Drawable.createFromStream(istr, "src");
-			if (result instanceof BitmapDrawable)
+				InputStream istr;
+
+				URL url = new URL(s_url);
+				istr = url.openStream();
+
+				Drawable result = Drawable.createFromStream(istr, "src");
+				if (result instanceof BitmapDrawable)
+				{
+					diskCache.put(s_url, ((BitmapDrawable) result).getBitmap());
+				}
+				return result;
+			} catch (Exception ex)
 			{
-				diskCache.put(s_url, ((BitmapDrawable) result).getBitmap());
+				GuiUtils.error(TAG, null, ex, activity);
 			}
-			return result;
+			return null;
+
         }
 
         @Override
@@ -107,6 +114,10 @@ public class ImageWorker {
             super.onPostExecute(result);
 			if (loadingControl != null)
 				loadingControl.stopLoading();
+			if (result == null)
+			{
+				return;
+			}
 
             synchronized (this) {
                 imageCache.put(s_url, result);
