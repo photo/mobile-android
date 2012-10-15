@@ -229,7 +229,7 @@ public class HomeFragment extends CommonFragment implements Refreshable
                     (ImageView) convertView.findViewById(R.id.newest_image);
             photoView.setTag(photo.getUrl("700x650xCR"));
             Drawable dr =
-                    iw.loadImage(this, photoView);
+					iw.loadImage(this, photoView, getActivity());
             photoView.setImageDrawable(dr);
 
             // set title or file's name
