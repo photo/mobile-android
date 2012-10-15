@@ -30,6 +30,7 @@
     <string name="share_twitter_logout">Logout</string>
     <string name="share_twitter_default_msg">Shared via @openphoto %1$s</string>
     <string name="share_twitter_success_message">Photo has been shared successfully</string>
+    <string name="share_twitter_success_setup_message">Twitter was successfully set up</string>
 
     <!-- SetupActivity -->
     <string name="hint_server">username.openphoto.me</string>

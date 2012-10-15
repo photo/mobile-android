@@ -20,7 +20,7 @@ public class GuiUtils
 {
     public static void alert(final String msg, final Activity activity)
     {
-        activity.runOnUiThread(new Runnable()
+		activity.runOnUiThread(new Runnable()
         {
             @Override
             public void run()
@@ -32,14 +32,7 @@ public class GuiUtils
 
     public static void info(final String msg, final Activity activity)
     {
-        activity.runOnUiThread(new Runnable()
-        {
-            @Override
-            public void run()
-            {
-                Toast.makeText(activity, msg, Toast.LENGTH_LONG).show();
-            }
-        });
+		alert(msg, activity);
     }
 
     public static void error(String TAG, String message, Exception ex,
