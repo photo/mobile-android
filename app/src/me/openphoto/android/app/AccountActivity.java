@@ -1,7 +1,9 @@
 
 package me.openphoto.android.app;
 
+import me.openphoto.android.app.util.LoginUtils;
 import android.app.Activity;
+import android.content.BroadcastReceiver;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -12,10 +14,20 @@ public class AccountActivity extends Activity {
 
     private static final String TAG = AccountActivity.class.getSimpleName();
 
+	BroadcastReceiver loginBroadcastReceiver;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_account);
+		loginBroadcastReceiver = LoginUtils
+				.getAndRegisterDestroyOnLoginActionBroadcastReceiver(TAG, this);
+	}
+
+	@Override
+	protected void onDestroy()
+	{
+		super.onDestroy();
+		unregisterReceiver(loginBroadcastReceiver);
     }
 
     @Override
