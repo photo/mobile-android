@@ -5,6 +5,7 @@ import me.openphoto.android.app.Preferences;
 import me.openphoto.android.app.net.IOpenPhotoApi;
 import me.openphoto.android.app.util.GuiUtils;
 import me.openphoto.android.app.util.LoadingControl;
+import me.openphoto.android.app.util.LoginUtils;
 import oauth.signpost.OAuthConsumer;
 import oauth.signpost.OAuthProvider;
 import oauth.signpost.basic.DefaultOAuthConsumer;
@@ -15,10 +16,10 @@ import android.os.AsyncTask;
 
 public class OAuthUtils
 {
-    static final String TAG = OAuthUtils.class.getSimpleName();
+	static final String TAG = OAuthUtils.class.getSimpleName();
     private static final String CALLBACK_URL = "openphoto://callback";
 
-    /**
+	/**
      * Open the browser and asks the user to authorize the app. Afterwards, we
      * redirect the user back to activity!
      * 
@@ -135,6 +136,7 @@ public class OAuthUtils
             {
                 Preferences.setLoginInformation(activity,
                         mUsedConsumer);
+				LoginUtils.sendLoggedInBroadcast(activity);
                 if (runOnSuccess != null)
                 {
                     runOnSuccess.run();

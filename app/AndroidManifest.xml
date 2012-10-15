@@ -66,13 +66,13 @@
 
         <activity
             android:name=".AccountLogin"
-            android:noHistory="true" />
+            />
         <activity
             android:name=".AccountSignup"
-            android:noHistory="true" />
+             />
         <activity
             android:name=".AccountActivity"
-            android:noHistory="true" />
+             />
 
         <!-- AutoUpload things -->
         <!-- Stuff for auto uploading photos -->
