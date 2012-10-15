@@ -15,7 +15,9 @@ import android.preference.PreferenceManager;
  * @author Patrick Santana <patrick@openphoto.me>
  */
 public class AccountOpenPhotoResponse extends OpenPhotoResponse {
-
+	public static int SUCCESSFUL_CODE = 200;
+	public static int INVALID_CREDENTIALS_CODE = 403;
+	public static int UNKNOWN_ERROR_CODE = 500;
     private String server;
     private String oAuthConsumerKey;
     private String oAuthConsumerSecret;
@@ -105,4 +107,19 @@ public class AccountOpenPhotoResponse extends OpenPhotoResponse {
                 .commit();
     }
 
+	@Override
+	public boolean isSuccess()
+	{
+		return getCode() == SUCCESSFUL_CODE;
+	}
+
+	public boolean isInvalidCredentials()
+	{
+		return getCode() == INVALID_CREDENTIALS_CODE;
+	}
+
+	public boolean isUnknownError()
+	{
+		return getCode() == UNKNOWN_ERROR_CODE;
+	}
 }

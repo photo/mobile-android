@@ -25,6 +25,7 @@ import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.text.Html;
 import android.util.Log;
@@ -51,6 +52,7 @@ public class HomeFragment extends CommonFragment implements Refreshable
     private NewestPhotosAdapter mAdapter;
     private LayoutInflater mInflater;
     private ImageWorker iw;
+	private Photo activePhoto;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -117,15 +119,15 @@ public class HomeFragment extends CommonFragment implements Refreshable
         switch (menuItemIndex)
         {
             case R.id.menu_share_email:
-                shareViaEMail(mAdapter.activePhoto);
+				shareViaEMail(activePhoto);
                 break;
             case R.id.menu_share_twitter:
-                shareViaTwitter(mAdapter.activePhoto);
+				shareViaTwitter(activePhoto, getActivity());
                 break;
             case R.id.menu_share_facebook:
                 // TODO
                 alert("Facebook share for item: "
-                        + mAdapter.activePhoto.getId());
+						+ activePhoto.getId());
                 break;
         }
         return true;
@@ -138,7 +140,7 @@ public class HomeFragment extends CommonFragment implements Refreshable
                 Uri.fromParts("mailto", mailId, null));
         emailIntent.putExtra(android.content.Intent.EXTRA_SUBJECT,
                 getString(R.string.share_email_default_title));
-        String url = photo.getUrl(Photo.ORIGINAL_SIZE);
+		String url = photo.getUrl(Photo.PATH_ORIGINAL);
         String bodyText = String.format(getString(R.string.share_email_default_body),
                 url, url);
         emailIntent.putExtra(
@@ -149,9 +151,18 @@ public class HomeFragment extends CommonFragment implements Refreshable
                 getString(R.string.share_email_send_title)));
     }
 
-    private void shareViaTwitter(Photo photo)
+	public void shareActivePhotoViaTwitter()
+	{
+		if (activePhoto != null)
+		{
+			shareViaTwitter(activePhoto, getActivity());
+		}
+	}
+
+	private static void shareViaTwitter(Photo photo,
+			final FragmentActivity activity)
     {
-        if (TwitterProvider.getTwitter(getActivity()) == null)
+		if (TwitterProvider.getTwitter(activity) == null)
         {
             YesNoDialogFragment dialogFragment = YesNoDialogFragment
                     .newInstance(R.string.share_twitter_authorisation_question,
@@ -163,7 +174,7 @@ public class HomeFragment extends CommonFragment implements Refreshable
                                 public void yesButtonPressed(
                                         DialogInterface dialog)
                                 {
-                                    TwitterUtils.askOAuth(getActivity());
+									TwitterUtils.askOAuth(activity);
                                 }
 
                                 @Override
@@ -173,11 +184,11 @@ public class HomeFragment extends CommonFragment implements Refreshable
                                     // do nothing
                                 }
                             });
-            dialogFragment.show(getActivity().getSupportFragmentManager(),
+			dialogFragment.show(activity.getSupportFragmentManager(),
                     "dialog");
         } else
         {
-            FragmentManager fm = getActivity().getSupportFragmentManager();
+			FragmentManager fm = activity.getSupportFragmentManager();
             TwitterFragment twitterDialog = new TwitterFragment();
             twitterDialog.setPhoto(photo);
             twitterDialog.show(fm, "Twitter");
@@ -188,7 +199,6 @@ public class HomeFragment extends CommonFragment implements Refreshable
     {
         private final IOpenPhotoApi mOpenPhotoApi;
         private final Context mContext;
-        private Photo activePhoto;
 
         public NewestPhotosAdapter(Context context)
         {

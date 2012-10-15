@@ -110,13 +110,14 @@ public class TwitterFragment extends CommonDialogFragment
         return result;
     }
 
-    private class ShowCurrentlyLoggedInUserTask extends
+	private class ShowCurrentlyLoggedInUserTask extends
             AsyncTask<Void, Void, Boolean>
     {
         TextView loggedInAsText;
         String name;
+		Activity activity = getActivity();
 
-        ShowCurrentlyLoggedInUserTask(View view)
+		ShowCurrentlyLoggedInUserTask(View view)
         {
             loggedInAsText = (TextView) view
                     .findViewById(R.id.loggedInAs);
@@ -135,14 +136,14 @@ public class TwitterFragment extends CommonDialogFragment
         {
             try
             {
-                Twitter twitter = TwitterProvider.getTwitter(getActivity());
+				Twitter twitter = TwitterProvider.getTwitter(activity);
                 name = twitter.getScreenName();
                 return true;
             } catch (Exception ex)
             {
                 GuiUtils.error(TAG, "Could not retrieve twitter screen name",
                         ex,
-                        getActivity());
+						activity);
             }
             return false;
         }
@@ -156,15 +157,16 @@ public class TwitterFragment extends CommonDialogFragment
             {
                 loggedInAsText.setText(String
                         .format(
-                                getString(R.string.share_twitter_logged_in_as),
+										activity.getString(R.string.share_twitter_logged_in_as),
                                 name));
             }
         }
     }
 
-    private class TweetTask extends
+	private class TweetTask extends
             AsyncTask<Void, Void, Boolean>
     {
+		Activity activity = getActivity();
         @Override
         protected void onPreExecute()
         {
@@ -178,7 +180,7 @@ public class TwitterFragment extends CommonDialogFragment
         {
             try
             {
-                Twitter twitter = TwitterProvider.getTwitter(getActivity());
+				Twitter twitter = TwitterProvider.getTwitter(activity);
                 StatusUpdate update = new StatusUpdate(messageEt.getText()
                         .toString());
                 twitter.updateStatus(update);
@@ -199,10 +201,14 @@ public class TwitterFragment extends CommonDialogFragment
             if (result.booleanValue())
             {
                 GuiUtils.info(
-                        getString(R.string.share_twitter_success_message),
-                        getActivity());
+						activity.getString(R.string.share_twitter_success_message),
+						activity);
             }
-            TwitterFragment.this.dismiss();
+			Dialog dialog = TwitterFragment.this.getDialog();
+			if (dialog != null && dialog.isShowing())
+			{
+				TwitterFragment.this.dismiss();
+			}
         }
     }
 

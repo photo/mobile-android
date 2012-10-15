@@ -94,14 +94,15 @@ public class TwitterUtils
      * @param activity
      * @param uri
      */
-    public static void verifyOAuthResponse(Activity activity, Uri uri)
+	public static void verifyOAuthResponse(Activity activity, Uri uri,
+			Runnable runOnSuccess)
     {
         if (uri != null && uri.toString().startsWith(CALLBACK_URL))
         {
             String verifier = uri
                     .getQueryParameter(oauth.signpost.OAuth.OAUTH_VERIFIER);
             new VerifyResponseTask(verifier, (LoadingControl) activity,
-                    activity).execute();
+					runOnSuccess, activity).execute();
         }
     }
 
@@ -153,14 +154,17 @@ public class TwitterUtils
         TwitterProvider twitterProvider;
         private CommonsHttpOAuthConsumer consumer;
         private OAuthProvider provider;
+		Runnable runOnSuccess;
 
         public VerifyResponseTask(String verifier,
                 LoadingControl loadingControl,
+				Runnable runOnSuccess,
                 Activity activity)
         {
             this.loadingControl = loadingControl;
             this.activity = activity;
             this.verifier = verifier;
+			this.runOnSuccess = runOnSuccess;
             twitterProvider = TwitterProvider.getInstance();
         }
 
@@ -212,6 +216,13 @@ public class TwitterUtils
                     twitter.setOAuthConsumer(CONSUMER_KEY, CONSUMER_SECRET);
                     twitter.setOAuthAccessToken(a);
                     twitterProvider.setTwitter(twitter);
+					GuiUtils.info(
+							activity.getString(R.string.share_twitter_success_setup_message),
+							activity);
+					if (runOnSuccess != null)
+					{
+						runOnSuccess.run();
+					}
                 } catch (Exception ex)
                 {
                     GuiUtils.error(TAG, null, ex,
