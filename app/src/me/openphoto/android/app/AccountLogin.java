@@ -1,4 +1,3 @@
-
 package me.openphoto.android.app;
 
 import me.openphoto.android.app.net.account.AccountOpenPhotoResponse;
@@ -13,123 +12,167 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.Toast;
 
-import com.bugsense.trace.BugSenseHandler;
+public class AccountLogin extends Activity
+{
 
-public class AccountLogin extends Activity {
+	private static final String TAG = AccountLogin.class.getSimpleName();
 
-    private static final String TAG = AccountLogin.class.getSimpleName();
+	@Override
+	public void onCreate(Bundle savedInstanceState)
+	{
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.activity_account_login);
+	}
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_account_login);
-    }
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu)
+	{
+		getMenuInflater().inflate(R.menu.activity_account_login, menu);
+		return true;
+	}
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.activity_account_login, menu);
-        return true;
-    }
+	public void loginButtonAction(View view)
+	{
+		Log.d(TAG, "Login the user");
 
-    public void loginButtonAction(View view) {
-        Log.d(TAG, "Login the user");
+		EditText editText = (EditText) findViewById(R.id.edit_email);
+		String email = editText.getText().toString();
 
-        EditText editText = (EditText) findViewById(R.id.edit_email);
-        String email = editText.getText().toString();
+		editText = (EditText) findViewById(R.id.edit_password);
+		String password = editText.getText().toString();
 
-        editText = (EditText) findViewById(R.id.edit_password);
-        String password = editText.getText().toString();
+		if (!GuiUtils.validateBasicTextData(
+				new String[]
+				{
+						email, password
+				}, new int[]
+				{
+						R.string.field_email,
+						R.string.field_password
+				}, this))
+		{
+			return;
+		}
 
-        Log.d(TAG, "Email = [" + email + "] and pwd = [" + password + "]");
+		Log.d(TAG, "Email = [" + email + "] and pwd = [" + password + "]");
 
-        // clean up login information
-        Preferences.logout(this);
+		// clean up login information
+		Preferences.logout(this);
 
-        try {
-            new LogInUserTask(new Credentials(email, password), this).execute();
-        } catch (Exception e) {
-            Log.e(TAG, "Execption to validate user", e);
-            Toast.makeText(this,
-                    "Error: " + e.getMessage(),
-                    Toast.LENGTH_LONG).show();
-            BugSenseHandler.log(TAG, e);
-        }
-    }
+		new LogInUserTask(new Credentials(email, password), this).execute();
 
-    private class LogInUserTask extends
-            AsyncTask<Void, Void, AccountOpenPhotoResponse>
-    {
-        private Credentials credentials;
-        private Activity activity;
+	}
 
-        public LogInUserTask(Credentials credentials, Activity activity) {
-            this.credentials = credentials;
-            this.activity = activity;
-        }
+	private class LogInUserTask extends
+			AsyncTask<Void, Void, AccountOpenPhotoResponse>
+	{
+		private Credentials credentials;
+		private Activity activity;
 
-        @Override
-        protected AccountOpenPhotoResponse doInBackground(Void... params) {
-            IAccountOpenPhotoApi api = new FakeAccountOpenPhotoApi(this.activity);
-            try {
-                return api.signIn(credentials.getUser(),
-                        credentials.getPwd());
-            } catch (Exception e) {
-                GuiUtils.error(TAG, "Could not login",
-                        e,
-                        this.activity);
-            }
-            return null;
-        }
+		public LogInUserTask(Credentials credentials, Activity activity)
+		{
+			this.credentials = credentials;
+			this.activity = activity;
+		}
 
-        @Override
-        protected void onPreExecute()
-        {
-            super.onPreExecute();
-        }
+		@Override
+		protected AccountOpenPhotoResponse doInBackground(Void... params)
+		{
+			IAccountOpenPhotoApi api = new FakeAccountOpenPhotoApi(
+					this.activity);
+			try
+			{
+				return api.signIn(credentials.getUser(),
+						credentials.getPwd());
+			} catch (Exception e)
+			{
+				GuiUtils.error(TAG, "Could not login",
+						e,
+						this.activity);
+			}
+			return null;
+		}
 
-        @Override
-        protected void onPostExecute(AccountOpenPhotoResponse result)
-        {
-            super.onPostExecute(result);
+		@Override
+		protected void onPreExecute()
+		{
+			super.onPreExecute();
+		}
 
-            if (result != null) {
-                // save credentials.
-                result.saveCredentials(this.activity);
+		@Override
+		protected void onPostExecute(AccountOpenPhotoResponse result)
+		{
+			try
+			{
+				super.onPostExecute(result);
 
-                // start new activity
-                setResult(RESULT_OK);
-                startActivity(new Intent(this.activity, MainActivity.class));
-                this.activity.finish();
-            }
-        }
+				if (result != null)
+				{
+					if (result.isSuccess())
+					{
+						// save credentials.
+						result.saveCredentials(this.activity);
 
-    }
+						// start new activity
+						setResult(RESULT_OK);
+						startActivity(new Intent(this.activity,
+								MainActivity.class));
+						this.activity.finish();
+					} else if (result.isInvalidCredentials())
+					{
+						GuiUtils.alert(getString(R.string.invalid_credentials),
+								activity);
+					} else if (result.isUnknownError())
+					{
+						if (result.getMessage() != null
+								&& result.getMessage().length() > 0)
+						{
+							GuiUtils.alert(result.getMessage(), activity);
+						} else
+						{
+							GuiUtils.alert(getString(R.string.unknown_error),
+									activity);
+						}
+					}
+				}
+			} catch (Exception e)
+			{
+				GuiUtils.error(TAG, null, e, activity);
+			}
+		}
 
-    public class Credentials {
-        private String user;
-        private String pwd;
+	}
 
-        public Credentials(String user, String pwd) {
-            this.user = user;
-            this.pwd = pwd;
-        }
+	public class Credentials
+	{
+		private String user;
+		private String pwd;
 
-        public String getUser() {
-            return user;
-        }
+		public Credentials(String user, String pwd)
+		{
+			this.user = user;
+			this.pwd = pwd;
+		}
 
-        public void setUser(String user) {
-            this.user = user;
-        }
+		public String getUser()
+		{
+			return user;
+		}
 
-        public String getPwd() {
-            return pwd;
-        }
+		public void setUser(String user)
+		{
+			this.user = user;
+		}
 
-        public void setPwd(String pwd) {
-            this.pwd = pwd;
-        }
-    }
+		public String getPwd()
+		{
+			return pwd;
+		}
+
+		public void setPwd(String pwd)
+		{
+			this.pwd = pwd;
+		}
+	}
 }

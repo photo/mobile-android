@@ -4,6 +4,7 @@ package me.openphoto.android.app.util;
 import java.util.HashMap;
 import java.util.Map;
 
+import me.openphoto.android.app.R;
 import android.app.Activity;
 import android.util.Log;
 import android.widget.Toast;
@@ -54,4 +55,64 @@ public class GuiUtils
         alert(message == null ? ex.getLocalizedMessage() : message,
                 activity);
     }
+
+	/**
+	 * Validate basic text data (whether null or empty) and show
+	 * appropriate "please specify first" message if it is invalid
+	 * 
+	 * @param values
+	 * @param titles
+	 * @param activity
+	 * @return false if at least one field is invalid, otherwise return true
+	 */
+	public static boolean validateBasicTextData(
+			String[] values,
+			String[] titles,
+			Activity activity)
+	{
+		for (int i = 0; i < values.length; i++)
+		{
+			String value = values[i];
+			if (value.length() == 0)
+			{
+				String pleaseSpecifyFirst = activity
+						.getString(R.string.pleaseSpecifyFirst);
+				info(String.format(pleaseSpecifyFirst, titles[i]),
+						activity);
+				return false;
+			}
+		}
+		return true;
+	}
+
+	/**
+	 * Validate basic text data (whether null or empty) and show
+	 * appropriate "please specify first" message if it is invalid
+	 * 
+	 * @param values
+	 * @param titles
+	 *            array of string resource codes
+	 * @param activity
+	 * @return false if at least one field is invalid, otherwise return true
+	 */
+	public static boolean validateBasicTextData(
+			String[] values,
+			int[] titles,
+			Activity activity)
+	{
+		for (int i = 0; i < values.length; i++)
+		{
+			String value = values[i];
+			if (value.length() == 0)
+			{
+				String pleaseSpecifyFirst = activity
+						.getString(R.string.pleaseSpecifyFirst);
+				info(String.format(pleaseSpecifyFirst,
+						activity.getString(titles[i])),
+						activity);
+				return false;
+			}
+		}
+		return true;
+	}
 }

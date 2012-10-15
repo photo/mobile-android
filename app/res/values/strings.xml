@@ -67,6 +67,7 @@
     <string name="years">years</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
+    <string name="pleaseSpecifyFirst">Please specify %1$s first!</string>
 
     <!-- Preferences -->
     <string name="upload_preference_category">Upload of taken pictures</string>
@@ -75,15 +76,23 @@
     <!-- Screens for Create/Login/Own domain: Account -->
     <string name="account_signup_button">Sign up with your email address</string>
     <string name="account_login_button">Login with your email address</string>
+    <string name="account_own_server_button">Have your own server</string>
     <string name="account_facebook">Connect using Facebook login</string>
     <string name="account_create_button">Create Account</string>
     <string name="title_activity_account_facebook">AccountFacebook</string>
     <string name="title_activity_account_login">AccountLogin</string>
     <string name="title_activity_account_signup">AccountSignup</string>
+    <string name="invalid_credentials">Invalid username or password</string>
+    <string name="unknown_error">Unknown error</string>
 
     <!-- Hints -->
     <string name="hint_email">email</string>
     <string name="hint_password">password</string>
     <string name="hint_username">username</string>
+    
+    <!-- missing fields names -->
+    <string name="field_email">email</string>
+    <string name="field_password">password</string>
+    <string name="field_username">username</string>
 
 </resources>
