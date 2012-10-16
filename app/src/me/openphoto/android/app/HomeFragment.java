@@ -6,6 +6,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import me.openphoto.android.app.facebook.FacebookBaseDialogListener;
+import me.openphoto.android.app.facebook.FacebookProvider;
+import me.openphoto.android.app.facebook.FacebookUtils;
+import me.openphoto.android.app.facebook.FacebookSessionEvents;
+import me.openphoto.android.app.facebook.FacebookSessionEvents.AuthListener;
 import me.openphoto.android.app.model.Photo;
 import me.openphoto.android.app.net.IOpenPhotoApi;
 import me.openphoto.android.app.net.Paging;
@@ -15,6 +20,7 @@ import me.openphoto.android.app.twitter.TwitterUtils;
 import me.openphoto.android.app.ui.adapter.EndlessAdapter;
 import me.openphoto.android.app.ui.widget.YesNoDialogFragment;
 import me.openphoto.android.app.ui.widget.YesNoDialogFragment.YesNoButtonPressedHandler;
+import me.openphoto.android.app.util.GuiUtils;
 import me.openphoto.android.app.util.ImageWorker;
 import me.openphoto.android.app.util.LoadingControl;
 import android.app.Activity;
@@ -43,6 +49,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.bugsense.trace.BugSenseHandler;
+import com.facebook.android.Facebook;
+import com.facebook.android.R;
 
 public class HomeFragment extends CommonFragment implements Refreshable
 {
@@ -53,6 +61,14 @@ public class HomeFragment extends CommonFragment implements Refreshable
     private LayoutInflater mInflater;
     private ImageWorker iw;
 	private Photo activePhoto;
+
+	@Override
+	public void onCreate(Bundle savedInstanceState)
+	{
+		super.onCreate(savedInstanceState);
+		FacebookProvider.init(getString(R.string.facebook_app_id),
+				getActivity().getApplicationContext());
+	}
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -122,17 +138,21 @@ public class HomeFragment extends CommonFragment implements Refreshable
 				shareViaEMail(activePhoto);
                 break;
             case R.id.menu_share_twitter:
-				shareViaTwitter(activePhoto, getActivity());
+				shareActivePhotoViaTwitter();
                 break;
             case R.id.menu_share_facebook:
-                // TODO
-                alert("Facebook share for item: "
-						+ activePhoto.getId());
+				shareActivePhotoViaFacebook();
                 break;
         }
         return true;
     }
 
+	@Override
+	public void onResume()
+	{
+		super.onResume();
+		FacebookUtils.extendAceessTokenIfNeeded(getActivity());
+	}
     private void shareViaEMail(Photo photo)
     {
         String mailId = "";
@@ -156,6 +176,14 @@ public class HomeFragment extends CommonFragment implements Refreshable
 		if (activePhoto != null)
 		{
 			shareViaTwitter(activePhoto, getActivity());
+		}
+	}
+
+	public void shareActivePhotoViaFacebook()
+	{
+		if (activePhoto != null)
+		{
+			shareViaFacebook(activePhoto, getActivity());
 		}
 	}
 
@@ -195,6 +223,110 @@ public class HomeFragment extends CommonFragment implements Refreshable
         }
     }
 
+	private static void shareViaFacebook(final Photo photo,
+			final FragmentActivity activity)
+	{
+		Facebook facebook = FacebookProvider.getFacebook();
+		if (facebook.isSessionValid())
+		{
+			try
+			{
+				Bundle params = new Bundle();
+				params.putString(
+						"name",
+						activity.getString(R.string.share_facebook_default_action));
+				params.putString(
+						"caption",
+						activity.getString(R.string.share_facebook_default_caption));
+				params.putString("description", activity
+						.getString(R.string.share_facebook_default_description));
+				params.putString("picture", photo.getUrl(Photo.PATH_ORIGINAL));
+
+				facebook.dialog(activity, "feed", params,
+						new UpdateStatusListener(activity));
+			} catch (Exception ex)
+			{
+				GuiUtils.error(TAG, null, ex, activity);
+			}
+		} else
+		{
+			YesNoDialogFragment dialogFragment = YesNoDialogFragment
+					.newInstance(R.string.share_facbook_authorisation_question,
+							new YesNoButtonPressedHandler()
+							{
+								private static final long serialVersionUID = 1L;
+
+								@Override
+								public void yesButtonPressed(
+										DialogInterface dialog)
+								{
+									AuthListener listener = new AuthListener()
+									{
+										@Override
+										public void onAuthSucceed()
+										{
+											FacebookSessionEvents
+													.removeAuthListener(this);
+											shareViaFacebook(photo, activity);
+										}
+
+										@Override
+										public void onAuthFail(String error)
+										{
+											FacebookSessionEvents
+													.removeAuthListener(this);
+										}
+									};
+									FacebookSessionEvents.addAuthListener(listener);
+									FacebookUtils
+											.loginRequest(
+													activity,
+													MainActivity.AUTHORIZE_ACTIVITY_RESULT_CODE);
+								}
+
+								@Override
+								public void noButtonPressed(
+										DialogInterface dialog)
+								{
+									// do nothing
+								}
+							});
+			dialogFragment.show(activity.getSupportFragmentManager(),
+					"dialog");
+		}
+	}
+
+	public static class UpdateStatusListener extends FacebookBaseDialogListener
+	{
+		public UpdateStatusListener(Activity activity)
+		{
+			super(activity);
+		}
+		@Override
+		public void onComplete(Bundle values)
+		{
+			final String postId = values.getString("post_id");
+			if (postId != null)
+			{
+				GuiUtils.info(activity
+						.getString(R.string.share_facebook_success_message),
+						activity);
+			} else
+			{
+				GuiUtils.info(activity
+						.getString(R.string.share_facebook_no_wall_post_made),
+						activity);
+			}
+		}
+
+		@Override
+		public void onCancel()
+		{
+			GuiUtils.info(activity
+					.getString(R.string.share_facebook_share_canceled_message),
+					activity);
+		}
+	}
     private class NewestPhotosAdapter extends EndlessAdapter<Photo>
     {
         private final IOpenPhotoApi mOpenPhotoApi;

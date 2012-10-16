@@ -2,6 +2,7 @@
 package me.openphoto.android.app.oauth;
 
 import me.openphoto.android.app.Preferences;
+import me.openphoto.android.app.R;
 import me.openphoto.android.app.net.IOpenPhotoApi;
 import me.openphoto.android.app.util.GuiUtils;
 import me.openphoto.android.app.util.LoadingControl;
@@ -10,6 +11,7 @@ import oauth.signpost.OAuthConsumer;
 import oauth.signpost.OAuthProvider;
 import oauth.signpost.basic.DefaultOAuthConsumer;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -17,8 +19,11 @@ import android.os.AsyncTask;
 public class OAuthUtils
 {
 	static final String TAG = OAuthUtils.class.getSimpleName();
-    private static final String CALLBACK_URL = "openphoto://callback";
 
+	static String getCallbackUrl(Context context)
+	{
+		return context.getString(R.string.openphoto_oauth_callback_url);
+	}
 	/**
      * Open the browser and asks the user to authorize the app. Afterwards, we
      * redirect the user back to activity!
@@ -31,7 +36,7 @@ public class OAuthUtils
         {
             IOpenPhotoApi mOpenPhoto = Preferences.getApi(activity);
             String url = mOpenPhoto.getOAuthUrl("OpenPhoto Android App",
-                    CALLBACK_URL,
+					getCallbackUrl(activity),
                     activity);
             activity.startActivity(new Intent(Intent.ACTION_VIEW, Uri
                     .parse(url)));
@@ -53,7 +58,7 @@ public class OAuthUtils
             LoadingControl loadingControl, Uri uri,
             Runnable runOnSuccess)
     {
-        if (uri != null && uri.toString().startsWith(CALLBACK_URL))
+		if (uri != null && uri.toString().startsWith(getCallbackUrl(activity)))
         {
             if (uri.getQueryParameter("oauth_token") != null)
             {

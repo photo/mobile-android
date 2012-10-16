@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
 
-    <PreferenceCategory android:title="@string/setting_account_title" >
+    <PreferenceCategory android:title="@string/setting_account_title" 
+        android:key="@string/setting_account_category">
         <Preference
             android:defaultValue="@string/setting_account_server_default"
             android:key="@string/setting_account_server_key"
@@ -9,6 +10,8 @@
             android:title="@string/setting_account_server_title" />
 
         <PreferenceScreen android:key="@string/setting_account_loggedin_key" />
+        <PreferenceScreen android:key="@string/setting_account_facebook_loggedin_key" 
+            android:title="@string/setting_account_facebook_loggedin_logout"/>
     </PreferenceCategory>
     
     <!-- PreferenceCategory android:title="@string/upload_preference_category" >
