@@ -1,6 +1,10 @@
 
 package me.openphoto.android.app;
 
+import me.openphoto.android.app.facebook.FacebookProvider;
+import me.openphoto.android.app.facebook.FacebookUtils;
+import me.openphoto.android.app.facebook.FacebookSessionEvents;
+import me.openphoto.android.app.facebook.FacebookSessionEvents.LogoutListener;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
@@ -9,6 +13,7 @@ import android.preference.Preference;
 import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceActivity;
+import android.preference.PreferenceCategory;
 
 /**
  * The settings screen
@@ -16,9 +21,13 @@ import android.preference.PreferenceActivity;
  * @author pas
  * @author Patrick Boos
  */
-public class SettingsActivity extends PreferenceActivity implements OnPreferenceClickListener {
+public class SettingsActivity extends PreferenceActivity implements
+		OnPreferenceClickListener
+{
     private Preference mLoginPreference;
+	private Preference mFacebookLoginPreference;
     private Preference mServerUrl;
+	private PreferenceCategory loginCategory;
 
     /**
      * Called when Settings Activity is first loaded
@@ -30,8 +39,16 @@ public class SettingsActivity extends PreferenceActivity implements OnPreference
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.settings);
 
+		loginCategory = (PreferenceCategory) findPreference(getString(R.string.setting_account_category));
         mLoginPreference = findPreference(getString(R.string.setting_account_loggedin_key));
         mLoginPreference.setOnPreferenceClickListener(this);
+		mFacebookLoginPreference = findPreference(getString(R.string.setting_account_facebook_loggedin_key));
+		mFacebookLoginPreference.setOnPreferenceClickListener(this);
+		if (FacebookProvider.getFacebook() == null
+				|| !FacebookProvider.getFacebook().isSessionValid())
+		{
+			loginCategory.removePreference(mFacebookLoginPreference);
+		}
         findPreference(getString(R.string.setting_account_server_key))
                 .setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
                     @Override
@@ -89,6 +106,28 @@ public class SettingsActivity extends PreferenceActivity implements OnPreference
             } else {
 				finish();
             }
+		} else if (getString(R.string.setting_account_facebook_loggedin_key)
+				.equals(preference.getKey()))
+		{
+			LogoutListener logoutListener = new LogoutListener()
+			{
+
+				@Override
+				public void onLogoutBegin()
+				{
+				}
+
+				@Override
+				public void onLogoutFinish()
+				{
+					FacebookSessionEvents.removeLogoutListener(this);
+					loginCategory.removePreference(mFacebookLoginPreference);
+				}
+
+			};
+			mFacebookLoginPreference.setEnabled(false);
+			FacebookSessionEvents.addLogoutListener(logoutListener);
+			FacebookUtils.logoutRequest(this);
         }
         return false;
     }

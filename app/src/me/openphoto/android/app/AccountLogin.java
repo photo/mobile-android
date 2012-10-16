@@ -4,8 +4,10 @@ import me.openphoto.android.app.net.account.AccountOpenPhotoResponse;
 import me.openphoto.android.app.net.account.FakeAccountOpenPhotoApi;
 import me.openphoto.android.app.net.account.IAccountOpenPhotoApi;
 import me.openphoto.android.app.util.GuiUtils;
+import me.openphoto.android.app.util.LoadingControl;
 import me.openphoto.android.app.util.LoginUtils;
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -14,10 +16,11 @@ import android.view.Menu;
 import android.view.View;
 import android.widget.EditText;
 
-public class AccountLogin extends Activity
+public class AccountLogin extends Activity implements
+		LoadingControl
 {
-
 	private static final String TAG = AccountLogin.class.getSimpleName();
+	ProgressDialog progress;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState)
@@ -61,22 +64,44 @@ public class AccountLogin extends Activity
 		// clean up login information
 		Preferences.logout(this);
 
-		new LogInUserTask(new Credentials(email, password), this).execute();
+		new LogInUserTask(new Credentials(email, password), this, this)
+				.execute();
 
 	}
 
+	@Override
+	public void startLoading()
+	{
+		if (progress == null)
+		{
+			progress = ProgressDialog.show(this,
+					getString(R.string.logging_in_message), null, true, false);
+		}
+	}
+
+	@Override
+	public void stopLoading()
+	{
+		if (progress != null && progress.isShowing())
+		{
+			progress.dismiss();
+			progress = null;
+		}
+	}
 	private class LogInUserTask extends
 			AsyncTask<Void, Void, AccountOpenPhotoResponse>
 	{
 		private Credentials credentials;
 		private Activity activity;
+		LoadingControl loadingControl;
 
-		public LogInUserTask(Credentials credentials, Activity activity)
+		public LogInUserTask(Credentials credentials,
+				LoadingControl loadingControl, Activity activity)
 		{
 			this.credentials = credentials;
 			this.activity = activity;
+			this.loadingControl = loadingControl;
 		}
-
 		@Override
 		protected AccountOpenPhotoResponse doInBackground(Void... params)
 		{
@@ -99,6 +124,7 @@ public class AccountLogin extends Activity
 		protected void onPreExecute()
 		{
 			super.onPreExecute();
+			loadingControl.startLoading();
 		}
 
 		@Override
@@ -107,6 +133,7 @@ public class AccountLogin extends Activity
 			try
 			{
 				super.onPostExecute(result);
+				loadingControl.stopLoading();
 
 				if (result != null)
 				{

@@ -1,5 +1,6 @@
 package me.openphoto.android.app;
 
+import me.openphoto.android.app.facebook.FacebookProvider;
 import me.openphoto.android.app.service.UploaderService;
 import me.openphoto.android.app.twitter.TwitterUtils;
 import me.openphoto.android.app.util.GalleryOpenControl;
@@ -18,7 +19,6 @@ import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.view.Window;
-import com.bugsense.trace.BugSenseHandler;
 
 public class MainActivity extends SherlockFragmentActivity
 		implements LoadingControl, GalleryOpenControl
@@ -26,8 +26,8 @@ public class MainActivity extends SherlockFragmentActivity
 	private static final String HOME_TAG = "home";
 	public static final String TAG = MainActivity.class.getSimpleName();
 	public static final String ACTIVE_TAB = "ActiveTab";
+	final static int AUTHORIZE_ACTIVITY_RESULT_CODE = 0;
 
-	private static final String BUG_SENSE_API_KEY = "16a061fa";
 	private ActionBar mActionBar;
 	private Menu mMenu;
 	private int mLoaders = 0;
@@ -55,7 +55,6 @@ public class MainActivity extends SherlockFragmentActivity
 		setUpTabs(savedInstanceState == null ? 1 : savedInstanceState.getInt(
 				ACTIVE_TAB, 1));
 
-		BugSenseHandler.setup(this, BUG_SENSE_API_KEY);
 	}
 
 	private void setUpTabs(int activeTab)
@@ -136,6 +135,24 @@ public class MainActivity extends SherlockFragmentActivity
 		}
 	}
 
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data)
+	{
+		switch (requestCode)
+		{
+		/*
+		 * if this is the activity result from authorization flow, do a call
+		 * back to authorizeCallback Source Tag: login_tag
+		 */
+			case AUTHORIZE_ACTIVITY_RESULT_CODE:
+			{
+				FacebookProvider.getFacebook().authorizeCallback(requestCode,
+						resultCode,
+						data);
+				break;
+			}
+		}
+	}
 	public void reinitMenu()
 	{
 		if (mMenu != null)

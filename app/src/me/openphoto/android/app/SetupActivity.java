@@ -1,4 +1,3 @@
-
 package me.openphoto.android.app;
 
 import me.openphoto.android.app.oauth.OAuthUtils;
@@ -26,25 +25,27 @@ import com.actionbarsherlock.app.SherlockFragmentActivity;
 public class SetupActivity extends SherlockFragmentActivity implements
 		LoadingControl
 {
-    public static final String TAG = SetupActivity.class.getSimpleName();
+	public static final String TAG = SetupActivity.class.getSimpleName();
 	ProgressDialog progress;
-    /**
-     * Called when Setup Activity is first loaded
-     * 
-     * @see android.app.Activity#onCreate(android.os.Bundle)
-     */
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+
+	/**
+	 * Called when Setup Activity is first loaded
+	 * 
+	 * @see android.app.Activity#onCreate(android.os.Bundle)
+	 */
+	@Override
+	protected void onCreate(Bundle savedInstanceState)
+	{
+		super.onCreate(savedInstanceState);
 		if (savedInstanceState == null)
 		{
 			getSupportFragmentManager().beginTransaction()
 					.add(android.R.id.content,
 							new UiFragment()).commit();
 		}
-    }
+	}
 
-    @Override
+	@Override
 	protected void onNewIntent(Intent intent)
 	{
 		super.onNewIntent(intent);
@@ -68,8 +69,11 @@ public class SetupActivity extends SherlockFragmentActivity implements
 	@Override
 	public void startLoading()
 	{
-		progress = ProgressDialog.show(this,
-				getString(R.string.logging_in_message), null, true, false);
+		if (progress == null)
+		{
+			progress = ProgressDialog.show(this,
+					getString(R.string.logging_in_message), null, true, false);
+		}
 	}
 
 	@Override
