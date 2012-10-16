@@ -53,6 +53,8 @@ public class FakeAccountOpenPhotoApi extends ApiBase implements
 						"\"owner\":\"hello@openphoto.me\"}}");
 		// JSONObject jsonObjFake = new JSONObject(
 		// "{\"message\":\"Invalid username or password.\",\"code\":403,\"result\":0}");
+		// JSONObject jsonObjFake = new JSONObject(
+		// "{\"message\":\"Please enter a username with at least 6 characters.\",\"code\":500,\"result\":false}");
 
         /*
          * For a Fake error, this is the message:

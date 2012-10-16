@@ -49,7 +49,8 @@
     <string name="hint_server">username.openphoto.me</string>
     <string name="login">Login</string>
     <string name="get_openphoto_account">Get an openphoto account</string>
-    <string name="logging_in_message">Please wait. Logging you in...</string>
+    <string name="logging_in_message">Please wait. Logging you in…</string>
+    <string name="signup_message">Please wait. Registering new user…</string>
 
     <!-- MainActivity -->
     <string name="tab_home">Home</string>
