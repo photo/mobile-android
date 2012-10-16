@@ -28,10 +28,20 @@ public class TwitterUtils
     static final String ACCESS_TOKEN_TOKEN = "accessTokenToken";
     static final String ACCESS_TOKEN_SECRET = "accessTokenSecret";
 
-    private static final String CONSUMER_KEY = "Z0EVWNVma30RFZH8nJphog";
-    private static final String CONSUMER_SECRET = "wt2PQuFHwai0ffPvAnlPsQc8W0DIUjeUyvnCOvbQb3E";
-    private static final String CALLBACK_URL = "openphoto-t://twitter-callback";
+	static String getCallbackUrl(Context context)
+    {
+    	return context.getString(R.string.twitter_callback_url);
+    }
 
+	static String getConsumerKey(Context context)
+	{
+		return context.getString(R.string.twitter_api_consumer_key);
+	}
+
+	static String getConsumerSecret(Context context)
+	{
+		return context.getString(R.string.twitter_api_consumer_secret);
+	}
     /**
      * This method checks the shared prefs to see if we have persisted a user
      * token/secret if it has then it logs on using them, otherwise return null
@@ -97,7 +107,9 @@ public class TwitterUtils
 	public static void verifyOAuthResponse(Activity activity, Uri uri,
 			Runnable runOnSuccess)
     {
-        if (uri != null && uri.toString().startsWith(CALLBACK_URL))
+		if (uri != null
+				&& uri.toString().startsWith(
+						getCallbackUrl(activity)))
         {
             String verifier = uri
                     .getQueryParameter(oauth.signpost.OAuth.OAUTH_VERIFIER);
@@ -121,7 +133,8 @@ public class TwitterUtils
         {
             // initialize Twitter4J
             twitter = new TwitterFactory().getInstance();
-            twitter.setOAuthConsumer(CONSUMER_KEY, CONSUMER_SECRET);
+			twitter.setOAuthConsumer(getConsumerKey(context),
+					getConsumerSecret(context));
             twitter.setOAuthAccessToken(a);
         }
         return twitter;
@@ -213,7 +226,8 @@ public class TwitterUtils
 
                     // initialize Twitter4J
                     Twitter twitter = new TwitterFactory().getInstance();
-                    twitter.setOAuthConsumer(CONSUMER_KEY, CONSUMER_SECRET);
+					twitter.setOAuthConsumer(getConsumerKey(activity),
+							getConsumerSecret(activity));
                     twitter.setOAuthAccessToken(a);
                     twitterProvider.setTwitter(twitter);
 					GuiUtils.info(
@@ -261,14 +275,14 @@ public class TwitterUtils
             try
             {
                 consumer = new CommonsHttpOAuthConsumer(
-                        CONSUMER_KEY,
-                        CONSUMER_SECRET);
+						getConsumerKey(activity),
+						getConsumerSecret(activity));
                 provider = new DefaultOAuthProvider(
                         "http://twitter.com/oauth/request_token",
                         "http://twitter.com/oauth/access_token",
                         "http://twitter.com/oauth/authorize");
                 authUrl = provider.retrieveRequestToken(consumer,
-                        CALLBACK_URL);
+                		getCallbackUrl(activity));
                 return true;
             } catch (Exception e)
             {

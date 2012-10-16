@@ -35,7 +35,7 @@ public class GuiUtils
 		alert(msg, activity);
     }
 
-    public static void error(String TAG, String message, Exception ex,
+	public static void error(String TAG, String message, Exception ex,
             Activity activity)
     {
         Map<String, String> extraData = new HashMap<String, String>();

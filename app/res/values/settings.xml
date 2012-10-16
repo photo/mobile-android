@@ -9,6 +9,9 @@
   
   <string name="setting_account_title">Account</string>
   
+  <string name="setting_account_facebook_loggedin_key">setting_facebook_loggedin</string>
+  <string name="setting_account_facebook_loggedin_logout">Facebook Log out</string>
+  <string name="setting_account_category">setting_account_category</string>
   <string name="setting_account_loggedin_key">setting_loggedin</string>
   <string name="setting_account_loggedin_logout">Log out</string>
   <string name="setting_account_loggedin_login">Log in</string>
@@ -33,4 +36,17 @@
   <string name="setting_autoupload_tag_key">setting_autoupload_tag</string>
   <string name="setting_autoupload_tag_default">autoupload</string>
   
+  <!-- API Keys -->
+  <string name="facebook_app_id">486985971321265</string>
+  <string name="bugsense_api_key">16a061fa</string>
+  <string name="twitter_api_consumer_key">Z0EVWNVma30RFZH8nJphog</string>
+  <string name="twitter_api_consumer_secret">wt2PQuFHwai0ffPvAnlPsQc8W0DIUjeUyvnCOvbQb3E</string>
+  <string name="twitter_callback_url">openphoto-t://twitter-callback</string>
+  <string name="openphoto_oauth_callback_url">openphoto://callback</string>
+  
+  <!--  Facebook preferences -->
+  <string-array name="share_facebook_permissions">
+        <item>publish_stream</item>
+        <item>photo_upload</item>
+    </string-array>
 </resources>

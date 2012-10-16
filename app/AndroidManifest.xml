@@ -18,6 +18,7 @@
     <application
         android:icon="@drawable/icon"
         android:label="@string/app_name"
+        android:name=".OpenPhotoApplication"
         android:theme="@style/Theme.OpenPhoto.Light" >
         <activity android:name=".SplashActivity" />
         <activity
