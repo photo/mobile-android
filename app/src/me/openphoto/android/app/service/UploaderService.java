@@ -163,7 +163,8 @@ public class UploaderService extends Service {
                             e.getClass().getSimpleName() + ": " + e.getMessage());
                     showErrorNotification(photoUpload, file);
                 }
-				GuiUtils.processError(TAG, "Could not upload the photo taken",
+				GuiUtils.processError(TAG,
+						R.string.errorCouldNotUploadTakenPhoto,
 						e,
 						getApplicationContext(), !photoUpload.isAutoUpload());
             }

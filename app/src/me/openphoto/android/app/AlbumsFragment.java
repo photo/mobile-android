@@ -131,7 +131,10 @@ public class AlbumsFragment extends CommonFragment implements
                     return new LoadResponse(response.getAlbums(), false);
                 } catch (Exception e)
                 {
-					GuiUtils.error(TAG, "Could not load next albums in list", e);
+					GuiUtils.error(
+							TAG,
+							R.string.errorCouldNotLoadNextAlbumsInList,
+							e);
                 }
             }
             return new LoadResponse(null, false);

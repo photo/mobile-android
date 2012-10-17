@@ -205,7 +205,9 @@ public class TwitterUtils
                 return true;
             } catch (Exception e)
             {
-                GuiUtils.error(TAG, "Error while verifying the response", e,
+				GuiUtils.error(TAG,
+						R.string.errorVerifyingTheResponse,
+						e,
                         activity);
                 return false;
             }
@@ -231,8 +233,7 @@ public class TwitterUtils
                     twitter.setOAuthAccessToken(a);
                     twitterProvider.setTwitter(twitter);
 					GuiUtils.info(
-							activity.getString(R.string.share_twitter_success_setup_message),
-							activity);
+							R.string.share_twitter_success_setup_message);
 					if (runOnSuccess != null)
 					{
 						runOnSuccess.run();
@@ -286,7 +287,7 @@ public class TwitterUtils
                 return true;
             } catch (Exception e)
             {
-                GuiUtils.error(TAG, "Error with twitter authentication", e,
+				GuiUtils.error(TAG, R.string.errorWithTwitterAuthentication, e,
                         activity);
                 return false;
             }
@@ -301,8 +302,7 @@ public class TwitterUtils
                 try
                 {
                     GuiUtils.info(
-                            activity.getString(R.string.share_twitter_authorise_ask),
-                            activity);
+							R.string.share_twitter_authorise_ask);
                     TwitterProvider twitterProvider = TwitterProvider.getInstance();
                     twitterProvider.setConsumer(consumer);
                     twitterProvider.setProvider(provider);
