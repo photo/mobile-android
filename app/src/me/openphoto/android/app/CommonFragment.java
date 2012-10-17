@@ -15,10 +15,6 @@ import com.actionbarsherlock.app.SherlockFragment;
  */
 public class CommonFragment extends SherlockFragment
 {
-    protected void alert(final String msg)
-    {
-        GuiUtils.alert(msg, getActivity());
-    }
 
     @Override
     public void onAttach(Activity activity)
@@ -31,7 +27,7 @@ public class CommonFragment extends SherlockFragment
         boolean result = Utils.isOnline(getActivity());
         if (!result)
         {
-            alert(getString(R.string.noInternetAccess));
+			GuiUtils.alert(R.string.noInternetAccess);
         }
         return result;
     }

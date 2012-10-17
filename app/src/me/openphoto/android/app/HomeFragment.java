@@ -304,23 +304,17 @@ public class HomeFragment extends CommonFragment implements Refreshable
 			final String postId = values.getString("post_id");
 			if (postId != null)
 			{
-				GuiUtils.info(context
-						.getString(R.string.share_facebook_success_message),
-						context);
+				GuiUtils.info(R.string.share_facebook_success_message);
 			} else
 			{
-				GuiUtils.info(context
-						.getString(R.string.share_facebook_no_wall_post_made),
-						context);
+				GuiUtils.info(R.string.share_facebook_no_wall_post_made);
 			}
 		}
 
 		@Override
 		public void onCancel()
 		{
-			GuiUtils.info(context
-					.getString(R.string.share_facebook_share_canceled_message),
-					context);
+			GuiUtils.info(R.string.share_facebook_share_canceled_message);
 		}
 	}
     private class NewestPhotosAdapter extends EndlessAdapter<Photo>
@@ -482,7 +476,8 @@ public class HomeFragment extends CommonFragment implements Refreshable
                         } catch (Exception e)
                         {
 							GuiUtils.error(TAG,
-									"Could not use Intent to open maps", e);
+									R.string.errorCouldNotUseIntentsToOpenMaps,
+									e);
                         }
                     }
                 });
@@ -517,7 +512,9 @@ public class HomeFragment extends CommonFragment implements Refreshable
 					return new LoadResponse(response.getPhotos(), false);
                 } catch (Exception e)
                 {
-					GuiUtils.error(TAG, "Could not load next photos in list",
+					GuiUtils.error(
+							TAG,
+							R.string.errorCouldNotLoadNextPhotosInList,
 							e, mContext);
                 }
             }

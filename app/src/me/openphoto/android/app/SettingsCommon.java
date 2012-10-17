@@ -39,8 +39,8 @@ public class SettingsCommon implements
 
 				// confirm if user wants to log out
 				new AlertDialog.Builder(activity)
-						.setTitle("Log out")
-						.setMessage("Are you sure?")
+						.setTitle(R.string.logOut)
+						.setMessage(R.string.areYouSureQuestion)
 						.setIcon(android.R.drawable.ic_dialog_alert)
 						.setPositiveButton(R.string.yes,
 								new DialogInterface.OnClickListener()

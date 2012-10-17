@@ -113,7 +113,8 @@ public class AccountLogin extends Activity implements
 						credentials.getPwd());
 			} catch (Exception e)
 			{
-				GuiUtils.error(TAG, "Could not login",
+				GuiUtils.error(TAG,
+						R.string.errorCouldNotLogin,
 						e,
 						this.activity);
 			}
@@ -150,8 +151,7 @@ public class AccountLogin extends Activity implements
 						this.activity.finish();
 					} else if (result.isInvalidCredentials())
 					{
-						GuiUtils.alert(getString(R.string.invalid_credentials),
-								activity);
+						GuiUtils.alert(R.string.invalid_credentials);
 					} else if (result.isUnknownError())
 					{
 						if (result.getMessage() != null
@@ -160,8 +160,7 @@ public class AccountLogin extends Activity implements
 							GuiUtils.alert(result.getMessage(), activity);
 						} else
 						{
-							GuiUtils.alert(getString(R.string.unknown_error),
-									activity);
+							GuiUtils.alert(R.string.unknown_error);
 						}
 					}
 				}

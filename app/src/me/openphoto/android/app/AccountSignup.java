@@ -127,7 +127,8 @@ public class AccountSignup extends Activity
 						email, password);
 			} catch (Exception e)
 			{
-				GuiUtils.error(TAG, "Could not signup",
+				GuiUtils.error(TAG,
+						R.string.errorCouldNotSignup,
 						e,
 						activity);
 			}
@@ -165,8 +166,7 @@ public class AccountSignup extends Activity
 							GuiUtils.alert(result.getMessage(), activity);
 						} else
 						{
-							GuiUtils.alert(getString(R.string.unknown_error),
-									activity);
+							GuiUtils.alert(R.string.unknown_error);
 						}
 					}
 				}

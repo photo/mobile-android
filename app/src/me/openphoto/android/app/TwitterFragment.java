@@ -85,7 +85,7 @@ public class TwitterFragment extends CommonDialogFragment
             });
         } catch (Exception ex)
         {
-            GuiUtils.error(TAG, "Could not init twitter fragment", ex,
+			GuiUtils.error(TAG, R.string.errorCouldNotInitTwitterFragment, ex,
                     getActivity());
             dismiss();
         }
@@ -141,7 +141,8 @@ public class TwitterFragment extends CommonDialogFragment
                 return true;
             } catch (Exception ex)
             {
-                GuiUtils.error(TAG, "Could not retrieve twitter screen name",
+				GuiUtils.error(TAG,
+						R.string.errorCouldNotRetrieveTwitterScreenName,
                         ex,
 						activity);
             }
@@ -187,7 +188,7 @@ public class TwitterFragment extends CommonDialogFragment
                 return true;
             } catch (Exception ex)
             {
-                GuiUtils.error(TAG, "Could not send tweet", ex,
+				GuiUtils.error(TAG, R.string.errorCouldNotSendTweet, ex,
                         getActivity());
             }
             return false;
@@ -201,8 +202,7 @@ public class TwitterFragment extends CommonDialogFragment
             if (result.booleanValue())
             {
                 GuiUtils.info(
-						activity.getString(R.string.share_twitter_success_message),
-						activity);
+						R.string.share_twitter_success_message);
             }
 			Dialog dialog = TwitterFragment.this.getDialog();
 			if (dialog != null && dialog.isShowing())

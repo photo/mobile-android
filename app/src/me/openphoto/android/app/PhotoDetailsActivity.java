@@ -25,7 +25,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 /**
  * The general photo viewing screen
@@ -241,7 +240,7 @@ public class PhotoDetailsActivity extends Activity {
                 mPhoto = response.getPhoto();
                 return mStorage.getBitmap(mPhoto.getUrl(PhotosEndlessAdapter.SIZE_BIG));
             } catch (Exception e) {
-				GuiUtils.error(TAG, "Could not get photo", e);
+				GuiUtils.error(TAG, R.string.errorCouldNotGetPhoto, e);
                 return null;
             }
         }
@@ -254,8 +253,8 @@ public class PhotoDetailsActivity extends Activity {
                     mCallback.onImageDisplayed(mImageView);
                 }
             } else {
-                Toast.makeText(PhotoDetailsActivity.this, "Error occured", Toast.LENGTH_LONG)
-                        .show();
+				GuiUtils.alert(
+						R.string.errorOccured);
             }
             super.onPostExecute(bitmap);
         }

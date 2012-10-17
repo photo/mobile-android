@@ -139,7 +139,8 @@ public class TagsFragment extends CommonFragment implements
                     return new LoadResponse(response.getTags(), false);
                 } catch (Exception e)
                 {
-					GuiUtils.error(TAG, "Could not load next tags in list", e);
+					GuiUtils.error(TAG,
+							R.string.errorCouldNotLoadNextTagsInList, e);
                 }
             }
             return new LoadResponse(null, false);
