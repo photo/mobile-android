@@ -1,7 +1,7 @@
 package me.openphoto.android.app.facebook;
 
 import me.openphoto.android.app.util.GuiUtils;
-import android.app.Activity;
+import android.content.Context;
 
 import com.facebook.android.DialogError;
 import com.facebook.android.Facebook.DialogListener;
@@ -14,20 +14,20 @@ import com.facebook.android.FacebookError;
 public abstract class FacebookBaseDialogListener implements DialogListener {
 
 	public static final String TAG = FacebookBaseDialogListener.class.getSimpleName();
-	protected Activity activity;
+	protected Context context;
 
-	public FacebookBaseDialogListener(Activity activity)
+	public FacebookBaseDialogListener(Context context)
 	{
-		this.activity = activity;
+		this.context = context;
 	}
     @Override
     public void onFacebookError(FacebookError e) {
-		GuiUtils.error(TAG, null, e, activity);
+		GuiUtils.error(TAG, null, e, context);
     }
 
     @Override
     public void onError(DialogError e) {
-		GuiUtils.error(TAG, null, new RuntimeException(e), activity);
+		GuiUtils.error(TAG, null, new RuntimeException(e), context);
     }
 
     @Override

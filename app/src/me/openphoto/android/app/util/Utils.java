@@ -26,7 +26,6 @@ import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Environment;
 import android.os.StatFs;
-import android.util.Log;
 
 /**
  * Class containing some static utility methods.
@@ -154,7 +153,7 @@ public class Utils {
 			}
 		} catch (Exception ex)
 		{
-			Log.e(TAG, "Error", ex);
+			GuiUtils.noAlertError(TAG, "Error", ex);
 		}
 		return result;
 	}
@@ -184,7 +183,7 @@ public class Utils {
 			}
 		} catch (Exception ex)
 		{
-			Log.e(TAG, "Error", ex);
+			GuiUtils.noAlertError(TAG, "Error", ex);
 		}
 		return result;
 	}

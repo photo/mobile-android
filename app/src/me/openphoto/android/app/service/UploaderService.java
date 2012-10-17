@@ -2,6 +2,7 @@
 package me.openphoto.android.app.service;
 
 import java.io.File;
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,6 +16,7 @@ import me.openphoto.android.app.net.IOpenPhotoApi;
 import me.openphoto.android.app.net.UploadResponse;
 import me.openphoto.android.app.provider.PhotoUpload;
 import me.openphoto.android.app.provider.UploadsProviderAccessor;
+import me.openphoto.android.app.util.GuiUtils;
 import me.openphoto.android.app.util.ImageUtils;
 import me.openphoto.android.app.util.Utils;
 import android.app.Notification;
@@ -46,19 +48,32 @@ public class UploaderService extends Service {
     private static ConnectivityChangeReceiver sReceiver;
 
     private volatile Looper mServiceLooper;
-    private volatile ServiceHandler mServiceHandler;
+	private volatile ServiceHandler mServiceHandler;
 
     private NotificationManager mNotificationManager;
     private long mNotificationLastUpdateTime;
 
-    private final class ServiceHandler extends Handler {
-        public ServiceHandler(Looper looper) {
+	/**
+	 * Now it is static and uses weak reference
+	 * http://stackoverflow.com/a/11408340/527759
+	 * 
+	 */
+	private static final class ServiceHandler extends Handler
+	{
+		private final WeakReference<UploaderService> mService;
+
+		public ServiceHandler(Looper looper, UploaderService service) {
             super(looper);
+			mService = new WeakReference<UploaderService>(service);
         }
 
         @Override
         public void handleMessage(Message msg) {
-            handleIntent((Intent) msg.obj);
+			UploaderService service = mService.get();
+			if (service != null)
+			{
+				service.handleIntent((Intent) msg.obj);
+			}
         }
     }
 
@@ -71,7 +86,7 @@ public class UploaderService extends Service {
         HandlerThread thread = new HandlerThread(TAG);
         thread.start();
         mServiceLooper = thread.getLooper();
-        mServiceHandler = new ServiceHandler(mServiceLooper);
+		mServiceHandler = new ServiceHandler(mServiceLooper, this);
 
         mApi = Preferences.getApi(this);
         startFileObserver();
@@ -146,9 +161,11 @@ public class UploaderService extends Service {
                 if (!photoUpload.isAutoUpload()) {
                     uploads.setError(photoUpload.getId(),
                             e.getClass().getSimpleName() + ": " + e.getMessage());
-                    Log.e(TAG, "Could not upload the photo taken", e);
                     showErrorNotification(photoUpload, file);
                 }
+				GuiUtils.processError(TAG, "Could not upload the photo taken",
+						e,
+						getApplicationContext(), !photoUpload.isAutoUpload());
             }
 
             stopUploadNotification();

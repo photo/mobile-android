@@ -1,19 +1,16 @@
 
 package me.openphoto.android.app;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import me.openphoto.android.app.model.Tag;
 import me.openphoto.android.app.net.IOpenPhotoApi;
 import me.openphoto.android.app.net.TagsResponse;
 import me.openphoto.android.app.ui.adapter.EndlessAdapter;
 import me.openphoto.android.app.util.GalleryOpenControl;
+import me.openphoto.android.app.util.GuiUtils;
 import me.openphoto.android.app.util.LoadingControl;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,8 +21,6 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
-
-import com.bugsense.trace.BugSenseHandler;
 
 public class TagsFragment extends CommonFragment implements
         OnItemClickListener
@@ -144,11 +139,7 @@ public class TagsFragment extends CommonFragment implements
                     return new LoadResponse(response.getTags(), false);
                 } catch (Exception e)
                 {
-                    Log.e(TAG, "Could not load next photos in list", e);
-                    Map<String, String> extraData = new HashMap<String, String>();
-                    extraData.put("message",
-                            "Could not load next photos in list");
-                    BugSenseHandler.log(TAG, extraData, e);
+					GuiUtils.error(TAG, "Could not load next tags in list", e);
                 }
             }
             return new LoadResponse(null, false);

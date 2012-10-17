@@ -7,10 +7,10 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 
 import me.openphoto.android.app.util.FileUtils;
+import me.openphoto.android.app.util.GuiUtils;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.text.TextUtils;
-import android.util.Log;
 import android.widget.ImageView;
 
 /**
@@ -78,7 +78,7 @@ public class ImageStorage {
         try {
             return FileUtils.getImageCacheFolder(mContext) + "/" + url;
         } catch (IOException e) {
-            Log.e(TAG, "Can not get storage path", e);
+			GuiUtils.noAlertError(TAG, "Can not get storage path", e);
             return null;
         }
     }
