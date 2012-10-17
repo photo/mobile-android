@@ -10,8 +10,8 @@ import me.openphoto.android.app.net.IOpenPhotoApi;
 import me.openphoto.android.app.net.Paging;
 import me.openphoto.android.app.net.PhotosResponse;
 import me.openphoto.android.app.net.ReturnSizes;
+import me.openphoto.android.app.util.GuiUtils;
 import android.content.Context;
-import android.util.Log;
 
 public abstract class PhotosEndlessAdapter extends EndlessAdapter<Photo>
 {
@@ -84,7 +84,7 @@ public abstract class PhotosEndlessAdapter extends EndlessAdapter<Photo>
             return new LoadResponse(response.getPhotos(), hasNextPage);
         } catch (Exception e)
         {
-            Log.e(TAG, "Could not load next photos in list", e);
+        	GuiUtils.error(TAG, "Could not load next photos in list", e);
         }
         return new LoadResponse(null, false);
     }

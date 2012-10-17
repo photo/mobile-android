@@ -7,7 +7,6 @@ import java.net.URL;
 import java.util.HashMap;
 
 import me.openphoto.android.app.BuildConfig;
-import android.app.Activity;
 import android.content.Context;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
@@ -43,8 +42,7 @@ public class ImageWorker {
 				DiskLruCache.openCache(ctx, cacheDir, HTTP_CACHE_SIZE);
     }
 
-	public Drawable loadImage(BaseAdapter adapt, ImageView view,
-			Activity activity)
+	public Drawable loadImage(BaseAdapter adapt, ImageView view)
     {
         this.adapt = adapt;
         String url = (String) view.getTag();
@@ -56,18 +54,16 @@ public class ImageWorker {
             synchronized (this) {
                 imageCache.put(url, DEFAULT_ICON);
             }
-			new ImageTask(activity).execute(url);
+			new ImageTask().execute(url);
             return DEFAULT_ICON;
         }
     }
     private class ImageTask extends AsyncTask<String, Void, Drawable>
     {
         private String s_url;
-		private Activity activity;
 
-		public ImageTask(Activity activity)
+		public ImageTask()
 		{
-			this.activity = activity;
 		}
 
         @Override
@@ -103,7 +99,7 @@ public class ImageWorker {
 				return result;
 			} catch (Exception ex)
 			{
-				GuiUtils.error(TAG, null, ex, activity);
+				GuiUtils.error(TAG, null, ex);
 			}
 			return null;
 

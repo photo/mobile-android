@@ -6,6 +6,7 @@ import java.util.Calendar;
 import java.util.List;
 
 import me.openphoto.android.app.net.UploadMetaData;
+import me.openphoto.android.app.util.GuiUtils;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -15,7 +16,6 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
-import android.util.Log;
 
 public class UploadsProviderAccessor {
     private static final String TAG = UploadsProviderAccessor.class.getSimpleName();
@@ -49,6 +49,7 @@ public class UploadsProviderAccessor {
             data.put(JSON_PERMISSION, metaData.getPermission());
             values.put(UploadsProvider.KEY_METADATA_JSON, data.toString());
         } catch (JSONException e) {
+			GuiUtils.noAlertError(TAG, null, e);
         }
         values.put(UploadsProvider.KEY_UPLOADED, 0);
         values.put(UploadsProvider.KEY_IS_AUTOUPLOAD, isAutoUpload ? 1 : 0);
@@ -93,7 +94,7 @@ public class UploadsProviderAccessor {
             cursor.close();
         } catch (Exception ex)
         {
-            ex.printStackTrace();
+			GuiUtils.noAlertError(TAG, null, ex);
         }
     }
 
@@ -144,7 +145,7 @@ public class UploadsProviderAccessor {
                     .setIsAutoUpload(cursor.getInt(UploadsProvider.IS_AUTOUPLOAD_COLUMN) != 0);
             return pendingUpload;
         } catch (Exception e) {
-            Log.e(TAG, "Could not get pending upload", e);
+			GuiUtils.noAlertError(TAG, "Could not get pending upload", e);
             return null;
         }
     }
