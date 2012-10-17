@@ -28,6 +28,8 @@ import android.widget.ImageView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
+import com.facebook.android.R;
+
 /**
  * This activity handles uploading pictures to OpenPhoto.
  * 
@@ -113,11 +115,12 @@ public class UploadActivity extends Activity implements OnClickListener {
         switch (id) {
             case DIALOG_SELECT_IMAGE:
                 final CharSequence[] items = {
-                        "Camera", "Gallery"
+						getString(R.string.upload_camera_option),
+						getString(R.string.upload_gallery_option)
                 };
 
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                builder.setTitle("Upload");
+				builder.setTitle(R.string.upload_title);
                 builder.setItems(items, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int item) {
@@ -134,7 +137,7 @@ public class UploadActivity extends Activity implements OnClickListener {
                                 } catch (IOException e) {
 									GuiUtils.error(
 											TAG,
-                                            "Can not find external storage for taking a picture",
+											R.string.errorCanNotFindExternalStorageForTakingPicture,
 											e,
 											UploadActivity.this);
                                 }

@@ -60,6 +60,9 @@
 
     <!-- UploadActivity -->
     <string name="uploading_in_background">Started upload in background</string>
+    <string name="upload_camera_option">Camera</string>
+    <string name="upload_gallery_option">Gallery</string>
+    <string name="upload_title">Upload</string>
 
     <!-- Notifications -->
     <string name="notification_uploading_photo">Uploading %1$s</string>
@@ -83,6 +86,28 @@
     <string name="yes">Yes</string>
     <string name="no">No</string>
     <string name="pleaseSpecifyFirst">Please specify %1$s first!</string>
+    <string name="logOut">Log out</string>
+    <string name="areYouSureQuestion">Are you sure?</string>
+    
+    <!-- Errors -->
+    <string name="errorWithAuthentication">Error with authentication</string>
+    <string name="errorSimple">Error: %1$s</string>
+    <string name="errorCouldNotUploadTakenPhoto">Could not upload the photo taken</string>
+    <string name="errorVerifyingTheResponse">Error while verifying the response</string>
+    <string name="errorWithTwitterAuthentication">Error with twitter authentication</string>
+    <string name="errorCouldNotLoadNextPhotosInList">Could not load next photos in list</string>
+    <string name="errorCouldNotLogin">Could not login</string>
+    <string name="errorCouldNotSignup">Could not signup</string>
+    <string name="errorCouldNotLoadNextAlbumsInList">Could not load next albums in list</string>
+    <string name="errorCouldNotUseIntentsToOpenMaps">Could not use Intent to open maps</string>
+    <string name="errorCouldNotLoadNextPhotosInList">Could not load next photos in list</string>
+    <string name="errorCouldNotGetPhoto">Could not get photo</string>
+    <string name="errorOccured">Error occured</string>
+    <string name="errorCouldNotLoadNextTagsInList">Could not load next tags in list</string>
+    <string name="errorCouldNotInitTwitterFragment">Could not init twitter fragment</string>
+    <string name="errorCouldNotRetrieveTwitterScreenName">Could not retrieve twitter screen name</string>
+    <string name="errorCouldNotSendTweet">Could not send tweet</string>
+    <string name="errorCanNotFindExternalStorageForTakingPicture">Can not find external storage for taking a picture</string>
 
     <!-- Preferences -->
     <string name="upload_preference_category">Upload of taken pictures</string>
@@ -109,5 +134,6 @@
     <string name="field_email">email</string>
     <string name="field_password">password</string>
     <string name="field_username">username</string>
+    
 
 </resources>

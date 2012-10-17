@@ -14,7 +14,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.content.Context;
-import android.util.Log;
 
 /**
  * OpenPhotoApi provides access to the acOpenPhoto API.
@@ -201,7 +200,6 @@ public class OpenPhotoApi extends ApiBase implements IOpenPhotoApi {
         }
         ApiResponse response = execute(request);
         String result = response.getContentAsString();
-        Log.e(TAG, "Result = " + result);
         return new PhotosResponse(new JSONObject(result));
     }
 

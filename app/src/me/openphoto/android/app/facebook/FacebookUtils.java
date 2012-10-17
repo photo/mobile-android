@@ -156,9 +156,7 @@ public class FacebookUtils
 		public void onComplete(Bundle values)
 		{
 			FacebookSessionEvents.onLoginSuccess();
-			GuiUtils.info(context
-					.getString(R.string.share_facebook_success_setup_message),
-					context);
+			GuiUtils.info(R.string.share_facebook_success_setup_message);
 		}
 
 		@Override

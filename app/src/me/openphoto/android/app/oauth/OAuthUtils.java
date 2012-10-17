@@ -67,7 +67,13 @@ public class OAuthUtils
                         runOnSuccess).execute();
             } else
             {
-                GuiUtils.alert("Error: " + uri.getQueryParameter("error"),
+				String errorMsg = uri.getQueryParameter("error");
+				if (errorMsg == null)
+				{
+					errorMsg = "";
+				}
+				GuiUtils.alert(String.format(
+						activity.getString(R.string.errorSimple), errorMsg),
                         activity);
             }
         }
@@ -125,7 +131,9 @@ public class OAuthUtils
                 return true;
             } catch (Exception e)
             {
-                GuiUtils.error(TAG, "Error with authentication", e, activity);
+				GuiUtils.error(TAG,
+						R.string.errorWithAuthentication,
+						e, activity);
                 return false;
             }
         }
