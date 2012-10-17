@@ -2,15 +2,13 @@
 package me.openphoto.android.app;
 
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import me.openphoto.android.app.facebook.FacebookBaseDialogListener;
 import me.openphoto.android.app.facebook.FacebookProvider;
-import me.openphoto.android.app.facebook.FacebookUtils;
 import me.openphoto.android.app.facebook.FacebookSessionEvents;
 import me.openphoto.android.app.facebook.FacebookSessionEvents.AuthListener;
+import me.openphoto.android.app.facebook.FacebookUtils;
 import me.openphoto.android.app.model.Photo;
 import me.openphoto.android.app.net.IOpenPhotoApi;
 import me.openphoto.android.app.net.Paging;
@@ -34,7 +32,6 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.text.Html;
-import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
@@ -48,7 +45,6 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.bugsense.trace.BugSenseHandler;
 import com.facebook.android.Facebook;
 import com.facebook.android.R;
 
@@ -308,23 +304,23 @@ public class HomeFragment extends CommonFragment implements Refreshable
 			final String postId = values.getString("post_id");
 			if (postId != null)
 			{
-				GuiUtils.info(activity
+				GuiUtils.info(context
 						.getString(R.string.share_facebook_success_message),
-						activity);
+						context);
 			} else
 			{
-				GuiUtils.info(activity
+				GuiUtils.info(context
 						.getString(R.string.share_facebook_no_wall_post_made),
-						activity);
+						context);
 			}
 		}
 
 		@Override
 		public void onCancel()
 		{
-			GuiUtils.info(activity
+			GuiUtils.info(context
 					.getString(R.string.share_facebook_share_canceled_message),
-					activity);
+					context);
 		}
 	}
     private class NewestPhotosAdapter extends EndlessAdapter<Photo>
@@ -361,7 +357,7 @@ public class HomeFragment extends CommonFragment implements Refreshable
                     (ImageView) convertView.findViewById(R.id.newest_image);
             photoView.setTag(photo.getUrl("700x650xCR"));
             Drawable dr =
-					iw.loadImage(this, photoView, getActivity());
+					iw.loadImage(this, photoView);
             photoView.setImageDrawable(dr);
 
             // set title or file's name
@@ -485,7 +481,8 @@ public class HomeFragment extends CommonFragment implements Refreshable
                             startActivity(intent);
                         } catch (Exception e)
                         {
-                            Log.e(TAG, "Could not use Intent to open maps", e);
+							GuiUtils.error(TAG,
+									"Could not use Intent to open maps", e);
                         }
                     }
                 });
@@ -517,16 +514,11 @@ public class HomeFragment extends CommonFragment implements Refreshable
                 {
                     PhotosResponse response = mOpenPhotoApi
                             .getNewestPhotos(new Paging(page, 25));
-                    return new LoadResponse(response.getPhotos(), false);
+					return new LoadResponse(response.getPhotos(), false);
                 } catch (Exception e)
                 {
-                    Log.e(TAG, "Could not load next photos in list", e);
-                    Map<String, String> extraData = new HashMap<String, String>();
-                    extraData
-                            .put("message",
-                                    "Could not load next photos in list for HomeFragment");
-                    BugSenseHandler.log(TAG, extraData, e);
-                    alert("Could not load next photos in list");
+					GuiUtils.error(TAG, "Could not load next photos in list",
+							e, mContext);
                 }
             }
             return new LoadResponse(null, false);

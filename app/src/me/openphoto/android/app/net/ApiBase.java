@@ -5,13 +5,12 @@ import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import me.openphoto.android.app.Preferences;
 import me.openphoto.android.app.net.ApiRequest.Parameter;
 import me.openphoto.android.app.net.HttpEntityWithProgress.ProgressListener;
+import me.openphoto.android.app.util.GuiUtils;
 import oauth.signpost.OAuthConsumer;
 
 import org.apache.http.HttpEntity;
@@ -31,9 +30,6 @@ import org.apache.http.params.CoreProtocolPNames;
 import org.apache.http.protocol.HTTP;
 
 import android.content.Context;
-import android.util.Log;
-
-import com.bugsense.trace.BugSenseHandler;
 
 /**
  * ApiBase provides the basic functionality to call RESTful APIs using an
@@ -88,10 +84,7 @@ public class ApiBase {
             try {
                 consumer.sign(httpRequest);
             } catch (Exception e) {
-                Map<String, String> extraData = new HashMap<String, String>();
-                extraData.put("message", "Error signing request");
-                BugSenseHandler.log(TAG, extraData, e);
-                Log.e(TAG, e.getMessage());
+				GuiUtils.noAlertError(TAG, "Error signing request", e);
             }
         }
         return new ApiResponse(httpClient.execute(httpRequest));

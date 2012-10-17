@@ -10,6 +10,7 @@ import me.openphoto.android.app.provider.PhotoUpload;
 import me.openphoto.android.app.provider.UploadsProviderAccessor;
 import me.openphoto.android.app.service.UploaderService;
 import me.openphoto.android.app.util.FileUtils;
+import me.openphoto.android.app.util.GuiUtils;
 import me.openphoto.android.app.util.ImageUtils;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -131,9 +132,11 @@ public class UploadActivity extends Activity implements OnClickListener {
                                             Uri.fromFile(mUploadImageFile));
                                     startActivityForResult(intent, REQUEST_CAMERA);
                                 } catch (IOException e) {
-                                    Toast.makeText(UploadActivity.this,
+									GuiUtils.error(
+											TAG,
                                             "Can not find external storage for taking a picture",
-                                            Toast.LENGTH_LONG).show();
+											e,
+											UploadActivity.this);
                                 }
                                 return;
                             case 1:

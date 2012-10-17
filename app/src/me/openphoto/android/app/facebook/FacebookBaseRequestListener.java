@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 
 import me.openphoto.android.app.util.GuiUtils;
-import android.app.Activity;
+import android.content.Context;
 
 import com.facebook.android.AsyncFacebookRunner.RequestListener;
 import com.facebook.android.FacebookError;
@@ -16,11 +16,11 @@ import com.facebook.android.FacebookError;
  */
 public abstract class FacebookBaseRequestListener implements RequestListener {
 	static final String TAG = FacebookBaseRequestListener.class.getSimpleName();
-	Activity activity;
+	Context context;
 
-	public FacebookBaseRequestListener(Activity activity)
+	public FacebookBaseRequestListener(Context context)
 	{
-		this.activity = activity;
+		this.context = context;
 	}
     @Override
     public void onFacebookError(FacebookError e, final Object state) {
@@ -44,7 +44,7 @@ public abstract class FacebookBaseRequestListener implements RequestListener {
 
 	public void processException(Exception e)
 	{
-		GuiUtils.error(TAG, null, e, activity);
+		GuiUtils.error(TAG, null, e, context);
 	}
 
 }

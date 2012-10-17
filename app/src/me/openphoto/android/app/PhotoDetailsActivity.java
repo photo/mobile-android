@@ -2,8 +2,6 @@
 package me.openphoto.android.app;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 import me.openphoto.android.app.model.Photo;
 import me.openphoto.android.app.net.PhotoResponse;
@@ -11,6 +9,7 @@ import me.openphoto.android.app.net.ReturnSizes;
 import me.openphoto.android.app.ui.adapter.PhotosEndlessAdapter;
 import me.openphoto.android.app.ui.lib.ImageStorage;
 import me.openphoto.android.app.ui.lib.ImageStorage.OnImageDisplayedCallback;
+import me.openphoto.android.app.util.GuiUtils;
 import android.app.Activity;
 import android.content.Context;
 import android.database.DataSetObserver;
@@ -21,15 +20,12 @@ import android.os.Parcelable;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.bugsense.trace.BugSenseHandler;
 
 /**
  * The general photo viewing screen
@@ -245,10 +241,7 @@ public class PhotoDetailsActivity extends Activity {
                 mPhoto = response.getPhoto();
                 return mStorage.getBitmap(mPhoto.getUrl(PhotosEndlessAdapter.SIZE_BIG));
             } catch (Exception e) {
-                Log.e(TAG, "Could not get photo", e);
-                Map<String, String> extraData = new HashMap<String, String>();
-                extraData.put("message", "Error with load photos");
-                BugSenseHandler.log(TAG, extraData, e);
+				GuiUtils.error(TAG, "Could not get photo", e);
                 return null;
             }
         }

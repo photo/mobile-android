@@ -124,7 +124,7 @@ public class FacebookUtils
 					activity.getResources().getStringArray(
 							R.array.share_facebook_permissions),
 					activityCode,
-					new LoginDialogListener(activity));
+					new LoginDialogListener(activity.getApplicationContext()));
 		}
 	}
 
@@ -146,55 +146,49 @@ public class FacebookUtils
 
 	private static final class LoginDialogListener implements DialogListener
 	{
-		Activity activity;
+		Context context;
 
-		public LoginDialogListener(Activity activity)
+		public LoginDialogListener(Context context)
 		{
-			this.activity = activity;
+			this.context = context;
 		}
 		@Override
 		public void onComplete(Bundle values)
 		{
 			FacebookSessionEvents.onLoginSuccess();
-			GuiUtils.info(activity.getString(R.string.share_facebook_success_setup_message), activity);
-			clearReferences();
+			GuiUtils.info(context
+					.getString(R.string.share_facebook_success_setup_message),
+					context);
 		}
 
 		@Override
 		public void onFacebookError(FacebookError error)
 		{
-			GuiUtils.error(TAG, null, error, activity);
+			GuiUtils.error(TAG, null, error, context);
 			FacebookSessionEvents.onLoginError(error.getMessage());
-			clearReferences();
 		}
 
 		@Override
 		public void onError(DialogError error)
 		{
-			GuiUtils.error(TAG, null, new RuntimeException(error), activity);
+			GuiUtils.error(TAG, null, new RuntimeException(error), context);
 			FacebookSessionEvents.onLoginError(error.getMessage());
-			clearReferences();
 		}
 
 		@Override
 		public void onCancel()
 		{
-			FacebookSessionEvents.onLoginError(activity
+			FacebookSessionEvents.onLoginError(context
 					.getString(R.string.share_facbook_action_canceled));
-			clearReferences();
 		}
 
-		void clearReferences()
-		{
-			activity = null;
-		}
 	}
 
 	private static class LogoutRequestListener extends FacebookBaseRequestListener
 	{
-		public LogoutRequestListener(Activity activity)
+		public LogoutRequestListener(Context context)
 		{
-			super(activity);
+			super(context);
 		}
 		@Override
 		public void onComplete(String response, final Object state)
@@ -203,7 +197,7 @@ public class FacebookUtils
 			 * callback should be run in the original thread, not the background
 			 * thread
 			 */
-			activity.runOnUiThread(new Runnable()
+			GuiUtils.runOnUiThread(new Runnable()
 			{
 				@Override
 				public void run()
