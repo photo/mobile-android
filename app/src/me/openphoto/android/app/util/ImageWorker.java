@@ -2,12 +2,18 @@
 package me.openphoto.android.app.util;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.HashMap;
 
 import me.openphoto.android.app.BuildConfig;
+import me.openphoto.android.app.OpenPhotoApplication;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
@@ -82,8 +88,9 @@ public class ImageWorker {
 				File cachedFile = getCachedFile(s_url);
 				if (cachedFile != null)
 				{
-					return Drawable
-							.createFromPath(cachedFile.getAbsolutePath());
+//					return Drawable
+//							.createFromPath(cachedFile.getAbsolutePath());
+					return getDrawable(cachedFile.getAbsolutePath());
 				}
 
 				InputStream istr;
@@ -100,10 +107,70 @@ public class ImageWorker {
 			} catch (Exception ex)
 			{
 				GuiUtils.error(TAG, null, ex);
+			} catch (Throwable t)
+			{
+				GuiUtils.error(TAG, null, new RuntimeException(t));
 			}
 			return null;
 
         }
+
+		/**
+		 * Out of Memory hack taken from here
+		 * http://stackoverflow.com/a/7116158/527759
+		 * 
+		 * @param path
+		 * @return
+		 */
+		Drawable getDrawable(String path)
+		{
+			Bitmap bm = null;
+			BitmapFactory.Options bfOptions = new BitmapFactory.Options();
+			bfOptions.inDither = false; // Disable Dithering mode
+			bfOptions.inPurgeable = true; // Tell to gc that whether it needs
+											// free memory, the Bitmap can be
+											// cleared
+			bfOptions.inInputShareable = true; // Which kind of reference will
+												// be used to recover the Bitmap
+												// data after being clear, when
+												// it will be used in the future
+			bfOptions.inTempStorage = new byte[32 * 1024];
+
+			File file = new File(path);
+			FileInputStream fs = null;
+			try
+			{
+				fs = new FileInputStream(file);
+			} catch (FileNotFoundException e)
+			{
+				// TODO do something intelligent
+				e.printStackTrace();
+			}
+
+			try
+			{
+				if (fs != null)
+					bm = BitmapFactory.decodeFileDescriptor(fs.getFD(), null,
+							bfOptions);
+			} catch (IOException e)
+			{
+				GuiUtils.error(TAG, null, e);
+			} finally
+			{
+				if (fs != null)
+				{
+					try
+					{
+						fs.close();
+					} catch (IOException e)
+					{
+						e.printStackTrace();
+					}
+				}
+			}
+			return bm == null ? null : new BitmapDrawable(OpenPhotoApplication
+					.getContext().getResources(), bm);
+		}
 
         @Override
         protected void onPostExecute(Drawable result) {
