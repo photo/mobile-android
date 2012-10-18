@@ -1,37 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+<PreferenceScreen xmlns:holo="http://schemas.android.com/apk/res-auto" >
 
-    <PreferenceCategory android:title="@string/setting_account_title" 
-        android:key="@string/setting_account_category">
+    <PreferenceCategory holo:title="@string/setting_account_title" 
+        holo:key="@string/setting_account_category">
         <Preference
-            android:defaultValue="@string/setting_account_server_default"
-            android:key="@string/setting_account_server_key"
-            android:selectable="false"
-            android:title="@string/setting_account_server_title" />
+            holo:defaultValue="@string/setting_account_server_default"
+            holo:key="@string/setting_account_server_key"
+            holo:selectable="false"
+            holo:title="@string/setting_account_server_title" />
 
-        <PreferenceScreen android:key="@string/setting_account_loggedin_key" />
-        <PreferenceScreen android:key="@string/setting_account_facebook_loggedin_key" 
-            android:title="@string/setting_account_facebook_loggedin_logout"/>
+        <PreferenceScreen holo:key="@string/setting_account_loggedin_key" />
+        <PreferenceScreen holo:key="@string/setting_account_facebook_loggedin_key" 
+            holo:title="@string/setting_account_facebook_loggedin_logout"/>
     </PreferenceCategory>
     
-    <!-- PreferenceCategory android:title="@string/upload_preference_category" >
+    <!-- PreferenceCategory holo:title="@string/upload_preference_category" >
         <CheckBoxPreference
-            android:defaultValue="@bool/setting_wifi_only_upload_on_default"
-            android:key="@string/setting_wifi_only_upload_on_key"
-            android:title="@string/wifi_only_upload" />
+            holo:defaultValue="@bool/setting_wifi_only_upload_on_default"
+            holo:key="@string/setting_wifi_only_upload_on_key"
+            holo:title="@string/wifi_only_upload" />
     </PreferenceCategory>
-    <PreferenceCategory android:title="Auto upload of taken pictures" >
+    <PreferenceCategory holo:title="Auto upload of taken pictures" >
         <CheckBoxPreference
-            android:defaultValue="@bool/setting_autoupload_on_default"
-            android:key="@string/setting_autoupload_on_key"
-            android:title="Auto upload taken pictures" />
+            holo:defaultValue="@bool/setting_autoupload_on_default"
+            holo:key="@string/setting_autoupload_on_key"
+            holo:title="Auto upload taken pictures" />
 
         <EditTextPreference
-            android:defaultValue="@string/setting_autoupload_tag_default"
-            android:dependency="@string/setting_autoupload_on_key"
-            android:dialogTitle="Set tag for uploaded pictures:"
-            android:key="@string/setting_autoupload_tag_key"
-            android:title="Tag" />
+            holo:defaultValue="@string/setting_autoupload_tag_default"
+            holo:dependency="@string/setting_autoupload_on_key"
+            holo:dialogTitle="Set tag for uploaded pictures:"
+            holo:key="@string/setting_autoupload_tag_key"
+            holo:title="Tag" />
     </PreferenceCategory-->
 
 </PreferenceScreen>

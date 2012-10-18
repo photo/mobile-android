@@ -1,12 +1,14 @@
 package me.openphoto.android.app;
 
-import android.annotation.TargetApi;
 import android.os.Bundle;
-import android.preference.PreferenceCategory;
-import android.preference.PreferenceFragment;
 
-@TargetApi(11)
-public class SettingsFragment extends PreferenceFragment
+import com.WazaBe.HoloEverywhere.preference.PreferenceCategory;
+import com.WazaBe.HoloEverywhere.sherlock.SPreferenceFragment;
+
+/**
+ * @author Eugene Popovich
+ */
+public class SettingsFragment extends SPreferenceFragment
 {
 	private SettingsCommon settingsCommon;
 	@Override
