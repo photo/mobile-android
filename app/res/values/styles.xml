@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <style name="Theme.OpenPhoto.Light" parent="Theme.Sherlock.Light">
+    <style name="Theme.OpenPhoto.Light" parent="Holo.Theme.Sherlock.Light">
         <item name="android:windowBackground">@drawable/bg</item>
         <item name="android:listViewStyle">@style/TransparentListView</item>
         <item name="android:expandableListViewStyle">@style/TransparentExpandableListView</item>
         <item name="actionBarStyle">@style/solid_ActionBar</item>
     </style>
-    <style name="Theme.OpenPhoto.Light.NoActionBar" parent="Theme.Sherlock.Light.NoActionBar">
+    <style name="Theme.OpenPhoto.Light.NoActionBar" parent="Holo.Theme.Sherlock.Light.NoActionBar">
         <item name="android:windowBackground">@drawable/bg</item>
     </style>
     <style name="solid_ActionBar" parent="@style/Widget.Sherlock.Light.ActionBar.Solid">

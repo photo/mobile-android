@@ -5,13 +5,14 @@ import me.openphoto.android.app.facebook.FacebookSessionEvents;
 import me.openphoto.android.app.facebook.FacebookSessionEvents.LogoutListener;
 import me.openphoto.android.app.facebook.FacebookUtils;
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.DialogInterface;
-import android.preference.EditTextPreference;
-import android.preference.Preference;
-import android.preference.Preference.OnPreferenceChangeListener;
-import android.preference.Preference.OnPreferenceClickListener;
-import android.preference.PreferenceCategory;
+
+import com.WazaBe.HoloEverywhere.app.AlertDialog;
+import com.WazaBe.HoloEverywhere.preference.EditTextPreference;
+import com.WazaBe.HoloEverywhere.preference.Preference;
+import com.WazaBe.HoloEverywhere.preference.Preference.OnPreferenceChangeListener;
+import com.WazaBe.HoloEverywhere.preference.Preference.OnPreferenceClickListener;
+import com.WazaBe.HoloEverywhere.preference.PreferenceCategory;
 
 public class SettingsCommon implements
 		OnPreferenceClickListener

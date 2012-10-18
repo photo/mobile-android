@@ -2,15 +2,17 @@
 package me.openphoto.android.app;
 
 import me.openphoto.android.app.util.LoginUtils;
-import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Menu;
 import android.view.View;
 
-public class AccountActivity extends Activity {
+import com.WazaBe.HoloEverywhere.sherlock.SActivity;
+import com.actionbarsherlock.view.Menu;
+
+public class AccountActivity extends SActivity
+{
 
     private static final String TAG = AccountActivity.class.getSimpleName();
 
@@ -32,7 +34,7 @@ public class AccountActivity extends Activity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.activity_account, menu);
+		getSupportMenuInflater().inflate(R.menu.activity_account, menu);
         return true;
     }
 
