@@ -3,9 +3,9 @@ package me.openphoto.android.app;
 
 import me.openphoto.android.app.util.GuiUtils;
 import me.openphoto.android.app.util.Utils;
-import android.app.Activity;
 
-import com.actionbarsherlock.app.SherlockFragment;
+import com.WazaBe.HoloEverywhere.app.Activity;
+import com.WazaBe.HoloEverywhere.sherlock.SFragment;
 
 /**
  * Common parent fragment. All the tab fragments under MainActivity should to
@@ -13,7 +13,7 @@ import com.actionbarsherlock.app.SherlockFragment;
  * 
  * @author Eugene Popovich
  */
-public class CommonFragment extends SherlockFragment
+public class CommonFragment extends SFragment
 {
 
     @Override

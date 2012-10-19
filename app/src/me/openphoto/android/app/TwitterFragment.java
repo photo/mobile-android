@@ -8,17 +8,19 @@ import me.openphoto.android.app.util.GuiUtils;
 import me.openphoto.android.app.util.LoadingControl;
 import twitter4j.StatusUpdate;
 import twitter4j.Twitter;
-import android.app.Activity;
-import android.app.Dialog;
+import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+
+import com.WazaBe.HoloEverywhere.LayoutInflater;
+import com.WazaBe.HoloEverywhere.app.Activity;
+import com.WazaBe.HoloEverywhere.app.Dialog;
 
 /**
  * @author Eugene Popovich
@@ -115,7 +117,7 @@ public class TwitterFragment extends CommonDialogFragment
     {
         TextView loggedInAsText;
         String name;
-		Activity activity = getActivity();
+		Context activity = getActivity();
 
 		ShowCurrentlyLoggedInUserTask(View view)
         {
@@ -167,7 +169,7 @@ public class TwitterFragment extends CommonDialogFragment
 	private class TweetTask extends
             AsyncTask<Void, Void, Boolean>
     {
-		Activity activity = getActivity();
+		Context activity = getActivity();
         @Override
         protected void onPreExecute()
         {

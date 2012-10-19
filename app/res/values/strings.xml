@@ -57,6 +57,7 @@
     <string name="tab_gallery">Gallery</string>
     <string name="tab_tags">Tags</string>
     <string name="tab_albums">Albums</string>
+    <string name="tab_sync">Sync</string>
 
     <!-- UploadActivity -->
     <string name="uploading_in_background">Started upload in background</string>

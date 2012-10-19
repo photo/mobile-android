@@ -21,7 +21,6 @@ import me.openphoto.android.app.ui.widget.YesNoDialogFragment.YesNoButtonPressed
 import me.openphoto.android.app.util.GuiUtils;
 import me.openphoto.android.app.util.ImageWorker;
 import me.openphoto.android.app.util.LoadingControl;
-import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -30,13 +29,8 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentManager;
 import android.text.Html;
-import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
-import android.view.LayoutInflater;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -45,6 +39,11 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.WazaBe.HoloEverywhere.LayoutInflater;
+import com.WazaBe.HoloEverywhere.app.Activity;
+import com.actionbarsherlock.view.ContextMenu;
+import com.actionbarsherlock.view.MenuInflater;
+import com.actionbarsherlock.view.MenuItem;
 import com.facebook.android.Facebook;
 import com.facebook.android.R;
 
@@ -57,6 +56,8 @@ public class HomeFragment extends CommonFragment implements Refreshable
     private LayoutInflater mInflater;
     private ImageWorker iw;
 	private Photo activePhoto;
+
+	private ListView list;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState)
@@ -98,8 +99,9 @@ public class HomeFragment extends CommonFragment implements Refreshable
     public void refresh(View view)
     {
         mAdapter = new NewestPhotosAdapter(getActivity());
-        ListView list = (ListView) view.findViewById(R.id.list_newest_photos);
+		list = (ListView) view.findViewById(R.id.list_newest_photos);
         list.setAdapter(mAdapter);
+		// registerForContextMenu(list);
     }
 
     @Override
@@ -109,39 +111,41 @@ public class HomeFragment extends CommonFragment implements Refreshable
         mAdapter.forceStopLoadingIfNecessary();
     }
 
-    @Override
-    public void onCreateContextMenu(ContextMenu menu, View v,
-            ContextMenuInfo menuInfo)
-    {
-        if (v.getId() == R.id.share_button)
-        {
-            MenuInflater inflater = getActivity().getMenuInflater();
-            inflater.inflate(R.menu.share, menu);
-            super.onCreateContextMenu(menu, v, menuInfo);
-        } else
-        {
-            super.onCreateContextMenu(menu, v, menuInfo);
-        }
-    }
+	@Override
+	public void onCreateContextMenu(ContextMenu menu, View v,
+			ContextMenuInfo menuInfo)
+	{
+		System.out.println("test");
+		if (v.getId() == R.id.share_button)
+		{
+			MenuInflater inflater = getSupportActivity()
+					.getSupportMenuInflater();
+			inflater.inflate(R.menu.share, menu);
+			super.onCreateContextMenu(menu, v, menuInfo);
+		} else
+		{
+			super.onCreateContextMenu(menu, v, menuInfo);
+		}
+	}
 
-    @Override
-    public boolean onContextItemSelected(MenuItem item)
-    {
-        int menuItemIndex = item.getItemId();
-        switch (menuItemIndex)
-        {
-            case R.id.menu_share_email:
+	@Override
+	public boolean onContextItemSelected(MenuItem item)
+	{
+		int menuItemIndex = item.getItemId();
+		switch (menuItemIndex)
+		{
+			case R.id.menu_share_email:
 				shareViaEMail(activePhoto);
-                break;
-            case R.id.menu_share_twitter:
+			break;
+			case R.id.menu_share_twitter:
 				shareActivePhotoViaTwitter();
-                break;
-            case R.id.menu_share_facebook:
+			break;
+			case R.id.menu_share_facebook:
 				shareActivePhotoViaFacebook();
-                break;
-        }
-        return true;
-    }
+			break;
+		}
+		return true;
+	}
 
 	@Override
 	public void onResume()
@@ -208,14 +212,12 @@ public class HomeFragment extends CommonFragment implements Refreshable
                                     // do nothing
                                 }
                             });
-			dialogFragment.show(activity.getSupportFragmentManager(),
-                    "dialog");
+			dialogFragment.replace(activity.getSupportFragmentManager());
         } else
         {
-			FragmentManager fm = activity.getSupportFragmentManager();
             TwitterFragment twitterDialog = new TwitterFragment();
             twitterDialog.setPhoto(photo);
-            twitterDialog.show(fm, "Twitter");
+			twitterDialog.replace(activity.getSupportFragmentManager());
         }
     }
 
@@ -287,16 +289,15 @@ public class HomeFragment extends CommonFragment implements Refreshable
 									// do nothing
 								}
 							});
-			dialogFragment.show(activity.getSupportFragmentManager(),
-					"dialog");
+			dialogFragment.replace(activity.getSupportFragmentManager());
 		}
 	}
 
 	public static class UpdateStatusListener extends FacebookBaseDialogListener
 	{
-		public UpdateStatusListener(Activity activity)
+		public UpdateStatusListener(Context context)
 		{
-			super(activity);
+			super(context);
 		}
 		@Override
 		public void onComplete(Bundle values)
@@ -487,14 +488,17 @@ public class HomeFragment extends CommonFragment implements Refreshable
             }
             final ImageView shareButton = (ImageView) convertView
                     .findViewById(R.id.share_button);
-            registerForContextMenu(shareButton);
             shareButton.setOnClickListener(new OnClickListener()
             {
                 @Override
                 public void onClick(View v)
                 {
-                    activePhoto = photo;
-                    getActivity().openContextMenu(shareButton);
+					System.out.println("OnClick");
+					activePhoto = photo;
+					registerForContextMenu(v);
+					v.showContextMenu();
+					// getSupportActivity().openContextMenu(v);
+					unregisterForContextMenu(v);
                 }
             });
             return convertView;

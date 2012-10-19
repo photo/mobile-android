@@ -12,15 +12,15 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.view.View;
 
+import com.WazaBe.HoloEverywhere.sherlock.SActivity;
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.ActionBar.Tab;
-import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.view.Window;
 
-public class MainActivity extends SherlockFragmentActivity
+public class MainActivity extends SActivity
 		implements LoadingControl, GalleryOpenControl
 {
 	private static final String HOME_TAG = "home";
@@ -75,6 +75,10 @@ public class MainActivity extends SherlockFragmentActivity
 				R.string.tab_tags,
 				new TabListener<TagsFragment>("tags",
 						TagsFragment.class, null));
+		addTab(View.NO_ID,
+				R.string.tab_sync,
+				new TabListener<SyncFragment>("sync",
+						SyncFragment.class, null));
 		mActionBar.selectTab(mActionBar.getTabAt(activeTab));
 	}
 
