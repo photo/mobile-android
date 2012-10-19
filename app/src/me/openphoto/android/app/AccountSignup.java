@@ -7,21 +7,23 @@ import me.openphoto.android.app.util.GuiUtils;
 import me.openphoto.android.app.util.LoadingControl;
 import me.openphoto.android.app.util.LoginUtils;
 import android.app.Activity;
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Menu;
 import android.view.View;
 import android.widget.EditText;
+
+import com.WazaBe.HoloEverywhere.app.ProgressDialog;
+import com.WazaBe.HoloEverywhere.sherlock.SActivity;
+import com.actionbarsherlock.view.Menu;
 
 /**
  * Class to create new accounts on OpenPhoto
  * 
  * @author Patrick Santana <patrick@openphoto.me>
  */
-public class AccountSignup extends Activity
+public class AccountSignup extends SActivity
 		implements LoadingControl
 {
 
@@ -38,7 +40,7 @@ public class AccountSignup extends Activity
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu)
 	{
-		getMenuInflater().inflate(R.menu.activity_account_signup, menu);
+		getSupportMenuInflater().inflate(R.menu.activity_account_signup, menu);
 		return true;
 	}
 
@@ -127,7 +129,8 @@ public class AccountSignup extends Activity
 						email, password);
 			} catch (Exception e)
 			{
-				GuiUtils.error(TAG, "Could not signup",
+				GuiUtils.error(TAG,
+						R.string.errorCouldNotSignup,
 						e,
 						activity);
 			}
@@ -165,8 +168,7 @@ public class AccountSignup extends Activity
 							GuiUtils.alert(result.getMessage(), activity);
 						} else
 						{
-							GuiUtils.alert(getString(R.string.unknown_error),
-									activity);
+							GuiUtils.alert(R.string.unknown_error);
 						}
 					}
 				}

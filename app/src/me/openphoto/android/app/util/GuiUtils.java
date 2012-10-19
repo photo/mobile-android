@@ -23,6 +23,10 @@ public class GuiUtils
 	static Thread mUiThread;
 	static Handler mHandler;
 
+	static String getMessage(int messageId)
+	{
+		return OpenPhotoApplication.getContext().getString(messageId);
+	}
 	public static void setup()
 	{
 		mHandler = new Handler();
@@ -45,6 +49,10 @@ public class GuiUtils
 		}
 	}
 
+	public static void alert(int messageId)
+	{
+		alert(getMessage(messageId));
+	}
 	public static void alert(final String msg)
 	{
 		alert(msg, null);
@@ -64,6 +72,10 @@ public class GuiUtils
 		runOnUiThread(runnable);
 	}
 
+	public static void info(int messagId)
+	{
+		info(getMessage(messagId));
+	}
 	public static void info(final String msg)
 	{
 		info(msg, null);
@@ -73,9 +85,19 @@ public class GuiUtils
 		alert(msg, context);
 	}
 
+	public static void error(String TAG, int messageId, Exception ex)
+	{
+		error(TAG, getMessage(messageId), ex);
+	}
 	public static void error(String TAG, String message, Exception ex)
 	{
 		error(TAG, message, ex, null);
+	}
+
+	public static void error(String TAG, int messageId, Exception ex,
+			Context context)
+	{
+		error(TAG, getMessage(messageId), ex, context);
 	}
 	public static void error(String TAG, String message, Exception ex,
 			Context context)
@@ -86,6 +108,12 @@ public class GuiUtils
 	public static void noAlertError(String TAG, String message, Exception ex)
 	{
 		processError(TAG, message, ex, null, false);
+	}
+
+	public static void processError(String TAG, int messageId, Exception ex,
+			Context context, boolean alertMessage)
+	{
+		processError(TAG, getMessage(messageId), ex, context, alertMessage);
 	}
 	public static void processError(String TAG, String message, Exception ex,
 			Context context, boolean alertMessage)

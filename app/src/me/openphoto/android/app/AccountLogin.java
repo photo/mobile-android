@@ -7,16 +7,18 @@ import me.openphoto.android.app.util.GuiUtils;
 import me.openphoto.android.app.util.LoadingControl;
 import me.openphoto.android.app.util.LoginUtils;
 import android.app.Activity;
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Menu;
 import android.view.View;
 import android.widget.EditText;
 
-public class AccountLogin extends Activity implements
+import com.WazaBe.HoloEverywhere.app.ProgressDialog;
+import com.WazaBe.HoloEverywhere.sherlock.SActivity;
+import com.actionbarsherlock.view.Menu;
+
+public class AccountLogin extends SActivity implements
 		LoadingControl
 {
 	private static final String TAG = AccountLogin.class.getSimpleName();
@@ -32,7 +34,7 @@ public class AccountLogin extends Activity implements
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu)
 	{
-		getMenuInflater().inflate(R.menu.activity_account_login, menu);
+		getSupportMenuInflater().inflate(R.menu.activity_account_login, menu);
 		return true;
 	}
 
@@ -113,7 +115,8 @@ public class AccountLogin extends Activity implements
 						credentials.getPwd());
 			} catch (Exception e)
 			{
-				GuiUtils.error(TAG, "Could not login",
+				GuiUtils.error(TAG,
+						R.string.errorCouldNotLogin,
 						e,
 						this.activity);
 			}
@@ -150,8 +153,7 @@ public class AccountLogin extends Activity implements
 						this.activity.finish();
 					} else if (result.isInvalidCredentials())
 					{
-						GuiUtils.alert(getString(R.string.invalid_credentials),
-								activity);
+						GuiUtils.alert(R.string.invalid_credentials);
 					} else if (result.isUnknownError())
 					{
 						if (result.getMessage() != null
@@ -160,8 +162,7 @@ public class AccountLogin extends Activity implements
 							GuiUtils.alert(result.getMessage(), activity);
 						} else
 						{
-							GuiUtils.alert(getString(R.string.unknown_error),
-									activity);
+							GuiUtils.alert(R.string.unknown_error);
 						}
 					}
 				}

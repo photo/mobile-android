@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import me.openphoto.android.app.Preferences;
+import me.openphoto.android.app.R;
 import me.openphoto.android.app.model.Photo;
 import me.openphoto.android.app.net.IOpenPhotoApi;
 import me.openphoto.android.app.net.Paging;
@@ -84,7 +85,9 @@ public abstract class PhotosEndlessAdapter extends EndlessAdapter<Photo>
             return new LoadResponse(response.getPhotos(), hasNextPage);
         } catch (Exception e)
         {
-        	GuiUtils.error(TAG, "Could not load next photos in list", e);
+			GuiUtils.error(
+					TAG,
+					R.string.errorCouldNotLoadNextPhotosInList, e);
         }
         return new LoadResponse(null, false);
     }
