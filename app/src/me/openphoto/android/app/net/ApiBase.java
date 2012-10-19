@@ -77,14 +77,15 @@ public class ApiBase {
 
         httpRequest.getParams().setBooleanParameter(
                 "http.protocol.expect-continue", false);
-        httpRequest.setHeader("User-Agent", "OpenPhoto Android");
+        httpRequest.setHeader("User-Agent", "android");
+        httpRequest.setHeader("source", "android");
 
         OAuthConsumer consumer = Preferences.getOAuthConsumer(context);
         if (consumer != null) {
             try {
                 consumer.sign(httpRequest);
             } catch (Exception e) {
-				GuiUtils.noAlertError(TAG, "Error signing request", e);
+                GuiUtils.noAlertError(TAG, "Error signing request", e);
             }
         }
         return new ApiResponse(httpClient.execute(httpRequest));
