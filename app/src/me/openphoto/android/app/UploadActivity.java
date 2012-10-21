@@ -21,7 +21,6 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -46,7 +45,6 @@ public class UploadActivity extends Activity implements OnClickListener {
 	private File mUploadImageFile;
 
 	private ToggleButton mPrivateToggle;
-	private Button mSelectTagsButton;
 
 	/**
 	 * @see android.app.Activity#onCreate(android.os.Bundle)
@@ -60,7 +58,6 @@ public class UploadActivity extends Activity implements OnClickListener {
 		findViewById(R.id.image_upload).setOnClickListener(this);
 		mPrivateToggle = (ToggleButton) findViewById(R.id.toggle_private);
 		mPrivateToggle.setChecked(true);
-		
 
 		if (getIntent() != null
 				&& Intent.ACTION_SEND.equals(getIntent().getAction())
@@ -97,10 +94,10 @@ public class UploadActivity extends Activity implements OnClickListener {
 		switch (requestCode) {
 		case REQUEST_TAGS:
 			if (resultCode == RESULT_OK && data.getExtras() != null) {
-				String selectedTags = data.getExtras().getString("SELECTED_TAGS");
+				String selectedTags = data.getExtras().getString(
+						"SELECTED_TAGS");
 				((EditText) findViewById(R.id.edit_tags)).setText(selectedTags);
 			}
-			
 			break;
 		case REQUEST_GALLERY:
 			if (resultCode == RESULT_OK && data.getData() != null) {

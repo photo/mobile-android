@@ -11,7 +11,6 @@ import me.openphoto.android.app.ui.adapter.EndlessAdapter;
 import me.openphoto.android.app.util.GuiUtils;
 import me.openphoto.android.app.util.LoadingControl;
 import me.openphoto.android.app.util.Utils;
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -20,16 +19,15 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.ListView;
-import android.widget.Toast;
 
-public class SelectTagsActivity extends Activity implements OnClickListener,
-		LoadingControl {
+import com.bugsense.trace.BugSenseHandler;
+
+public class SelectTagsActivity extends Activity implements LoadingControl {
 
 	public static final String TAG = SelectTagsActivity.class.getSimpleName();
 
@@ -53,22 +51,16 @@ public class SelectTagsActivity extends Activity implements OnClickListener,
 		return true;
 	}
 
-	@Override
-	public void onClick(View v) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@SuppressLint("NewApi")
+	/**
+	 * Return selected Tags to the upload activity
+	 * 
+	 * @param v
+	 */
 	public void finishedClicked(View v) {
 
-		int checkedItemCount = list.getCheckedItemCount();
-		Toast.makeText(this, "checked items: " + checkedItemCount,
-				Toast.LENGTH_SHORT).show();
-		
 		Intent data = new Intent();
 		String selectedTags = mAdapter.getSelectedTags().trim();
-		
+
 		data.putExtra("SELECTED_TAGS", selectedTags);
 		setResult(RESULT_OK, data);
 		finish();
@@ -117,11 +109,11 @@ public class SelectTagsActivity extends Activity implements OnClickListener,
 					TagsResponse response = mOpenPhotoApi.getTags();
 					return new LoadResponse(response.getTags(), false);
 				} catch (Exception e) {
-					Log.e(TAG, "Could not load next photos in list", e);
+					Log.e(TAG, "Could not load next tags in list", e);
 					Map<String, String> extraData = new HashMap<String, String>();
 					extraData.put("message",
-							"Could not load next photos in list");
-					// BugSenseHandler.log(TAG, extraData, e);
+							"Could not load next tags in list");
+					BugSenseHandler.log(TAG, extraData, e);
 				}
 			}
 			return new LoadResponse(null, false);
@@ -160,15 +152,17 @@ public class SelectTagsActivity extends Activity implements OnClickListener,
 
 		public String getSelectedTags() {
 
-			StringBuffer buf = new StringBuffer();
+			StringBuffer buf = new StringBuffer("");
 
-			for (String tagText : checkedTags) {
-				buf.append(tagText).append(",");
+			if (checkedTags.size() > 0) {
+
+				for (String tagText : checkedTags) {
+					buf.append(tagText).append(",");
+				}
+
+				// remove last comma
+				buf.deleteCharAt(buf.length() - 1);
 			}
-
-			// remove last comma
-			buf.deleteCharAt(buf.length()-1);
-			
 			return buf.toString();
 		}
 

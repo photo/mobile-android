@@ -46,6 +46,9 @@
 
     <!-- UploadActivity -->
     <string name="uploading_in_background">Started upload in background</string>
+    
+    <!-- SelectTagsActivity -->
+    <string name="title_activity_select_tags">Select Tags</string>
 
     <!-- Notifications -->
     <string name="notification_uploading_photo">Uploading %1$s</string>
