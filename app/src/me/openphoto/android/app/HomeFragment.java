@@ -215,9 +215,15 @@ public class HomeFragment extends CommonFragment implements Refreshable
 			dialogFragment.replace(activity.getSupportFragmentManager());
         } else
         {
+			try
+			{
             TwitterFragment twitterDialog = new TwitterFragment();
             twitterDialog.setPhoto(photo);
 			twitterDialog.replace(activity.getSupportFragmentManager());
+			} catch (Exception ex)
+			{
+				GuiUtils.error(TAG, null, ex);
+			}
         }
     }
 
@@ -229,23 +235,32 @@ public class HomeFragment extends CommonFragment implements Refreshable
 		{
 			try
 			{
-				Bundle params = new Bundle();
-				params.putString(
-						"name",
-						activity.getString(R.string.share_facebook_default_action));
-				params.putString(
-						"caption",
-						activity.getString(R.string.share_facebook_default_caption));
-				params.putString("description", activity
-						.getString(R.string.share_facebook_default_description));
-				params.putString("picture", photo.getUrl(Photo.PATH_ORIGINAL));
-
-				facebook.dialog(activity, "feed", params,
-						new UpdateStatusListener(activity));
+				FacebookFragment facebookDialog = new FacebookFragment();
+				facebookDialog.setPhoto(photo);
+				facebookDialog.replace(activity.getSupportFragmentManager());
 			} catch (Exception ex)
 			{
-				GuiUtils.error(TAG, null, ex, activity);
+				GuiUtils.error(TAG, null, ex);
 			}
+//			try
+//			{
+//				Bundle params = new Bundle();
+//				params.putString(
+//						"name",
+//						activity.getString(R.string.share_facebook_default_action));
+//				params.putString(
+//						"caption",
+//						activity.getString(R.string.share_facebook_default_caption));
+//				params.putString("description", activity
+//						.getString(R.string.share_facebook_default_description));
+//				params.putString("picture", photo.getUrl(Photo.PATH_ORIGINAL));
+//
+//				facebook.dialog(activity, "feed", params,
+//						new UpdateStatusListener(activity));
+//			} catch (Exception ex)
+//			{
+//				GuiUtils.error(TAG, null, ex, activity);
+//			}
 		} else
 		{
 			YesNoDialogFragment dialogFragment = YesNoDialogFragment

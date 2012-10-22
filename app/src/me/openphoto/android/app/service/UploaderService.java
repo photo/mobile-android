@@ -289,7 +289,7 @@ public class UploaderService extends Service {
                 .setSmallIcon(icon)
                 .setAutoCancel(true)
                 .setContentIntent(contentIntent)
-                .getNotification();
+				.build();
         // Notification notification = new Notification(icon, titleText, when);
         // notification.flags |= Notification.FLAG_AUTO_CANCEL;
         // notification.setLatestEventInfo(this, titleText, contentMessageTitle,

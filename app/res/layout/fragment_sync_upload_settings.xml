@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:orientation="vertical" android:layout_width="match_parent"
+	android:layout_height="match_parent">
+	<LinearLayout android:focusable="true"
+		android:focusableInTouchMode="true" android:layout_width="0px"
+		android:layout_height="0px" />
+		<LinearLayout android:layout_width="match_parent"
+		android:layout_height="wrap_content">
+		<Button android:id="@+id/nextBtn" android:layout_width="wrap_content"
+			android:layout_height="wrap_content" android:text="@string/sync_next_button" />
+	</LinearLayout>
+	<ScrollView android:layout_width="fill_parent"
+		android:layout_height="wrap_content" android:layout_weight="1"
+		android:padding="@dimen/site_padding">
+		<LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+		<EditText android:id="@+id/edit_title" android:layout_width="fill_parent"
+			android:layout_height="wrap_content" android:ems="10"
+			android:hint="@string/upload_title" android:inputType="textCapWords">
+		</EditText>
+		<EditText android:id="@+id/edit_tags" android:layout_width="fill_parent"
+			android:layout_height="wrap_content" android:ems="10"
+			android:hint="@string/upload_tags" android:inputType="textMultiLine" />
+
+		<com.WazaBe.HoloEverywhere.widget.Switch
+			android:id="@+id/private_switch" android:layout_width="match_parent"
+			android:layout_height="wrap_content" android:text="@string/upload_private" />
+		<com.WazaBe.HoloEverywhere.widget.Switch
+			android:id="@+id/twitter_switch" android:layout_width="match_parent"
+			android:layout_height="wrap_content" android:text="@string/upload_share_twitter" />
+		<com.WazaBe.HoloEverywhere.widget.Switch
+			android:id="@+id/facebook_switch" android:layout_width="match_parent"
+			android:layout_height="wrap_content" android:text="@string/upload_share_facebook" />
+		</LinearLayout>
+	</ScrollView>
+	 <Button
+        android:id="@+id/button_upload"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/upload_button" />
+</LinearLayout>

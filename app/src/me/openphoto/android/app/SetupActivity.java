@@ -2,19 +2,19 @@ package me.openphoto.android.app;
 
 import me.openphoto.android.app.oauth.OAuthUtils;
 import me.openphoto.android.app.util.LoadingControl;
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 
-import com.actionbarsherlock.app.SherlockFragment;
-import com.actionbarsherlock.app.SherlockFragmentActivity;
+import com.WazaBe.HoloEverywhere.LayoutInflater;
+import com.WazaBe.HoloEverywhere.app.ProgressDialog;
+import com.WazaBe.HoloEverywhere.sherlock.SActivity;
+import com.WazaBe.HoloEverywhere.sherlock.SFragment;
 
 /**
  * The activity that gets presented to the user in case the user is not logged
@@ -22,7 +22,7 @@ import com.actionbarsherlock.app.SherlockFragmentActivity;
  * 
  * @author Patrick Boos
  */
-public class SetupActivity extends SherlockFragmentActivity implements
+public class SetupActivity extends SActivity implements
 		LoadingControl
 {
 	public static final String TAG = SetupActivity.class.getSimpleName();
@@ -86,7 +86,7 @@ public class SetupActivity extends SherlockFragmentActivity implements
 		}
 	}
 
-	public static class UiFragment extends SherlockFragment implements
+	public static class UiFragment extends SFragment implements
 			OnClickListener
 	{
 		@Override

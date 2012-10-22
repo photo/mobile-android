@@ -61,6 +61,7 @@ public class UploadsProviderAccessor {
     }
 
     public void addPendingUpload(Uri photoUri, UploadMetaData metaData) {
+		System.out.println(photoUri);
         addPendingUpload(photoUri, metaData, false);
     }
 
