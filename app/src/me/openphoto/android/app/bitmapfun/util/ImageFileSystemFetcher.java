@@ -3,9 +3,9 @@ package me.openphoto.android.app.bitmapfun.util;
 import java.io.File;
 
 import me.openphoto.android.app.BuildConfig;
+import me.openphoto.android.app.util.CommonUtils;
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.util.Log;
 
 public class ImageFileSystemFetcher extends ImageResizer
 {
@@ -50,7 +50,7 @@ public class ImageFileSystemFetcher extends ImageResizer
 	{
 		if (BuildConfig.DEBUG)
 		{
-			Log.d(TAG, "processBitmap - " + data);
+			CommonUtils.debug(TAG, "processBitmap - " + data);
 		}
 		if (data == null)
 		{

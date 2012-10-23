@@ -1,5 +1,7 @@
 package me.openphoto.android.app;
 
+import java.util.List;
+
 import me.openphoto.android.app.SyncImageSelectionFragment.NextStepFlow;
 import me.openphoto.android.app.SyncUploadFragment.PreviousStepFlow;
 import android.os.Bundle;
@@ -9,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.WazaBe.HoloEverywhere.LayoutInflater;
+import com.WazaBe.HoloEverywhere.app.Activity;
 
 public class SyncFragment extends CommonFragment implements NextStepFlow,
 		PreviousStepFlow, Refreshable
@@ -19,6 +22,7 @@ public class SyncFragment extends CommonFragment implements NextStepFlow,
 
 	SyncImageSelectionFragment firstStepFragment;
 	SyncUploadFragment secondStepFragment;
+	SyncHandler syncHandler;
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -31,6 +35,12 @@ public class SyncFragment extends CommonFragment implements NextStepFlow,
 		return v;
 	}
 
+	@Override
+	public void onAttach(Activity activity)
+	{
+		super.onAttach(activity);
+		syncHandler = (SyncHandler) activity;
+	}
 	void init(View view)
 	{
 		if (activeFragment != null)
@@ -65,12 +75,18 @@ public class SyncFragment extends CommonFragment implements NextStepFlow,
 	public void onDestroyView()
 	{
 		super.onDestroyView();
+		detachActiveFragment();
+	}
+
+	public void detachActiveFragment()
+	{
 		if (!getActivity().isFinishing())
 		{
 			FragmentTransaction transaction = getActivity()
 					.getSupportFragmentManager().beginTransaction();
 			transaction.detach(activeFragment);
 			transaction.commit();
+			activeFragment = null;
 		}
 	};
 	@Override
@@ -110,4 +126,26 @@ public class SyncFragment extends CommonFragment implements NextStepFlow,
 		}
 	}
 
+	@Override
+	public List<String> getSelectedFileNames()
+	{
+		return firstStepFragment.getSelectedFileNames();
+	}
+
+	@Override
+	public void uploadStarted()
+	{
+		// detachActiveFragment();
+		firstStepFragment.clear();
+		secondStepFragment.clear();
+		if (syncHandler != null)
+		{
+			syncHandler.syncStarted();
+		}
+	}
+
+	static interface SyncHandler
+	{
+		void syncStarted();
+	}
 }

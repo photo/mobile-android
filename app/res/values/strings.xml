@@ -75,6 +75,8 @@
     
     <!-- Sync screen -->
     <string name="sync_next_button">Next</string>
+    <string name="sync_previous_button">Pick photos</string>
+    <string name="sync_please_pick_at_least_one_photo">Please pick at least one photo first!</string>
 
     <!-- Notifications -->
     <string name="notification_uploading_photo">Uploading %1$s</string>

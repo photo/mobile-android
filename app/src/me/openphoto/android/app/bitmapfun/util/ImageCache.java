@@ -19,12 +19,12 @@ package me.openphoto.android.app.bitmapfun.util;
 import java.io.File;
 
 import me.openphoto.android.app.BuildConfig;
+import me.openphoto.android.app.util.CommonUtils;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.util.LruCache;
-import android.util.Log;
 
 /**
  * This class holds our bitmap caches (memory and disk).
@@ -174,7 +174,7 @@ public class ImageCache {
             final Bitmap memBitmap = mMemoryCache.get(data);
             if (memBitmap != null) {
                 if (BuildConfig.DEBUG) {
-                    Log.d(TAG, "Memory cache hit");
+                    CommonUtils.debug(TAG, "Memory cache hit");
                 }
                 return memBitmap;
             }

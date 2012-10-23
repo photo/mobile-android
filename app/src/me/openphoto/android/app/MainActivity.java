@@ -1,8 +1,10 @@
 package me.openphoto.android.app;
 
+import me.openphoto.android.app.SyncFragment.SyncHandler;
 import me.openphoto.android.app.facebook.FacebookProvider;
 import me.openphoto.android.app.service.UploaderService;
 import me.openphoto.android.app.twitter.TwitterUtils;
+import me.openphoto.android.app.util.CommonUtils;
 import me.openphoto.android.app.util.GalleryOpenControl;
 import me.openphoto.android.app.util.LoadingControl;
 import android.content.Intent;
@@ -21,8 +23,10 @@ import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.view.Window;
 
 public class MainActivity extends SActivity
-		implements LoadingControl, GalleryOpenControl
+		implements LoadingControl, GalleryOpenControl, SyncHandler
 {
+	private static final int HOME_INDEX = 0;
+	private static final int SYNC_INDEX = 4;
 	private static final String HOME_TAG = "home";
 	public static final String TAG = MainActivity.class.getSimpleName();
 	public static final String ACTIVE_TAB = "ActiveTab";
@@ -290,6 +294,7 @@ public class MainActivity extends SActivity
 		@Override
 		public void onTabSelected(Tab tab, FragmentTransaction ft)
 		{
+			CommonUtils.debug(TAG, "onTabSelected");
 			if (mFragment == null)
 			{
 				mFragment = Fragment.instantiate(MainActivity.this,
@@ -306,6 +311,7 @@ public class MainActivity extends SActivity
 		@Override
 		public void onTabUnselected(Tab tab, FragmentTransaction ft)
 		{
+			CommonUtils.debug(TAG, "onTabUnselected");
 			if (mFragment != null)
 			{
 				ft.detach(mFragment);
@@ -316,6 +322,16 @@ public class MainActivity extends SActivity
 		@Override
 		public void onTabReselected(Tab tab, FragmentTransaction ft)
 		{
+			CommonUtils.debug(TAG, "onTabReselected");
+		}
+	}
+
+	@Override
+	public void syncStarted()
+	{
+		if (mActionBar.getSelectedTab() == mActionBar.getTabAt(SYNC_INDEX))
+		{
+			mActionBar.selectTab(mActionBar.getTabAt(HOME_INDEX));
 		}
 	}
 }

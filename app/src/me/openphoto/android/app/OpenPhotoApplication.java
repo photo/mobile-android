@@ -1,10 +1,12 @@
 package me.openphoto.android.app;
 
+import me.openphoto.android.app.facebook.FacebookProvider;
 import me.openphoto.android.app.util.GuiUtils;
 import android.app.Application;
 import android.content.Context;
 
 import com.bugsense.trace.BugSenseHandler;
+import com.facebook.android.R;
 
 /**
  * @author Eugene Popovich
@@ -34,5 +36,7 @@ public class OpenPhotoApplication extends Application
 		{
 			BugSenseHandler.setup(this, bugSenseApiKey);
 		}
+		FacebookProvider.init(getString(R.string.facebook_app_id),
+				getApplicationContext());
 	}
 }

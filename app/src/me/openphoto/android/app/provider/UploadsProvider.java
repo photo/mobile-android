@@ -58,6 +58,8 @@ public class UploadsProvider extends ContentProvider
 	public static final int UPLOADED_COLUMN = 3;
 	public static final int ERROR_COLUMN = 4;
 	public static final int IS_AUTOUPLOAD_COLUMN = 5;
+	public static final int SHARE_ON_TWITTER_COLUMN = 6;
+	public static final int SHARE_ON_FACEBOOK_COLUMN = 7;
 
 	private static final String DATABASE_CREATE =
 			"CREATE TABLE " + PHOTOS_TABLE + " ("

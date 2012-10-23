@@ -1,6 +1,10 @@
 
 package me.openphoto.android.app;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.net.MalformedURLException;
+
 import me.openphoto.android.app.facebook.FacebookProvider;
 import me.openphoto.android.app.facebook.FacebookUtils;
 import me.openphoto.android.app.model.Photo;
@@ -190,22 +194,7 @@ public class FacebookFragment extends CommonDialogFragment
         {
             try
             {
-				Facebook facebook = FacebookProvider.getFacebook();
-				Bundle bparams = new Bundle();
-				bparams.putString(
-						"message",
-						messageEt.getText().toString());
-				bparams.putString(
-						"name",
-						activity.getString(R.string.share_facebook_default_action));
-				bparams.putString(
-						"caption",
-						activity.getString(R.string.share_facebook_default_caption));
-				bparams.putString("description", activity
-						.getString(R.string.share_facebook_default_description));
-				bparams.putString("picture", photo.getUrl(Photo.PATH_ORIGINAL));
-				facebook.request("feed", bparams, "POST");
-
+				sharePhoto(messageEt.getText().toString(), photo, activity);
                 return true;
             } catch (Exception ex)
             {
@@ -234,4 +223,26 @@ public class FacebookFragment extends CommonDialogFragment
         }
     }
 
+	public static void sharePhoto(
+			String message,
+			Photo photo,
+			Context context) throws FileNotFoundException,
+			MalformedURLException, IOException
+	{
+		Facebook facebook = FacebookProvider.getFacebook();
+		Bundle bparams = new Bundle();
+		bparams.putString(
+				"message",
+				message);
+		bparams.putString(
+				"name",
+				photo.getTitle());
+		bparams.putString(
+				"caption",
+				context.getString(R.string.share_facebook_default_caption));
+		bparams.putString("description", context
+				.getString(R.string.share_facebook_default_description));
+		bparams.putString("picture", photo.getUrl(Photo.PATH_ORIGINAL));
+		facebook.request("feed", bparams, "POST");
+	}
 }

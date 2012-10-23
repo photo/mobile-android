@@ -31,7 +31,11 @@ public class UploadsProviderAccessor {
         mContext = context;
     }
 
-    private void addPendingUpload(Uri photoUri, UploadMetaData metaData, boolean isAutoUpload) {
+	private void addPendingUpload(Uri photoUri, UploadMetaData metaData,
+			boolean isAutoUpload,
+			boolean isShareOnTwitter,
+			boolean isShareOnFacebook)
+	{
         ContentResolver cp = mContext.getContentResolver();
         ContentValues values = new ContentValues();
         values.put(UploadsProvider.KEY_URI, photoUri.toString());
@@ -53,16 +57,23 @@ public class UploadsProviderAccessor {
         }
         values.put(UploadsProvider.KEY_UPLOADED, 0);
         values.put(UploadsProvider.KEY_IS_AUTOUPLOAD, isAutoUpload ? 1 : 0);
+		values.put(UploadsProvider.KEY_SHARE_ON_FACEBOOK, isShareOnFacebook ? 1
+				: 0);
+		values.put(UploadsProvider.KEY_SHARE_ON_TWITTER, isShareOnTwitter ? 1
+				: 0);
         cp.insert(UploadsProvider.CONTENT_URI, values);
     }
 
     public void addPendingAutoUpload(Uri photoUri, UploadMetaData metaData) {
-        addPendingUpload(photoUri, metaData, true);
+		addPendingUpload(photoUri, metaData, true, false, false);
     }
 
-    public void addPendingUpload(Uri photoUri, UploadMetaData metaData) {
-		System.out.println(photoUri);
-        addPendingUpload(photoUri, metaData, false);
+	public void addPendingUpload(Uri photoUri, UploadMetaData metaData,
+			boolean isShareOnTwitter,
+			boolean isShareOnFacebook)
+	{
+		addPendingUpload(photoUri, metaData, false, isShareOnTwitter,
+				isShareOnFacebook);
     }
 
     public List<PhotoUpload> getPendingUploads() {
@@ -144,6 +155,12 @@ public class UploadsProviderAccessor {
             pendingUpload.setError(cursor.getString(UploadsProvider.ERROR_COLUMN));
             pendingUpload
                     .setIsAutoUpload(cursor.getInt(UploadsProvider.IS_AUTOUPLOAD_COLUMN) != 0);
+			pendingUpload
+					.setShareOnFacebook(cursor
+							.getInt(UploadsProvider.SHARE_ON_FACEBOOK_COLUMN) != 0);
+			pendingUpload
+					.setShareOnTwitter(cursor
+							.getInt(UploadsProvider.SHARE_ON_TWITTER_COLUMN) != 0);
             return pendingUpload;
         } catch (Exception e) {
 			GuiUtils.noAlertError(TAG, "Could not get pending upload", e);

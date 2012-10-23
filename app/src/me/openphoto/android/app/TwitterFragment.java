@@ -8,6 +8,7 @@ import me.openphoto.android.app.util.GuiUtils;
 import me.openphoto.android.app.util.LoadingControl;
 import twitter4j.StatusUpdate;
 import twitter4j.Twitter;
+import twitter4j.TwitterException;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -183,10 +184,8 @@ public class TwitterFragment extends CommonDialogFragment
         {
             try
             {
-				Twitter twitter = TwitterProvider.getTwitter(activity);
-                StatusUpdate update = new StatusUpdate(messageEt.getText()
-                        .toString());
-                twitter.updateStatus(update);
+				sendTweet(messageEt.getText()
+						.toString(), activity);
                 return true;
             } catch (Exception ex)
             {
@@ -214,4 +213,20 @@ public class TwitterFragment extends CommonDialogFragment
         }
     }
 
+	public static void sendTweet(String message, Context context)
+			throws TwitterException
+	{
+		Twitter twitter = TwitterProvider.getTwitter(context);
+		if (twitter != null)
+		{
+			sendTweet(message, twitter);
+		}
+	}
+
+	public static void sendTweet(String message, Twitter twitter)
+			throws TwitterException
+	{
+		StatusUpdate update = new StatusUpdate(message);
+		twitter.updateStatus(update);
+	}
 }

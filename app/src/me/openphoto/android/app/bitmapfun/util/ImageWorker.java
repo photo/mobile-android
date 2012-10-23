@@ -19,6 +19,7 @@ package me.openphoto.android.app.bitmapfun.util;
 import java.lang.ref.WeakReference;
 
 import me.openphoto.android.app.BuildConfig;
+import me.openphoto.android.app.util.CommonUtils;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.Resources;
@@ -29,7 +30,6 @@ import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.TransitionDrawable;
 import android.os.AsyncTask;
-import android.util.Log;
 import android.widget.ImageView;
 
 /**
@@ -164,7 +164,7 @@ public abstract class ImageWorker {
             bitmapWorkerTask.cancel(true);
             if (BuildConfig.DEBUG) {
                 final Object bitmapData = bitmapWorkerTask.data;
-                Log.d(TAG, "cancelWork - cancelled work for " + bitmapData);
+                CommonUtils.debug(TAG, "cancelWork - cancelled work for " + bitmapData);
             }
         }
     }
@@ -183,7 +183,7 @@ public abstract class ImageWorker {
             if (bitmapData == null || !bitmapData.equals(data)) {
                 bitmapWorkerTask.cancel(true);
                 if (BuildConfig.DEBUG) {
-                    Log.d(TAG, "cancelPotentialWork - cancelled work for " + data);
+                    CommonUtils.debug(TAG, "cancelPotentialWork - cancelled work for " + data);
                 }
             } else {
                 // The same work is already in progress.

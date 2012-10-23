@@ -17,11 +17,11 @@
 package me.openphoto.android.app.bitmapfun.util;
 
 import me.openphoto.android.app.BuildConfig;
+import me.openphoto.android.app.util.CommonUtils;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.util.Log;
 
 
 /**
@@ -86,7 +86,7 @@ public class ImageResizer extends ImageWorker {
      */
     private Bitmap processBitmap(int resId) {
         if (BuildConfig.DEBUG) {
-            Log.d(TAG, "processBitmap - " + resId);
+            CommonUtils.debug(TAG, "processBitmap - " + resId);
         }
         return decodeSampledBitmapFromResource(
                 mContext.getResources(), resId, mImageWidth, mImageHeight);

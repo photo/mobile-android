@@ -196,7 +196,7 @@ public class ImageWorker {
 			{
 				if (BuildConfig.DEBUG)
 				{
-					Log.d(TAG, "downloadBitmap - found in http cache - "
+					CommonUtils.debug(TAG, "downloadBitmap - found in http cache - "
 							+ urlString);
 				}
 				return cacheFile;

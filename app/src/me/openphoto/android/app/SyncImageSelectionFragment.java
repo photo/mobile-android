@@ -1,6 +1,7 @@
 package me.openphoto.android.app;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -10,6 +11,7 @@ import me.openphoto.android.app.bitmapfun.util.ImageCache.ImageCacheParams;
 import me.openphoto.android.app.bitmapfun.util.ImageFileSystemFetcher;
 import me.openphoto.android.app.bitmapfun.util.ImageResizer;
 import me.openphoto.android.app.bitmapfun.util.ImageWorker.ImageWorkerAdapter;
+import me.openphoto.android.app.util.CommonUtils;
 import me.openphoto.android.app.util.GuiUtils;
 import me.openphoto.android.app.util.LoadingControl;
 import android.content.Context;
@@ -17,7 +19,6 @@ import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -49,6 +50,8 @@ public class SyncImageSelectionFragment extends CommonFragment implements Refres
 	private int mImageThumbBorder;
 	private GridView photosGrid;
 	NextStepFlow nextStepFlow;
+	InitTask initTask = null;
+	boolean clearOnViewCreate = false;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState)
@@ -69,7 +72,6 @@ public class SyncImageSelectionFragment extends CommonFragment implements Refres
 		mImageWorker.setImageCache(ImageCache.findOrCreateCache(getActivity(),
 				cacheParams));
 		mAdapter = new CustomImageAdapter(getActivity(), mImageWorker);
-		new InitTask().execute();
 	}
 
 	@Override
@@ -116,7 +118,7 @@ public class SyncImageSelectionFragment extends CommonFragment implements Refres
 										- 2 * mImageThumbBorder);
 								if (BuildConfig.DEBUG)
 								{
-									Log.d(TAG,
+									CommonUtils.debug(TAG,
 											"onCreateView - numColumns set to "
 													+ numColumns);
 								}
@@ -130,13 +132,30 @@ public class SyncImageSelectionFragment extends CommonFragment implements Refres
 			@Override
 			public void onClick(View v)
 			{
-				if (nextStepFlow != null)
+				if (isDataLoaded())
 				{
-					nextStepFlow.activateNextStep();
+					if (mAdapter.hasSelected())
+					{
+						if (nextStepFlow != null)
+						{
+							nextStepFlow.activateNextStep();
+						}
+					} else
+					{
+						GuiUtils.alert(R.string.sync_please_pick_at_least_one_photo);
+					}
 				}
 			}
 		});
-		refresh(v);
+		photosGrid.setOnItemClickListener(this);
+		if (isDataLoaded())
+		{
+			photosGrid.setAdapter(mAdapter);
+		}
+		if (photosGrid.getAdapter() == null && initTask == null)
+		{
+			refresh(v);
+		}
 	}
 
 	@Override
@@ -155,12 +174,16 @@ public class SyncImageSelectionFragment extends CommonFragment implements Refres
 
 	void refresh(View v)
 	{
-		// mAdapter = new GalleryAdapter();
-		if (mImageWorker.getAdapter() != null)
+		if (initTask == null)
 		{
-			photosGrid.setAdapter(mAdapter);
+			initTask = new InitTask();
+			initTask.execute();
 		}
-		photosGrid.setOnItemClickListener(this);
+	}
+
+	public boolean isDataLoaded()
+	{
+		return mImageWorker.getAdapter() != null;
 	}
 
 	@Override
@@ -200,6 +223,48 @@ public class SyncImageSelectionFragment extends CommonFragment implements Refres
 		super.onDestroyView();
 	}
 
+	public void setClearOnViewCreate()
+	{
+		this.clearOnViewCreate = true;
+	}
+
+	public void clear()
+	{
+		mAdapter.clearSelection();
+	}
+
+	public List<String> getSelectedFileNames()
+	{
+		if (mImageWorker.getAdapter() == null)
+		{
+			return Collections.emptyList();
+		}
+		List<String> result = new ArrayList<String>();
+		for (int i = 0, size = mAdapter.getCount(); i < size; i++)
+		{
+			long itemId = mAdapter.getItemId(i);
+			if (itemId != -1 && mAdapter.isSelected(itemId))
+			{
+				result.add((String) mAdapter.getItem(i));
+			}
+		}
+		return result;
+	}
+	public NextStepFlow getNextStepFlow()
+	{
+		return nextStepFlow;
+	}
+
+	public void setNextStepFlow(NextStepFlow nextStepFlow)
+	{
+		this.nextStepFlow = nextStepFlow;
+	}
+
+	static interface NextStepFlow
+	{
+		void activateNextStep();
+	}
+
 	private class InitTask extends
 			AsyncTask<Void, Void, Boolean>
 	{
@@ -219,14 +284,14 @@ public class SyncImageSelectionFragment extends CommonFragment implements Refres
 			}
 			return false;
 		}
-
+	
 		@Override
 		protected void onPreExecute()
 		{
 			super.onPreExecute();
 			loadingControl.startLoading();
 		}
-
+	
 		@Override
 		protected void onPostExecute(Boolean result)
 		{
@@ -238,8 +303,9 @@ public class SyncImageSelectionFragment extends CommonFragment implements Refres
 				mAdapter.selectedIds.clear();
 				photosGrid.setAdapter(mAdapter);
 			}
+			initTask = null;
 		}
-
+	
 	}
 
 	private class CustomImageAdapter extends ImageAdapter
@@ -249,7 +315,7 @@ public class SyncImageSelectionFragment extends CommonFragment implements Refres
 		{
 			super(context, imageWorker);
 		}
-
+	
 		@Override
 		public View getViewAdditional(int position, View convertView,
 				ViewGroup container)
@@ -267,7 +333,7 @@ public class SyncImageSelectionFragment extends CommonFragment implements Refres
 			{ // Otherwise re-use the converted view
 				view = convertView;
 			}
-
+	
 			// Check the height matches our calculated column width
 			if (view.getLayoutParams().height != mItemHeight)
 			{
@@ -296,7 +362,7 @@ public class SyncImageSelectionFragment extends CommonFragment implements Refres
 					selectedOverlay.setVisibility(isSelected(id) ?
 							View.VISIBLE : View.INVISIBLE);
 				}
-
+	
 			});
 			ImageView imageView = (ImageView) view.findViewById(R.id.image);
 			// Finally load the image asynchronously into the ImageView, this
@@ -305,20 +371,30 @@ public class SyncImageSelectionFragment extends CommonFragment implements Refres
 			mImageWorker.loadImage(position - mNumColumns, imageView);
 			return view;
 		}
-
+	
 		public boolean isSelected(final long id)
 		{
 			return selectedIds.contains(id);
 		}
-
+	
 		public void addToSelected(final long id)
 		{
 			selectedIds.add(id);
 		}
-
+	
 		public void removeFromSelected(final long id)
 		{
 			selectedIds.remove(id);
+		}
+
+		void clearSelection()
+		{
+			selectedIds.clear();
+		}
+
+		boolean hasSelected()
+		{
+			return !selectedIds.isEmpty();
 		}
 	}
 
@@ -332,14 +408,14 @@ public class SyncImageSelectionFragment extends CommonFragment implements Refres
 	 */
 	private static class ImageAdapter extends BaseAdapter
 	{
-
+	
 		protected final Context mContext;
 		protected int mItemHeight = 0;
 		protected int mNumColumns = 0;
 		protected int mActionBarHeight = 0;
 		protected GridView.LayoutParams mImageViewLayoutParams;
 		private ImageResizer mImageWorker;
-
+	
 		public ImageAdapter(Context context, ImageResizer imageWorker)
 		{
 			super();
@@ -348,14 +424,14 @@ public class SyncImageSelectionFragment extends CommonFragment implements Refres
 			mImageViewLayoutParams = new GridView.LayoutParams(
 					LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
 		}
-
+	
 		@Override
 		public int getCount()
 		{
 			// Size of adapter + number of columns for top empty row
 			return mImageWorker.getAdapter().getSize() + mNumColumns;
 		}
-
+	
 		@Override
 		public Object getItem(int position)
 		{
@@ -363,13 +439,13 @@ public class SyncImageSelectionFragment extends CommonFragment implements Refres
 					null : mImageWorker.getAdapter().getItem(
 							position - mNumColumns);
 		}
-
+	
 		@Override
 		public long getItemId(int position)
 		{
-			return position < mNumColumns ? 0 : position - mNumColumns;
+			return position < mNumColumns ? -1 : position - mNumColumns;
 		}
-
+	
 		@Override
 		public int getViewTypeCount()
 		{
@@ -377,19 +453,19 @@ public class SyncImageSelectionFragment extends CommonFragment implements Refres
 			// views
 			return 2;
 		}
-
+	
 		@Override
 		public int getItemViewType(int position)
 		{
 			return (position < mNumColumns) ? 1 : 0;
 		}
-
+	
 		@Override
 		public boolean hasStableIds()
 		{
 			return true;
 		}
-
+	
 		@Override
 		public final View getView(int position, View convertView,
 				ViewGroup container)
@@ -424,10 +500,10 @@ public class SyncImageSelectionFragment extends CommonFragment implements Refres
 						ViewGroup.LayoutParams.MATCH_PARENT, mActionBarHeight));
 				return convertView;
 			}
-
+	
 			return getViewAdditional(position, convertView, container);
 		}
-
+	
 		public View getViewAdditional(int position, View convertView,
 				ViewGroup container)
 		{
@@ -442,20 +518,20 @@ public class SyncImageSelectionFragment extends CommonFragment implements Refres
 			{ // Otherwise re-use the converted view
 				imageView = (ImageView) convertView;
 			}
-
+	
 			// Check the height matches our calculated column width
 			if (imageView.getLayoutParams().height != mItemHeight)
 			{
 				imageView.setLayoutParams(mImageViewLayoutParams);
 			}
-
+	
 			// Finally load the image asynchronously into the ImageView, this
 			// also takes care of
 			// setting a placeholder image while the background thread runs
 			mImageWorker.loadImage(position - mNumColumns, imageView);
 			return imageView;
 		}
-
+	
 		/**
 		 * Sets the item height. Useful for when we know the column width so the
 		 * height can be set
@@ -476,12 +552,12 @@ public class SyncImageSelectionFragment extends CommonFragment implements Refres
 			mImageWorker.setImageSize(imageHeight);
 			notifyDataSetChanged();
 		}
-
+	
 		public void setNumColumns(int numColumns)
 		{
 			mNumColumns = numColumns;
 		}
-
+	
 		public int getNumColumns()
 		{
 			return mNumColumns;
@@ -492,7 +568,8 @@ public class SyncImageSelectionFragment extends CommonFragment implements Refres
 			ImageWorkerAdapter
 	{
 		List<Long> ids = new ArrayList<Long>();
-
+		String[] valuesCache;
+	
 		public CustomImageWorkerAdapter()
 		{
 			String[] projection =
@@ -511,21 +588,25 @@ public class SyncImageSelectionFragment extends CommonFragment implements Refres
 				{
 					ids.add(cursor.getLong(0));
 				}
+				valuesCache = new String[ids.size()];
 			} finally
 			{
 				cursor.close();
 			}
 		}
-
+	
 		@Override
 		public int getSize()
 		{
 			return ids.size();
 		}
-
+	
 		@Override
 		public Object getItem(int num)
 		{
+			String cachedValue = valuesCache[num];
+			if (cachedValue == null)
+			{
 			// return Uri.withAppendedPath(
 			// MediaStore.Images.Media.EXTERNAL_CONTENT_URI, ""
 			// + ids.get(num));
@@ -544,195 +625,16 @@ public class SyncImageSelectionFragment extends CommonFragment implements Refres
 			{
 				if (cursor != null && cursor.moveToFirst())
 				{
-					return cursor.getString(0);
+						cachedValue = cursor.getString(0);
+						valuesCache[num] = cachedValue;
 				}
+
 			} finally
 			{
 				cursor.close();
 			}
-			return null;
-		}
-	}
-
-	private class GalleryAdapter extends QuickAdapter
-	{
-
-		public GalleryAdapter()
-		{
-			super(getActivity(), new GalleryDataSource());
-		}
-
-		@Override
-		public View newView(Context context, Cursor cursor, ViewGroup parent)
-		{
-
-			final LayoutInflater layoutInflater = (LayoutInflater) getActivity()
-					.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-			return layoutInflater.inflate(
-					R.layout.item_sync_image, null);
-		}
-
-		@Override
-		public void bindView(View view, Context context, Cursor cursor)
-		{
-			try
-			{
-				ImageView image = (ImageView) view.findViewById(R.id.image);
-				String path = cursor.getString(0);
-				System.out.println("Path: " + path);
-				// int imageID = cursor.getInt(0);
-				// image.setImageURI(Uri.withAppendedPath(
-				// MediaStore.Images.Media.EXTERNAL_CONTENT_URI, ""
-				// + imageID));
-			} catch (Exception ex)
-			{
-				GuiUtils.error(TAG, null, ex);
 			}
+			return cachedValue;
 		}
-
-	}
-
-	class GalleryDataSource implements QuickAdapter.DataSource
-	{
-
-		@Override
-		public Cursor getRowIds()
-		{
-			String[] projection =
-			{
-					MediaStore.Images.Media._ID
-			};
-			return getActivity().getContentResolver().query(
-					MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-					projection, // Which columns to return
-					null, // Return all rows
-					null,
-					MediaStore.Images.Media.BUCKET_ID);
-		}
-
-		@Override
-		public Cursor getRowById(long rowId)
-		{
-			String[] projection =
-			{
-					MediaStore.Images.Media.DATA
-			};
-			return getActivity().getContentResolver().query(
-					MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-					projection, // Which columns to return
-					MediaStore.Images.Media._ID + " = " + Long.toString(rowId), // Return
-																				// all
-																				// rows
-					null,
-					MediaStore.Images.Media.BUCKET_ID);
-		}
-
-	}
-
-	public static abstract class QuickAdapter extends BaseAdapter
-	{
-
-		private final DataSource mDataSource;
-		private int mSize = 0;
-		private Cursor mRowIds = null;
-		private final Context mContext;
-
-		public QuickAdapter(Context context, DataSource dataSource)
-		{
-			mDataSource = dataSource;
-			mContext = context;
-			doQuery();
-		}
-
-		private void doQuery()
-		{
-			if (mRowIds != null)
-			{
-				mRowIds.close();
-			}
-			mRowIds = mDataSource.getRowIds();
-			mSize = mRowIds.getCount();
-		}
-
-		@Override
-		public int getCount()
-		{
-			return mSize;
-		}
-
-		@Override
-		public Object getItem(int position)
-		{
-			if (mRowIds.moveToPosition(position))
-			{
-				long rowId = mRowIds.getLong(0);
-				Cursor c = mDataSource.getRowById(rowId);
-				return c;
-			} else
-			{
-				return null;
-			}
-		}
-
-		@Override
-		public long getItemId(int position)
-		{
-			if (mRowIds.moveToPosition(position))
-			{
-				long rowId = mRowIds.getLong(0);
-				return rowId;
-			} else
-			{
-				return 0;
-			}
-		}
-
-		@Override
-		public View getView(int position, View convertView, ViewGroup parent)
-		{
-			mRowIds.moveToPosition(position);
-			long rowId = mRowIds.getLong(0);
-			Cursor cursor = mDataSource.getRowById(rowId);
-			cursor.moveToFirst();
-			View v;
-			if (convertView == null)
-			{
-				v = newView(mContext, cursor, parent);
-			} else
-			{
-				v = convertView;
-			}
-			bindView(v, mContext, cursor);
-			cursor.close();
-			return v;
-		}
-
-		public abstract View newView(Context context, Cursor cursor,
-				ViewGroup parent);
-
-		public abstract void bindView(View view, Context context, Cursor cursor);
-
-		public interface DataSource
-		{
-			Cursor getRowIds();
-
-			Cursor getRowById(long rowId);
-		}
-
-	}
-
-	public NextStepFlow getNextStepFlow()
-	{
-		return nextStepFlow;
-	}
-
-	public void setNextStepFlow(NextStepFlow nextStepFlow)
-	{
-		this.nextStepFlow = nextStepFlow;
-	}
-
-	static interface NextStepFlow
-	{
-		void activateNextStep();
 	}
 }

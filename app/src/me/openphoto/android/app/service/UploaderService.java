@@ -6,19 +6,26 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
+import me.openphoto.android.app.FacebookFragment;
 import me.openphoto.android.app.MainActivity;
 import me.openphoto.android.app.PhotoDetailsActivity;
 import me.openphoto.android.app.Preferences;
 import me.openphoto.android.app.R;
+import me.openphoto.android.app.TwitterFragment;
 import me.openphoto.android.app.UploadActivity;
+import me.openphoto.android.app.facebook.FacebookProvider;
+import me.openphoto.android.app.model.Photo;
 import me.openphoto.android.app.net.HttpEntityWithProgress.ProgressListener;
 import me.openphoto.android.app.net.IOpenPhotoApi;
 import me.openphoto.android.app.net.UploadResponse;
 import me.openphoto.android.app.provider.PhotoUpload;
 import me.openphoto.android.app.provider.UploadsProviderAccessor;
+import me.openphoto.android.app.twitter.TwitterProvider;
+import me.openphoto.android.app.util.CommonUtils;
 import me.openphoto.android.app.util.GuiUtils;
 import me.openphoto.android.app.util.ImageUtils;
 import me.openphoto.android.app.util.Utils;
+import twitter4j.Twitter;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -38,6 +45,8 @@ import android.support.v4.app.NotificationCompat;
 import android.text.TextUtils;
 import android.util.Log;
 import android.widget.RemoteViews;
+
+import com.facebook.android.Facebook;
 
 public class UploaderService extends Service {
     private static final int NOTIFICATION_UPLOAD_PROGRESS = 1;
@@ -91,7 +100,7 @@ public class UploaderService extends Service {
         mApi = Preferences.getApi(this);
         startFileObserver();
         setUpConnectivityWatcher();
-        Log.d(TAG, "Service created");
+        CommonUtils.debug(TAG, "Service created");
     }
 
     @Override
@@ -100,7 +109,7 @@ public class UploaderService extends Service {
         for (NewPhotoObserver observer : sNewPhotoObservers) {
             observer.stopWatching();
         }
-        Log.d(TAG, "Service destroyed");
+        CommonUtils.debug(TAG, "Service destroyed");
         super.onDestroy();
     }
 
@@ -157,6 +166,7 @@ public class UploaderService extends Service {
                 if (!photoUpload.isAutoUpload()) {
                     showSuccessNotification(photoUpload, file, uploadResponse);
                 }
+				shareIfRequested(photoUpload, uploadResponse, true);
             } catch (Exception e) {
                 if (!photoUpload.isAutoUpload()) {
                     uploads.setError(photoUpload.getId(),
@@ -173,7 +183,64 @@ public class UploaderService extends Service {
         }
     }
 
-    private Notification showUploadNotification(File file) {
+	public void shareIfRequested(PhotoUpload photoUpload,
+			UploadResponse uploadResponse, boolean silent)
+	{
+		Photo photo = uploadResponse.getPhoto();
+		if (photo != null)
+		{
+			if (photoUpload.isShareOnTwitter())
+			{
+				shareOnTwitter(photo, silent);
+			}
+			if (photoUpload.isShareOnFacebook())
+			{
+				shareOnFacebook(photo, silent);
+			}
+		}
+	}
+
+	private void shareOnFacebook(Photo photo, boolean silent)
+	{
+		try
+		{
+			Facebook facebook = FacebookProvider.getFacebook();
+			if (facebook.isSessionValid())
+			{
+				FacebookFragment.sharePhoto(null, photo,
+						getApplicationContext());
+			}
+		} catch (Exception ex)
+		{
+			GuiUtils.processError(TAG, R.string.errorCouldNotSendFacebookPhoto,
+					ex,
+					getApplicationContext(),
+					!silent);
+		}
+	}
+
+	private void shareOnTwitter(Photo photo, boolean silent)
+	{
+		try
+		{
+			Twitter twitter = TwitterProvider
+					.getTwitter(getApplicationContext());
+			if (twitter != null)
+			{
+				TwitterFragment.sendTweet(String.format(
+						getString(R.string.share_twitter_default_msg),
+						photo.getUrl(Photo.PATH_ORIGINAL)), twitter);
+			}
+		} catch (Exception ex)
+		{
+			GuiUtils.processError(TAG, R.string.errorCouldNotSendTweet, ex,
+					getApplicationContext(),
+					!silent);
+		}
+	}
+
+	private Notification showUploadNotification(File file)
+	{
         int icon = R.drawable.icon;
         CharSequence tickerText = getString(R.string.notification_uploading_photo, file.getName());
         long when = System.currentTimeMillis();
@@ -195,7 +262,7 @@ public class UploaderService extends Service {
                 .setSmallIcon(icon)
                 .setContentIntent(contentIntent)
                 .setContent(contentView)
-                .getNotification();
+				.build();
         // Notification notification = new Notification(icon, tickerText, when);
 
         // notification.contentView = contentView;
@@ -245,7 +312,7 @@ public class UploaderService extends Service {
                 .setSmallIcon(icon)
                 .setAutoCancel(true)
                 .setContentIntent(contentIntent)
-                .getNotification();
+				.build();
         // Notification notification = new Notification(icon, titleText, when);
         // notification.flags |= Notification.FLAG_AUTO_CANCEL;
         // notification.setLatestEventInfo(this, titleText, contentMessageTitle,
@@ -320,7 +387,7 @@ public class UploaderService extends Service {
                     NewPhotoObserver observer = new NewPhotoObserver(this, dir);
                     sNewPhotoObservers.add(observer);
                     observer.startWatching();
-                    Log.d(TAG, "Started watching " + dir);
+                    CommonUtils.debug(TAG, "Started watching " + dir);
                 }
             }
         }
@@ -333,7 +400,7 @@ public class UploaderService extends Service {
             boolean online = Utils.isOnline(context);
             boolean wifiOnlyUpload = Preferences
                     .isWiFiOnlyUploadActive(getBaseContext());
-            Log.d(TAG, "Connectivity changed to " + (online ? "online" : "offline"));
+            CommonUtils.debug(TAG, "Connectivity changed to " + (online ? "online" : "offline"));
             if (online
                     && (!wifiOnlyUpload || (wifiOnlyUpload && Utils
                             .isWiFiActive(context))))

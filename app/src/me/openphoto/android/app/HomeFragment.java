@@ -28,6 +28,7 @@ import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.FragmentActivity;
 import android.text.Html;
 import android.view.ContextMenu.ContextMenuInfo;
@@ -63,8 +64,6 @@ public class HomeFragment extends CommonFragment implements Refreshable
 	public void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
-		FacebookProvider.init(getString(R.string.facebook_app_id),
-				getActivity().getApplicationContext());
 	}
 
     @Override
@@ -217,9 +216,9 @@ public class HomeFragment extends CommonFragment implements Refreshable
         {
 			try
 			{
-            TwitterFragment twitterDialog = new TwitterFragment();
-            twitterDialog.setPhoto(photo);
-			twitterDialog.replace(activity.getSupportFragmentManager());
+				TwitterFragment twitterDialog = new TwitterFragment();
+				twitterDialog.setPhoto(photo);
+				twitterDialog.replace(activity.getSupportFragmentManager());
 			} catch (Exception ex)
 			{
 				GuiUtils.error(TAG, null, ex);
@@ -280,7 +279,17 @@ public class HomeFragment extends CommonFragment implements Refreshable
 										{
 											FacebookSessionEvents
 													.removeAuthListener(this);
-											shareViaFacebook(photo, activity);
+											Handler handler = new Handler();
+											handler.postDelayed(new Runnable()
+											{
+
+												@Override
+												public void run()
+												{
+													shareViaFacebook(photo,
+															activity);
+												}
+											}, 1000);
 										}
 
 										@Override

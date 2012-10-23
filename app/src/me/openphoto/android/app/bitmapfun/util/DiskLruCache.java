@@ -31,6 +31,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import me.openphoto.android.app.BuildConfig;
+import me.openphoto.android.app.util.CommonUtils;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
@@ -182,7 +183,7 @@ public class DiskLruCache {
             cacheByteSize -= eldestFileSize;
             count++;
             if (BuildConfig.DEBUG) {
-                Log.d(TAG, "flushCache - Removed cache file, " + eldestFile + ", "
+                CommonUtils.debug(TAG, "flushCache - Removed cache file, " + eldestFile + ", "
                         + eldestFileSize);
             }
         }
@@ -199,7 +200,7 @@ public class DiskLruCache {
             final String file = mLinkedHashMap.get(key);
             if (file != null) {
                 if (BuildConfig.DEBUG) {
-                    Log.d(TAG, "Disk cache hit");
+                    CommonUtils.debug(TAG, "Disk cache hit");
                 }
                 return BitmapFactory.decodeFile(file);
             } else {
@@ -207,7 +208,7 @@ public class DiskLruCache {
                 if (new File(existingFile).exists()) {
                     put(key, existingFile);
                     if (BuildConfig.DEBUG) {
-                        Log.d(TAG, "Disk cache hit (existing file)");
+                        CommonUtils.debug(TAG, "Disk cache hit (existing file)");
                     }
                     return BitmapFactory.decodeFile(existingFile);
                 }

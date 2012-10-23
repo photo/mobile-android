@@ -6,11 +6,11 @@ import java.io.File;
 import me.openphoto.android.app.Preferences;
 import me.openphoto.android.app.net.UploadMetaData;
 import me.openphoto.android.app.provider.UploadsProviderAccessor;
+import me.openphoto.android.app.util.CommonUtils;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.FileObserver;
-import android.util.Log;
 
 public class NewPhotoObserver extends FileObserver {
 
@@ -28,7 +28,7 @@ public class NewPhotoObserver extends FileObserver {
     public void onEvent(int event, String fileName) {
         if (event == FileObserver.CREATE && !fileName.equals(".probe")) {
             File file = new File(mPath + "/" + fileName);
-            Log.d(TAG, "File created [" + file.getAbsolutePath() + "]");
+            CommonUtils.debug(TAG, "File created [" + file.getAbsolutePath() + "]");
 
             if (!Preferences.isAutoUploadActive(mContext)) {
                 return;
