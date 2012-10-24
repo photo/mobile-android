@@ -263,10 +263,6 @@ public class UploaderService extends Service {
                 .setContentIntent(contentIntent)
                 .setContent(contentView)
 				.build();
-        // Notification notification = new Notification(icon, tickerText, when);
-
-        // notification.contentView = contentView;
-        // notification.contentIntent = contentIntent;
 
         mNotificationManager.notify(NOTIFICATION_UPLOAD_PROGRESS, notification);
 

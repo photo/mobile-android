@@ -1,5 +1,6 @@
 package me.openphoto.android.app.facebook;
 
+import me.openphoto.android.app.Preferences;
 import me.openphoto.android.app.R;
 import me.openphoto.android.app.facebook.FacebookSessionEvents.AuthListener;
 import me.openphoto.android.app.facebook.FacebookSessionEvents.LogoutListener;
@@ -34,8 +35,7 @@ public class FacebookUtils
 	 */
 	public static boolean restore(Facebook session, Context context)
 	{
-		SharedPreferences savedSession = context.getSharedPreferences(KEY,
-				Context.MODE_PRIVATE);
+		SharedPreferences savedSession = Preferences.getSharedPreferences(KEY);
 		session.setTokenFromCache(
 				savedSession.getString(TOKEN, null),
 				savedSession.getLong(EXPIRES, 0),
@@ -49,7 +49,7 @@ public class FacebookUtils
 	 */
 	public static boolean save(Facebook session, Context context)
 	{
-		Editor editor = context.getSharedPreferences(KEY, Context.MODE_PRIVATE)
+		Editor editor = Preferences.getSharedPreferences(KEY)
 				.edit();
 		editor.putString(TOKEN, session.getAccessToken());
 		editor.putLong(EXPIRES, session.getAccessExpires());
@@ -64,7 +64,8 @@ public class FacebookUtils
 	 */
 	public static void clear(Context context)
 	{
-		Editor editor = context.getSharedPreferences(KEY, Context.MODE_PRIVATE)
+		Editor editor = context.getSharedPreferences(KEY,
+				Preferences.PREFERENCES_MODE)
 				.edit();
 		editor.clear();
 		editor.commit();

@@ -16,6 +16,7 @@
 
 package me.openphoto.android.app.provider;
 
+import me.openphoto.android.app.util.CommonUtils;
 import android.content.ContentProvider;
 import android.content.ContentUris;
 import android.content.ContentValues;
@@ -98,16 +99,16 @@ public class UploadsProvider extends ContentProvider
 	}
 
 	// Constants to differntiate URI requests
-	private static final int CONTACTS = 1;
-	private static final int CONTACT_ID = 2;
+	private static final int UPLOADS = 1;
+	private static final int UPLOAD_ID = 2;
 
 	private static final UriMatcher uriMatcher;
 
 	static
 	{
 		uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
-		uriMatcher.addURI(packageName, "uplodas", CONTACTS);
-		uriMatcher.addURI(packageName, "uploads/#", CONTACT_ID);
+		uriMatcher.addURI(packageName, "uplodas", UPLOADS);
+		uriMatcher.addURI(packageName, "uploads/#", UPLOAD_ID);
 	}
 
 	@Override
@@ -115,9 +116,9 @@ public class UploadsProvider extends ContentProvider
 	{
 		switch (uriMatcher.match(uri))
 		{
-			case CONTACTS:
+			case UPLOADS:
 				return "vnd.android.cursor.dir/vnd.openphoto.photo";
-			case CONTACT_ID:
+			case UPLOAD_ID:
 				return "vnd.android.cursor.item/vnd.openphoto.photo";
 			default:
 				throw new IllegalArgumentException("Unsupported URI: " + uri);
@@ -144,7 +145,7 @@ public class UploadsProvider extends ContentProvider
 		qb.setTables(PHOTOS_TABLE);
 		switch (uriMatcher.match(uri))
 		{
-			case CONTACT_ID:
+			case UPLOAD_ID:
 				qb.appendWhere(KEY_ID + "=" + uri.getPathSegments().get(1));
 			break;
 			default:
@@ -174,13 +175,16 @@ public class UploadsProvider extends ContentProvider
 	public int delete(Uri uri, String where, String[] whereArgs)
 	{
 		int count;
+		CommonUtils.debug(TAG, "received delete " + uri);
 		switch (uriMatcher.match(uri))
 		{
-			case CONTACTS:
+			case UPLOADS:
+				CommonUtils.debug(TAG, "update delete");
 				count = mDb.delete(PHOTOS_TABLE, where, whereArgs);
 			break;
-			case CONTACT_ID:
+			case UPLOAD_ID:
 				String segment = uri.getPathSegments().get(1);
+				CommonUtils.debug(TAG, "update delete id " + segment);
 				count = mDb.delete(PHOTOS_TABLE,
 						KEY_ID
 								+ "="
@@ -202,14 +206,17 @@ public class UploadsProvider extends ContentProvider
 			String[] whereArgs)
 	{
 		int count;
+		CommonUtils.debug(TAG, "received update " + uri);
 		switch (uriMatcher.match(uri))
 		{
-			case CONTACTS:
+			case UPLOADS:
+				CommonUtils.debug(TAG, "update uploads");
 				count = mDb.update(PHOTOS_TABLE, values, where, whereArgs);
 			break;
 
-			case CONTACT_ID:
+			case UPLOAD_ID:
 				String segment = uri.getPathSegments().get(1);
+				CommonUtils.debug(TAG, "update upload ids " + segment);
 				count = mDb.update(PHOTOS_TABLE, values,
 						KEY_ID
 								+ "="

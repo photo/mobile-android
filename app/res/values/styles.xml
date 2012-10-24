@@ -29,8 +29,8 @@
         <item name="android:textStyle">bold</item>
     </style>
 	<style name="YesNoSwitch" parent="Holo.Switch.Light">
-	    <item name="android:textOn">@string/yes</item>
-	    <item name="android:textOff">@string/no</item>
+	    <item name="textOn">@string/yes</item>
+	    <item name="textOff">@string/no</item>
 	</style>
     <style name="TransparentListView" parent="@android:style/Widget.ListView">
         <item name="android:cacheColorHint">@android:color/transparent</item>

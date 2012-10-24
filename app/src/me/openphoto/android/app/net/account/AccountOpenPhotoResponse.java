@@ -9,7 +9,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.content.Context;
-import android.preference.PreferenceManager;
 
 /**
  * @author Patrick Santana <patrick@openphoto.me>
@@ -89,12 +88,14 @@ public class AccountOpenPhotoResponse extends OpenPhotoResponse {
     public void saveCredentials(Context context) {
         Preferences.setServer(context, this.getServer());
 
-        PreferenceManager.getDefaultSharedPreferences(context)
+		Preferences
+				.getDefaultSharedPreferences(context)
                 .edit()
                 .putBoolean(context.getString(R.string.setting_account_loggedin_key), true)
                 .commit();
 
-        context.getSharedPreferences("oauth", Context.MODE_PRIVATE)
+		Preferences
+				.getSharedPreferences("oauth")
                 .edit()
                 .putString(context.getString(R.string.setting_oauth_consumer_key),
                         this.getoAuthConsumerKey())

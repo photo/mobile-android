@@ -91,9 +91,9 @@ public class CommonFragment extends SFragment
 	}
 
 	@Override
-	public void onViewCreated(View view, Bundle savedInstanceState)
+	public void onViewCreated(View view)
 	{
-		super.onViewCreated(view, savedInstanceState);
+		super.onViewCreated(view);
 		CommonUtils.debug(TAG, "onViewCreated: " + getClass().getSimpleName());
 	}
 

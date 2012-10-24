@@ -133,10 +133,11 @@ public class SyncFragment extends CommonFragment implements NextStepFlow,
 	}
 
 	@Override
-	public void uploadStarted()
+	public void uploadStarted(List<String> processedFileNames)
 	{
 		// detachActiveFragment();
 		firstStepFragment.clear();
+		firstStepFragment.addProcessedValues(processedFileNames);
 		secondStepFragment.clear();
 		if (syncHandler != null)
 		{

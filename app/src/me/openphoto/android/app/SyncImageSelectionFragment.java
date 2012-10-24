@@ -2,6 +2,7 @@ package me.openphoto.android.app;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -11,11 +12,13 @@ import me.openphoto.android.app.bitmapfun.util.ImageCache.ImageCacheParams;
 import me.openphoto.android.app.bitmapfun.util.ImageFileSystemFetcher;
 import me.openphoto.android.app.bitmapfun.util.ImageResizer;
 import me.openphoto.android.app.bitmapfun.util.ImageWorker.ImageWorkerAdapter;
+import me.openphoto.android.app.provider.UploadsProviderAccessor;
 import me.openphoto.android.app.util.CommonUtils;
 import me.openphoto.android.app.util.GuiUtils;
 import me.openphoto.android.app.util.LoadingControl;
 import android.content.Context;
 import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -30,11 +33,14 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.GridView;
 import android.widget.ImageView;
 
 import com.WazaBe.HoloEverywhere.LayoutInflater;
 import com.WazaBe.HoloEverywhere.app.Activity;
+import com.WazaBe.HoloEverywhere.widget.Switch;
 
 public class SyncImageSelectionFragment extends CommonFragment implements Refreshable,
 		OnItemClickListener
@@ -51,7 +57,7 @@ public class SyncImageSelectionFragment extends CommonFragment implements Refres
 	private GridView photosGrid;
 	NextStepFlow nextStepFlow;
 	InitTask initTask = null;
-	boolean clearOnViewCreate = false;
+	Switch stateSwitch;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState)
@@ -66,7 +72,7 @@ public class SyncImageSelectionFragment extends CommonFragment implements Refres
 
 		ImageCacheParams cacheParams = new ImageCacheParams(IMAGE_CACHE_DIR);
 
-		mImageWorker = new ImageFileSystemFetcher(getActivity(),
+		mImageWorker = new CustomImageFileSystemFetcher(getActivity(),
 				mImageThumbSize);
 		mImageWorker.setLoadingImage(R.drawable.empty_photo);
 		mImageWorker.setImageCache(ImageCache.findOrCreateCache(getActivity(),
@@ -147,6 +153,17 @@ public class SyncImageSelectionFragment extends CommonFragment implements Refres
 				}
 			}
 		});
+		stateSwitch = (Switch) v.findViewById(R.id.uploaded_state_switch);
+		stateSwitch.setOnCheckedChangeListener(new OnCheckedChangeListener()
+		{
+
+			@Override
+			public void onCheckedChanged(CompoundButton buttonView,
+					boolean isChecked)
+			{
+				switchUploadState(isChecked);
+			}
+		});
 		photosGrid.setOnItemClickListener(this);
 		if (isDataLoaded())
 		{
@@ -156,6 +173,23 @@ public class SyncImageSelectionFragment extends CommonFragment implements Refres
 		{
 			refresh(v);
 		}
+	}
+
+	protected void switchUploadState(boolean isChecked)
+	{
+		if (isDataLoaded())
+		{
+			CustomImageWorkerAdapter adapter = getCustomImageWorkerAdapter();
+			adapter.setFiltered(!isChecked);
+			mAdapter.notifyDataSetChanged();
+		}
+	}
+
+	public CustomImageWorkerAdapter getCustomImageWorkerAdapter()
+	{
+		CustomImageWorkerAdapter adapter = (CustomImageWorkerAdapter) mImageWorker
+				.getAdapter();
+		return adapter;
 	}
 
 	@Override
@@ -191,7 +225,10 @@ public class SyncImageSelectionFragment extends CommonFragment implements Refres
 	{
 		super.onResume();
 		mImageWorker.setExitTasksEarly(false);
-		mAdapter.notifyDataSetChanged();
+		if (isDataLoaded())
+		{
+			mAdapter.notifyDataSetChanged();
+		}
 	}
 
 	@Override
@@ -223,11 +260,6 @@ public class SyncImageSelectionFragment extends CommonFragment implements Refres
 		super.onDestroyView();
 	}
 
-	public void setClearOnViewCreate()
-	{
-		this.clearOnViewCreate = true;
-	}
-
 	public void clear()
 	{
 		mAdapter.clearSelection();
@@ -242,10 +274,10 @@ public class SyncImageSelectionFragment extends CommonFragment implements Refres
 		List<String> result = new ArrayList<String>();
 		for (int i = 0, size = mAdapter.getCount(); i < size; i++)
 		{
-			long itemId = mAdapter.getItemId(i);
-			if (itemId != -1 && mAdapter.isSelected(itemId))
+			ImageData imageData = (ImageData) mAdapter.getItem(i);
+			if (imageData != null && mAdapter.isSelected(imageData.id))
 			{
-				result.add((String) mAdapter.getItem(i));
+				result.add(imageData.data);
 			}
 		}
 		return result;
@@ -265,6 +297,28 @@ public class SyncImageSelectionFragment extends CommonFragment implements Refres
 		void activateNextStep();
 	}
 
+	public void addProcessedValues(List<String> values)
+	{
+		if (isDataLoaded())
+		{
+			getCustomImageWorkerAdapter().addProcessedValues(values);
+			mAdapter.notifyDataSetChanged();
+		}
+	}
+	static class ImageData
+	{
+		long id;
+		String data;
+
+		public ImageData(long id, String data)
+		{
+			super();
+			this.id = id;
+			this.data = data;
+		}
+
+
+	}
 	private class InitTask extends
 			AsyncTask<Void, Void, Boolean>
 	{
@@ -290,6 +344,9 @@ public class SyncImageSelectionFragment extends CommonFragment implements Refres
 		{
 			super.onPreExecute();
 			loadingControl.startLoading();
+			photosGrid.setAdapter(null);
+			mImageWorker.setAdapter(null);
+			mAdapter.clearSelection();
 		}
 	
 		@Override
@@ -297,6 +354,7 @@ public class SyncImageSelectionFragment extends CommonFragment implements Refres
 		{
 			super.onPostExecute(result);
 			loadingControl.stopLoading();
+			adapter.setFiltered(!stateSwitch.isChecked());
 			mImageWorker.setAdapter(adapter);
 			if (photosGrid != null)
 			{
@@ -341,29 +399,42 @@ public class SyncImageSelectionFragment extends CommonFragment implements Refres
 			}
 			final View selectedOverlay = view
 					.findViewById(R.id.selection_overlay);
-			final long id = getItemId(position);
+			ImageData value = (ImageData) getItem(position);
+			final long id = value.id;
+
 			selectedOverlay.setVisibility(isSelected(id) ?
 					View.VISIBLE : View.INVISIBLE);
+			boolean isProcessed = getCustomImageWorkerAdapter()
+					.isProcessedValue(value);
+			final View uploadedOverlay = view
+					.findViewById(R.id.uploaded_overlay);
+			uploadedOverlay.setVisibility(isProcessed ?
+					View.VISIBLE : View.INVISIBLE);
 			View imageContainer = view.findViewById(R.id.imageContainer);
-			imageContainer.setOnClickListener(new OnClickListener()
+			if (isProcessed)
 			{
-				@Override
-				public void onClick(View v)
+				imageContainer.setOnClickListener(null);
+			} else
+			{
+				imageContainer.setOnClickListener(new OnClickListener()
 				{
-					System.out.println("Clicked");
-					boolean selected = isSelected(id);
-					if (selected)
+					@Override
+					public void onClick(View v)
 					{
-						removeFromSelected(id);
-					} else
-					{
-						addToSelected(id);
+						boolean selected = isSelected(id);
+						if (selected)
+						{
+							removeFromSelected(id);
+						} else
+						{
+							addToSelected(id);
+						}
+						selectedOverlay.setVisibility(isSelected(id) ?
+								View.VISIBLE : View.INVISIBLE);
 					}
-					selectedOverlay.setVisibility(isSelected(id) ?
-							View.VISIBLE : View.INVISIBLE);
-				}
-	
-			});
+
+				});
+			}
 			ImageView imageView = (ImageView) view.findViewById(R.id.image);
 			// Finally load the image asynchronously into the ImageView, this
 			// also takes care of
@@ -564,17 +635,49 @@ public class SyncImageSelectionFragment extends CommonFragment implements Refres
 		}
 	}
 
+	private class CustomImageFileSystemFetcher extends ImageFileSystemFetcher
+	{
+		public CustomImageFileSystemFetcher(Context context, int imageSize)
+		{
+			super(context, imageSize);
+		}
+
+		public CustomImageFileSystemFetcher(Context context, int imageWidth,
+				int imageHeight)
+		{
+			super(context, imageWidth, imageHeight);
+		}
+
+		@Override
+		protected Bitmap processBitmap(Object data)
+		{
+			ImageData imageData = (ImageData) data;
+			return super.processBitmap(imageData.data);
+		}
+	}
 	private class CustomImageWorkerAdapter extends
 			ImageWorkerAdapter
 	{
-		List<Long> ids = new ArrayList<Long>();
-		String[] valuesCache;
+		List<ImageData> all;
+		Set<String> processedValues;
+
+		List<Integer> filteredIndexes;
+
+		boolean filtered = false;
 	
 		public CustomImageWorkerAdapter()
 		{
+			loadGallery();
+			loadProcessedValues();
+			sort();
+		}
+
+		public void loadGallery()
+		{
 			String[] projection =
 			{
-					MediaStore.Images.Media._ID
+					MediaStore.Images.Media._ID,
+					MediaStore.Images.Media.DATA
 			};
 			Cursor cursor = getActivity().getContentResolver().query(
 					MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
@@ -584,57 +687,92 @@ public class SyncImageSelectionFragment extends CommonFragment implements Refres
 					MediaStore.Images.Media.BUCKET_ID);
 			try
 			{
+				int count = cursor.getCount();
+				all = new ArrayList<ImageData>(count);
 				while (cursor.moveToNext())
 				{
-					ids.add(cursor.getLong(0));
+					int ind = 0;
+					all.add(new ImageData(cursor.getLong(ind++), cursor
+							.getString(ind)));
 				}
-				valuesCache = new String[ids.size()];
 			} finally
 			{
 				cursor.close();
 			}
+		}
+
+		public void loadProcessedValues()
+		{
+			UploadsProviderAccessor uploads = new UploadsProviderAccessor(
+					getActivity());
+			List<String> fileNames = uploads
+					.getUploadedOrPendingPhotosFileNames();
+			processedValues = new TreeSet<String>(fileNames);
 		}
 	
 		@Override
 		public int getSize()
 		{
-			return ids.size();
+			return filteredIndexes == null ? all.size() : filteredIndexes
+					.size();
 		}
 	
 		@Override
 		public Object getItem(int num)
 		{
-			String cachedValue = valuesCache[num];
-			if (cachedValue == null)
-			{
-			// return Uri.withAppendedPath(
-			// MediaStore.Images.Media.EXTERNAL_CONTENT_URI, ""
-			// + ids.get(num));
-			String[] projection =
-			{
-					MediaStore.Images.Media.DATA
-			};
-			Cursor cursor = getActivity().getContentResolver().query(
-					MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-					projection, // Which columns to return
-					MediaStore.Images.Media._ID + " = "
-							+ Long.toString(ids.get(num)),
-					null,
-					MediaStore.Images.Media.BUCKET_ID);
-			try
-			{
-				if (cursor != null && cursor.moveToFirst())
-				{
-						cachedValue = cursor.getString(0);
-						valuesCache[num] = cachedValue;
-				}
+			return filteredIndexes == null ? all.get(num) : all
+					.get(filteredIndexes.get(num));
+		}
 
-			} finally
+		public void setFiltered(boolean filtered)
+		{
+			if (filtered)
 			{
-				cursor.close();
+				filteredIndexes = new ArrayList<Integer>();
+
+				for (int i = 0, size = all.size(); i < size; i++)
+				{
+					ImageData value = all.get(i);
+					if (!isProcessedValue(value))
+					{
+						filteredIndexes.add(i);
+					}
+				}
+			} else
+			{
+				filteredIndexes = null;
 			}
-			}
-			return cachedValue;
+			this.filtered = filtered;
+		}
+
+		public boolean isProcessedValue(ImageData value)
+		{
+			return processedValues.contains(value.data);
+		}
+
+		public void addProcessedValues(List<String> values)
+		{
+			processedValues.addAll(values);
+			sort();
+			setFiltered(filtered);
+		}
+
+		void sort()
+		{
+			Collections.sort(all, new Comparator<ImageData>()
+			{
+				@Override
+				public int compare(ImageData lhs, ImageData rhs)
+				{
+					boolean leftProcessed = isProcessedValue(lhs);
+					boolean rightProcessed = isProcessedValue(rhs);
+					if (leftProcessed == rightProcessed)
+					{
+						return 0;
+					}
+					return leftProcessed ? -1 : 1;
+				}
+			});
 		}
 	}
 }

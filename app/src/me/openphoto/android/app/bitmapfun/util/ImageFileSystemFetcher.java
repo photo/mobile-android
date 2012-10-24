@@ -46,7 +46,7 @@ public class ImageFileSystemFetcher extends ImageResizer
 	 *            The data to load the bitmap, in this case, a regular http URL
 	 * @return The downloaded and resized bitmap
 	 */
-	private Bitmap processBitmap(String data)
+	protected Bitmap processBitmap(String data)
 	{
 		if (BuildConfig.DEBUG)
 		{

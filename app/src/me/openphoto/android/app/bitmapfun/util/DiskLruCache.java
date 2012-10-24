@@ -83,6 +83,21 @@ public class DiskLruCache {
 	 * @param context
 	 * @param cacheDir
 	 * @param maxByteSize
+	 * @return
+	 */
+	public static DiskLruCache openCache(Context context, File cacheDir,
+			long maxByteSize)
+	{
+		return openCache(context, cacheDir, maxByteSize,
+				DEFAULT_MAX_CACHE_ITEM_SIZE);
+    }
+
+	/**
+	 * Used to fetch an instance of DiskLruCache.
+	 * 
+	 * @param context
+	 * @param cacheDir
+	 * @param maxByteSize
 	 * @param maxItemSize
 	 * @return
 	 */
@@ -90,17 +105,19 @@ public class DiskLruCache {
 			long maxByteSize,
 			int maxItemSize)
 	{
-        if (!cacheDir.exists()) {
-            cacheDir.mkdir();
-        }
+		if (!cacheDir.exists())
+		{
+			cacheDir.mkdir();
+		}
 
-        if (cacheDir.isDirectory() && cacheDir.canWrite()
-                && Utils.getUsableSpace(cacheDir) > maxByteSize) {
+		if (cacheDir.isDirectory() && cacheDir.canWrite()
+				&& Utils.getUsableSpace(cacheDir) > maxByteSize)
+		{
 			return new DiskLruCache(cacheDir, maxByteSize, maxItemSize);
-        }
+		}
 
-        return null;
-    }
+		return null;
+	}
 
     /**
      * Constructor that should not be called directly, instead use

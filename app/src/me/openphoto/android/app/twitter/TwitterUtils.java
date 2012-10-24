@@ -1,6 +1,7 @@
 
 package me.openphoto.android.app.twitter;
 
+import me.openphoto.android.app.Preferences;
 import me.openphoto.android.app.R;
 import me.openphoto.android.app.util.GuiUtils;
 import me.openphoto.android.app.util.LoadingControl;
@@ -51,8 +52,8 @@ public class TwitterUtils
      */
     static AccessToken getAccessToken(Context context)
     {
-        SharedPreferences settings = context.getSharedPreferences(PREFS_NAME,
-                Context.MODE_PRIVATE);
+		SharedPreferences settings = Preferences
+				.getSharedPreferences(PREFS_NAME);
         String token = settings.getString(ACCESS_TOKEN_TOKEN, "");
         String tokenSecret = settings.getString(ACCESS_TOKEN_SECRET, "");
         if (token != null && tokenSecret != null && !"".equals(tokenSecret)
@@ -72,8 +73,8 @@ public class TwitterUtils
      */
     static void storeAccessToken(Context context, AccessToken a)
     {
-        SharedPreferences settings = context.getSharedPreferences(PREFS_NAME,
-                Context.MODE_PRIVATE);
+		SharedPreferences settings = Preferences
+				.getSharedPreferences(PREFS_NAME);
         SharedPreferences.Editor editor = settings.edit();
         if (a == null)
         {

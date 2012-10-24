@@ -148,12 +148,14 @@ public class SyncUploadFragment extends CommonFragment
 
 		List<String> getSelectedFileNames();
 
-		void uploadStarted();
+		void uploadStarted(List<String> processedFileNames);
 	}
 
 	private class UploadInitTask extends
 			AsyncTask<Void, Void, Boolean>
 	{
+
+		private List<String> selectedFiles;
 
 		@Override
 		protected Boolean doInBackground(Void... params)
@@ -171,7 +173,7 @@ public class SyncUploadFragment extends CommonFragment
 				boolean shareOnFacebook = facebookSwitch.isChecked();
 				boolean shareOnTwitter = twitterSwitch.isChecked();
 
-				List<String> selectedFiles = getPreviousStepFlow()
+				selectedFiles = getPreviousStepFlow()
 						.getSelectedFileNames();
 				for (String fileName : selectedFiles)
 				{
@@ -208,7 +210,7 @@ public class SyncUploadFragment extends CommonFragment
 			if (result.booleanValue())
 			{
 				GuiUtils.alert(R.string.uploading_in_background);
-				getPreviousStepFlow().uploadStarted();
+				getPreviousStepFlow().uploadStarted(selectedFiles);
 			}
 		}
 

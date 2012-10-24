@@ -6,12 +6,15 @@ import java.util.Calendar;
 import java.util.List;
 
 import me.openphoto.android.app.net.UploadMetaData;
+import me.openphoto.android.app.util.CommonUtils;
 import me.openphoto.android.app.util.GuiUtils;
+import me.openphoto.android.app.util.ImageUtils;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.content.ContentResolver;
+import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -99,6 +102,36 @@ public class UploadsProviderAccessor {
         }
     }
 
+	public List<String> getUploadedOrPendingPhotosFileNames()
+	{
+		String[] projection = new String[]{
+				UploadsProvider.KEY_URI
+		};
+		Cursor cursor = mContext.getContentResolver().query(
+				UploadsProvider.CONTENT_URI, projection,
+				null, null, null);
+		try
+		{
+			List<String> result = new ArrayList<String>(
+					cursor.getCount());
+
+			while (cursor.moveToNext())
+			{
+				int ind = 0;
+				Uri photoUri = Uri.parse(cursor.getString(ind));
+				CommonUtils.debug(TAG, "Already uploaded URI: " + photoUri);
+				String filePath = ImageUtils.getRealPathFromURI(mContext,
+						photoUri);
+				CommonUtils.debug(TAG, "Already uploaded file: " + filePath);
+				result.add(filePath);
+			}
+			return result;
+		} finally
+		{
+			closeCursor(cursor);
+		}
+	}
+
     public void closeCursor(Cursor cursor)
     {
         try
@@ -169,21 +202,24 @@ public class UploadsProviderAccessor {
     }
 
     public void setUploaded(long id) {
-        Uri contentUri = Uri.withAppendedPath(UploadsProvider.CONTENT_URI, "" + id);
+		Uri contentUri = ContentUris.withAppendedId(
+				UploadsProvider.CONTENT_URI, id);
         ContentValues values = new ContentValues();
         values.put(UploadsProvider.KEY_UPLOADED, Calendar.getInstance().getTimeInMillis());
         mContext.getContentResolver().update(contentUri, values, null, null);
     }
 
     public void setError(long id, String error) {
-        Uri contentUri = Uri.withAppendedPath(UploadsProvider.CONTENT_URI, "" + id);
+		Uri contentUri = ContentUris.withAppendedId(
+				UploadsProvider.CONTENT_URI, id);
         ContentValues values = new ContentValues();
         values.put(UploadsProvider.KEY_ERROR, error);
         mContext.getContentResolver().update(contentUri, values, null, null);
     }
 
     public void delete(long id) {
-        Uri contentUri = Uri.withAppendedPath(UploadsProvider.CONTENT_URI, "" + id);
+		Uri contentUri = ContentUris.withAppendedId(
+				UploadsProvider.CONTENT_URI, id);
         mContext.getContentResolver().delete(contentUri, null, null);
     }
 }
