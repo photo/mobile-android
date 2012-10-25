@@ -23,10 +23,12 @@ public class SettingsFragment extends SPreferenceFragment
 				.setLoginCategory((PreferenceCategory) findPreference(getString(R.string.setting_account_category)));
 		settingsCommon
 				.setLoginPreference(findPreference(getString(R.string.setting_account_loggedin_key)));
-		settingsCommon
-				.setFacebookLoginPreference(findPreference(getString(R.string.setting_account_facebook_loggedin_key)));
+		// settingsCommon
+		// .setFacebookLoginPreference(findPreference(getString(R.string.setting_account_facebook_loggedin_key)));
 		settingsCommon
 				.setServerUrl(findPreference(getString(R.string.setting_account_server_key)));
+		settingsCommon
+				.setSyncClearPreference(findPreference(getString(R.string.setting_sync_clear_key)));
 	}
 
 	@Override

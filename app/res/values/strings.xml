@@ -85,6 +85,7 @@
     <string name="notification_upload_failed_title">Upload failed</string>
     <string name="notification_upload_failed_text">%1$s</string>
     <string name="notification_upload_success_title">Upload finished</string>
+    <string name="notification_upload_skipped_title">Upload skipped. Found same photo on the server.</string>
     <string name="notification_upload_success_text">%1$s</string>
     <string name="noInternetAccess">Internet connection is not available</string>
 
@@ -131,7 +132,13 @@
     <!-- Preferences -->
     <string name="upload_preference_category">Upload of taken pictures</string>
     <string name="wifi_only_upload">Upload only if WiFi network used</string>
-
+    <string name="auto_upload_preference_category">Auto upload of taken pictures (Experimental)</string>
+    <string name="sync_preference_category">Sync</string>
+    <string name="sync_clear">Clear sync information</string>
+    <string name="sync_clear_comment">This doesn\'t touch your images. Only uploaded markers are removed.</string>
+    <string name="sync_cleared_message">The sync information has been cleared</string>
+  	<string name="setting_account_facebook_loggedin_logout">Facebook Log out</string>
+  
     <!-- Screens for Create/Login/Own domain: Account -->
     <string name="account_signup_button">Sign up with your email address</string>
     <string name="account_login_button">Login with your email address</string>

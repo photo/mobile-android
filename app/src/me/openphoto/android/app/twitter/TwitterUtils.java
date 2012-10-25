@@ -3,6 +3,8 @@ package me.openphoto.android.app.twitter;
 
 import me.openphoto.android.app.Preferences;
 import me.openphoto.android.app.R;
+import me.openphoto.android.app.ui.widget.YesNoDialogFragment;
+import me.openphoto.android.app.ui.widget.YesNoDialogFragment.YesNoButtonPressedHandler;
 import me.openphoto.android.app.util.GuiUtils;
 import me.openphoto.android.app.util.LoadingControl;
 import oauth.signpost.OAuthProvider;
@@ -13,10 +15,13 @@ import twitter4j.TwitterFactory;
 import twitter4j.auth.AccessToken;
 import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
+
+import com.WazaBe.HoloEverywhere.sherlock.SActivity;
 
 /**
  * @author Eugene Popovich
@@ -29,6 +34,7 @@ public class TwitterUtils
     static final String ACCESS_TOKEN_TOKEN = "accessTokenToken";
     static final String ACCESS_TOKEN_SECRET = "accessTokenSecret";
 
+	static Runnable runOnceOnSuccessAuthentication;
 	static String getCallbackUrl(Context context)
     {
     	return context.getString(R.string.twitter_callback_url);
@@ -159,6 +165,57 @@ public class TwitterUtils
         storeAccessToken(context, null);
     }
 
+	public static void runAfterTwitterAuthentication(
+			final Activity activity,
+			final Runnable runOnSuccessAuthentication)
+	{
+		runAfterTwitterAuthentication(activity, runOnSuccessAuthentication,
+				null);
+	}
+	public static void runAfterTwitterAuthentication(
+			final Activity activity,
+			final Runnable runOnSuccessAuthentication,
+			final Runnable runOnCancelAuthentication)
+	{
+		if (TwitterProvider.getTwitter(activity) == null)
+		{
+			YesNoDialogFragment dialogFragment = YesNoDialogFragment
+					.newInstance(R.string.share_twitter_authorisation_question,
+							new YesNoButtonPressedHandler()
+							{
+								private static final long serialVersionUID = 1L;
+
+								@Override
+								public void yesButtonPressed(
+										DialogInterface dialog)
+								{
+									addRunOnceOnSuccessAuthenticationAction(runOnSuccessAuthentication);
+									TwitterUtils.askOAuth(activity);
+								}
+
+								@Override
+								public void noButtonPressed(
+										DialogInterface dialog)
+								{
+									if (runOnCancelAuthentication != null)
+									{
+										runOnCancelAuthentication.run();
+									}
+								}
+							});
+			dialogFragment.replace(((SActivity) activity)
+					.getSupportFragmentManager());
+		} else
+		{
+			runOnSuccessAuthentication.run();
+		}
+	}
+
+	public static void addRunOnceOnSuccessAuthenticationAction(
+			Runnable runOnSuccessAuthentication)
+	{
+		TwitterUtils.runOnceOnSuccessAuthentication = runOnSuccessAuthentication;
+	}
     private static class VerifyResponseTask
             extends AsyncTask<Void, Void, Boolean>
     {
@@ -238,6 +295,11 @@ public class TwitterUtils
 					if (runOnSuccess != null)
 					{
 						runOnSuccess.run();
+					}
+					if (runOnceOnSuccessAuthentication != null)
+					{
+						runOnceOnSuccessAuthentication.run();
+						runOnceOnSuccessAuthentication = null;
 					}
                 } catch (Exception ex)
                 {

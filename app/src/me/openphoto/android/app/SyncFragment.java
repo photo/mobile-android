@@ -4,6 +4,7 @@ import java.util.List;
 
 import me.openphoto.android.app.SyncImageSelectionFragment.NextStepFlow;
 import me.openphoto.android.app.SyncUploadFragment.PreviousStepFlow;
+import me.openphoto.android.app.provider.UploadsUtils.UploadsClearedHandler;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -14,7 +15,7 @@ import com.WazaBe.HoloEverywhere.LayoutInflater;
 import com.WazaBe.HoloEverywhere.app.Activity;
 
 public class SyncFragment extends CommonFragment implements NextStepFlow,
-		PreviousStepFlow, Refreshable
+		PreviousStepFlow, Refreshable, UploadsClearedHandler
 {
 	Fragment activeFragment;
 	static final String FIRST_STEP_TAG = "firstStep";
@@ -75,7 +76,7 @@ public class SyncFragment extends CommonFragment implements NextStepFlow,
 	public void onDestroyView()
 	{
 		super.onDestroyView();
-		detachActiveFragment();
+		// detachActiveFragment();
 	}
 
 	public void detachActiveFragment()
@@ -139,6 +140,7 @@ public class SyncFragment extends CommonFragment implements NextStepFlow,
 		firstStepFragment.clear();
 		firstStepFragment.addProcessedValues(processedFileNames);
 		secondStepFragment.clear();
+		activatePreviousStep();
 		if (syncHandler != null)
 		{
 			syncHandler.syncStarted();
@@ -148,5 +150,11 @@ public class SyncFragment extends CommonFragment implements NextStepFlow,
 	static interface SyncHandler
 	{
 		void syncStarted();
+	}
+
+	@Override
+	public void uploadsCleared()
+	{
+		firstStepFragment.uploadsCleared();
 	}
 }

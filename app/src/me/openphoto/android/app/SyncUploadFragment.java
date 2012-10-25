@@ -3,11 +3,11 @@ package me.openphoto.android.app;
 import java.io.File;
 import java.util.List;
 
-import me.openphoto.android.app.facebook.FacebookProvider;
+import me.openphoto.android.app.facebook.FacebookUtils;
 import me.openphoto.android.app.net.UploadMetaData;
 import me.openphoto.android.app.provider.UploadsProviderAccessor;
 import me.openphoto.android.app.service.UploaderService;
-import me.openphoto.android.app.twitter.TwitterProvider;
+import me.openphoto.android.app.twitter.TwitterUtils;
 import me.openphoto.android.app.util.GuiUtils;
 import me.openphoto.android.app.util.LoadingControl;
 import android.content.Intent;
@@ -73,6 +73,7 @@ public class SyncUploadFragment extends CommonFragment
 			@Override
 			public void onClick(View v)
 			{
+				v.setEnabled(false);
 				uploadSelectedFiles(true, true);
 			}
 		});
@@ -91,43 +92,33 @@ public class SyncUploadFragment extends CommonFragment
 	{
 		if (checkTwitter && twitterSwitch.isChecked())
 		{
-			if (TwitterProvider.getTwitter(getActivity()) == null)
+			Runnable runnable = new Runnable()
 			{
-				uploadSelectedFiles(false, checkFacebook);
-				return;
-				// YesNoDialogFragment dialogFragment = YesNoDialogFragment
-				// .newInstance(
-				// R.string.share_twitter_authorisation_question,
-				// new YesNoButtonPressedHandler()
-				// {
-				// private static final long serialVersionUID = 1L;
-				//
-				// @Override
-				// public void yesButtonPressed(
-				// DialogInterface dialog)
-				// {
-				// TwitterUtils.askOAuth(getActivity());
-				// }
-				//
-				// @Override
-				// public void noButtonPressed(
-				// DialogInterface dialog)
-				// {
-				// uploadSelectedFiles(false,
-				// checkFacebook);
-				// }
-				// });
-				// dialogFragment.replace(getActivity()
-				// .getSupportFragmentManager());
-			}
+
+				@Override
+				public void run()
+				{
+					uploadSelectedFiles(false, checkFacebook);
+				}
+			};
+			TwitterUtils.runAfterTwitterAuthentication(getActivity(),
+					runnable, runnable);
+			return;
 		}
 		if (checkFacebook && facebookSwitch.isChecked())
 		{
-			if (!FacebookProvider.getFacebook().isSessionValid())
+			Runnable runnable = new Runnable()
 			{
-				uploadSelectedFiles(checkTwitter, false);
-				return;
-			}
+
+				@Override
+				public void run()
+				{
+					uploadSelectedFiles(checkTwitter, false);
+				}
+			};
+			FacebookUtils.runAfterFacebookAuthentication(getActivity(),
+					runnable, runnable);
+			return;
 		}
 		new UploadInitTask().execute();
 	}
@@ -177,7 +168,6 @@ public class SyncUploadFragment extends CommonFragment
 						.getSelectedFileNames();
 				for (String fileName : selectedFiles)
 				{
-					System.out.println(fileName);
 					File uploadFile = new File(fileName);
 					uploads.addPendingUpload(Uri.fromFile(uploadFile),
 							metaData, shareOnTwitter,

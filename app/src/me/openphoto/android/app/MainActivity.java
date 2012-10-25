@@ -2,11 +2,14 @@ package me.openphoto.android.app;
 
 import me.openphoto.android.app.SyncFragment.SyncHandler;
 import me.openphoto.android.app.facebook.FacebookProvider;
+import me.openphoto.android.app.provider.UploadsUtils;
+import me.openphoto.android.app.provider.UploadsUtils.UploadsClearedHandler;
 import me.openphoto.android.app.service.UploaderService;
 import me.openphoto.android.app.twitter.TwitterUtils;
 import me.openphoto.android.app.util.CommonUtils;
 import me.openphoto.android.app.util.GalleryOpenControl;
 import me.openphoto.android.app.util.LoadingControl;
+import android.content.BroadcastReceiver;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -23,18 +26,22 @@ import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.view.Window;
 
 public class MainActivity extends SActivity
-		implements LoadingControl, GalleryOpenControl, SyncHandler
+		implements LoadingControl, GalleryOpenControl, SyncHandler,
+		UploadsClearedHandler
 {
 	private static final int HOME_INDEX = 0;
 	private static final int SYNC_INDEX = 4;
 	private static final String HOME_TAG = "home";
+	private static final String SYNC_TAG = "sync";
 	public static final String TAG = MainActivity.class.getSimpleName();
 	public static final String ACTIVE_TAB = "ActiveTab";
-	final static int AUTHORIZE_ACTIVITY_RESULT_CODE = 0;
+	public final static int AUTHORIZE_ACTIVITY_RESULT_CODE = 0;
 
 	private ActionBar mActionBar;
 	private Menu mMenu;
 	private int mLoaders = 0;
+
+	private BroadcastReceiver uploadsClearedReceiver;
 
 	/**
 	 * Called when Main Activity is first loaded
@@ -46,7 +53,6 @@ public class MainActivity extends SActivity
 	{
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
-		setContentView(R.layout.activity_main);
 		mActionBar = getSupportActionBar();
 		mActionBar.setDisplayUseLogoEnabled(true);
 		mActionBar.setDisplayShowTitleEnabled(false);
@@ -58,9 +64,17 @@ public class MainActivity extends SActivity
 
 		setUpTabs(savedInstanceState == null ? 1 : savedInstanceState.getInt(
 				ACTIVE_TAB, 1));
-
+		uploadsClearedReceiver = UploadsUtils
+				.getAndRegisterOnUploadClearedActionBroadcastReceiver(TAG,
+						this, this);
 	}
 
+	@Override
+	protected void onDestroy()
+	{
+		super.onDestroy();
+		unregisterReceiver(uploadsClearedReceiver);
+	}
 	private void setUpTabs(int activeTab)
 	{
 		addTab(R.drawable.tab_home_2states,
@@ -81,7 +95,7 @@ public class MainActivity extends SActivity
 						TagsFragment.class, null));
 		addTab(View.NO_ID,
 				R.string.tab_sync,
-				new TabListener<SyncFragment>("sync",
+				new TabListener<SyncFragment>(SYNC_TAG,
 						SyncFragment.class, null));
 		mActionBar.selectTab(mActionBar.getTabAt(activeTab));
 	}
@@ -127,19 +141,7 @@ public class MainActivity extends SActivity
 		{
 			Uri uri = intent.getData();
 			TwitterUtils.verifyOAuthResponse(this, uri,
-					new Runnable()
-					{
-						@Override
-						public void run()
-						{
-							HomeFragment homeFragment = (HomeFragment) getSupportFragmentManager()
-									.findFragmentByTag(HOME_TAG);
-							if (homeFragment != null)
-							{
-								homeFragment.shareActivePhotoViaTwitter();
-							}
-						}
-					});
+					null);
 		}
 	}
 
@@ -334,4 +336,16 @@ public class MainActivity extends SActivity
 			mActionBar.selectTab(mActionBar.getTabAt(HOME_INDEX));
 		}
 	}
+
+	@Override
+	public void uploadsCleared()
+	{
+		SyncFragment fragment = (SyncFragment) getSupportFragmentManager()
+				.findFragmentByTag(SYNC_TAG);
+		if (fragment != null)
+		{
+			fragment.uploadsCleared();
+		}
+	}
+
 }

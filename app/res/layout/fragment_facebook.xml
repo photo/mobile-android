@@ -6,6 +6,9 @@
 		android:layout_height="wrap_content" android:layout_weight="1"
 		android:ems="10" android:scrollbars="vertical"
 		android:padding="5dip" android:gravity="top"
+		android:inputType="textMultiLine"
+		android:lines="5"
+		android:minHeight="50dip"
 		android:text="test text asdf asdf asdf asdf asdf as asdf asd f">
 		<requestFocus />
 	</EditText>

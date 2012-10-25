@@ -120,7 +120,6 @@ public class ApiBase {
             ProgressListener listener) throws UnsupportedEncodingException {
         HttpUriRequest httpRequest = null;
         String baseUrl = Preferences.getServer(this.context);
-		System.out.println("baseUrl:" + baseUrl);
         switch (request.getMethod()) {
             case ApiRequest.GET:
                 httpRequest = new HttpGet(addParamsToUrl(

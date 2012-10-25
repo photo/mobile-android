@@ -4,6 +4,7 @@ import me.openphoto.android.app.facebook.FacebookProvider;
 import me.openphoto.android.app.facebook.FacebookSessionEvents;
 import me.openphoto.android.app.facebook.FacebookSessionEvents.LogoutListener;
 import me.openphoto.android.app.facebook.FacebookUtils;
+import me.openphoto.android.app.provider.UploadsUtils;
 import android.app.Activity;
 import android.content.DialogInterface;
 
@@ -17,9 +18,11 @@ import com.WazaBe.HoloEverywhere.preference.PreferenceCategory;
 public class SettingsCommon implements
 		OnPreferenceClickListener
 {
+	static final String TAG = SettingsCommon.class.getSimpleName();
 	Activity activity;
 	Preference mLoginPreference;
 	Preference mFacebookLoginPreference;
+	Preference mSyncClearPreference;
 	PreferenceCategory loginCategory;
 	Preference mServerUrl;
 
@@ -164,4 +167,40 @@ public class SettingsCommon implements
 					}
 				});
 	}
+
+	public void setSyncClearPreference(Preference mSyncClearPreference)
+	{
+		this.mSyncClearPreference = mSyncClearPreference;
+		mSyncClearPreference
+				.setOnPreferenceClickListener(new OnPreferenceClickListener()
+				{
+
+					@Override
+					public boolean onPreferenceClick(Preference preference)
+					{
+						// confirm if user wants to clear sync information
+						new AlertDialog.Builder(activity)
+								.setTitle(R.string.sync_clear)
+								.setMessage(R.string.areYouSureQuestion)
+								.setIcon(android.R.drawable.ic_dialog_alert)
+								.setPositiveButton(R.string.yes,
+										new DialogInterface.OnClickListener()
+										{
+
+											@Override
+											public void onClick(
+													DialogInterface dialog,
+													int whichButton)
+											{
+												UploadsUtils.clearUploads();
+											}
+										})
+								.setNegativeButton(R.string.no, null)
+								.show();
+
+						return true;
+					}
+				});
+	}
+
 }

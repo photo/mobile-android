@@ -757,6 +757,13 @@ public class SyncImageSelectionFragment extends CommonFragment implements Refres
 			setFiltered(filtered);
 		}
 
+		public void clearProcessedValues()
+		{
+			processedValues.clear();
+			sort();
+			setFiltered(filtered);
+		}
+
 		void sort()
 		{
 			Collections.sort(all, new Comparator<ImageData>()
@@ -773,6 +780,15 @@ public class SyncImageSelectionFragment extends CommonFragment implements Refres
 					return leftProcessed ? -1 : 1;
 				}
 			});
+		}
+	}
+
+	public void uploadsCleared()
+	{
+		if (isDataLoaded())
+		{
+			getCustomImageWorkerAdapter().clearProcessedValues();
+			mAdapter.notifyDataSetChanged();
 		}
 	}
 }

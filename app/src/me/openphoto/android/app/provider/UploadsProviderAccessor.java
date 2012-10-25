@@ -222,4 +222,10 @@ public class UploadsProviderAccessor {
 				UploadsProvider.CONTENT_URI, id);
         mContext.getContentResolver().delete(contentUri, null, null);
     }
+
+	public void deleteAll()
+	{
+		mContext.getContentResolver().delete(UploadsProvider.CONTENT_URI, null,
+				null);
+	}
 }

@@ -5,31 +5,22 @@ import java.util.Date;
 import java.util.List;
 
 import me.openphoto.android.app.facebook.FacebookBaseDialogListener;
-import me.openphoto.android.app.facebook.FacebookProvider;
-import me.openphoto.android.app.facebook.FacebookSessionEvents;
-import me.openphoto.android.app.facebook.FacebookSessionEvents.AuthListener;
 import me.openphoto.android.app.facebook.FacebookUtils;
 import me.openphoto.android.app.model.Photo;
 import me.openphoto.android.app.net.IOpenPhotoApi;
 import me.openphoto.android.app.net.Paging;
 import me.openphoto.android.app.net.PhotosResponse;
-import me.openphoto.android.app.twitter.TwitterProvider;
 import me.openphoto.android.app.twitter.TwitterUtils;
 import me.openphoto.android.app.ui.adapter.EndlessAdapter;
-import me.openphoto.android.app.ui.widget.YesNoDialogFragment;
-import me.openphoto.android.app.ui.widget.YesNoDialogFragment.YesNoButtonPressedHandler;
 import me.openphoto.android.app.util.GuiUtils;
 import me.openphoto.android.app.util.ImageWorker;
 import me.openphoto.android.app.util.LoadingControl;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
-import android.support.v4.app.FragmentActivity;
 import android.text.Html;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.View;
@@ -45,7 +36,6 @@ import com.WazaBe.HoloEverywhere.app.Activity;
 import com.actionbarsherlock.view.ContextMenu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
-import com.facebook.android.Facebook;
 import com.facebook.android.R;
 
 public class HomeFragment extends CommonFragment implements Refreshable
@@ -114,7 +104,6 @@ public class HomeFragment extends CommonFragment implements Refreshable
 	public void onCreateContextMenu(ContextMenu menu, View v,
 			ContextMenuInfo menuInfo)
 	{
-		System.out.println("test");
 		if (v.getId() == R.id.share_button)
 		{
 			MenuInflater inflater = getSupportActivity()
@@ -174,7 +163,25 @@ public class HomeFragment extends CommonFragment implements Refreshable
 	{
 		if (activePhoto != null)
 		{
-			shareViaTwitter(activePhoto, getActivity());
+			TwitterUtils.runAfterTwitterAuthentication(getActivity(),
+					new Runnable()
+					{
+
+						@Override
+						public void run()
+						{
+							try
+							{
+								TwitterFragment twitterDialog = new TwitterFragment();
+								twitterDialog.setPhoto(activePhoto);
+								twitterDialog.replace(getActivity()
+										.getSupportFragmentManager());
+							} catch (Exception ex)
+							{
+								GuiUtils.error(TAG, null, ex);
+							}
+						}
+					});
 		}
 	}
 
@@ -182,138 +189,25 @@ public class HomeFragment extends CommonFragment implements Refreshable
 	{
 		if (activePhoto != null)
 		{
-			shareViaFacebook(activePhoto, getActivity());
-		}
-	}
+			FacebookUtils.runAfterFacebookAuthentication(getActivity(),
+					new Runnable()
+					{
 
-	private static void shareViaTwitter(Photo photo,
-			final FragmentActivity activity)
-    {
-		if (TwitterProvider.getTwitter(activity) == null)
-        {
-            YesNoDialogFragment dialogFragment = YesNoDialogFragment
-                    .newInstance(R.string.share_twitter_authorisation_question,
-                            new YesNoButtonPressedHandler()
-                            {
-                                private static final long serialVersionUID = 1L;
-
-                                @Override
-                                public void yesButtonPressed(
-                                        DialogInterface dialog)
-                                {
-									TwitterUtils.askOAuth(activity);
-                                }
-
-                                @Override
-                                public void noButtonPressed(
-                                        DialogInterface dialog)
-                                {
-                                    // do nothing
-                                }
-                            });
-			dialogFragment.replace(activity.getSupportFragmentManager());
-        } else
-        {
-			try
-			{
-				TwitterFragment twitterDialog = new TwitterFragment();
-				twitterDialog.setPhoto(photo);
-				twitterDialog.replace(activity.getSupportFragmentManager());
-			} catch (Exception ex)
-			{
-				GuiUtils.error(TAG, null, ex);
-			}
-        }
-    }
-
-	private static void shareViaFacebook(final Photo photo,
-			final FragmentActivity activity)
-	{
-		Facebook facebook = FacebookProvider.getFacebook();
-		if (facebook.isSessionValid())
-		{
-			try
-			{
-				FacebookFragment facebookDialog = new FacebookFragment();
-				facebookDialog.setPhoto(photo);
-				facebookDialog.replace(activity.getSupportFragmentManager());
-			} catch (Exception ex)
-			{
-				GuiUtils.error(TAG, null, ex);
-			}
-//			try
-//			{
-//				Bundle params = new Bundle();
-//				params.putString(
-//						"name",
-//						activity.getString(R.string.share_facebook_default_action));
-//				params.putString(
-//						"caption",
-//						activity.getString(R.string.share_facebook_default_caption));
-//				params.putString("description", activity
-//						.getString(R.string.share_facebook_default_description));
-//				params.putString("picture", photo.getUrl(Photo.PATH_ORIGINAL));
-//
-//				facebook.dialog(activity, "feed", params,
-//						new UpdateStatusListener(activity));
-//			} catch (Exception ex)
-//			{
-//				GuiUtils.error(TAG, null, ex, activity);
-//			}
-		} else
-		{
-			YesNoDialogFragment dialogFragment = YesNoDialogFragment
-					.newInstance(R.string.share_facbook_authorisation_question,
-							new YesNoButtonPressedHandler()
+						@Override
+						public void run()
+						{
+							try
 							{
-								private static final long serialVersionUID = 1L;
-
-								@Override
-								public void yesButtonPressed(
-										DialogInterface dialog)
-								{
-									AuthListener listener = new AuthListener()
-									{
-										@Override
-										public void onAuthSucceed()
-										{
-											FacebookSessionEvents
-													.removeAuthListener(this);
-											Handler handler = new Handler();
-											handler.postDelayed(new Runnable()
-											{
-
-												@Override
-												public void run()
-												{
-													shareViaFacebook(photo,
-															activity);
-												}
-											}, 1000);
-										}
-
-										@Override
-										public void onAuthFail(String error)
-										{
-											FacebookSessionEvents
-													.removeAuthListener(this);
-										}
-									};
-									FacebookSessionEvents.addAuthListener(listener);
-									FacebookUtils
-											.loginRequest(
-													activity,
-													MainActivity.AUTHORIZE_ACTIVITY_RESULT_CODE);
-								}
-
-								@Override
-								public void noButtonPressed(
-										DialogInterface dialog)
-								{
-									// do nothing
-								}
-							});
-			dialogFragment.replace(activity.getSupportFragmentManager());
+								FacebookFragment facebookDialog = new FacebookFragment();
+								facebookDialog.setPhoto(activePhoto);
+								facebookDialog.replace(getActivity()
+										.getSupportFragmentManager());
+							} catch (Exception ex)
+							{
+								GuiUtils.error(TAG, null, ex);
+							}
+						}
+					});
 		}
 	}
 
@@ -517,7 +411,6 @@ public class HomeFragment extends CommonFragment implements Refreshable
                 @Override
                 public void onClick(View v)
                 {
-					System.out.println("OnClick");
 					activePhoto = photo;
 					registerForContextMenu(v);
 					v.showContextMenu();

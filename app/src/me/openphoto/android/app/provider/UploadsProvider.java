@@ -107,7 +107,7 @@ public class UploadsProvider extends ContentProvider
 	static
 	{
 		uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
-		uriMatcher.addURI(packageName, "uplodas", UPLOADS);
+		uriMatcher.addURI(packageName, "uploads", UPLOADS);
 		uriMatcher.addURI(packageName, "uploads/#", UPLOAD_ID);
 	}
 
