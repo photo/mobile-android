@@ -3,6 +3,7 @@ package me.openphoto.android.app;
 import me.openphoto.android.app.net.account.AccountOpenPhotoResponse;
 import me.openphoto.android.app.net.account.FakeAccountOpenPhotoApi;
 import me.openphoto.android.app.net.account.IAccountOpenPhotoApi;
+import me.openphoto.android.app.util.CommonUtils;
 import me.openphoto.android.app.util.GuiUtils;
 import me.openphoto.android.app.util.LoadingControl;
 import me.openphoto.android.app.util.LoginUtils;
@@ -10,7 +11,6 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 
@@ -46,7 +46,7 @@ public class AccountSignup extends SActivity
 
 	public void createAccountButtonAction(View view)
 	{
-		Log.d(TAG, "Create an account");
+		CommonUtils.debug(TAG, "Create an account");
 
 		EditText editText = (EditText) findViewById(R.id.edit_username);
 		String username = editText.getText().toString();
@@ -70,7 +70,7 @@ public class AccountSignup extends SActivity
 		{
 			return;
 		}
-		Log.d(TAG, "Email = [" + email + "], username = [" + username
+		CommonUtils.debug(TAG, "Email = [" + email + "], username = [" + username
 				+ "] and pwd = [" + password
 				+ "]");
 

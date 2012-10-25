@@ -11,13 +11,13 @@ import java.util.HashMap;
 
 import me.openphoto.android.app.BuildConfig;
 import me.openphoto.android.app.OpenPhotoApplication;
+import me.openphoto.android.app.bitmapfun.util.DiskLruCache;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
-import android.util.Log;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 
@@ -196,7 +196,7 @@ public class ImageWorker {
 			{
 				if (BuildConfig.DEBUG)
 				{
-					Log.d(TAG, "downloadBitmap - found in http cache - "
+					CommonUtils.debug(TAG, "downloadBitmap - found in http cache - "
 							+ urlString);
 				}
 				return cacheFile;

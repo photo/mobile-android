@@ -8,17 +8,20 @@ import me.openphoto.android.app.util.GuiUtils;
 import me.openphoto.android.app.util.LoadingControl;
 import twitter4j.StatusUpdate;
 import twitter4j.Twitter;
-import android.app.Activity;
-import android.app.Dialog;
+import twitter4j.TwitterException;
+import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+
+import com.WazaBe.HoloEverywhere.LayoutInflater;
+import com.WazaBe.HoloEverywhere.app.Activity;
+import com.WazaBe.HoloEverywhere.app.Dialog;
 
 /**
  * @author Eugene Popovich
@@ -115,7 +118,7 @@ public class TwitterFragment extends CommonDialogFragment
     {
         TextView loggedInAsText;
         String name;
-		Activity activity = getActivity();
+		Context activity = getActivity();
 
 		ShowCurrentlyLoggedInUserTask(View view)
         {
@@ -167,7 +170,7 @@ public class TwitterFragment extends CommonDialogFragment
 	private class TweetTask extends
             AsyncTask<Void, Void, Boolean>
     {
-		Activity activity = getActivity();
+		Context activity = getActivity();
         @Override
         protected void onPreExecute()
         {
@@ -181,10 +184,8 @@ public class TwitterFragment extends CommonDialogFragment
         {
             try
             {
-				Twitter twitter = TwitterProvider.getTwitter(activity);
-                StatusUpdate update = new StatusUpdate(messageEt.getText()
-                        .toString());
-                twitter.updateStatus(update);
+				sendTweet(messageEt.getText()
+						.toString(), activity);
                 return true;
             } catch (Exception ex)
             {
@@ -212,4 +213,20 @@ public class TwitterFragment extends CommonDialogFragment
         }
     }
 
+	public static void sendTweet(String message, Context context)
+			throws TwitterException
+	{
+		Twitter twitter = TwitterProvider.getTwitter(context);
+		if (twitter != null)
+		{
+			sendTweet(message, twitter);
+		}
+	}
+
+	public static void sendTweet(String message, Twitter twitter)
+			throws TwitterException
+	{
+		StatusUpdate update = new StatusUpdate(message);
+		twitter.updateStatus(update);
+	}
 }

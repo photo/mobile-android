@@ -26,7 +26,10 @@ import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.entity.mime.MultipartEntity;
 import org.apache.http.entity.mime.content.FileBody;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.params.CoreProtocolPNames;
+import org.apache.http.params.BasicHttpParams;
+import org.apache.http.params.HttpConnectionParams;
+import org.apache.http.params.HttpParams;
+import org.apache.http.params.HttpProtocolParams;
 import org.apache.http.protocol.HTTP;
 
 import android.content.Context;
@@ -41,6 +44,7 @@ public class ApiBase {
     public final static String TAG = ApiBase.class.getSimpleName();
 
     private Context context;
+	static int NetworkConnectionTimeout_ms = 10000;
 
     public ApiBase(Context context) {
         this.context = context;
@@ -70,9 +74,20 @@ public class ApiBase {
      */
     public ApiResponse execute(ApiRequest request, ProgressListener listener)
             throws ClientProtocolException, IOException {
-        DefaultHttpClient httpClient = new DefaultHttpClient();
-        httpClient.getParams().setParameter(
-                CoreProtocolPNames.PROTOCOL_VERSION, HttpVersion.HTTP_1_1);
+		// PoolingClientConnectionManager();
+		HttpParams params = new BasicHttpParams();
+
+		// set params for connection...
+		HttpConnectionParams.setStaleCheckingEnabled(
+				params, false);
+		HttpConnectionParams.setConnectionTimeout(params,
+				NetworkConnectionTimeout_ms);
+		HttpConnectionParams.setSoTimeout(params,
+				NetworkConnectionTimeout_ms);
+		HttpProtocolParams.setVersion(params, HttpVersion.HTTP_1_1);
+
+		DefaultHttpClient httpClient = new DefaultHttpClient(params);
+
         HttpUriRequest httpRequest = createHttpRequest(request, listener);
 
         httpRequest.getParams().setBooleanParameter(
@@ -105,7 +120,6 @@ public class ApiBase {
             ProgressListener listener) throws UnsupportedEncodingException {
         HttpUriRequest httpRequest = null;
         String baseUrl = Preferences.getServer(this.context);
-
         switch (request.getMethod()) {
             case ApiRequest.GET:
                 httpRequest = new HttpGet(addParamsToUrl(

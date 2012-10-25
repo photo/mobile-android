@@ -7,7 +7,7 @@
 
     <uses-sdk
         android:minSdkVersion="7"
-        android:targetSdkVersion="14" />
+        android:targetSdkVersion="16" />
 
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.INTERNET" />
@@ -37,7 +37,8 @@
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTask"
-            android:logo="@drawable/actionbar_logo" >
+            android:logo="@drawable/actionbar_logo" 
+            >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -54,7 +55,7 @@
         </activity>
         <activity
             android:name=".PhotoDetailsActivity"
-            android:theme="@style/Theme.OpenPhoto.Light.NoActionBar" />
+            android:theme="@style/Theme.OpenPhoto.Fullscreen" />
         <activity
             android:name=".UploadActivity"
             android:configChanges="orientation" >

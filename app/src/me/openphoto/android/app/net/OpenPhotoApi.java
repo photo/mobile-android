@@ -117,39 +117,61 @@ public class OpenPhotoApi extends ApiBase implements IOpenPhotoApi {
             String album, Paging paging)
             throws ClientProtocolException, IOException, IllegalStateException,
             JSONException {
-        ApiRequest request;
-        if (album != null && album.length() > 0)
-        {
-            request = new ApiRequest(ApiRequest.GET, "/photos/album-" + album
-                    + "/list.json");
-        } else
-        {
-            request = new ApiRequest(ApiRequest.GET, "/photos/list.json");
-        }
-        if (resize != null) {
-            request.addParameter("returnSizes", resize.toString());
-        }
-        if (tags != null && !tags.isEmpty()) {
-            Iterator<String> it = tags.iterator();
-            StringBuilder sb = new StringBuilder(it.next());
-            while (it.hasNext()) {
-                sb.append("," + it.next());
-            }
-            request.addParameter("tags", sb.toString());
-        }
-        if (paging != null) {
-            if (paging.hasPage()) {
-                request.addParameter("page", Integer.toString(paging.getPage()));
-            }
-            if (paging.hasPageSize()) {
-                request.addParameter("pageSize",
-                        Integer.toString(paging.getPageSize()));
-            }
-        }
-        ApiResponse response = execute(request);
-        // TODO: Fix null pointer exception at this place.
-        return new PhotosResponse(new JSONObject(response.getContentAsString()));
+		return getPhotos(resize, tags, album, null, paging);
     }
+
+	public PhotosResponse getPhotos(ReturnSizes resize,
+			Collection<String> tags,
+			String album,
+			String hash,
+			Paging paging)
+			throws ClientProtocolException, IOException, IllegalStateException,
+			JSONException
+	{
+		ApiRequest request;
+		if (album != null && album.length() > 0)
+		{
+			request = new ApiRequest(ApiRequest.GET, "/photos/album-" + album
+					+ "/list.json");
+		} else
+		{
+			request = new ApiRequest(ApiRequest.GET, "/photos/list.json");
+		}
+		if (hash != null)
+		{
+			request.addParameter("hash", hash);
+		}
+
+		if (resize != null)
+		{
+			request.addParameter("returnSizes", resize.toString());
+		}
+		if (tags != null && !tags.isEmpty())
+		{
+			Iterator<String> it = tags.iterator();
+			StringBuilder sb = new StringBuilder(it.next());
+			while (it.hasNext())
+			{
+				sb.append("," + it.next());
+			}
+			request.addParameter("tags", sb.toString());
+		}
+		if (paging != null)
+		{
+			if (paging.hasPage())
+			{
+				request.addParameter("page", Integer.toString(paging.getPage()));
+			}
+			if (paging.hasPageSize())
+			{
+				request.addParameter("pageSize",
+						Integer.toString(paging.getPageSize()));
+			}
+		}
+		ApiResponse response = execute(request);
+		// TODO: Fix null pointer exception at this place.
+		return new PhotosResponse(new JSONObject(response.getContentAsString()));
+	}
 
     /*
      * (non-Javadoc)
@@ -212,4 +234,13 @@ public class OpenPhotoApi extends ApiBase implements IOpenPhotoApi {
     public static void injectMock(IOpenPhotoApi mock) {
         OpenPhotoApi.sMock = mock;
     }
+
+	@Override
+	public PhotosResponse getPhotos(String hash)
+			throws ClientProtocolException,
+			IOException, IllegalStateException,
+			JSONException
+	{
+		return getPhotos(null, null, null, hash, null);
+	}
 }

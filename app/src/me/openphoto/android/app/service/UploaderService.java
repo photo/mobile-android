@@ -6,19 +6,28 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
+import me.openphoto.android.app.FacebookFragment;
 import me.openphoto.android.app.MainActivity;
 import me.openphoto.android.app.PhotoDetailsActivity;
 import me.openphoto.android.app.Preferences;
 import me.openphoto.android.app.R;
+import me.openphoto.android.app.TwitterFragment;
 import me.openphoto.android.app.UploadActivity;
+import me.openphoto.android.app.facebook.FacebookProvider;
+import me.openphoto.android.app.model.Photo;
 import me.openphoto.android.app.net.HttpEntityWithProgress.ProgressListener;
 import me.openphoto.android.app.net.IOpenPhotoApi;
+import me.openphoto.android.app.net.PhotosResponse;
 import me.openphoto.android.app.net.UploadResponse;
 import me.openphoto.android.app.provider.PhotoUpload;
 import me.openphoto.android.app.provider.UploadsProviderAccessor;
+import me.openphoto.android.app.twitter.TwitterProvider;
+import me.openphoto.android.app.util.CommonUtils;
 import me.openphoto.android.app.util.GuiUtils;
 import me.openphoto.android.app.util.ImageUtils;
+import me.openphoto.android.app.util.SHA1Utils;
 import me.openphoto.android.app.util.Utils;
+import twitter4j.Twitter;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -39,6 +48,8 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.widget.RemoteViews;
 
+import com.facebook.android.Facebook;
+
 public class UploaderService extends Service {
     private static final int NOTIFICATION_UPLOAD_PROGRESS = 1;
     private static final String TAG = UploaderService.class.getSimpleName();
@@ -52,6 +63,13 @@ public class UploaderService extends Service {
 
     private NotificationManager mNotificationManager;
     private long mNotificationLastUpdateTime;
+	/**
+	 * According to this http://stackoverflow.com/a/7370448/527759
+	 * need so send different request codes each time we put some extra data
+	 * into
+	 * intent, or it will not be recreated
+	 */
+	int requestCounter = 0;
 
 	/**
 	 * Now it is static and uses weak reference
@@ -91,7 +109,7 @@ public class UploaderService extends Service {
         mApi = Preferences.getApi(this);
         startFileObserver();
         setUpConnectivityWatcher();
-        Log.d(TAG, "Service created");
+        CommonUtils.debug(TAG, "Service created");
     }
 
     @Override
@@ -100,7 +118,7 @@ public class UploaderService extends Service {
         for (NewPhotoObserver observer : sNewPhotoObservers) {
             observer.stopWatching();
         }
-        Log.d(TAG, "Service destroyed");
+        CommonUtils.debug(TAG, "Service destroyed");
         super.onDestroy();
     }
 
@@ -135,28 +153,53 @@ public class UploaderService extends Service {
                 Log.i(TAG, "Upload canceled because WiFi is not active anymore");
                 break;
             }
-            File file = new File(filePath);
-            stopErrorNotification(file);
-            final Notification notification = showUploadNotification(file);
+			File file = new File(filePath);
+			stopErrorNotification(file);
             try {
-                UploadResponse uploadResponse = mApi.uploadPhoto(file, photoUpload.getMetaData(),
-                        new ProgressListener() {
-                            private int mLastProgress = -1;
+				String hash = SHA1Utils.computeSha1ForFile(filePath);
+				PhotosResponse photos = mApi.getPhotos(hash);
+				Photo photo = null;
+				boolean skipped = false;
+				if (photos.getPhotos().size() > 0)
+				{
+					CommonUtils.debug(TAG, "The photo " + filePath
+							+ " with hash " + hash
+							+ " already found on the server. Skip uploading");
+					skipped = true;
+					photo = photos.getPhotos().get(0);
+				} else
+				{
+					final Notification notification = showUploadNotification(file);
+					UploadResponse uploadResponse = mApi.uploadPhoto(file,
+							photoUpload.getMetaData(),
+							new ProgressListener()
+							{
+								private int mLastProgress = -1;
 
-                            @Override
-                            public void transferred(long transferedBytes, long totalBytes) {
-                                int newProgress = (int) (transferedBytes * 100 / totalBytes);
-                                if (mLastProgress < newProgress) {
-                                    mLastProgress = newProgress;
-                                    updateUploadNotification(notification, mLastProgress, 100);
-                                }
-                            }
-                        });
-                Log.i(TAG, "Upload to OpenPhoto completed for: " + photoUpload.getPhotoUri());
-                uploads.setUploaded(photoUpload.getId());
-                if (!photoUpload.isAutoUpload()) {
-                    showSuccessNotification(photoUpload, file, uploadResponse);
-                }
+								@Override
+								public void transferred(long transferedBytes,
+										long totalBytes)
+								{
+									int newProgress = (int) (transferedBytes * 100 / totalBytes);
+									if (mLastProgress < newProgress)
+									{
+										mLastProgress = newProgress;
+										updateUploadNotification(notification,
+												mLastProgress, 100);
+									}
+								}
+							});
+					Log.i(TAG, "Upload to OpenPhoto completed for: "
+							+ photoUpload.getPhotoUri());
+					photo = uploadResponse.getPhoto();
+				}
+				uploads.setUploaded(photoUpload.getId());
+				if (!photoUpload.isAutoUpload())
+				{
+					showSuccessNotification(photoUpload, file,
+							photo, skipped);
+				}
+				shareIfRequested(photoUpload, photo, true);
             } catch (Exception e) {
                 if (!photoUpload.isAutoUpload()) {
                     uploads.setError(photoUpload.getId(),
@@ -173,7 +216,63 @@ public class UploaderService extends Service {
         }
     }
 
-    private Notification showUploadNotification(File file) {
+	public void shareIfRequested(PhotoUpload photoUpload,
+			Photo photo, boolean silent)
+	{
+		if (photo != null)
+		{
+			if (photoUpload.isShareOnTwitter())
+			{
+				shareOnTwitter(photo, silent);
+			}
+			if (photoUpload.isShareOnFacebook())
+			{
+				shareOnFacebook(photo, silent);
+			}
+		}
+	}
+
+	private void shareOnFacebook(Photo photo, boolean silent)
+	{
+		try
+		{
+			Facebook facebook = FacebookProvider.getFacebook();
+			if (facebook.isSessionValid())
+			{
+				FacebookFragment.sharePhoto(null, photo,
+						getApplicationContext());
+			}
+		} catch (Exception ex)
+		{
+			GuiUtils.processError(TAG, R.string.errorCouldNotSendFacebookPhoto,
+					ex,
+					getApplicationContext(),
+					!silent);
+		}
+	}
+
+	private void shareOnTwitter(Photo photo, boolean silent)
+	{
+		try
+		{
+			Twitter twitter = TwitterProvider
+					.getTwitter(getApplicationContext());
+			if (twitter != null)
+			{
+				TwitterFragment.sendTweet(String.format(
+						getString(R.string.share_twitter_default_msg),
+						photo.getUrl(Photo.PATH_ORIGINAL)), twitter);
+			}
+		} catch (Exception ex)
+		{
+			GuiUtils.processError(TAG, R.string.errorCouldNotSendTweet, ex,
+					getApplicationContext(),
+					!silent);
+		}
+	}
+
+	private Notification showUploadNotification(File file)
+	{
         int icon = R.drawable.icon;
         CharSequence tickerText = getString(R.string.notification_uploading_photo, file.getName());
         long when = System.currentTimeMillis();
@@ -195,11 +294,7 @@ public class UploaderService extends Service {
                 .setSmallIcon(icon)
                 .setContentIntent(contentIntent)
                 .setContent(contentView)
-                .getNotification();
-        // Notification notification = new Notification(icon, tickerText, when);
-
-        // notification.contentView = contentView;
-        // notification.contentIntent = contentIntent;
+				.build();
 
         mNotificationManager.notify(NOTIFICATION_UPLOAD_PROGRESS, notification);
 
@@ -234,7 +329,8 @@ public class UploaderService extends Service {
 
         Intent notificationIntent = new Intent(this, UploadActivity.class);
         notificationIntent.putExtra(UploadActivity.EXTRA_PENDING_UPLOAD_URI, photoUpload.getUri());
-        PendingIntent contentIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
+		PendingIntent contentIntent = PendingIntent.getActivity(this,
+				requestCounter++, notificationIntent, 0);
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(
                 this);
@@ -245,7 +341,7 @@ public class UploaderService extends Service {
                 .setSmallIcon(icon)
                 .setAutoCancel(true)
                 .setContentIntent(contentIntent)
-                .getNotification();
+				.build();
         // Notification notification = new Notification(icon, titleText, when);
         // notification.flags |= Notification.FLAG_AUTO_CANCEL;
         // notification.setLatestEventInfo(this, titleText, contentMessageTitle,
@@ -259,9 +355,14 @@ public class UploaderService extends Service {
     }
 
     private void showSuccessNotification(PhotoUpload photoUpload, File file,
-            UploadResponse uploadResponse) {
+			Photo photo,
+			boolean skipped)
+	{
         int icon = R.drawable.icon;
-        CharSequence titleText = getString(R.string.notification_upload_success_title);
+		CharSequence titleText = getString(
+				skipped ?
+						R.string.notification_upload_skipped_title :
+						R.string.notification_upload_success_title);
         long when = System.currentTimeMillis();
         String imageName = file.getName();
         if (!TextUtils.isEmpty(photoUpload.getMetaData().getTitle())) {
@@ -271,14 +372,16 @@ public class UploaderService extends Service {
                 imageName);
 
         Intent notificationIntent;
-        if (uploadResponse.getPhoto() != null) {
+		if (photo != null)
+		{
             notificationIntent = new Intent(this, PhotoDetailsActivity.class);
             notificationIntent
-                    .putExtra(PhotoDetailsActivity.EXTRA_PHOTO, uploadResponse.getPhoto());
+					.putExtra(PhotoDetailsActivity.EXTRA_PHOTO, photo);
         } else {
             notificationIntent = new Intent(this, MainActivity.class);
         }
-        PendingIntent contentIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
+		PendingIntent contentIntent = PendingIntent.getActivity(this,
+				requestCounter++, notificationIntent, 0);
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(
                 this);
@@ -289,7 +392,7 @@ public class UploaderService extends Service {
                 .setSmallIcon(icon)
                 .setAutoCancel(true)
                 .setContentIntent(contentIntent)
-                .getNotification();
+				.build();
         // Notification notification = new Notification(icon, titleText, when);
         // notification.flags |= Notification.FLAG_AUTO_CANCEL;
         // notification.setLatestEventInfo(this, titleText, contentMessageTitle,
@@ -320,7 +423,7 @@ public class UploaderService extends Service {
                     NewPhotoObserver observer = new NewPhotoObserver(this, dir);
                     sNewPhotoObservers.add(observer);
                     observer.startWatching();
-                    Log.d(TAG, "Started watching " + dir);
+                    CommonUtils.debug(TAG, "Started watching " + dir);
                 }
             }
         }
@@ -333,7 +436,7 @@ public class UploaderService extends Service {
             boolean online = Utils.isOnline(context);
             boolean wifiOnlyUpload = Preferences
                     .isWiFiOnlyUploadActive(getBaseContext());
-            Log.d(TAG, "Connectivity changed to " + (online ? "online" : "offline"));
+            CommonUtils.debug(TAG, "Connectivity changed to " + (online ? "online" : "offline"));
             if (online
                     && (!wifiOnlyUpload || (wifiOnlyUpload && Utils
                             .isWiFiActive(context))))

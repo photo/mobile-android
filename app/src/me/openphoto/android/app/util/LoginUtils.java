@@ -20,7 +20,7 @@ public class LoginUtils
 			@Override
 			public void onReceive(Context context, Intent intent)
 			{
-				Log.d(TAG, "Received login broadcast message");
+				CommonUtils.debug(TAG, "Received login broadcast message");
 				activity.finish();
 			}
 		};
