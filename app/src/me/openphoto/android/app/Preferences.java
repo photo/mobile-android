@@ -9,11 +9,25 @@ import oauth.signpost.basic.DefaultOAuthProvider;
 import oauth.signpost.commonshttp.CommonsHttpOAuthConsumer;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
 
 public class Preferences {
+	public final static int PREFERENCES_MODE = Context.MODE_MULTI_PROCESS;
+
+	public static SharedPreferences getDefaultSharedPreferences(Context context)
+	{
+		return OpenPhotoApplication.getContext().getSharedPreferences(
+				"default",
+				PREFERENCES_MODE);
+	}
+
+	public static SharedPreferences getSharedPreferences(String name)
+	{
+		return OpenPhotoApplication.getContext().getSharedPreferences(
+				name,
+				PREFERENCES_MODE);
+	}
     public static boolean isAutoUploadActive(Context context) {
-        return PreferenceManager.getDefaultSharedPreferences(context)
+		return getDefaultSharedPreferences(context)
                 .getBoolean(
                         context.getString(R.string.setting_autoupload_on_key),
                         context.getResources().getBoolean(R.bool.setting_autoupload_on_default));
@@ -21,8 +35,7 @@ public class Preferences {
 
     public static boolean isWiFiOnlyUploadActive(Context context)
     {
-        return PreferenceManager
-                .getDefaultSharedPreferences(context)
+		return getDefaultSharedPreferences(context)
                 .getBoolean(
                         context.getString(R.string.setting_wifi_only_upload_on_key),
                         context.getResources().getBoolean(
@@ -30,14 +43,14 @@ public class Preferences {
     }
 
     public static String getAutoUploadTag(Context context) {
-        return PreferenceManager.getDefaultSharedPreferences(context)
+		return getDefaultSharedPreferences(context)
                 .getString(
                         context.getString(R.string.setting_autoupload_tag_key),
                         context.getResources().getString(R.string.setting_autoupload_tag_default));
     }
 
     public static String getServer(Context context) {
-        return PreferenceManager.getDefaultSharedPreferences(context)
+		return getDefaultSharedPreferences(context)
                 .getString(
                         context.getString(R.string.setting_account_server_key),
                         context.getString(R.string.setting_account_server_default));
@@ -53,38 +66,43 @@ public class Preferences {
                     server.length() - 1);
         }
 
-        return PreferenceManager.getDefaultSharedPreferences(context)
+		return getDefaultSharedPreferences(context)
                 .edit()
                 .putString(context.getString(R.string.setting_account_server_key), server)
                 .commit();
     }
 
     public static boolean isLoggedIn(Context context) {
-        return PreferenceManager.getDefaultSharedPreferences(context)
+		return getDefaultSharedPreferences(context)
                 .getBoolean(context.getString(R.string.setting_account_loggedin_key), false);
     }
 
     public static void logout(Context context) {
-        PreferenceManager.getDefaultSharedPreferences(context)
+		getDefaultSharedPreferences(context)
                 .edit()
                 .putBoolean(context.getString(R.string.setting_account_loggedin_key), false)
                 .commit();
-        PreferenceManager.getDefaultSharedPreferences(context).edit()
+		getDefaultSharedPreferences(context)
+				.edit()
                 .putString(context.getString(R.string.setting_account_server_key),
                         context.getString(R.string.setting_account_server_default)).commit();
 
-        context.getSharedPreferences("oauth", Context.MODE_PRIVATE)
+		getSharedPreferences("oauth")
                 .edit()
                 .clear()
                 .commit();
+		getDefaultSharedPreferences(context)
+				.edit()
+				.remove(context.getString(R.string.setting_account_server_key))
+				.commit();
     }
 
     public static void setLoginInformation(Context context, OAuthConsumer consumer) {
-        PreferenceManager.getDefaultSharedPreferences(context)
+		getDefaultSharedPreferences(context)
                 .edit()
                 .putBoolean(context.getString(R.string.setting_account_loggedin_key), true)
                 .commit();
-        context.getSharedPreferences("oauth", Context.MODE_PRIVATE)
+		getSharedPreferences("oauth")
                 .edit()
                 .putString(context.getString(R.string.setting_oauth_consumer_key),
                         consumer.getConsumerKey())
@@ -112,7 +130,7 @@ public class Preferences {
             return null;
         }
 
-        SharedPreferences prefs = context.getSharedPreferences("oauth", Context.MODE_PRIVATE);
+		SharedPreferences prefs = getSharedPreferences("oauth");
         OAuthConsumer consumer = new CommonsHttpOAuthConsumer(
                 prefs.getString(context.getString(R.string.setting_oauth_consumer_key), null),
                 prefs.getString(context.getString(R.string.setting_oauth_consumer_secret),

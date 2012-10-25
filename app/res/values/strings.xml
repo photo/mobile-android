@@ -44,6 +44,8 @@
     <string name="share_facebook_success_message">Photo has been shared successfully</string>
     <string name="share_facebook_share_canceled_message">Update status cancelled</string>
     <string name="share_facebook_no_wall_post_made">No wall post made</string>
+    <string name="share_facebook_dialog_title">Facebook share</string>
+    <string name="share_facebook_logged_in_as">Logged in as %1$s</string>
     
     <!-- SetupActivity -->
     <string name="hint_server">username.openphoto.me</string>
@@ -57,18 +59,33 @@
     <string name="tab_gallery">Gallery</string>
     <string name="tab_tags">Tags</string>
     <string name="tab_albums">Albums</string>
+    <string name="tab_sync">Sync</string>
 
     <!-- UploadActivity -->
     <string name="uploading_in_background">Started upload in background</string>
     <string name="upload_camera_option">Camera</string>
     <string name="upload_gallery_option">Gallery</string>
     <string name="upload_title">Upload</string>
+    <string name="upload_tags">Tags</string>
+    <string name="upload_title">Title</string>
+    <string name="upload_private">Private</string>
+    <string name="upload_share_facebook">Facebook</string>
+    <string name="upload_share_twitter">Twitter</string>
+    <string name="upload_button">Upload!</string>
+    
+    <!-- Sync screen -->
+    <string name="sync_next_button">Next</string>
+    <string name="sync_previous_button">Pick photos</string>
+    <string name="sync_please_pick_at_least_one_photo">Please pick at least one photo first!</string>
+    <string name="sync_show_all">Show all</string>
+    <string name="sync_uploaded">UPLOADED!</string>
 
     <!-- Notifications -->
     <string name="notification_uploading_photo">Uploading %1$s</string>
     <string name="notification_upload_failed_title">Upload failed</string>
     <string name="notification_upload_failed_text">%1$s</string>
     <string name="notification_upload_success_title">Upload finished</string>
+    <string name="notification_upload_skipped_title">Upload skipped. Found same photo on the server.</string>
     <string name="notification_upload_success_text">%1$s</string>
     <string name="noInternetAccess">Internet connection is not available</string>
 
@@ -108,11 +125,20 @@
     <string name="errorCouldNotRetrieveTwitterScreenName">Could not retrieve twitter screen name</string>
     <string name="errorCouldNotSendTweet">Could not send tweet</string>
     <string name="errorCanNotFindExternalStorageForTakingPicture">Can not find external storage for taking a picture</string>
+    <string name="errorCouldNotInitFacebookFragment">Could not init facebook fragment</string>
+    <string name="errorCouldNotRetrieveFacebookScreenName">Could not retrieve facebook user name</string>
+    <string name="errorCouldNotSendFacebookPhoto">Could not post facebook message</string>
 
     <!-- Preferences -->
     <string name="upload_preference_category">Upload of taken pictures</string>
     <string name="wifi_only_upload">Upload only if WiFi network used</string>
-
+    <string name="auto_upload_preference_category">Auto upload of taken pictures (Experimental)</string>
+    <string name="sync_preference_category">Sync</string>
+    <string name="sync_clear">Clear sync information</string>
+    <string name="sync_clear_comment">This doesn\'t touch your images. Only uploaded markers are removed.</string>
+    <string name="sync_cleared_message">The sync information has been cleared</string>
+  	<string name="setting_account_facebook_loggedin_logout">Facebook Log out</string>
+  
     <!-- Screens for Create/Login/Own domain: Account -->
     <string name="account_signup_button">Sign up with your email address</string>
     <string name="account_login_button">Login with your email address</string>

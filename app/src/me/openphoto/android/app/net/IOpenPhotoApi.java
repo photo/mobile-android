@@ -165,4 +165,18 @@ public interface IOpenPhotoApi {
      */
     PhotosResponse getNewestPhotos(Paging paging) throws ClientProtocolException, IOException,
             IllegalStateException, JSONException;
+
+	/**
+	 * Return the photos by given SHA-1 hash
+	 * 
+	 * @param hash
+	 * @return a list of photos with the specified hash
+	 * @throws ClientProtocolException
+	 * @throws IOException
+	 * @throws IllegalStateException
+	 * @throws JSONException
+	 */
+	PhotosResponse getPhotos(String hash) throws ClientProtocolException,
+			IOException, IllegalStateException,
+			JSONException;
 }

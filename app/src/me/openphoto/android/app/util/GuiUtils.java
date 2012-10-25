@@ -9,8 +9,8 @@ import android.app.Activity;
 import android.content.Context;
 import android.os.Handler;
 import android.util.Log;
-import android.widget.Toast;
 
+import com.WazaBe.HoloEverywhere.widget.Toast;
 import com.bugsense.trace.BugSenseHandler;
 
 /**
@@ -88,6 +88,11 @@ public class GuiUtils
 	public static void error(String TAG, int messageId, Exception ex)
 	{
 		error(TAG, getMessage(messageId), ex);
+	}
+
+	public static void error(String TAG, Exception ex)
+	{
+		error(TAG, null, ex, null);
 	}
 	public static void error(String TAG, String message, Exception ex)
 	{

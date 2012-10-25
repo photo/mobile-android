@@ -7,6 +7,10 @@
         <item name="android:expandableListViewStyle">@style/TransparentExpandableListView</item>
         <item name="actionBarStyle">@style/solid_ActionBar</item>
     </style>
+    <style name="Theme.OpenPhoto.Dialog.Light" parent="Holo.Theme.Dialog.Light">
+    </style>
+    <style name="Theme.OpenPhoto.Fullscreen" parent="Holo.Theme.Sherlock.Light.NoActionBar.Fullscreen">
+    </style>
     <style name="Theme.OpenPhoto.Light.NoActionBar" parent="Holo.Theme.Sherlock.Light.NoActionBar">
         <item name="android:windowBackground">@drawable/bg</item>
     </style>
@@ -17,12 +21,19 @@
     <style name="NotificationText" parent="android:TextAppearance.Small" />
 
     <style name="NotificationTitle" parent="android:TextAppearance.Medium" />
-
+    
+	<style name="PhotoGridLayout">
+        <item name="android:drawSelectorOnTop">false</item>
+        <item name="android:listSelector">@null</item>
+    </style>
     <style name="TextTitle">
         <item name="android:textSize">18dp</item>
         <item name="android:textStyle">bold</item>
     </style>
-
+	<style name="YesNoSwitch" parent="Holo.Switch.Light">
+	    <item name="textOn">@string/yes</item>
+	    <item name="textOff">@string/no</item>
+	</style>
     <style name="TransparentListView" parent="@android:style/Widget.ListView">
         <item name="android:cacheColorHint">@android:color/transparent</item>
     </style>

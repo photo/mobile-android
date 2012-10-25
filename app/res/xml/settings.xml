@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:holo="http://schemas.android.com/apk/res-auto" >
+<PreferenceScreen xmlns:holo="http://schemas.android.com/apk/res-auto" xmlns:android="http://schemas.android.com/apk/res/android">
 
     <PreferenceCategory holo:title="@string/setting_account_title" 
         holo:key="@string/setting_account_category">
@@ -10,17 +10,23 @@
             holo:title="@string/setting_account_server_title" />
 
         <PreferenceScreen holo:key="@string/setting_account_loggedin_key" />
-        <PreferenceScreen holo:key="@string/setting_account_facebook_loggedin_key" 
-            holo:title="@string/setting_account_facebook_loggedin_logout"/>
+        <!-- PreferenceScreen holo:key="@string/setting_account_facebook_loggedin_key" 
+            holo:title="@string/setting_account_facebook_loggedin_logout"/-->
+    </PreferenceCategory>
+    <PreferenceCategory holo:title="@string/sync_preference_category">
+        <Preference holo:key="@string/setting_sync_clear_key" 
+            holo:title="@string/sync_clear"
+            holo:summary="@string/sync_clear_comment"
+            />
     </PreferenceCategory>
     
-    <!-- PreferenceCategory holo:title="@string/upload_preference_category" >
+    <PreferenceCategory holo:title="@string/upload_preference_category" >
         <CheckBoxPreference
             holo:defaultValue="@bool/setting_wifi_only_upload_on_default"
             holo:key="@string/setting_wifi_only_upload_on_key"
             holo:title="@string/wifi_only_upload" />
     </PreferenceCategory>
-    <PreferenceCategory holo:title="Auto upload of taken pictures" >
+    <PreferenceCategory holo:title="@string/auto_upload_preference_category" >
         <CheckBoxPreference
             holo:defaultValue="@bool/setting_autoupload_on_default"
             holo:key="@string/setting_autoupload_on_key"
@@ -32,6 +38,6 @@
             holo:dialogTitle="Set tag for uploaded pictures:"
             holo:key="@string/setting_autoupload_tag_key"
             holo:title="Tag" />
-    </PreferenceCategory-->
+    </PreferenceCategory>
 
 </PreferenceScreen>

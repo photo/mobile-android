@@ -9,4 +9,8 @@
   <dimen name="actionbar_action_text_size">100dp</dimen>
   
   <dimen name="gallery_item_size">100dp</dimen>
+  
+  <dimen name="image_thumbnail_size">100dp</dimen>
+  <dimen name="image_thumbnail_spacing">1dp</dimen>
+  <dimen name="image_thumbnail_border">1dp</dimen>
 </resources>

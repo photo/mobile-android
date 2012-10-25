@@ -201,7 +201,8 @@ public class UploadActivity extends Activity implements OnClickListener {
         metaData.setTags(((EditText) findViewById(R.id.edit_tags)).getText().toString());
         metaData.setPrivate(mPrivateToggle.isChecked());
 
-        uploads.addPendingUpload(Uri.fromFile(uploadFile), metaData);
+		uploads.addPendingUpload(Uri.fromFile(uploadFile), metaData, false,
+				false);
         startService(new Intent(this, UploaderService.class));
         Toast.makeText(this, R.string.uploading_in_background, Toast.LENGTH_LONG).show();
         finish();

@@ -1,16 +1,23 @@
 package me.openphoto.android.app.facebook;
 
+import me.openphoto.android.app.MainActivity;
+import me.openphoto.android.app.Preferences;
 import me.openphoto.android.app.R;
 import me.openphoto.android.app.facebook.FacebookSessionEvents.AuthListener;
 import me.openphoto.android.app.facebook.FacebookSessionEvents.LogoutListener;
+import me.openphoto.android.app.ui.widget.YesNoDialogFragment;
+import me.openphoto.android.app.ui.widget.YesNoDialogFragment.YesNoButtonPressedHandler;
 import me.openphoto.android.app.util.GuiUtils;
 import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 
+import com.WazaBe.HoloEverywhere.sherlock.SActivity;
 import com.facebook.android.AsyncFacebookRunner;
 import com.facebook.android.DialogError;
 import com.facebook.android.Facebook;
@@ -34,8 +41,7 @@ public class FacebookUtils
 	 */
 	public static boolean restore(Facebook session, Context context)
 	{
-		SharedPreferences savedSession = context.getSharedPreferences(KEY,
-				Context.MODE_PRIVATE);
+		SharedPreferences savedSession = Preferences.getSharedPreferences(KEY);
 		session.setTokenFromCache(
 				savedSession.getString(TOKEN, null),
 				savedSession.getLong(EXPIRES, 0),
@@ -49,7 +55,7 @@ public class FacebookUtils
 	 */
 	public static boolean save(Facebook session, Context context)
 	{
-		Editor editor = context.getSharedPreferences(KEY, Context.MODE_PRIVATE)
+		Editor editor = Preferences.getSharedPreferences(KEY)
 				.edit();
 		editor.putString(TOKEN, session.getAccessToken());
 		editor.putLong(EXPIRES, session.getAccessExpires());
@@ -64,7 +70,8 @@ public class FacebookUtils
 	 */
 	public static void clear(Context context)
 	{
-		Editor editor = context.getSharedPreferences(KEY, Context.MODE_PRIVATE)
+		Editor editor = context.getSharedPreferences(KEY,
+				Preferences.PREFERENCES_MODE)
 				.edit();
 		editor.clear();
 		editor.commit();
@@ -144,6 +151,77 @@ public class FacebookUtils
 		}
 	}
 
+	public static void runAfterFacebookAuthentication(
+			final Activity activity,
+			final Runnable runOnSuccessAuthentication)
+	{
+		runAfterFacebookAuthentication(activity, runOnSuccessAuthentication,
+				null);
+	}
+
+	public static void runAfterFacebookAuthentication(
+			final Activity activity,
+			final Runnable runOnSuccessAuthentication,
+			final Runnable runOnCancelAuthentication)
+	{
+		Facebook facebook = FacebookProvider.getFacebook();
+		if (facebook.isSessionValid())
+		{
+			runOnSuccessAuthentication.run();
+		} else
+		{
+			YesNoDialogFragment dialogFragment = YesNoDialogFragment
+					.newInstance(R.string.share_facbook_authorisation_question,
+							new YesNoButtonPressedHandler()
+							{
+								private static final long serialVersionUID = 1L;
+
+								@Override
+								public void yesButtonPressed(
+										DialogInterface dialog)
+								{
+									AuthListener listener = new AuthListener()
+									{
+										@Override
+										public void onAuthSucceed()
+										{
+											FacebookSessionEvents
+													.removeAuthListener(this);
+											Handler handler = new Handler();
+											handler.postDelayed(
+													runOnSuccessAuthentication,
+													1000);
+										}
+
+										@Override
+										public void onAuthFail(String error)
+										{
+											FacebookSessionEvents
+													.removeAuthListener(this);
+										}
+									};
+									FacebookSessionEvents
+											.addAuthListener(listener);
+									FacebookUtils
+											.loginRequest(
+													activity,
+													MainActivity.AUTHORIZE_ACTIVITY_RESULT_CODE);
+								}
+
+								@Override
+								public void noButtonPressed(
+										DialogInterface dialog)
+								{
+									if (runOnCancelAuthentication != null)
+									{
+										runOnCancelAuthentication.run();
+									}
+								}
+							});
+			dialogFragment.replace(((SActivity) activity)
+					.getSupportFragmentManager());
+		}
+	}
 	private static final class LoginDialogListener implements DialogListener
 	{
 		Context context;

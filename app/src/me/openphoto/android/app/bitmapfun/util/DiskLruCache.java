@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package me.openphoto.android.app.util;
+package me.openphoto.android.app.bitmapfun.util;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -31,6 +31,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import me.openphoto.android.app.BuildConfig;
+import me.openphoto.android.app.util.CommonUtils;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
@@ -50,11 +51,13 @@ public class DiskLruCache {
     private static final int MAX_REMOVALS = 4;
     private static final int INITIAL_CAPACITY = 32;
     private static final float LOAD_FACTOR = 0.75f;
+	private static final int DEFAULT_MAX_CACHE_ITEM_SIZE = 64;
 
     private final File mCacheDir;
     private int cacheSize = 0;
     private int cacheByteSize = 0;
-    private final int maxCacheItemSize = 64; // 64 item default
+	private int maxCacheItemSize = DEFAULT_MAX_CACHE_ITEM_SIZE; // 64 item
+																// default
     private long maxCacheByteSize = 1024 * 1024 * 5; // 5MB default
     private CompressFormat mCompressFormat = CompressFormat.JPEG;
     private int mCompressQuality = 70;
@@ -75,25 +78,46 @@ public class DiskLruCache {
     };
 
     /**
-     * Used to fetch an instance of DiskLruCache.
-     *
-     * @param context
-     * @param cacheDir
-     * @param maxByteSize
-     * @return
-     */
-    public static DiskLruCache openCache(Context context, File cacheDir, long maxByteSize) {
-        if (!cacheDir.exists()) {
-            cacheDir.mkdir();
-        }
-
-        if (cacheDir.isDirectory() && cacheDir.canWrite()
-                && Utils.getUsableSpace(cacheDir) > maxByteSize) {
-            return new DiskLruCache(cacheDir, maxByteSize);
-        }
-
-        return null;
+	 * Used to fetch an instance of DiskLruCache.
+	 * 
+	 * @param context
+	 * @param cacheDir
+	 * @param maxByteSize
+	 * @return
+	 */
+	public static DiskLruCache openCache(Context context, File cacheDir,
+			long maxByteSize)
+	{
+		return openCache(context, cacheDir, maxByteSize,
+				DEFAULT_MAX_CACHE_ITEM_SIZE);
     }
+
+	/**
+	 * Used to fetch an instance of DiskLruCache.
+	 * 
+	 * @param context
+	 * @param cacheDir
+	 * @param maxByteSize
+	 * @param maxItemSize
+	 * @return
+	 */
+	public static DiskLruCache openCache(Context context, File cacheDir,
+			long maxByteSize,
+			int maxItemSize)
+	{
+		if (!cacheDir.exists())
+		{
+			cacheDir.mkdir();
+		}
+
+		if (cacheDir.isDirectory() && cacheDir.canWrite()
+				&& Utils.getUsableSpace(cacheDir) > maxByteSize)
+		{
+			return new DiskLruCache(cacheDir, maxByteSize, maxItemSize);
+		}
+
+		return null;
+	}
 
     /**
      * Constructor that should not be called directly, instead use
@@ -104,8 +128,23 @@ public class DiskLruCache {
      * @param maxByteSize
      */
     private DiskLruCache(File cacheDir, long maxByteSize) {
+		this(cacheDir, maxByteSize, DEFAULT_MAX_CACHE_ITEM_SIZE);
+	}
+
+	/**
+	 * Constructor that should not be called directly, instead use
+	 * {@link DiskLruCache#openCache(Context, File, long)} which runs some extra
+	 * checks before
+	 * creating a DiskLruCache instance.
+	 * 
+	 * @param cacheDir
+	 * @param maxByteSize
+	 */
+	private DiskLruCache(File cacheDir, long maxByteSize, int maxItemSize)
+	{
         mCacheDir = cacheDir;
         maxCacheByteSize = maxByteSize;
+		maxCacheItemSize = maxItemSize;
     }
 
     /**
@@ -161,7 +200,7 @@ public class DiskLruCache {
             cacheByteSize -= eldestFileSize;
             count++;
             if (BuildConfig.DEBUG) {
-                Log.d(TAG, "flushCache - Removed cache file, " + eldestFile + ", "
+                CommonUtils.debug(TAG, "flushCache - Removed cache file, " + eldestFile + ", "
                         + eldestFileSize);
             }
         }
@@ -178,7 +217,7 @@ public class DiskLruCache {
             final String file = mLinkedHashMap.get(key);
             if (file != null) {
                 if (BuildConfig.DEBUG) {
-                    Log.d(TAG, "Disk cache hit");
+                    CommonUtils.debug(TAG, "Disk cache hit");
                 }
                 return BitmapFactory.decodeFile(file);
             } else {
@@ -186,7 +225,7 @@ public class DiskLruCache {
                 if (new File(existingFile).exists()) {
                     put(key, existingFile);
                     if (BuildConfig.DEBUG) {
-                        Log.d(TAG, "Disk cache hit (existing file)");
+                        CommonUtils.debug(TAG, "Disk cache hit (existing file)");
                     }
                     return BitmapFactory.decodeFile(existingFile);
                 }
