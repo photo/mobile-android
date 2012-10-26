@@ -101,7 +101,8 @@ public class ImageCache {
                 activity.getSupportFragmentManager());
 
         // See if we already have an ImageCache stored in RetainFragment
-        ImageCache imageCache = (ImageCache) mRetainFragment.getObject();
+		ImageCache imageCache = (ImageCache) mRetainFragment
+				.getObject(cacheParams.uniqueName);
 
         // No existing ImageCache, create one and store it in RetainFragment
         if (imageCache == null) {
@@ -196,9 +197,20 @@ public class ImageCache {
     }
 
     public void clearCaches() {
-        mDiskCache.clearCache();
-        mMemoryCache.evictAll();
+		if (mDiskCache != null)
+		{
+			mDiskCache.clearCache();
+		}
+		clearMemoryCache();
     }
+
+	public void clearMemoryCache()
+	{
+		if (mMemoryCache != null)
+		{
+			mMemoryCache.evictAll();
+		}
+	}
 
     /**
      * A holder class that contains cache parameters.

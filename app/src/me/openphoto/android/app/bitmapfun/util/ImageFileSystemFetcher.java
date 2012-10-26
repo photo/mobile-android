@@ -4,6 +4,7 @@ import java.io.File;
 
 import me.openphoto.android.app.BuildConfig;
 import me.openphoto.android.app.util.CommonUtils;
+import me.openphoto.android.app.util.LoadingControl;
 import android.content.Context;
 import android.graphics.Bitmap;
 
@@ -11,18 +12,21 @@ public class ImageFileSystemFetcher extends ImageResizer
 {
 	private static final String TAG = ImageFileSystemFetcher.class
 			.getSimpleName();
+	
 	/**
 	 * Initialize providing a target image width and height for the processing
 	 * images.
 	 * 
 	 * @param context
+	 * @param loadingControl
 	 * @param imageWidth
 	 * @param imageHeight
 	 */
-	public ImageFileSystemFetcher(Context context, int imageWidth,
+	public ImageFileSystemFetcher(Context context,
+			LoadingControl loadingControl, int imageWidth,
 			int imageHeight)
 	{
-		super(context, imageWidth, imageHeight);
+		super(context, loadingControl, imageWidth, imageHeight);
 	}
 
 	/**
@@ -30,11 +34,13 @@ public class ImageFileSystemFetcher extends ImageResizer
 	 * height);
 	 * 
 	 * @param context
+	 * @param loadingControl
 	 * @param imageSize
 	 */
-	public ImageFileSystemFetcher(Context context, int imageSize)
+	public ImageFileSystemFetcher(Context context,
+			LoadingControl loadingControl, int imageSize)
 	{
-		super(context, imageSize);
+		super(context, loadingControl, imageSize);
 	}
 
 	/**

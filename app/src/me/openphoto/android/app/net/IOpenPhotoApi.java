@@ -167,6 +167,23 @@ public interface IOpenPhotoApi {
             IllegalStateException, JSONException;
 
 	/**
+	 * Return Newest Photos to be used in the Home Screen
+	 * 
+	 * @param resize
+	 *            which sizes should be returned
+	 * @param paging
+	 *            paging for the newest hone screen
+	 * @return a list of photos to be displayed inthe home screen
+	 * @throws ClientProtocolException
+	 * @throws IOException
+	 * @throws IllegalStateException
+	 * @throws JSONException
+	 */
+	PhotosResponse getNewestPhotos(ReturnSizes resize, Paging paging)
+			throws ClientProtocolException, IOException,
+			IllegalStateException, JSONException;
+
+	/**
 	 * Return the photos by given SHA-1 hash
 	 * 
 	 * @param hash
