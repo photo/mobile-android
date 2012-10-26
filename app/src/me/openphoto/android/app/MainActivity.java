@@ -31,6 +31,7 @@ public class MainActivity extends SActivity
         UploadsClearedHandler
 {
     private static final int HOME_INDEX = 0;
+    private static final int GALLERY_INDEX = 1;
     private static final int SYNC_INDEX = 2;
     private static final String HOME_TAG = "home";
     private static final String SYNC_TAG = "sync";
@@ -230,7 +231,7 @@ public class MainActivity extends SActivity
         }
         intent.putExtra(GalleryFragment.EXTRA_TAG, tag);
         intent.putExtra(GalleryFragment.EXTRA_ALBUM, album);
-        mActionBar.selectTab(mActionBar.getTabAt(1));
+        mActionBar.selectTab(mActionBar.getTabAt(GALLERY_INDEX));
     }
 
     @Override
