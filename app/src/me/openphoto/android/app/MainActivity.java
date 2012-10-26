@@ -1,11 +1,16 @@
 
 package me.openphoto.android.app;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import me.openphoto.android.app.SyncFragment.SyncHandler;
 import me.openphoto.android.app.facebook.FacebookProvider;
 import me.openphoto.android.app.provider.UploadsUtils;
 import me.openphoto.android.app.provider.UploadsUtils.UploadsClearedHandler;
 import me.openphoto.android.app.service.UploaderService;
+import me.openphoto.android.app.service.UploaderServiceUtils;
+import me.openphoto.android.app.service.UploaderServiceUtils.PhotoUploadedHandler;
 import me.openphoto.android.app.twitter.TwitterUtils;
 import me.openphoto.android.app.util.CommonUtils;
 import me.openphoto.android.app.util.GalleryOpenControl;
@@ -28,12 +33,13 @@ import com.actionbarsherlock.view.Window;
 
 public class MainActivity extends SActivity
         implements LoadingControl, GalleryOpenControl, SyncHandler,
-        UploadsClearedHandler
+        UploadsClearedHandler, PhotoUploadedHandler
 {
     private static final int HOME_INDEX = 0;
 	private static final int GALLERY_INDEX = 1;
 	private static final int SYNC_INDEX = 2;
     private static final String HOME_TAG = "home";
+    private static final String GALLERY_TAG = "gallery";
     private static final String SYNC_TAG = "sync";
     public static final String TAG = MainActivity.class.getSimpleName();
     public static final String ACTIVE_TAB = "ActiveTab";
@@ -43,7 +49,7 @@ public class MainActivity extends SActivity
     private Menu mMenu;
     private int mLoaders = 0;
 
-    private BroadcastReceiver uploadsClearedReceiver;
+    private List<BroadcastReceiver> receivers = new ArrayList<BroadcastReceiver>();
 
     /**
      * Called when Main Activity is first loaded
@@ -66,16 +72,21 @@ public class MainActivity extends SActivity
 
         setUpTabs(savedInstanceState == null ? 1 : savedInstanceState.getInt(
                 ACTIVE_TAB, 1));
-        uploadsClearedReceiver = UploadsUtils
+        receivers.add(UploadsUtils
                 .getAndRegisterOnUploadClearedActionBroadcastReceiver(TAG,
-                        this, this);
+                        this, this));
+        receivers.add(UploaderServiceUtils.getAndRegisterOnPhotoUploadedActionBroadcastReceiver(
+                TAG, this, this));
     }
 
     @Override
     protected void onDestroy()
     {
         super.onDestroy();
-        unregisterReceiver(uploadsClearedReceiver);
+        for (BroadcastReceiver br : receivers)
+        {
+            unregisterReceiver(br);
+        }
     }
 
     private void setUpTabs(int activeTab)
@@ -86,7 +97,7 @@ public class MainActivity extends SActivity
                         null));
         addTab(R.drawable.tab_gallery_2states,
                 R.string.tab_gallery,
-                new TabListener<GalleryFragment>("gallery",
+                new TabListener<GalleryFragment>(GALLERY_TAG,
                         GalleryFragment.class, null));
         addTab(View.NO_ID,
                 R.string.tab_sync,
@@ -333,7 +344,7 @@ public class MainActivity extends SActivity
     @Override
     public void syncStarted()
     {
-        if (mActionBar.getSelectedTab() == mActionBar.getTabAt(SYNC_INDEX))
+        if (mActionBar.getSelectedNavigationIndex() == SYNC_INDEX)
         {
             mActionBar.selectTab(mActionBar.getTabAt(HOME_INDEX));
         }
@@ -347,6 +358,17 @@ public class MainActivity extends SActivity
         if (fragment != null)
         {
             fragment.uploadsCleared();
+        }
+    }
+
+    @Override
+    public void photoUploaded() {
+        switch (mActionBar.getSelectedNavigationIndex())
+        {
+            case HOME_INDEX:
+            case GALLERY_INDEX:
+                ((Refreshable) getCurrentFragment()).refresh();
+                break;
         }
     }
 
