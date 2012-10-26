@@ -207,30 +207,45 @@ public class OpenPhotoApi extends ApiBase implements IOpenPhotoApi {
     public PhotosResponse getNewestPhotos(Paging paging) throws ClientProtocolException,
             IOException,
             IllegalStateException, JSONException {
-        ApiRequest request = new ApiRequest(ApiRequest.GET, "/photos/list.json");
-        request.addParameter("returnSizes", "700x650xCR");
-        request.addParameter("sortBy", "dateUploaded,DESC");
-
-        if (paging != null) {
-            if (paging.hasPage()) {
-                request.addParameter("page", Integer.toString(paging.getPage()));
-            }
-            if (paging.hasPageSize()) {
-                request.addParameter("pageSize",
-                        Integer.toString(paging.getPageSize()));
-            }
-        }
-        ApiResponse response = execute(request);
-        String result = response.getContentAsString();
-        return new PhotosResponse(new JSONObject(result));
+		return getNewestPhotos(null, paging);
     }
 
-    /**
-     * ONLY FOR TESTING! Will make the class return the given Mock when
-     * accessing createInstance(..)
-     * 
-     * @param mock Mock to be used for OpenPhotoApi
-     */
+	@Override
+	public PhotosResponse getNewestPhotos(ReturnSizes returnSize, Paging paging)
+			throws ClientProtocolException, IOException, IllegalStateException,
+			JSONException
+	{
+		ApiRequest request = new ApiRequest(ApiRequest.GET, "/photos/list.json");
+		if (returnSize != null)
+		{
+			request.addParameter("returnSizes", returnSize.toString());
+		}
+		request.addParameter("sortBy", "dateUploaded,DESC");
+
+		if (paging != null)
+		{
+			if (paging.hasPage())
+			{
+				request.addParameter("page", Integer.toString(paging.getPage()));
+			}
+			if (paging.hasPageSize())
+			{
+				request.addParameter("pageSize",
+						Integer.toString(paging.getPageSize()));
+			}
+		}
+		ApiResponse response = execute(request);
+		String result = response.getContentAsString();
+		return new PhotosResponse(new JSONObject(result));
+	}
+
+	/**
+	 * ONLY FOR TESTING! Will make the class return the given Mock when
+	 * accessing createInstance(..)
+	 * 
+	 * @param mock
+	 *            Mock to be used for OpenPhotoApi
+	 */
     public static void injectMock(IOpenPhotoApi mock) {
         OpenPhotoApi.sMock = mock;
     }

@@ -20,6 +20,7 @@ import java.lang.ref.WeakReference;
 
 import me.openphoto.android.app.BuildConfig;
 import me.openphoto.android.app.util.CommonUtils;
+import me.openphoto.android.app.util.LoadingControl;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.Resources;
@@ -48,9 +49,12 @@ public abstract class ImageWorker {
 
     protected Context mContext;
     protected ImageWorkerAdapter mImageWorkerAdapter;
+	protected LoadingControl loadingControl;
 
-    protected ImageWorker(Context context) {
+	protected ImageWorker(Context context, LoadingControl loadingControl)
+	{
         mContext = context;
+		this.loadingControl = loadingControl;
     }
 
     /**
@@ -64,7 +68,8 @@ public abstract class ImageWorker {
      * @param data The URL of the image to download.
      * @param imageView The ImageView to bind the downloaded image to.
      */
-    public void loadImage(Object data, ImageView imageView) {
+	public void loadImage(Object data, ImageView imageView)
+	{
         Bitmap bitmap = null;
 
         if (mImageCache != null) {
@@ -75,7 +80,7 @@ public abstract class ImageWorker {
             // Bitmap found in memory cache
             imageView.setImageBitmap(bitmap);
         } else if (cancelPotentialWork(data, imageView)) {
-            final BitmapWorkerTask task = new BitmapWorkerTask(imageView);
+			final BitmapWorkerTask task = new BitmapWorkerTask(imageView);
             final AsyncDrawable asyncDrawable =
                     new AsyncDrawable(mContext.getResources(), mLoadingBitmap, task);
             imageView.setImageDrawable(asyncDrawable);
@@ -216,8 +221,38 @@ public abstract class ImageWorker {
         private Object data;
         private final WeakReference<ImageView> imageViewReference;
 
-        public BitmapWorkerTask(ImageView imageView) {
+		public BitmapWorkerTask(ImageView imageView)
+		{
             imageViewReference = new WeakReference<ImageView>(imageView);
+        }
+        
+        @Override
+        protected void onPreExecute()
+        {
+        	super.onPreExecute();
+        	startLoading();
+        }
+
+		public void startLoading()
+		{
+        	if(loadingControl != null)
+        	{
+        		loadingControl.startLoading();
+        	}
+		}
+
+		public void stopLoading()
+		{
+			if (loadingControl != null)
+			{
+				loadingControl.stopLoading();
+			}
+		}
+        @Override
+        protected void onCancelled()
+        {
+        	super.onCancelled();
+        	stopLoading();
         }
 
         /**
@@ -257,12 +292,12 @@ public abstract class ImageWorker {
 
             return bitmap;
         }
-
         /**
          * Once the image is processed, associates it to the imageView
          */
         @Override
         protected void onPostExecute(Bitmap bitmap) {
+			stopLoading();
             // if cancel was called on this task or the "exit early" flag is set then we're done
             if (isCancelled() || mExitTasksEarly) {
                 bitmap = null;

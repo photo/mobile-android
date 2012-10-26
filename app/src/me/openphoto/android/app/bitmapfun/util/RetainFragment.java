@@ -16,6 +16,9 @@
 
 package me.openphoto.android.app.bitmapfun.util;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -27,6 +30,7 @@ import android.support.v4.app.FragmentManager;
 public class RetainFragment extends Fragment {
     private static final String TAG = "RetainFragment";
     private Object mObject;
+	private Map<String, Object> map = new HashMap<String, Object>();
 
     /**
      * Empty constructor as per the Fragment documentation
@@ -80,4 +84,26 @@ public class RetainFragment extends Fragment {
         return mObject;
     }
 
+	public Object getObject(String key)
+	{
+		if (key == null)
+		{
+			return getObject();
+		} else
+		{
+			return map.get(key);
+		}
+	}
+
+	public void setObject(String key, Object object)
+	{
+		if (key == null)
+		{
+			setObject(object);
+		} else
+		{
+			map.put(key, object);
+		}
+	}
 }
+
