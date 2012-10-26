@@ -200,6 +200,10 @@ public class UploaderService extends Service {
 							photo, skipped);
 				}
 				shareIfRequested(photoUpload, photo, true);
+                if (!skipped)
+                {
+                    UploaderServiceUtils.sendPhotoUploadedBroadcast();
+                }
             } catch (Exception e) {
                 if (!photoUpload.isAutoUpload()) {
                     uploads.setError(photoUpload.getId(),
