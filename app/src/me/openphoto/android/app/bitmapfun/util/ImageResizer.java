@@ -18,6 +18,7 @@ package me.openphoto.android.app.bitmapfun.util;
 
 import me.openphoto.android.app.BuildConfig;
 import me.openphoto.android.app.util.CommonUtils;
+import me.openphoto.android.app.util.LoadingControl;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
@@ -35,25 +36,33 @@ public class ImageResizer extends ImageWorker {
     protected int mImageHeight;
 
     /**
-     * Initialize providing a single target image size (used for both width and height);
-     *
-     * @param context
-     * @param imageWidth
-     * @param imageHeight
-     */
-    public ImageResizer(Context context, int imageWidth, int imageHeight) {
-        super(context);
+	 * Initialize providing a single target image size (used for both width and
+	 * height);
+	 * 
+	 * @param context
+	 * @param loadingControl
+	 * @param imageWidth
+	 * @param imageHeight
+	 */
+	public ImageResizer(Context context, LoadingControl loadingControl,
+			int imageWidth, int imageHeight)
+	{
+		super(context, loadingControl);
         setImageSize(imageWidth, imageHeight);
     }
 
     /**
-     * Initialize providing a single target image size (used for both width and height);
-     *
-     * @param context
-     * @param imageSize
-     */
-    public ImageResizer(Context context, int imageSize) {
-        super(context);
+	 * Initialize providing a single target image size (used for both width and
+	 * height);
+	 * 
+	 * @param context
+	 * @param loadingControl
+	 * @param imageSize
+	 */
+	public ImageResizer(Context context, LoadingControl loadingControl,
+			int imageSize)
+	{
+		super(context, loadingControl);
         setImageSize(imageSize);
     }
 

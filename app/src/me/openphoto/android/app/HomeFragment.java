@@ -4,24 +4,27 @@ package me.openphoto.android.app;
 import java.util.Date;
 import java.util.List;
 
+import me.openphoto.android.app.bitmapfun.util.ImageCache;
+import me.openphoto.android.app.bitmapfun.util.ImageFetcher;
+import me.openphoto.android.app.bitmapfun.util.ImageWorker;
 import me.openphoto.android.app.facebook.FacebookBaseDialogListener;
 import me.openphoto.android.app.facebook.FacebookUtils;
 import me.openphoto.android.app.model.Photo;
 import me.openphoto.android.app.net.IOpenPhotoApi;
 import me.openphoto.android.app.net.Paging;
 import me.openphoto.android.app.net.PhotosResponse;
+import me.openphoto.android.app.net.ReturnSizes;
 import me.openphoto.android.app.twitter.TwitterUtils;
 import me.openphoto.android.app.ui.adapter.EndlessAdapter;
 import me.openphoto.android.app.util.GuiUtils;
-import me.openphoto.android.app.util.ImageWorker;
 import me.openphoto.android.app.util.LoadingControl;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.Html;
+import android.util.DisplayMetrics;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -41,14 +44,16 @@ import com.facebook.android.R;
 public class HomeFragment extends CommonFragment implements Refreshable
 {
     public static final String TAG = HomeFragment.class.getSimpleName();
+	private static final String IMAGE_CACHE_DIR = "images";
 
     private LoadingControl loadingControl;
     private NewestPhotosAdapter mAdapter;
     private LayoutInflater mInflater;
-    private ImageWorker iw;
+	private ImageWorker mImageWorker;
 	private Photo activePhoto;
 
 	private ListView list;
+	private ReturnSizes returnSizes;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState)
@@ -72,10 +77,27 @@ public class HomeFragment extends CommonFragment implements Refreshable
     {
         super.onAttach(activity);
         loadingControl = ((LoadingControl) activity);
-        if (iw == null)
-        {
-            iw = new ImageWorker(activity, loadingControl);
-        }
+		// Fetch screen height and width, to use as our max size when loading
+		// images as this
+		// activity runs full screen
+		final DisplayMetrics displaymetrics = new DisplayMetrics();
+		activity.getWindowManager().getDefaultDisplay()
+				.getMetrics(displaymetrics);
+		final int height = displaymetrics.heightPixels;
+		final int width = displaymetrics.widthPixels;
+		final int longest = height > width ? height : width;
+
+		returnSizes = new ReturnSizes(700, 650, true);
+		// The ImageWorker takes care of loading images into our ImageView
+		// children asynchronously
+		mImageWorker = new ImageFetcher(activity, loadingControl, longest);
+		mImageWorker.setImageCache(ImageCache.findOrCreateCache(activity,
+				IMAGE_CACHE_DIR));
+		mImageWorker.setImageFadeIn(false);
+		// if (iw == null)
+		// {
+		// iw = new ImageWorker(activity, loadingControl);
+		// }
 
     }
 
@@ -98,6 +120,7 @@ public class HomeFragment extends CommonFragment implements Refreshable
     {
         super.onDestroyView();
         mAdapter.forceStopLoadingIfNecessary();
+		mImageWorker.getImageCache().clearMemoryCache();
     }
 
 	@Override
@@ -140,6 +163,14 @@ public class HomeFragment extends CommonFragment implements Refreshable
 	{
 		super.onResume();
 		FacebookUtils.extendAceessTokenIfNeeded(getActivity());
+		mImageWorker.setExitTasksEarly(false);
+	}
+
+	@Override
+	public void onPause()
+	{
+		super.onPause();
+		mImageWorker.setExitTasksEarly(true);
 	}
     private void shareViaEMail(Photo photo)
     {
@@ -268,10 +299,12 @@ public class HomeFragment extends CommonFragment implements Refreshable
             // load the image in another thread
             ImageView photoView =
                     (ImageView) convertView.findViewById(R.id.newest_image);
-            photoView.setTag(photo.getUrl("700x650xCR"));
-            Drawable dr =
-					iw.loadImage(this, photoView);
-            photoView.setImageDrawable(dr);
+			mImageWorker
+					.loadImage(photo.getUrl(returnSizes.toString()), photoView);
+			// photoView.setTag(photo.getUrl("700x650xCR"));
+			// Drawable dr =
+			// iw.loadImage(this, photoView);
+			// photoView.setImageDrawable(dr);
 
             // set title or file's name
             if (photo.getTitle() != null && photo.getTitle().trim().length()
@@ -429,7 +462,7 @@ public class HomeFragment extends CommonFragment implements Refreshable
                 try
                 {
                     PhotosResponse response = mOpenPhotoApi
-                            .getNewestPhotos(new Paging(page, 25));
+							.getNewestPhotos(returnSizes, new Paging(page, 25));
 					return new LoadResponse(response.getPhotos(), false);
                 } catch (Exception e)
                 {
