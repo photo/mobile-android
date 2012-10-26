@@ -31,7 +31,7 @@ public class MainActivity extends SActivity
         UploadsClearedHandler
 {
     private static final int HOME_INDEX = 0;
-    private static final int SYNC_INDEX = 4;
+    private static final int SYNC_INDEX = 2;
     private static final String HOME_TAG = "home";
     private static final String SYNC_TAG = "sync";
     public static final String TAG = MainActivity.class.getSimpleName();
