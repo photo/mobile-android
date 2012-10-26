@@ -5,6 +5,7 @@ import me.openphoto.android.app.model.Photo;
 import me.openphoto.android.app.ui.adapter.PhotosEndlessAdapter;
 import me.openphoto.android.app.ui.lib.ImageStorage;
 import me.openphoto.android.app.util.LoadingControl;
+import me.openphoto.android.app.util.Utils;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -108,12 +109,13 @@ public class GalleryFragment extends CommonFragment implements Refreshable,
 
         public GalleryAdapter()
         {
-            super(getActivity());
+            this(null, null);
         }
 
         public GalleryAdapter(String tagFilter, String albumFilter)
         {
-            super(getActivity(), tagFilter, albumFilter);
+            super(getActivity(), Utils.isTablet(getActivity()) ? 45
+                    : PhotosEndlessAdapter.DEFAULT_PAGE_SIZE, tagFilter, albumFilter);
         }
 
         @Override

@@ -16,6 +16,7 @@
 
 package me.openphoto.android.app.util;
 
+import me.openphoto.android.app.R;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -90,4 +91,9 @@ public class Utils {
 		}
 		return result;
 	}
+
+    public static boolean isTablet(Context context)
+    {
+        return context.getResources().getBoolean(R.bool.isTablet);
+    }
 }

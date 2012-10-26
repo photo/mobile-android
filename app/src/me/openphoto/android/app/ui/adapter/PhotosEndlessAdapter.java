@@ -16,6 +16,7 @@ import android.content.Context;
 
 public abstract class PhotosEndlessAdapter extends EndlessAdapter<Photo>
 {
+    public static final int DEFAULT_PAGE_SIZE = 30;
     private static final String TAG = null;
     private final IOpenPhotoApi mOpenPhotoApi;
     private final List<String> mTagFilter;
@@ -34,13 +35,24 @@ public abstract class PhotosEndlessAdapter extends EndlessAdapter<Photo>
 
     public PhotosEndlessAdapter(Context context)
     {
-        this(context, null, null);
+        this(context, DEFAULT_PAGE_SIZE);
+    }
+
+    public PhotosEndlessAdapter(Context context, int pageSize)
+    {
+        this(context, pageSize, null, null);
     }
 
     public PhotosEndlessAdapter(Context context, String tagFilter,
             String albumFilter)
     {
-        this(context, null, tagFilter, albumFilter);
+        this(context, DEFAULT_PAGE_SIZE, tagFilter, albumFilter);
+    }
+
+    public PhotosEndlessAdapter(Context context, int pageSize, String tagFilter,
+            String albumFilter)
+    {
+        this(context, pageSize, null, tagFilter, albumFilter);
     }
 
     public PhotosEndlessAdapter(Context context, ArrayList<Photo> photos)
@@ -52,7 +64,16 @@ public abstract class PhotosEndlessAdapter extends EndlessAdapter<Photo>
             String tagFilter,
             String albumFilter)
     {
-        super(30, photos);
+        this(context, DEFAULT_PAGE_SIZE, photos, tagFilter, albumFilter);
+    }
+
+    public PhotosEndlessAdapter(Context context,
+            int pageSize,
+            ArrayList<Photo> photos,
+            String tagFilter,
+            String albumFilter)
+    {
+        super(pageSize, photos);
         mOpenPhotoApi = Preferences.getApi(context);
         mTagFilter = new ArrayList<String>(1);
         if (tagFilter != null)
