@@ -63,21 +63,6 @@ public class SyncImageSelectionFragment extends CommonFragment implements Refres
 	public void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
-		mImageThumbSize = getResources().getDimensionPixelSize(
-				R.dimen.image_thumbnail_size);
-		mImageThumbSpacing = getResources().getDimensionPixelSize(
-				R.dimen.image_thumbnail_spacing);
-		mImageThumbBorder = getResources().getDimensionPixelSize(
-				R.dimen.image_thumbnail_border);
-
-		ImageCacheParams cacheParams = new ImageCacheParams(IMAGE_CACHE_DIR);
-
-		mImageWorker = new CustomImageFileSystemFetcher(getActivity(),
-				mImageThumbSize);
-		mImageWorker.setLoadingImage(R.drawable.empty_photo);
-		mImageWorker.setImageCache(ImageCache.findOrCreateCache(getActivity(),
-				cacheParams));
-		mAdapter = new CustomImageAdapter(getActivity(), mImageWorker);
 	}
 
 	@Override
@@ -93,6 +78,24 @@ public class SyncImageSelectionFragment extends CommonFragment implements Refres
 
 	public void init(View v)
 	{
+		mImageThumbSize = getResources().getDimensionPixelSize(
+				R.dimen.image_thumbnail_size);
+		mImageThumbSpacing = getResources().getDimensionPixelSize(
+				R.dimen.image_thumbnail_spacing);
+		mImageThumbBorder = getResources().getDimensionPixelSize(
+				R.dimen.image_thumbnail_border);
+
+		mImageWorker = new CustomImageFileSystemFetcher(getActivity(),
+				loadingControl,
+				mImageThumbSize);
+		mImageWorker.setLoadingImage(R.drawable.empty_photo);
+
+		ImageCacheParams cacheParams = new ImageCacheParams(IMAGE_CACHE_DIR);
+
+		mImageWorker.setImageCache(ImageCache.findOrCreateCache(getActivity(),
+				cacheParams));
+		mAdapter = new CustomImageAdapter(getActivity(), mImageWorker);
+
 		photosGrid = (GridView) v.findViewById(R.id.grid_photos);
 
 		// This listener is used to get the final width of the GridView and then
@@ -258,6 +261,12 @@ public class SyncImageSelectionFragment extends CommonFragment implements Refres
 	public void onDestroyView()
 	{
 		super.onDestroyView();
+		mImageWorker.getImageCache().clearMemoryCache();
+		if (initTask != null)
+		{
+			initTask.cancel(true);
+		}
+
 	}
 
 	public void clear()
@@ -317,7 +326,11 @@ public class SyncImageSelectionFragment extends CommonFragment implements Refres
 			this.data = data;
 		}
 
-
+		@Override
+		public String toString()
+		{
+			return data;
+		}
 	}
 	private class InitTask extends
 			AsyncTask<Void, Void, Boolean>
@@ -348,12 +361,22 @@ public class SyncImageSelectionFragment extends CommonFragment implements Refres
 			mImageWorker.setAdapter(null);
 			mAdapter.clearSelection();
 		}
-	
+		@Override
+		protected void onCancelled()
+		{
+			super.onCancelled();
+			loadingControl.stopLoading();
+			initTask = null;
+		}
+
 		@Override
 		protected void onPostExecute(Boolean result)
 		{
 			super.onPostExecute(result);
 			loadingControl.stopLoading();
+			initTask = null;
+			if (!isCancelled())
+			{
 			adapter.setFiltered(!stateSwitch.isChecked());
 			mImageWorker.setAdapter(adapter);
 			if (photosGrid != null)
@@ -361,7 +384,7 @@ public class SyncImageSelectionFragment extends CommonFragment implements Refres
 				mAdapter.selectedIds.clear();
 				photosGrid.setAdapter(mAdapter);
 			}
-			initTask = null;
+			}
 		}
 	
 	}
@@ -637,15 +660,17 @@ public class SyncImageSelectionFragment extends CommonFragment implements Refres
 
 	private class CustomImageFileSystemFetcher extends ImageFileSystemFetcher
 	{
-		public CustomImageFileSystemFetcher(Context context, int imageSize)
+		public CustomImageFileSystemFetcher(Context context,
+				LoadingControl loadingControl, int imageSize)
 		{
-			super(context, imageSize);
+			super(context, loadingControl, imageSize);
 		}
 
-		public CustomImageFileSystemFetcher(Context context, int imageWidth,
+		public CustomImageFileSystemFetcher(Context context,
+				LoadingControl loadingControl, int imageWidth,
 				int imageHeight)
 		{
-			super(context, imageWidth, imageHeight);
+			super(context, loadingControl, imageWidth, imageHeight);
 		}
 
 		@Override
