@@ -9,6 +9,8 @@ import me.openphoto.android.app.net.ReturnSizes;
 import me.openphoto.android.app.ui.adapter.PhotosEndlessAdapter;
 import me.openphoto.android.app.ui.lib.ImageStorage;
 import me.openphoto.android.app.ui.lib.ImageStorage.OnImageDisplayedCallback;
+import me.openphoto.android.app.ui.widget.ViewPagerWithDisableSupport;
+import me.openphoto.android.app.ui.widget.ViewPagerWithDisableSupport.GesturesEnabledHandler;
 import me.openphoto.android.app.util.GuiUtils;
 import android.app.Activity;
 import android.content.Context;
@@ -25,6 +27,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.polites.android.GestureImageView;
 
 /**
  * The general photo viewing screen
@@ -50,7 +54,7 @@ public class PhotoDetailsActivity extends Activity {
 
     private ImageStorage mStorage;
 
-    private ViewPager mViewPager;
+    private ViewPagerWithDisableSupport mViewPager;
 
     private PhotoDetailPagerAdapter mAdapter;
 
@@ -78,8 +82,15 @@ public class PhotoDetailsActivity extends Activity {
 					photos, tags, album));
         }
 
-        mViewPager = (ViewPager) findViewById(R.id.photos);
+        mViewPager = (ViewPagerWithDisableSupport) findViewById(R.id.photos);
         mViewPager.setAdapter(mAdapter);
+        mViewPager.setGesturesEnabledHandler(new GesturesEnabledHandler() {
+            
+            @Override
+            public boolean isEnabled() {
+                return !mAdapter.isCurrentImageZoomed();
+            }
+        });
 
         int position = getIntent().getIntExtra(EXTRA_ADAPTER_POSITION, 0);
         if (position > 0) {
@@ -91,6 +102,7 @@ public class PhotoDetailsActivity extends Activity {
 
         private final LayoutInflater mInflator;
         private final PhotosAdapter mAdapter;
+        private View mCurrentView;
         private final DataSetObserver mObserver = new DataSetObserver() {
 
             @Override
@@ -191,6 +203,22 @@ public class PhotoDetailsActivity extends Activity {
         public void startUpdate(View arg0) {
         }
 
+        @Override
+        public void setPrimaryItem(ViewGroup container, int position, Object object) {
+            super.setPrimaryItem(container, position, object);
+            mCurrentView = (View) object;
+        }
+
+        boolean isCurrentImageZoomed()
+        {
+            if (mCurrentView != null)
+            {
+                GestureImageView giv = (GestureImageView)
+                        mCurrentView.findViewById(R.id.image);
+                return giv.isZoomed();
+            }
+            return false;
+        }
     }
 
     private class PhotosAdapter extends PhotosEndlessAdapter {
