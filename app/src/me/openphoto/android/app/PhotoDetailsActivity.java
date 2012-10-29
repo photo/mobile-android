@@ -34,13 +34,12 @@ import com.polites.android.GestureImageView;
  * The general photo viewing screen
  * 
  * @author pboos
- * @version
- *          05.10.2012
- *          <br>- removed action bar reference
- *          <br>- removed custom onClick listener from the ImageView
+ * @version 05.10.2012 <br>
+ *          - removed action bar reference <br>
+ *          - removed custom onClick listener from the ImageView
  *          <p>
- *          03.10.2012
- *          <br>- added initial support for album photos filter
+ *          03.10.2012 <br>
+ *          - added initial support for album photos filter
  */
 public class PhotoDetailsActivity extends Activity {
     private static final String TAG = PhotoDetailsActivity.class.getSimpleName();
@@ -50,7 +49,7 @@ public class PhotoDetailsActivity extends Activity {
     public static final String EXTRA_ADAPTER_PHOTOS = "EXTRA_ADAPTER_PHOTOS";
     public static final String EXTRA_ADAPTER_POSITION = "EXTRA_ADAPTER_POSITION";
     public static final String EXTRA_ADAPTER_TAGS = "EXTRA_ADAPTER_TAGS";
-	public static final String EXTRA_ADAPTER_ALBUM = "EXTRA_ADAPTER_ALBUM";
+    public static final String EXTRA_ADAPTER_ALBUM = "EXTRA_ADAPTER_ALBUM";
 
     private ImageStorage mStorage;
 
@@ -77,15 +76,15 @@ public class PhotoDetailsActivity extends Activity {
         } else if (getIntent().hasExtra(EXTRA_ADAPTER_PHOTOS)) {
             ArrayList<Photo> photos = getIntent().getParcelableArrayListExtra(EXTRA_ADAPTER_PHOTOS);
             String tags = getIntent().getStringExtra(EXTRA_ADAPTER_TAGS);
-			String album = getIntent().getStringExtra(EXTRA_ADAPTER_ALBUM);
-			mAdapter = new PhotoDetailPagerAdapter(new PhotosAdapter(this,
-					photos, tags, album));
+            String album = getIntent().getStringExtra(EXTRA_ADAPTER_ALBUM);
+            mAdapter = new PhotoDetailPagerAdapter(new PhotosAdapter(this,
+                    photos, tags, album));
         }
 
         mViewPager = (ViewPagerWithDisableSupport) findViewById(R.id.photos);
         mViewPager.setAdapter(mAdapter);
         mViewPager.setGesturesEnabledHandler(new GesturesEnabledHandler() {
-            
+
             @Override
             public boolean isEnabled() {
                 return !mAdapter.isCurrentImageZoomed();
@@ -227,11 +226,11 @@ public class PhotoDetailsActivity extends Activity {
             super(context, photos);
         }
 
-		public PhotosAdapter(Context context, ArrayList<Photo> photos,
-				String tags,
-				String album)
-		{
-			super(context, photos, tags, album);
+        public PhotosAdapter(Context context, ArrayList<Photo> photos,
+                String tags,
+                String album)
+        {
+            super(context, photos, tags, album);
         }
 
         @Override
@@ -268,7 +267,7 @@ public class PhotoDetailsActivity extends Activity {
                 mPhoto = response.getPhoto();
                 return mStorage.getBitmap(mPhoto.getUrl(PhotosEndlessAdapter.SIZE_BIG));
             } catch (Exception e) {
-				GuiUtils.error(TAG, R.string.errorCouldNotGetPhoto, e);
+                GuiUtils.error(TAG, R.string.errorCouldNotGetPhoto, e);
                 return null;
             }
         }
@@ -281,8 +280,8 @@ public class PhotoDetailsActivity extends Activity {
                     mCallback.onImageDisplayed(mImageView);
                 }
             } else {
-				GuiUtils.alert(
-						R.string.errorOccured);
+                GuiUtils.alert(
+                        R.string.errorOccured);
             }
             super.onPostExecute(bitmap);
         }

@@ -88,7 +88,7 @@ public class TwitterFragment extends CommonDialogFragment
             });
         } catch (Exception ex)
         {
-			GuiUtils.error(TAG, R.string.errorCouldNotInitTwitterFragment, ex,
+            GuiUtils.error(TAG, R.string.errorCouldNotInitTwitterFragment, ex,
                     getActivity());
             dismiss();
         }
@@ -113,14 +113,14 @@ public class TwitterFragment extends CommonDialogFragment
         return result;
     }
 
-	private class ShowCurrentlyLoggedInUserTask extends
+    private class ShowCurrentlyLoggedInUserTask extends
             AsyncTask<Void, Void, Boolean>
     {
         TextView loggedInAsText;
         String name;
-		Context activity = getActivity();
+        Context activity = getActivity();
 
-		ShowCurrentlyLoggedInUserTask(View view)
+        ShowCurrentlyLoggedInUserTask(View view)
         {
             loggedInAsText = (TextView) view
                     .findViewById(R.id.loggedInAs);
@@ -139,15 +139,15 @@ public class TwitterFragment extends CommonDialogFragment
         {
             try
             {
-				Twitter twitter = TwitterProvider.getTwitter(activity);
+                Twitter twitter = TwitterProvider.getTwitter(activity);
                 name = twitter.getScreenName();
                 return true;
             } catch (Exception ex)
             {
-				GuiUtils.error(TAG,
-						R.string.errorCouldNotRetrieveTwitterScreenName,
+                GuiUtils.error(TAG,
+                        R.string.errorCouldNotRetrieveTwitterScreenName,
                         ex,
-						activity);
+                        activity);
             }
             return false;
         }
@@ -161,16 +161,17 @@ public class TwitterFragment extends CommonDialogFragment
             {
                 loggedInAsText.setText(String
                         .format(
-										activity.getString(R.string.share_twitter_logged_in_as),
+                                activity.getString(R.string.share_twitter_logged_in_as),
                                 name));
             }
         }
     }
 
-	private class TweetTask extends
+    private class TweetTask extends
             AsyncTask<Void, Void, Boolean>
     {
-		Context activity = getActivity();
+        Context activity = getActivity();
+
         @Override
         protected void onPreExecute()
         {
@@ -184,12 +185,12 @@ public class TwitterFragment extends CommonDialogFragment
         {
             try
             {
-				sendTweet(messageEt.getText()
-						.toString(), activity);
+                sendTweet(messageEt.getText()
+                        .toString(), activity);
                 return true;
             } catch (Exception ex)
             {
-				GuiUtils.error(TAG, R.string.errorCouldNotSendTweet, ex,
+                GuiUtils.error(TAG, R.string.errorCouldNotSendTweet, ex,
                         getActivity());
             }
             return false;
@@ -203,30 +204,30 @@ public class TwitterFragment extends CommonDialogFragment
             if (result.booleanValue())
             {
                 GuiUtils.info(
-						R.string.share_twitter_success_message);
+                        R.string.share_twitter_success_message);
             }
-			Dialog dialog = TwitterFragment.this.getDialog();
-			if (dialog != null && dialog.isShowing())
-			{
-				TwitterFragment.this.dismiss();
-			}
+            Dialog dialog = TwitterFragment.this.getDialog();
+            if (dialog != null && dialog.isShowing())
+            {
+                TwitterFragment.this.dismiss();
+            }
         }
     }
 
-	public static void sendTweet(String message, Context context)
-			throws TwitterException
-	{
-		Twitter twitter = TwitterProvider.getTwitter(context);
-		if (twitter != null)
-		{
-			sendTweet(message, twitter);
-		}
-	}
+    public static void sendTweet(String message, Context context)
+            throws TwitterException
+    {
+        Twitter twitter = TwitterProvider.getTwitter(context);
+        if (twitter != null)
+        {
+            sendTweet(message, twitter);
+        }
+    }
 
-	public static void sendTweet(String message, Twitter twitter)
-			throws TwitterException
-	{
-		StatusUpdate update = new StatusUpdate(message);
-		twitter.updateStatus(update);
-	}
+    public static void sendTweet(String message, Twitter twitter)
+            throws TwitterException
+    {
+        StatusUpdate update = new StatusUpdate(message);
+        twitter.updateStatus(update);
+    }
 }

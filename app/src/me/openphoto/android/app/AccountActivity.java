@@ -16,25 +16,26 @@ public class AccountActivity extends SActivity
 
     private static final String TAG = AccountActivity.class.getSimpleName();
 
-	BroadcastReceiver loginBroadcastReceiver;
+    BroadcastReceiver loginBroadcastReceiver;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_account);
-		loginBroadcastReceiver = LoginUtils
-				.getAndRegisterDestroyOnLoginActionBroadcastReceiver(TAG, this);
-	}
+        loginBroadcastReceiver = LoginUtils
+                .getAndRegisterDestroyOnLoginActionBroadcastReceiver(TAG, this);
+    }
 
-	@Override
-	protected void onDestroy()
-	{
-		super.onDestroy();
-		unregisterReceiver(loginBroadcastReceiver);
+    @Override
+    protected void onDestroy()
+    {
+        super.onDestroy();
+        unregisterReceiver(loginBroadcastReceiver);
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-		getSupportMenuInflater().inflate(R.menu.activity_account, menu);
+        getSupportMenuInflater().inflate(R.menu.activity_account, menu);
         return true;
     }
 
@@ -50,11 +51,11 @@ public class AccountActivity extends SActivity
         startActivity(intent);
     }
 
-	public void accountOwnServerButtonAction(View view)
-	{
-		CommonUtils.debug(TAG, "Start own server button action");
-		Intent intent = new Intent(this, SetupActivity.class);
-		startActivity(intent);
-	}
+    public void accountOwnServerButtonAction(View view)
+    {
+        CommonUtils.debug(TAG, "Start own server button action");
+        Intent intent = new Intent(this, SetupActivity.class);
+        startActivity(intent);
+    }
 
 }

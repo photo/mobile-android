@@ -36,6 +36,7 @@ public class ViewPagerWithDisableSupport extends ViewPager
     {
         return handler == null ? true : handler.isEnabled();
     }
+
     public void setGesturesEnabledHandler(GesturesEnabledHandler handler) {
         this.handler = handler;
     }

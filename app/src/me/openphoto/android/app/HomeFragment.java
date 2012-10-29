@@ -44,22 +44,22 @@ import com.facebook.android.R;
 public class HomeFragment extends CommonFragment implements Refreshable
 {
     public static final String TAG = HomeFragment.class.getSimpleName();
-	private static final String IMAGE_CACHE_DIR = "images";
+    private static final String IMAGE_CACHE_DIR = "images";
 
     private LoadingControl loadingControl;
     private NewestPhotosAdapter mAdapter;
     private LayoutInflater mInflater;
-	private ImageWorker mImageWorker;
-	private Photo activePhoto;
+    private ImageWorker mImageWorker;
+    private Photo activePhoto;
 
-	private ListView list;
-	private ReturnSizes returnSizes;
+    private ListView list;
+    private ReturnSizes returnSizes;
 
-	@Override
-	public void onCreate(Bundle savedInstanceState)
-	{
-		super.onCreate(savedInstanceState);
-	}
+    @Override
+    public void onCreate(Bundle savedInstanceState)
+    {
+        super.onCreate(savedInstanceState);
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -77,27 +77,27 @@ public class HomeFragment extends CommonFragment implements Refreshable
     {
         super.onAttach(activity);
         loadingControl = ((LoadingControl) activity);
-		// Fetch screen height and width, to use as our max size when loading
-		// images as this
-		// activity runs full screen
-		final DisplayMetrics displaymetrics = new DisplayMetrics();
-		activity.getWindowManager().getDefaultDisplay()
-				.getMetrics(displaymetrics);
-		final int height = displaymetrics.heightPixels;
-		final int width = displaymetrics.widthPixels;
-		final int longest = height > width ? height : width;
+        // Fetch screen height and width, to use as our max size when loading
+        // images as this
+        // activity runs full screen
+        final DisplayMetrics displaymetrics = new DisplayMetrics();
+        activity.getWindowManager().getDefaultDisplay()
+                .getMetrics(displaymetrics);
+        final int height = displaymetrics.heightPixels;
+        final int width = displaymetrics.widthPixels;
+        final int longest = height > width ? height : width;
 
-		returnSizes = new ReturnSizes(700, 650, true);
-		// The ImageWorker takes care of loading images into our ImageView
-		// children asynchronously
-		mImageWorker = new ImageFetcher(activity, loadingControl, longest);
-		mImageWorker.setImageCache(ImageCache.findOrCreateCache(activity,
-				IMAGE_CACHE_DIR));
-		mImageWorker.setImageFadeIn(false);
-		// if (iw == null)
-		// {
-		// iw = new ImageWorker(activity, loadingControl);
-		// }
+        returnSizes = new ReturnSizes(700, 650, true);
+        // The ImageWorker takes care of loading images into our ImageView
+        // children asynchronously
+        mImageWorker = new ImageFetcher(activity, loadingControl, longest);
+        mImageWorker.setImageCache(ImageCache.findOrCreateCache(activity,
+                IMAGE_CACHE_DIR));
+        mImageWorker.setImageFadeIn(false);
+        // if (iw == null)
+        // {
+        // iw = new ImageWorker(activity, loadingControl);
+        // }
 
     }
 
@@ -110,9 +110,9 @@ public class HomeFragment extends CommonFragment implements Refreshable
     public void refresh(View view)
     {
         mAdapter = new NewestPhotosAdapter(getActivity());
-		list = (ListView) view.findViewById(R.id.list_newest_photos);
+        list = (ListView) view.findViewById(R.id.list_newest_photos);
         list.setAdapter(mAdapter);
-		// registerForContextMenu(list);
+        // registerForContextMenu(list);
     }
 
     @Override
@@ -120,58 +120,59 @@ public class HomeFragment extends CommonFragment implements Refreshable
     {
         super.onDestroyView();
         mAdapter.forceStopLoadingIfNecessary();
-		mImageWorker.getImageCache().clearMemoryCache();
+        mImageWorker.getImageCache().clearMemoryCache();
     }
 
-	@Override
-	public void onCreateContextMenu(ContextMenu menu, View v,
-			ContextMenuInfo menuInfo)
-	{
-		if (v.getId() == R.id.share_button)
-		{
-			MenuInflater inflater = getSupportActivity()
-					.getSupportMenuInflater();
-			inflater.inflate(R.menu.share, menu);
-			super.onCreateContextMenu(menu, v, menuInfo);
-		} else
-		{
-			super.onCreateContextMenu(menu, v, menuInfo);
-		}
-	}
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v,
+            ContextMenuInfo menuInfo)
+    {
+        if (v.getId() == R.id.share_button)
+        {
+            MenuInflater inflater = getSupportActivity()
+                    .getSupportMenuInflater();
+            inflater.inflate(R.menu.share, menu);
+            super.onCreateContextMenu(menu, v, menuInfo);
+        } else
+        {
+            super.onCreateContextMenu(menu, v, menuInfo);
+        }
+    }
 
-	@Override
-	public boolean onContextItemSelected(MenuItem item)
-	{
-		int menuItemIndex = item.getItemId();
-		switch (menuItemIndex)
-		{
-			case R.id.menu_share_email:
-				shareViaEMail(activePhoto);
-			break;
-			case R.id.menu_share_twitter:
-				shareActivePhotoViaTwitter();
-			break;
-			case R.id.menu_share_facebook:
-				shareActivePhotoViaFacebook();
-			break;
-		}
-		return true;
-	}
+    @Override
+    public boolean onContextItemSelected(MenuItem item)
+    {
+        int menuItemIndex = item.getItemId();
+        switch (menuItemIndex)
+        {
+            case R.id.menu_share_email:
+                shareViaEMail(activePhoto);
+                break;
+            case R.id.menu_share_twitter:
+                shareActivePhotoViaTwitter();
+                break;
+            case R.id.menu_share_facebook:
+                shareActivePhotoViaFacebook();
+                break;
+        }
+        return true;
+    }
 
-	@Override
-	public void onResume()
-	{
-		super.onResume();
-		FacebookUtils.extendAceessTokenIfNeeded(getActivity());
-		mImageWorker.setExitTasksEarly(false);
-	}
+    @Override
+    public void onResume()
+    {
+        super.onResume();
+        FacebookUtils.extendAceessTokenIfNeeded(getActivity());
+        mImageWorker.setExitTasksEarly(false);
+    }
 
-	@Override
-	public void onPause()
-	{
-		super.onPause();
-		mImageWorker.setExitTasksEarly(true);
-	}
+    @Override
+    public void onPause()
+    {
+        super.onPause();
+        mImageWorker.setExitTasksEarly(true);
+    }
+
     private void shareViaEMail(Photo photo)
     {
         String mailId = "";
@@ -179,7 +180,7 @@ public class HomeFragment extends CommonFragment implements Refreshable
                 Uri.fromParts("mailto", mailId, null));
         emailIntent.putExtra(android.content.Intent.EXTRA_SUBJECT,
                 getString(R.string.share_email_default_title));
-		String url = photo.getUrl(Photo.PATH_ORIGINAL);
+        String url = photo.getUrl(Photo.PATH_ORIGINAL);
         String bodyText = String.format(getString(R.string.share_email_default_body),
                 url, url);
         emailIntent.putExtra(
@@ -190,83 +191,85 @@ public class HomeFragment extends CommonFragment implements Refreshable
                 getString(R.string.share_email_send_title)));
     }
 
-	public void shareActivePhotoViaTwitter()
-	{
-		if (activePhoto != null)
-		{
-			TwitterUtils.runAfterTwitterAuthentication(getActivity(),
-					new Runnable()
-					{
+    public void shareActivePhotoViaTwitter()
+    {
+        if (activePhoto != null)
+        {
+            TwitterUtils.runAfterTwitterAuthentication(getActivity(),
+                    new Runnable()
+                    {
 
-						@Override
-						public void run()
-						{
-							try
-							{
-								TwitterFragment twitterDialog = new TwitterFragment();
-								twitterDialog.setPhoto(activePhoto);
-								twitterDialog.replace(getActivity()
-										.getSupportFragmentManager());
-							} catch (Exception ex)
-							{
-								GuiUtils.error(TAG, null, ex);
-							}
-						}
-					});
-		}
-	}
+                        @Override
+                        public void run()
+                        {
+                            try
+                            {
+                                TwitterFragment twitterDialog = new TwitterFragment();
+                                twitterDialog.setPhoto(activePhoto);
+                                twitterDialog.replace(getActivity()
+                                        .getSupportFragmentManager());
+                            } catch (Exception ex)
+                            {
+                                GuiUtils.error(TAG, null, ex);
+                            }
+                        }
+                    });
+        }
+    }
 
-	public void shareActivePhotoViaFacebook()
-	{
-		if (activePhoto != null)
-		{
-			FacebookUtils.runAfterFacebookAuthentication(getActivity(),
-					new Runnable()
-					{
+    public void shareActivePhotoViaFacebook()
+    {
+        if (activePhoto != null)
+        {
+            FacebookUtils.runAfterFacebookAuthentication(getActivity(),
+                    new Runnable()
+                    {
 
-						@Override
-						public void run()
-						{
-							try
-							{
-								FacebookFragment facebookDialog = new FacebookFragment();
-								facebookDialog.setPhoto(activePhoto);
-								facebookDialog.replace(getActivity()
-										.getSupportFragmentManager());
-							} catch (Exception ex)
-							{
-								GuiUtils.error(TAG, null, ex);
-							}
-						}
-					});
-		}
-	}
+                        @Override
+                        public void run()
+                        {
+                            try
+                            {
+                                FacebookFragment facebookDialog = new FacebookFragment();
+                                facebookDialog.setPhoto(activePhoto);
+                                facebookDialog.replace(getActivity()
+                                        .getSupportFragmentManager());
+                            } catch (Exception ex)
+                            {
+                                GuiUtils.error(TAG, null, ex);
+                            }
+                        }
+                    });
+        }
+    }
 
-	public static class UpdateStatusListener extends FacebookBaseDialogListener
-	{
-		public UpdateStatusListener(Context context)
-		{
-			super(context);
-		}
-		@Override
-		public void onComplete(Bundle values)
-		{
-			final String postId = values.getString("post_id");
-			if (postId != null)
-			{
-				GuiUtils.info(R.string.share_facebook_success_message);
-			} else
-			{
-				GuiUtils.info(R.string.share_facebook_no_wall_post_made);
-			}
-		}
+    public static class UpdateStatusListener extends FacebookBaseDialogListener
+    {
+        public UpdateStatusListener(Context context)
+        {
+            super(context);
+        }
 
-		@Override
-		public void onCancel()
-		{
-			GuiUtils.info(R.string.share_facebook_share_canceled_message);
-		}
-	}
+        @Override
+        public void onComplete(Bundle values)
+        {
+            final String postId = values.getString("post_id");
+            if (postId != null)
+            {
+                GuiUtils.info(R.string.share_facebook_success_message);
+            } else
+            {
+                GuiUtils.info(R.string.share_facebook_no_wall_post_made);
+            }
+        }
+
+        @Override
+        public void onCancel()
+        {
+            GuiUtils.info(R.string.share_facebook_share_canceled_message);
+        }
+    }
+
     private class NewestPhotosAdapter extends EndlessAdapter<Photo>
     {
         private final IOpenPhotoApi mOpenPhotoApi;
@@ -299,12 +302,12 @@ public class HomeFragment extends CommonFragment implements Refreshable
             // load the image in another thread
             ImageView photoView =
                     (ImageView) convertView.findViewById(R.id.newest_image);
-			mImageWorker
-					.loadImage(photo.getUrl(returnSizes.toString()), photoView);
-			// photoView.setTag(photo.getUrl("700x650xCR"));
-			// Drawable dr =
-			// iw.loadImage(this, photoView);
-			// photoView.setImageDrawable(dr);
+            mImageWorker
+                    .loadImage(photo.getUrl(returnSizes.toString()), photoView);
+            // photoView.setTag(photo.getUrl("700x650xCR"));
+            // Drawable dr =
+            // iw.loadImage(this, photoView);
+            // photoView.setImageDrawable(dr);
 
             // set title or file's name
             if (photo.getTitle() != null && photo.getTitle().trim().length()
@@ -427,9 +430,9 @@ public class HomeFragment extends CommonFragment implements Refreshable
                             startActivity(intent);
                         } catch (Exception e)
                         {
-							GuiUtils.error(TAG,
-									R.string.errorCouldNotUseIntentsToOpenMaps,
-									e);
+                            GuiUtils.error(TAG,
+                                    R.string.errorCouldNotUseIntentsToOpenMaps,
+                                    e);
                         }
                     }
                 });
@@ -444,11 +447,11 @@ public class HomeFragment extends CommonFragment implements Refreshable
                 @Override
                 public void onClick(View v)
                 {
-					activePhoto = photo;
-					registerForContextMenu(v);
-					v.showContextMenu();
-					// getSupportActivity().openContextMenu(v);
-					unregisterForContextMenu(v);
+                    activePhoto = photo;
+                    registerForContextMenu(v);
+                    v.showContextMenu();
+                    // getSupportActivity().openContextMenu(v);
+                    unregisterForContextMenu(v);
                 }
             });
             return convertView;
@@ -462,14 +465,14 @@ public class HomeFragment extends CommonFragment implements Refreshable
                 try
                 {
                     PhotosResponse response = mOpenPhotoApi
-							.getNewestPhotos(returnSizes, new Paging(page, 25));
-					return new LoadResponse(response.getPhotos(), false);
+                            .getNewestPhotos(returnSizes, new Paging(page, 25));
+                    return new LoadResponse(response.getPhotos(), false);
                 } catch (Exception e)
                 {
-					GuiUtils.error(
-							TAG,
-							R.string.errorCouldNotLoadNextPhotosInList,
-							e, mContext);
+                    GuiUtils.error(
+                            TAG,
+                            R.string.errorCouldNotLoadNextPhotosInList,
+                            e, mContext);
                 }
             }
             return new LoadResponse(null, false);

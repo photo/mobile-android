@@ -78,7 +78,7 @@ public class ImageStorage {
         try {
             return FileUtils.getImageCacheFolder(mContext) + "/" + url;
         } catch (IOException e) {
-			GuiUtils.noAlertError(TAG, "Can not get storage path", e);
+            GuiUtils.noAlertError(TAG, "Can not get storage path", e);
             return null;
         }
     }

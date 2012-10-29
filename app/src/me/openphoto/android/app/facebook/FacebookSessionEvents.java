@@ -27,9 +27,8 @@ public class FacebookSessionEvents {
      * Associate the given listener with this Facebook object. The listener's
      * callback interface will be invoked when authentication events occur.
      * 
-     * @param listener
-     *            The callback object for notifying the application when auth
-     *            events happen.
+     * @param listener The callback object for notifying the application when
+     *            auth events happen.
      */
     public static void addAuthListener(AuthListener listener) {
         mAuthListeners.add(listener);
@@ -39,9 +38,8 @@ public class FacebookSessionEvents {
      * Remove the given listener from the list of those that will be notified
      * when authentication events occur.
      * 
-     * @param listener
-     *            The callback object for notifying the application when auth
-     *            events happen.
+     * @param listener The callback object for notifying the application when
+     *            auth events happen.
      */
     public static void removeAuthListener(AuthListener listener) {
         mAuthListeners.remove(listener);
@@ -51,9 +49,8 @@ public class FacebookSessionEvents {
      * Associate the given listener with this Facebook object. The listener's
      * callback interface will be invoked when logout occurs.
      * 
-     * @param listener
-     *            The callback object for notifying the application when log out
-     *            starts and finishes.
+     * @param listener The callback object for notifying the application when
+     *            log out starts and finishes.
      */
     public static void addLogoutListener(LogoutListener listener) {
         mLogoutListeners.add(listener);
@@ -63,9 +60,8 @@ public class FacebookSessionEvents {
      * Remove the given listener from the list of those that will be notified
      * when logout occurs.
      * 
-     * @param listener
-     *            The callback object for notifying the application when log out
-     *            starts and finishes.
+     * @param listener The callback object for notifying the application when
+     *            log out starts and finishes.
      */
     public static void removeLogoutListener(LogoutListener listener) {
         mLogoutListeners.remove(listener);
@@ -108,9 +104,8 @@ public class FacebookSessionEvents {
         public void onAuthSucceed();
 
         /**
-         * Called when a login completes unsuccessfully with an error.
-         * 
-         * Executed by the thread that initiated the authentication.
+         * Called when a login completes unsuccessfully with an error. Executed
+         * by the thread that initiated the authentication.
          */
         public void onAuthFail(String error);
     }
@@ -128,9 +123,8 @@ public class FacebookSessionEvents {
 
         /**
          * Called when the session information has been cleared. UI should be
-         * updated to reflect logged-out state.
-         * 
-         * Executed by the thread that initiated the logout.
+         * updated to reflect logged-out state. Executed by the thread that
+         * initiated the logout.
          */
         public void onLogoutFinish();
     }
