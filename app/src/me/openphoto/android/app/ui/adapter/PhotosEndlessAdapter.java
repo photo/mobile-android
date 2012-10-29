@@ -22,15 +22,13 @@ public abstract class PhotosEndlessAdapter extends EndlessAdapter<Photo>
     private final List<String> mTagFilter;
     private final String mAlbumFilter;
     private static final ReturnSizes mSizes;
-    public static String SIZE_SMALL;
-    public static String SIZE_BIG;
+    public static ReturnSizes SIZE_SMALL = new ReturnSizes(200, 200);
+    public static ReturnSizes SIZE_BIG = new ReturnSizes(1024, 1024);
 
     static
     {
-        mSizes = new ReturnSizes(200, 200);
-        mSizes.add(1024, 1024);
-        SIZE_SMALL = mSizes.get(0);
-        SIZE_BIG = mSizes.get(1);
+        mSizes = new ReturnSizes(SIZE_SMALL);
+        mSizes.add(SIZE_BIG);
     }
 
     public PhotosEndlessAdapter(Context context)

@@ -1,9 +1,11 @@
 
 package me.openphoto.android.app;
 
+import me.openphoto.android.app.bitmapfun.util.ImageCache;
+import me.openphoto.android.app.bitmapfun.util.ImageFetcher;
 import me.openphoto.android.app.model.Photo;
+import me.openphoto.android.app.net.ReturnSizes;
 import me.openphoto.android.app.ui.adapter.PhotosEndlessAdapter;
-import me.openphoto.android.app.ui.lib.ImageStorage;
 import me.openphoto.android.app.util.LoadingControl;
 import me.openphoto.android.app.util.Utils;
 import android.content.Context;
@@ -19,10 +21,12 @@ import android.widget.ImageView;
 import com.WazaBe.HoloEverywhere.LayoutInflater;
 import com.WazaBe.HoloEverywhere.app.Activity;
 
-public class GalleryFragment extends CommonFragment implements Refreshable,
+public class GalleryFragment extends CommonFrargmentWithImageWorker implements Refreshable,
         OnItemClickListener
 {
     public static final String TAG = GalleryFragment.class.getSimpleName();
+
+    private static final String IMAGE_CACHE_DIR = SyncImageSelectionFragment.IMAGE_CACHE_DIR;
 
     public static String EXTRA_TAG = "EXTRA_TAG";
     public static String EXTRA_ALBUM = "EXTRA_ALBUM";
@@ -31,6 +35,8 @@ public class GalleryFragment extends CommonFragment implements Refreshable,
     private GalleryAdapter mAdapter;
     private String mTags;
     private String mAlbum;
+
+    private ReturnSizes returnSizes;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -49,6 +55,14 @@ public class GalleryFragment extends CommonFragment implements Refreshable,
         super.onAttach(activity);
         loadingControl = ((LoadingControl) activity);
 
+    }
+    @Override
+    protected void initImageWorker() {
+        returnSizes = PhotosEndlessAdapter.SIZE_SMALL;
+        mImageWorker = new ImageFetcher(getActivity(), loadingControl, returnSizes.getWidth(),
+                returnSizes.getHeight());
+        mImageWorker.setImageCache(ImageCache.findOrCreateCache(getActivity(),
+                IMAGE_CACHE_DIR));
     }
 
     @Override
@@ -104,9 +118,6 @@ public class GalleryFragment extends CommonFragment implements Refreshable,
 
     private class GalleryAdapter extends PhotosEndlessAdapter
     {
-        private final ImageStorage mStorage = new ImageStorage(
-                getActivity());
-
         public GalleryAdapter()
         {
             this(null, null);
@@ -129,8 +140,8 @@ public class GalleryFragment extends CommonFragment implements Refreshable,
                         R.layout.item_gallery_image, null);
             }
             ImageView image = (ImageView) convertView.findViewById(R.id.image);
-            image.setImageBitmap(null); // TODO maybe a loading image
-            mStorage.displayImageFor(image, photo.getUrl(SIZE_SMALL));
+            mImageWorker
+                    .loadImage(photo.getUrl(returnSizes.toString()), image);
             return convertView;
         }
 
