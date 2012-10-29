@@ -46,7 +46,6 @@ public class MainActivity extends SActivity
     public final static int AUTHORIZE_ACTIVITY_RESULT_CODE = 0;
 
     private ActionBar mActionBar;
-    private Menu mMenu;
     private int mLoaders = 0;
 
     private List<BroadcastReceiver> receivers = new ArrayList<BroadcastReceiver>();
@@ -180,24 +179,25 @@ public class MainActivity extends SActivity
 
     public void reinitMenu()
     {
-        if (mMenu != null)
-        {
-            mMenu.findItem(R.id.menu_camera).setVisible(
-                    Preferences.isLoggedIn(this));
-            Fragment currentFragment = getCurrentFragment();
-            showRefreshAction(currentFragment != null
-                    && currentFragment instanceof Refreshable
-                    && mLoaders == 0);
-        }
+        invalidateOptionsMenu();
+    }
+
+    public void reinitMenu(Menu menu)
+    {
+        menu.findItem(R.id.menu_camera).setVisible(
+                Preferences.isLoggedIn(this));
+        Fragment currentFragment = getCurrentFragment();
+        menu.findItem(R.id.menu_refresh).setVisible(currentFragment != null
+                && currentFragment instanceof Refreshable
+                && mLoaders == 0);
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu)
     {
-        mMenu = menu;
         MenuInflater inflater = getSupportMenuInflater();
         inflater.inflate(R.menu.main, menu);
-        reinitMenu();
+        reinitMenu(menu);
         return true;
     }
 
@@ -250,8 +250,8 @@ public class MainActivity extends SActivity
     {
         if (mLoaders++ == 0)
         {
+            reinitMenu();
             showLoading(true);
-            showRefreshAction(false);
         }
     }
 
@@ -265,13 +265,6 @@ public class MainActivity extends SActivity
         }
     }
 
-    private void showRefreshAction(boolean show)
-    {
-        if (mMenu != null)
-        {
-            mMenu.findItem(R.id.menu_refresh).setVisible(show);
-        }
-    }
 
     private void showLoading(boolean show)
     {

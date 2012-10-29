@@ -71,6 +71,23 @@ public abstract class ImageWorker {
      */
     public void loadImage(Object data, ImageView imageView)
     {
+        loadImage(data, imageView, loadingControl);
+    }
+
+    /**
+     * Load an image specified by the data parameter into an ImageView (override
+     * {@link ImageWorker#processBitmap(Object)} to define the processing
+     * logic). A memory and disk cache will be used if an {@link ImageCache} has
+     * been set using {@link ImageWorker#setImageCache(ImageCache)}. If the
+     * image is found in the memory cache, it is set immediately, otherwise an
+     * {@link AsyncTask} will be created to asynchronously load the bitmap.
+     * 
+     * @param data The URL of the image to download.
+     * @param imageView The ImageView to bind the downloaded image to.
+     * @param loadingControl the loading control.
+     */
+    public void loadImage(Object data, ImageView imageView, LoadingControl loadingControl)
+    {
         Bitmap bitmap = null;
 
         if (mImageCache != null) {
@@ -81,7 +98,7 @@ public abstract class ImageWorker {
             // Bitmap found in memory cache
             imageView.setImageBitmap(bitmap);
         } else if (cancelPotentialWork(data, imageView)) {
-            final BitmapWorkerTask task = new BitmapWorkerTask(imageView);
+            final BitmapWorkerTask task = new BitmapWorkerTask(imageView, loadingControl);
             final AsyncDrawable asyncDrawable =
                     new AsyncDrawable(mContext.getResources(), mLoadingBitmap, task);
             imageView.setImageDrawable(asyncDrawable);
@@ -225,10 +242,12 @@ public abstract class ImageWorker {
     private class BitmapWorkerTask extends AsyncTask<Object, Void, Bitmap> {
         private Object data;
         private final WeakReference<ImageView> imageViewReference;
+        LoadingControl loadingControl;
 
-        public BitmapWorkerTask(ImageView imageView)
+        public BitmapWorkerTask(ImageView imageView, LoadingControl loadingControl)
         {
             imageViewReference = new WeakReference<ImageView>(imageView);
+            this.loadingControl = loadingControl;
         }
 
         @Override

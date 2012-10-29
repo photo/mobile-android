@@ -5,12 +5,21 @@ import java.util.ArrayList;
 
 public class ReturnSizes {
 
-    private final ArrayList<String> mSizes = new ArrayList<String>();
+    private final ArrayList<ReturnSizes> mSizes = new ArrayList<ReturnSizes>();
 
-    public ReturnSizes(String size) {
-        add(size);
+    int width;
+    int height;
+    boolean cropped;
+    boolean blackWhite;
+
+    public ReturnSizes(ReturnSizes returnSizes) {
+        this(returnSizes.getWidth(), returnSizes.getHeight(), returnSizes.isCropped(), returnSizes
+                .isBlackWhite());
+        for (ReturnSizes rs : returnSizes.mSizes)
+        {
+            mSizes.add(new ReturnSizes(rs));
+        }
     }
-
     public ReturnSizes(int width, int height) {
         this(width, height, false);
     }
@@ -20,7 +29,10 @@ public class ReturnSizes {
     }
 
     public ReturnSizes(int width, int height, boolean cropped, boolean blackWhite) {
-        add(width, height, cropped, blackWhite);
+        this.width = width;
+        this.height = height;
+        this.cropped = cropped;
+        this.blackWhite = blackWhite;
     }
 
     public void add(int width, int height) {
@@ -32,18 +44,26 @@ public class ReturnSizes {
     }
 
     public void add(int width, int height, boolean cropped, boolean blackWhite) {
-        StringBuilder sb = new StringBuilder(width + "x" + height);
-        if (cropped) {
-            sb.append("xCR");
-        }
-        if (blackWhite) {
-            sb.append("xBW");
-        }
-        mSizes.add(sb.toString());
+
+        mSizes.add(new ReturnSizes(width, height, cropped, blackWhite));
     }
 
-    private void add(String size) {
-        mSizes.add(size);
+    public void add(ReturnSizes returnSizes)
+    {
+        mSizes.add(returnSizes);
+    }
+    static String getString(ReturnSizes returnSizes)
+    {
+        StringBuilder sb = new StringBuilder(returnSizes.width + "x" + returnSizes.height);
+        if (returnSizes.cropped) {
+            sb.append("xCR");
+        }
+        if (returnSizes.blackWhite) {
+            sb.append("xBW");
+        }
+        String glue = ",";
+        sb.append(join(returnSizes.mSizes, glue));
+        return sb.toString();
     }
 
     /*
@@ -52,26 +72,36 @@ public class ReturnSizes {
      */
     @Override
     public String toString() {
-        return join(mSizes, ",");
-    }
-
-    public String get(int index) {
-        return mSizes.get(index);
+        return getString(this);
     }
 
     public int size() {
         return mSizes.size();
     }
 
-    String join(ArrayList<String> strings, String glue)
+    static String join(ArrayList<ReturnSizes> returnSizes, String glue)
     {
-        int k = strings.size();
-        if (k == 0)
-            return null;
         StringBuilder out = new StringBuilder();
-        out.append(strings.get(0));
-        for (int x = 1; x < k; ++x)
-            out.append(glue).append(strings.get(x));
+        for (ReturnSizes rs : returnSizes)
+        {
+            out.append(glue).append(rs.toString());
+        }
         return out.toString();
+    }
+
+    public int getWidth() {
+        return width;
+    }
+
+    public int getHeight() {
+        return height;
+    }
+
+    public boolean isCropped() {
+        return cropped;
+    }
+
+    public boolean isBlackWhite() {
+        return blackWhite;
     }
 }

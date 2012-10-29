@@ -50,7 +50,8 @@
         android:paddingLeft="@dimen/site_padding"
         android:paddingRight="@dimen/site_padding"
         android:paddingTop="@dimen/site_padding_half"
-        android:paddingBottom="@dimen/site_padding_half" >
+        android:paddingBottom="@dimen/site_padding_half" 
+        android:visibility="gone">
 
         <TextView
             android:id="@+id/image_title"
