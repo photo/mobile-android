@@ -20,10 +20,12 @@ import android.os.Parcelable;
  * @author Patrick Boos
  */
 public class Photo implements Parcelable {
+    public static final String PERMISSION = "permission";
     public static final int PERMISSION_PUBLIC = 1;
     public static final int PERMISSION_PRIVATE = 0;
     public static final String ORIGINAL_SIZE = "original";
     public static final String PATH_ORIGINAL = "pathOriginal";
+    public static final String URL = "url";
 
     protected String mId;
     protected final List<String> mTags;
@@ -76,9 +78,9 @@ public class Photo implements Parcelable {
             pathOriginal = host + pathOriginal;
         }
         photo.mUrls.put(ORIGINAL_SIZE, pathOriginal);
-        photo.mUrls.put("url", json.optString("url"));
+        photo.mUrls.put(URL, json.optString("url"));
         photo.mUrls.put(PATH_ORIGINAL, json.optString(PATH_ORIGINAL));
-        photo.mPermission = json.optInt("permission", PERMISSION_PRIVATE);
+        photo.mPermission = json.optInt(PERMISSION, PERMISSION_PRIVATE);
 
         // dates
         Long dateUploadedInSeconds = Long.parseLong(json.optString("dateUploaded"));

@@ -242,7 +242,7 @@ public class FacebookFragment extends CommonDialogFragment
                 context.getString(R.string.share_facebook_default_caption));
         bparams.putString("description", context
                 .getString(R.string.share_facebook_default_description));
-        bparams.putString("picture", photo.getUrl(Photo.PATH_ORIGINAL));
+        bparams.putString("picture", photo.getUrl(Photo.URL));
         facebook.request("feed", bparams, "POST");
     }
 }

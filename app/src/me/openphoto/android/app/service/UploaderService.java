@@ -263,7 +263,7 @@ public class UploaderService extends Service {
             {
                 TwitterFragment.sendTweet(String.format(
                         getString(R.string.share_twitter_default_msg),
-                        photo.getUrl(Photo.PATH_ORIGINAL)), twitter);
+                        photo.getUrl(Photo.URL)), twitter);
             }
         } catch (Exception ex)
         {
