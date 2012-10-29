@@ -1,3 +1,4 @@
+
 package me.openphoto.android.app;
 
 import me.openphoto.android.app.net.account.AccountOpenPhotoResponse;
@@ -19,190 +20,192 @@ import com.WazaBe.HoloEverywhere.sherlock.SActivity;
 import com.actionbarsherlock.view.Menu;
 
 public class AccountLogin extends SActivity implements
-		LoadingControl
+        LoadingControl
 {
-	private static final String TAG = AccountLogin.class.getSimpleName();
-	ProgressDialog progress;
+    private static final String TAG = AccountLogin.class.getSimpleName();
+    ProgressDialog progress;
 
-	@Override
-	public void onCreate(Bundle savedInstanceState)
-	{
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_account_login);
-	}
+    @Override
+    public void onCreate(Bundle savedInstanceState)
+    {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_account_login);
+    }
 
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu)
-	{
-		getSupportMenuInflater().inflate(R.menu.activity_account_login, menu);
-		return true;
-	}
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu)
+    {
+        getSupportMenuInflater().inflate(R.menu.activity_account_login, menu);
+        return true;
+    }
 
-	public void loginButtonAction(View view)
-	{
-		CommonUtils.debug(TAG, "Login the user");
+    public void loginButtonAction(View view)
+    {
+        CommonUtils.debug(TAG, "Login the user");
 
-		EditText editText = (EditText) findViewById(R.id.edit_email);
-		String email = editText.getText().toString();
+        EditText editText = (EditText) findViewById(R.id.edit_email);
+        String email = editText.getText().toString();
 
-		editText = (EditText) findViewById(R.id.edit_password);
-		String password = editText.getText().toString();
+        editText = (EditText) findViewById(R.id.edit_password);
+        String password = editText.getText().toString();
 
-		if (!GuiUtils.validateBasicTextData(
-				new String[]
-				{
-						email, password
-				}, new int[]
-				{
-						R.string.field_email,
-						R.string.field_password
-				}, this))
-		{
-			return;
-		}
+        if (!GuiUtils.validateBasicTextData(
+                new String[]
+                {
+                        email, password
+                }, new int[]
+                {
+                        R.string.field_email,
+                        R.string.field_password
+                }, this))
+        {
+            return;
+        }
 
-		CommonUtils.debug(TAG, "Email = [" + email + "] and pwd = [" + password + "]");
+        CommonUtils.debug(TAG, "Email = [" + email + "] and pwd = [" + password + "]");
 
-		// clean up login information
-		Preferences.logout(this);
+        // clean up login information
+        Preferences.logout(this);
 
-		new LogInUserTask(new Credentials(email, password), this, this)
-				.execute();
+        new LogInUserTask(new Credentials(email, password), this, this)
+                .execute();
 
-	}
+    }
 
-	@Override
-	public void startLoading()
-	{
-		if (progress == null)
-		{
-			progress = ProgressDialog.show(this,
-					getString(R.string.logging_in_message), null, true, false);
-		}
-	}
+    @Override
+    public void startLoading()
+    {
+        if (progress == null)
+        {
+            progress = ProgressDialog.show(this,
+                    getString(R.string.logging_in_message), null, true, false);
+        }
+    }
 
-	@Override
-	public void stopLoading()
-	{
-		if (progress != null && progress.isShowing())
-		{
-			progress.dismiss();
-			progress = null;
-		}
-	}
-	private class LogInUserTask extends
-			AsyncTask<Void, Void, AccountOpenPhotoResponse>
-	{
-		private Credentials credentials;
-		private Activity activity;
-		LoadingControl loadingControl;
+    @Override
+    public void stopLoading()
+    {
+        if (progress != null && progress.isShowing())
+        {
+            progress.dismiss();
+            progress = null;
+        }
+    }
 
-		public LogInUserTask(Credentials credentials,
-				LoadingControl loadingControl, Activity activity)
-		{
-			this.credentials = credentials;
-			this.activity = activity;
-			this.loadingControl = loadingControl;
-		}
-		@Override
-		protected AccountOpenPhotoResponse doInBackground(Void... params)
-		{
-			IAccountOpenPhotoApi api = new FakeAccountOpenPhotoApi(
-					this.activity);
-			try
-			{
-				return api.signIn(credentials.getUser(),
-						credentials.getPwd());
-			} catch (Exception e)
-			{
-				GuiUtils.error(TAG,
-						R.string.errorCouldNotLogin,
-						e,
-						this.activity);
-			}
-			return null;
-		}
+    private class LogInUserTask extends
+            AsyncTask<Void, Void, AccountOpenPhotoResponse>
+    {
+        private Credentials credentials;
+        private Activity activity;
+        LoadingControl loadingControl;
 
-		@Override
-		protected void onPreExecute()
-		{
-			super.onPreExecute();
-			loadingControl.startLoading();
-		}
+        public LogInUserTask(Credentials credentials,
+                LoadingControl loadingControl, Activity activity)
+        {
+            this.credentials = credentials;
+            this.activity = activity;
+            this.loadingControl = loadingControl;
+        }
 
-		@Override
-		protected void onPostExecute(AccountOpenPhotoResponse result)
-		{
-			try
-			{
-				super.onPostExecute(result);
-				loadingControl.stopLoading();
+        @Override
+        protected AccountOpenPhotoResponse doInBackground(Void... params)
+        {
+            IAccountOpenPhotoApi api = new FakeAccountOpenPhotoApi(
+                    this.activity);
+            try
+            {
+                return api.signIn(credentials.getUser(),
+                        credentials.getPwd());
+            } catch (Exception e)
+            {
+                GuiUtils.error(TAG,
+                        R.string.errorCouldNotLogin,
+                        e,
+                        this.activity);
+            }
+            return null;
+        }
 
-				if (result != null)
-				{
-					if (result.isSuccess())
-					{
-						// save credentials.
-						result.saveCredentials(this.activity);
+        @Override
+        protected void onPreExecute()
+        {
+            super.onPreExecute();
+            loadingControl.startLoading();
+        }
 
-						// start new activity
-						setResult(RESULT_OK);
-						startActivity(new Intent(this.activity,
-								MainActivity.class));
-						LoginUtils.sendLoggedInBroadcast(activity);
-						this.activity.finish();
-					} else if (result.isInvalidCredentials())
-					{
-						GuiUtils.alert(R.string.invalid_credentials);
-					} else if (result.isUnknownError())
-					{
-						if (result.getMessage() != null
-								&& result.getMessage().length() > 0)
-						{
-							GuiUtils.alert(result.getMessage(), activity);
-						} else
-						{
-							GuiUtils.alert(R.string.unknown_error);
-						}
-					}
-				}
-			} catch (Exception e)
-			{
-				GuiUtils.error(TAG, null, e, activity);
-			}
-		}
+        @Override
+        protected void onPostExecute(AccountOpenPhotoResponse result)
+        {
+            try
+            {
+                super.onPostExecute(result);
+                loadingControl.stopLoading();
 
-	}
+                if (result != null)
+                {
+                    if (result.isSuccess())
+                    {
+                        // save credentials.
+                        result.saveCredentials(this.activity);
 
-	public class Credentials
-	{
-		private String user;
-		private String pwd;
+                        // start new activity
+                        setResult(RESULT_OK);
+                        startActivity(new Intent(this.activity,
+                                MainActivity.class));
+                        LoginUtils.sendLoggedInBroadcast(activity);
+                        this.activity.finish();
+                    } else if (result.isInvalidCredentials())
+                    {
+                        GuiUtils.alert(R.string.invalid_credentials);
+                    } else if (result.isUnknownError())
+                    {
+                        if (result.getMessage() != null
+                                && result.getMessage().length() > 0)
+                        {
+                            GuiUtils.alert(result.getMessage(), activity);
+                        } else
+                        {
+                            GuiUtils.alert(R.string.unknown_error);
+                        }
+                    }
+                }
+            } catch (Exception e)
+            {
+                GuiUtils.error(TAG, null, e, activity);
+            }
+        }
 
-		public Credentials(String user, String pwd)
-		{
-			this.user = user;
-			this.pwd = pwd;
-		}
+    }
 
-		public String getUser()
-		{
-			return user;
-		}
+    public class Credentials
+    {
+        private String user;
+        private String pwd;
 
-		public void setUser(String user)
-		{
-			this.user = user;
-		}
+        public Credentials(String user, String pwd)
+        {
+            this.user = user;
+            this.pwd = pwd;
+        }
 
-		public String getPwd()
-		{
-			return pwd;
-		}
+        public String getUser()
+        {
+            return user;
+        }
 
-		public void setPwd(String pwd)
-		{
-			this.pwd = pwd;
-		}
-	}
+        public void setUser(String user)
+        {
+            this.user = user;
+        }
+
+        public String getPwd()
+        {
+            return pwd;
+        }
+
+        public void setPwd(String pwd)
+        {
+            this.pwd = pwd;
+        }
+    }
 }

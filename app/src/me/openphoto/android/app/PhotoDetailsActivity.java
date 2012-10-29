@@ -9,6 +9,8 @@ import me.openphoto.android.app.net.ReturnSizes;
 import me.openphoto.android.app.ui.adapter.PhotosEndlessAdapter;
 import me.openphoto.android.app.ui.lib.ImageStorage;
 import me.openphoto.android.app.ui.lib.ImageStorage.OnImageDisplayedCallback;
+import me.openphoto.android.app.ui.widget.ViewPagerWithDisableSupport;
+import me.openphoto.android.app.ui.widget.ViewPagerWithDisableSupport.GesturesEnabledHandler;
 import me.openphoto.android.app.util.GuiUtils;
 import android.app.Activity;
 import android.content.Context;
@@ -26,17 +28,18 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.polites.android.GestureImageView;
+
 /**
  * The general photo viewing screen
  * 
  * @author pboos
- * @version
- *          05.10.2012
- *          <br>- removed action bar reference
- *          <br>- removed custom onClick listener from the ImageView
+ * @version 05.10.2012 <br>
+ *          - removed action bar reference <br>
+ *          - removed custom onClick listener from the ImageView
  *          <p>
- *          03.10.2012
- *          <br>- added initial support for album photos filter
+ *          03.10.2012 <br>
+ *          - added initial support for album photos filter
  */
 public class PhotoDetailsActivity extends Activity {
     private static final String TAG = PhotoDetailsActivity.class.getSimpleName();
@@ -46,11 +49,11 @@ public class PhotoDetailsActivity extends Activity {
     public static final String EXTRA_ADAPTER_PHOTOS = "EXTRA_ADAPTER_PHOTOS";
     public static final String EXTRA_ADAPTER_POSITION = "EXTRA_ADAPTER_POSITION";
     public static final String EXTRA_ADAPTER_TAGS = "EXTRA_ADAPTER_TAGS";
-	public static final String EXTRA_ADAPTER_ALBUM = "EXTRA_ADAPTER_ALBUM";
+    public static final String EXTRA_ADAPTER_ALBUM = "EXTRA_ADAPTER_ALBUM";
 
     private ImageStorage mStorage;
 
-    private ViewPager mViewPager;
+    private ViewPagerWithDisableSupport mViewPager;
 
     private PhotoDetailPagerAdapter mAdapter;
 
@@ -73,13 +76,20 @@ public class PhotoDetailsActivity extends Activity {
         } else if (getIntent().hasExtra(EXTRA_ADAPTER_PHOTOS)) {
             ArrayList<Photo> photos = getIntent().getParcelableArrayListExtra(EXTRA_ADAPTER_PHOTOS);
             String tags = getIntent().getStringExtra(EXTRA_ADAPTER_TAGS);
-			String album = getIntent().getStringExtra(EXTRA_ADAPTER_ALBUM);
-			mAdapter = new PhotoDetailPagerAdapter(new PhotosAdapter(this,
-					photos, tags, album));
+            String album = getIntent().getStringExtra(EXTRA_ADAPTER_ALBUM);
+            mAdapter = new PhotoDetailPagerAdapter(new PhotosAdapter(this,
+                    photos, tags, album));
         }
 
-        mViewPager = (ViewPager) findViewById(R.id.photos);
+        mViewPager = (ViewPagerWithDisableSupport) findViewById(R.id.photos);
         mViewPager.setAdapter(mAdapter);
+        mViewPager.setGesturesEnabledHandler(new GesturesEnabledHandler() {
+
+            @Override
+            public boolean isEnabled() {
+                return !mAdapter.isCurrentImageZoomed();
+            }
+        });
 
         int position = getIntent().getIntExtra(EXTRA_ADAPTER_POSITION, 0);
         if (position > 0) {
@@ -91,6 +101,7 @@ public class PhotoDetailsActivity extends Activity {
 
         private final LayoutInflater mInflator;
         private final PhotosAdapter mAdapter;
+        private View mCurrentView;
         private final DataSetObserver mObserver = new DataSetObserver() {
 
             @Override
@@ -191,6 +202,22 @@ public class PhotoDetailsActivity extends Activity {
         public void startUpdate(View arg0) {
         }
 
+        @Override
+        public void setPrimaryItem(ViewGroup container, int position, Object object) {
+            super.setPrimaryItem(container, position, object);
+            mCurrentView = (View) object;
+        }
+
+        boolean isCurrentImageZoomed()
+        {
+            if (mCurrentView != null)
+            {
+                GestureImageView giv = (GestureImageView)
+                        mCurrentView.findViewById(R.id.image);
+                return giv.isZoomed();
+            }
+            return false;
+        }
     }
 
     private class PhotosAdapter extends PhotosEndlessAdapter {
@@ -199,11 +226,11 @@ public class PhotoDetailsActivity extends Activity {
             super(context, photos);
         }
 
-		public PhotosAdapter(Context context, ArrayList<Photo> photos,
-				String tags,
-				String album)
-		{
-			super(context, photos, tags, album);
+        public PhotosAdapter(Context context, ArrayList<Photo> photos,
+                String tags,
+                String album)
+        {
+            super(context, photos, tags, album);
         }
 
         @Override
@@ -240,7 +267,7 @@ public class PhotoDetailsActivity extends Activity {
                 mPhoto = response.getPhoto();
                 return mStorage.getBitmap(mPhoto.getUrl(PhotosEndlessAdapter.SIZE_BIG));
             } catch (Exception e) {
-				GuiUtils.error(TAG, R.string.errorCouldNotGetPhoto, e);
+                GuiUtils.error(TAG, R.string.errorCouldNotGetPhoto, e);
                 return null;
             }
         }
@@ -253,8 +280,8 @@ public class PhotoDetailsActivity extends Activity {
                     mCallback.onImageDisplayed(mImageView);
                 }
             } else {
-				GuiUtils.alert(
-						R.string.errorOccured);
+                GuiUtils.alert(
+                        R.string.errorOccured);
             }
             super.onPostExecute(bitmap);
         }

@@ -4,7 +4,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical" >
 
-    <android.support.v4.view.ViewPager
+    <me.openphoto.android.app.ui.widget.ViewPagerWithDisableSupport
         android:id="@+id/photos"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />

@@ -106,9 +106,9 @@ public abstract class PhotosEndlessAdapter extends EndlessAdapter<Photo>
             return new LoadResponse(response.getPhotos(), hasNextPage);
         } catch (Exception e)
         {
-			GuiUtils.error(
-					TAG,
-					R.string.errorCouldNotLoadNextPhotosInList, e);
+            GuiUtils.error(
+                    TAG,
+                    R.string.errorCouldNotLoadNextPhotosInList, e);
         }
         return new LoadResponse(null, false);
     }

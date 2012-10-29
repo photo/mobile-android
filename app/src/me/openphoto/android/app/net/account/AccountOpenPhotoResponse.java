@@ -14,9 +14,9 @@ import android.content.Context;
  * @author Patrick Santana <patrick@openphoto.me>
  */
 public class AccountOpenPhotoResponse extends OpenPhotoResponse {
-	public static int SUCCESSFUL_CODE = 200;
-	public static int INVALID_CREDENTIALS_CODE = 403;
-	public static int UNKNOWN_ERROR_CODE = 500;
+    public static int SUCCESSFUL_CODE = 200;
+    public static int INVALID_CREDENTIALS_CODE = 403;
+    public static int UNKNOWN_ERROR_CODE = 500;
     private String server;
     private String oAuthConsumerKey;
     private String oAuthConsumerSecret;
@@ -88,14 +88,14 @@ public class AccountOpenPhotoResponse extends OpenPhotoResponse {
     public void saveCredentials(Context context) {
         Preferences.setServer(context, this.getServer());
 
-		Preferences
-				.getDefaultSharedPreferences(context)
+        Preferences
+                .getDefaultSharedPreferences(context)
                 .edit()
                 .putBoolean(context.getString(R.string.setting_account_loggedin_key), true)
                 .commit();
 
-		Preferences
-				.getSharedPreferences("oauth")
+        Preferences
+                .getSharedPreferences("oauth")
                 .edit()
                 .putString(context.getString(R.string.setting_oauth_consumer_key),
                         this.getoAuthConsumerKey())
@@ -108,19 +108,19 @@ public class AccountOpenPhotoResponse extends OpenPhotoResponse {
                 .commit();
     }
 
-	@Override
-	public boolean isSuccess()
-	{
-		return getCode() == SUCCESSFUL_CODE;
-	}
+    @Override
+    public boolean isSuccess()
+    {
+        return getCode() == SUCCESSFUL_CODE;
+    }
 
-	public boolean isInvalidCredentials()
-	{
-		return getCode() == INVALID_CREDENTIALS_CODE;
-	}
+    public boolean isInvalidCredentials()
+    {
+        return getCode() == INVALID_CREDENTIALS_CODE;
+    }
 
-	public boolean isUnknownError()
-	{
-		return getCode() == UNKNOWN_ERROR_CODE;
-	}
+    public boolean isUnknownError()
+    {
+        return getCode() == UNKNOWN_ERROR_CODE;
+    }
 }

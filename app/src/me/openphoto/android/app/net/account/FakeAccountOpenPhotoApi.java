@@ -41,20 +41,20 @@ public class FakeAccountOpenPhotoApi extends ApiBase implements
 
     private AccountOpenPhotoResponse createFakeAccountOpenPhotoResponse() throws JSONException {
 
-		JSONObject jsonObjFake = new JSONObject(
-				"{\"message\" : \"User credentials\"," +
-						"\"code\" : 200," +
-						"\"result\" :" +
-						"{\"host\":\"apigee.openphoto.me\"," +
-						"\"id\":\"102230629a6802fbca9825a4617bfe\"," +
-						"\"clientSecret\":\"0f5d654bca\"," +
-						"\"userToken\":\"b662440d621f2f71352f8865888fe2\"," +
-						"\"userSecret\":\"6d1e8fc274\"," +
-						"\"owner\":\"hello@openphoto.me\"}}");
-		// JSONObject jsonObjFake = new JSONObject(
-		// "{\"message\":\"Invalid username or password.\",\"code\":403,\"result\":0}");
-		// JSONObject jsonObjFake = new JSONObject(
-		// "{\"message\":\"Please enter a username with at least 6 characters.\",\"code\":500,\"result\":false}");
+        JSONObject jsonObjFake = new JSONObject(
+                "{\"message\" : \"User credentials\"," +
+                        "\"code\" : 200," +
+                        "\"result\" :" +
+                        "{\"host\":\"apigee.openphoto.me\"," +
+                        "\"id\":\"102230629a6802fbca9825a4617bfe\"," +
+                        "\"clientSecret\":\"0f5d654bca\"," +
+                        "\"userToken\":\"b662440d621f2f71352f8865888fe2\"," +
+                        "\"userSecret\":\"6d1e8fc274\"," +
+                        "\"owner\":\"hello@openphoto.me\"}}");
+        // JSONObject jsonObjFake = new JSONObject(
+        // "{\"message\":\"Invalid username or password.\",\"code\":403,\"result\":0}");
+        // JSONObject jsonObjFake = new JSONObject(
+        // "{\"message\":\"Please enter a username with at least 6 characters.\",\"code\":500,\"result\":false}");
 
         /*
          * For a Fake error, this is the message:

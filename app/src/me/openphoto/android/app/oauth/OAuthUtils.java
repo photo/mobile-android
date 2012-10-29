@@ -18,13 +18,14 @@ import android.os.AsyncTask;
 
 public class OAuthUtils
 {
-	static final String TAG = OAuthUtils.class.getSimpleName();
+    static final String TAG = OAuthUtils.class.getSimpleName();
 
-	static String getCallbackUrl(Context context)
-	{
-		return context.getString(R.string.openphoto_oauth_callback_url);
-	}
-	/**
+    static String getCallbackUrl(Context context)
+    {
+        return context.getString(R.string.openphoto_oauth_callback_url);
+    }
+
+    /**
      * Open the browser and asks the user to authorize the app. Afterwards, we
      * redirect the user back to activity!
      * 
@@ -36,7 +37,7 @@ public class OAuthUtils
         {
             IOpenPhotoApi mOpenPhoto = Preferences.getApi(activity);
             String url = mOpenPhoto.getOAuthUrl("OpenPhoto Android App",
-					getCallbackUrl(activity),
+                    getCallbackUrl(activity),
                     activity);
             activity.startActivity(new Intent(Intent.ACTION_VIEW, Uri
                     .parse(url)));
@@ -58,7 +59,7 @@ public class OAuthUtils
             LoadingControl loadingControl, Uri uri,
             Runnable runOnSuccess)
     {
-		if (uri != null && uri.toString().startsWith(getCallbackUrl(activity)))
+        if (uri != null && uri.toString().startsWith(getCallbackUrl(activity)))
         {
             if (uri.getQueryParameter("oauth_token") != null)
             {
@@ -67,13 +68,13 @@ public class OAuthUtils
                         runOnSuccess).execute();
             } else
             {
-				String errorMsg = uri.getQueryParameter("error");
-				if (errorMsg == null)
-				{
-					errorMsg = "";
-				}
-				GuiUtils.alert(String.format(
-						activity.getString(R.string.errorSimple), errorMsg),
+                String errorMsg = uri.getQueryParameter("error");
+                if (errorMsg == null)
+                {
+                    errorMsg = "";
+                }
+                GuiUtils.alert(String.format(
+                        activity.getString(R.string.errorSimple), errorMsg),
                         activity);
             }
         }
@@ -131,9 +132,9 @@ public class OAuthUtils
                 return true;
             } catch (Exception e)
             {
-				GuiUtils.error(TAG,
-						R.string.errorWithAuthentication,
-						e, activity);
+                GuiUtils.error(TAG,
+                        R.string.errorWithAuthentication,
+                        e, activity);
                 return false;
             }
         }
@@ -149,7 +150,7 @@ public class OAuthUtils
             {
                 Preferences.setLoginInformation(activity,
                         mUsedConsumer);
-				LoginUtils.sendLoggedInBroadcast(activity);
+                LoginUtils.sendLoggedInBroadcast(activity);
                 if (runOnSuccess != null)
                 {
                     runOnSuccess.run();

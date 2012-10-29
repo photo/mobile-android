@@ -34,7 +34,7 @@ import com.facebook.android.R;
  */
 public class FacebookFragment extends CommonDialogFragment
 {
-	public static final String TAG = FacebookFragment.class.getSimpleName();
+    public static final String TAG = FacebookFragment.class.getSimpleName();
 
     Photo photo;
 
@@ -47,7 +47,7 @@ public class FacebookFragment extends CommonDialogFragment
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState)
     {
-		View view = inflater.inflate(R.layout.fragment_facebook, container);
+        View view = inflater.inflate(R.layout.fragment_facebook, container);
         init(view);
         return view;
     }
@@ -68,16 +68,16 @@ public class FacebookFragment extends CommonDialogFragment
     {
         try
         {
-			new ShowCurrentlyLoggedInUserTask(view).execute();
+            new ShowCurrentlyLoggedInUserTask(view).execute();
             messageEt = (EditText) view.findViewById(R.id.message);
-			messageEt.setText(null);
+            messageEt.setText(null);
             Button logOutButton = (Button) view.findViewById(R.id.logoutBtn);
             logOutButton.setOnClickListener(new OnClickListener()
             {
                 @Override
                 public void onClick(View v)
                 {
-					performFacebookLogout();
+                    performFacebookLogout();
                 }
 
             });
@@ -92,21 +92,20 @@ public class FacebookFragment extends CommonDialogFragment
             });
         } catch (Exception ex)
         {
-			GuiUtils.error(TAG, R.string.errorCouldNotInitFacebookFragment, ex,
+            GuiUtils.error(TAG, R.string.errorCouldNotInitFacebookFragment, ex,
                     getActivity());
             dismiss();
         }
     }
-
 
     protected void postPhoto()
     {
         new PostPhotoTask().execute();
     }
 
-	private void performFacebookLogout()
+    private void performFacebookLogout()
     {
-		FacebookUtils.logoutRequest(getActivity());
+        FacebookUtils.logoutRequest(getActivity());
         dismiss();
     }
 
@@ -114,18 +113,18 @@ public class FacebookFragment extends CommonDialogFragment
     public Dialog onCreateDialog(Bundle savedInstanceState)
     {
         Dialog result = super.onCreateDialog(savedInstanceState);
-		result.setTitle(R.string.share_facebook_dialog_title);
+        result.setTitle(R.string.share_facebook_dialog_title);
         return result;
     }
 
-	private class ShowCurrentlyLoggedInUserTask extends
+    private class ShowCurrentlyLoggedInUserTask extends
             AsyncTask<Void, Void, Boolean>
     {
         TextView loggedInAsText;
         String name;
-		Context activity = getActivity();
+        Context activity = getActivity();
 
-		ShowCurrentlyLoggedInUserTask(View view)
+        ShowCurrentlyLoggedInUserTask(View view)
         {
             loggedInAsText = (TextView) view
                     .findViewById(R.id.loggedInAs);
@@ -144,20 +143,20 @@ public class FacebookFragment extends CommonDialogFragment
         {
             try
             {
-				Facebook facebook = FacebookProvider.getFacebook();
-				Bundle bparams = new Bundle();
-				bparams.putString("fields", "name");
-				String response = facebook.request("me", bparams);
-				JSONObject jsonObject = new JSONObject(response);
+                Facebook facebook = FacebookProvider.getFacebook();
+                Bundle bparams = new Bundle();
+                bparams.putString("fields", "name");
+                String response = facebook.request("me", bparams);
+                JSONObject jsonObject = new JSONObject(response);
 
-				name = jsonObject.getString("name");
+                name = jsonObject.getString("name");
                 return true;
             } catch (Exception ex)
             {
-				GuiUtils.error(TAG,
-						R.string.errorCouldNotRetrieveFacebookScreenName,
+                GuiUtils.error(TAG,
+                        R.string.errorCouldNotRetrieveFacebookScreenName,
                         ex,
-						activity);
+                        activity);
             }
             return false;
         }
@@ -171,16 +170,17 @@ public class FacebookFragment extends CommonDialogFragment
             {
                 loggedInAsText.setText(String
                         .format(
-										activity.getString(R.string.share_facebook_logged_in_as),
+                                activity.getString(R.string.share_facebook_logged_in_as),
                                 name));
             }
         }
     }
 
-	private class PostPhotoTask extends
+    private class PostPhotoTask extends
             AsyncTask<Void, Void, Boolean>
     {
-		Context activity = getActivity();
+        Context activity = getActivity();
+
         @Override
         protected void onPreExecute()
         {
@@ -194,12 +194,12 @@ public class FacebookFragment extends CommonDialogFragment
         {
             try
             {
-				sharePhoto(messageEt.getText().toString(), photo, activity);
+                sharePhoto(messageEt.getText().toString(), photo, activity);
                 return true;
             } catch (Exception ex)
             {
-				GuiUtils.error(TAG, R.string.errorCouldNotSendFacebookPhoto,
-						ex,
+                GuiUtils.error(TAG, R.string.errorCouldNotSendFacebookPhoto,
+                        ex,
                         getActivity());
             }
             return false;
@@ -213,36 +213,36 @@ public class FacebookFragment extends CommonDialogFragment
             if (result.booleanValue())
             {
                 GuiUtils.info(
-						R.string.share_facebook_success_message);
+                        R.string.share_facebook_success_message);
             }
-			Dialog dialog = FacebookFragment.this.getDialog();
-			if (dialog != null && dialog.isShowing())
-			{
-				FacebookFragment.this.dismiss();
-			}
+            Dialog dialog = FacebookFragment.this.getDialog();
+            if (dialog != null && dialog.isShowing())
+            {
+                FacebookFragment.this.dismiss();
+            }
         }
     }
 
-	public static void sharePhoto(
-			String message,
-			Photo photo,
-			Context context) throws FileNotFoundException,
-			MalformedURLException, IOException
-	{
-		Facebook facebook = FacebookProvider.getFacebook();
-		Bundle bparams = new Bundle();
-		bparams.putString(
-				"message",
-				message);
-		bparams.putString(
-				"name",
-				photo.getTitle());
-		bparams.putString(
-				"caption",
-				context.getString(R.string.share_facebook_default_caption));
-		bparams.putString("description", context
-				.getString(R.string.share_facebook_default_description));
-		bparams.putString("picture", photo.getUrl(Photo.PATH_ORIGINAL));
-		facebook.request("feed", bparams, "POST");
-	}
+    public static void sharePhoto(
+            String message,
+            Photo photo,
+            Context context) throws FileNotFoundException,
+            MalformedURLException, IOException
+    {
+        Facebook facebook = FacebookProvider.getFacebook();
+        Bundle bparams = new Bundle();
+        bparams.putString(
+                "message",
+                message);
+        bparams.putString(
+                "name",
+                photo.getTitle());
+        bparams.putString(
+                "caption",
+                context.getString(R.string.share_facebook_default_caption));
+        bparams.putString("description", context
+                .getString(R.string.share_facebook_default_description));
+        bparams.putString("picture", photo.getUrl(Photo.URL));
+        facebook.request("feed", bparams, "POST");
+    }
 }

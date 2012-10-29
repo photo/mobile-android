@@ -115,12 +115,12 @@ public class UploadActivity extends Activity implements OnClickListener {
         switch (id) {
             case DIALOG_SELECT_IMAGE:
                 final CharSequence[] items = {
-						getString(R.string.upload_camera_option),
-						getString(R.string.upload_gallery_option)
+                        getString(R.string.upload_camera_option),
+                        getString(R.string.upload_gallery_option)
                 };
 
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
-				builder.setTitle(R.string.upload_title);
+                builder.setTitle(R.string.upload_title);
                 builder.setItems(items, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int item) {
@@ -135,11 +135,11 @@ public class UploadActivity extends Activity implements OnClickListener {
                                             Uri.fromFile(mUploadImageFile));
                                     startActivityForResult(intent, REQUEST_CAMERA);
                                 } catch (IOException e) {
-									GuiUtils.error(
-											TAG,
-											R.string.errorCanNotFindExternalStorageForTakingPicture,
-											e,
-											UploadActivity.this);
+                                    GuiUtils.error(
+                                            TAG,
+                                            R.string.errorCanNotFindExternalStorageForTakingPicture,
+                                            e,
+                                            UploadActivity.this);
                                 }
                                 return;
                             case 1:
@@ -201,8 +201,8 @@ public class UploadActivity extends Activity implements OnClickListener {
         metaData.setTags(((EditText) findViewById(R.id.edit_tags)).getText().toString());
         metaData.setPrivate(mPrivateToggle.isChecked());
 
-		uploads.addPendingUpload(Uri.fromFile(uploadFile), metaData, false,
-				false);
+        uploads.addPendingUpload(Uri.fromFile(uploadFile), metaData, false,
+                false);
         startService(new Intent(this, UploaderService.class));
         Toast.makeText(this, R.string.uploading_in_background, Toast.LENGTH_LONG).show();
         finish();

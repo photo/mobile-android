@@ -13,7 +13,8 @@ import android.net.Uri;
 import android.provider.MediaStore;
 
 public class ImageUtils {
-	static final String TAG = ImageUtils.class.getSimpleName();
+    static final String TAG = ImageUtils.class.getSimpleName();
+
     /**
      * decodes image and scales it to reduce memory consumption <br />
      * <br />
@@ -50,7 +51,7 @@ public class ImageUtils {
             o2.inSampleSize = scale;
             return BitmapFactory.decodeStream(new FileInputStream(file), null, o2);
         } catch (FileNotFoundException e) {
-			GuiUtils.noAlertError(TAG, null, e);
+            GuiUtils.noAlertError(TAG, null, e);
         }
         return null;
     }

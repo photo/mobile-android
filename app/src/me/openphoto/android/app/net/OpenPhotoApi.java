@@ -117,61 +117,61 @@ public class OpenPhotoApi extends ApiBase implements IOpenPhotoApi {
             String album, Paging paging)
             throws ClientProtocolException, IOException, IllegalStateException,
             JSONException {
-		return getPhotos(resize, tags, album, null, paging);
+        return getPhotos(resize, tags, album, null, paging);
     }
 
-	public PhotosResponse getPhotos(ReturnSizes resize,
-			Collection<String> tags,
-			String album,
-			String hash,
-			Paging paging)
-			throws ClientProtocolException, IOException, IllegalStateException,
-			JSONException
-	{
-		ApiRequest request;
-		if (album != null && album.length() > 0)
-		{
-			request = new ApiRequest(ApiRequest.GET, "/photos/album-" + album
-					+ "/list.json");
-		} else
-		{
-			request = new ApiRequest(ApiRequest.GET, "/photos/list.json");
-		}
-		if (hash != null)
-		{
-			request.addParameter("hash", hash);
-		}
+    public PhotosResponse getPhotos(ReturnSizes resize,
+            Collection<String> tags,
+            String album,
+            String hash,
+            Paging paging)
+            throws ClientProtocolException, IOException, IllegalStateException,
+            JSONException
+    {
+        ApiRequest request;
+        if (album != null && album.length() > 0)
+        {
+            request = new ApiRequest(ApiRequest.GET, "/photos/album-" + album
+                    + "/list.json");
+        } else
+        {
+            request = new ApiRequest(ApiRequest.GET, "/photos/list.json");
+        }
+        if (hash != null)
+        {
+            request.addParameter("hash", hash);
+        }
 
-		if (resize != null)
-		{
-			request.addParameter("returnSizes", resize.toString());
-		}
-		if (tags != null && !tags.isEmpty())
-		{
-			Iterator<String> it = tags.iterator();
-			StringBuilder sb = new StringBuilder(it.next());
-			while (it.hasNext())
-			{
-				sb.append("," + it.next());
-			}
-			request.addParameter("tags", sb.toString());
-		}
-		if (paging != null)
-		{
-			if (paging.hasPage())
-			{
-				request.addParameter("page", Integer.toString(paging.getPage()));
-			}
-			if (paging.hasPageSize())
-			{
-				request.addParameter("pageSize",
-						Integer.toString(paging.getPageSize()));
-			}
-		}
-		ApiResponse response = execute(request);
-		// TODO: Fix null pointer exception at this place.
-		return new PhotosResponse(new JSONObject(response.getContentAsString()));
-	}
+        if (resize != null)
+        {
+            request.addParameter("returnSizes", resize.toString());
+        }
+        if (tags != null && !tags.isEmpty())
+        {
+            Iterator<String> it = tags.iterator();
+            StringBuilder sb = new StringBuilder(it.next());
+            while (it.hasNext())
+            {
+                sb.append("," + it.next());
+            }
+            request.addParameter("tags", sb.toString());
+        }
+        if (paging != null)
+        {
+            if (paging.hasPage())
+            {
+                request.addParameter("page", Integer.toString(paging.getPage()));
+            }
+            if (paging.hasPageSize())
+            {
+                request.addParameter("pageSize",
+                        Integer.toString(paging.getPageSize()));
+            }
+        }
+        ApiResponse response = execute(request);
+        // TODO: Fix null pointer exception at this place.
+        return new PhotosResponse(new JSONObject(response.getContentAsString()));
+    }
 
     /*
      * (non-Javadoc)
@@ -207,55 +207,54 @@ public class OpenPhotoApi extends ApiBase implements IOpenPhotoApi {
     public PhotosResponse getNewestPhotos(Paging paging) throws ClientProtocolException,
             IOException,
             IllegalStateException, JSONException {
-		return getNewestPhotos(null, paging);
+        return getNewestPhotos(null, paging);
     }
 
-	@Override
-	public PhotosResponse getNewestPhotos(ReturnSizes returnSize, Paging paging)
-			throws ClientProtocolException, IOException, IllegalStateException,
-			JSONException
-	{
-		ApiRequest request = new ApiRequest(ApiRequest.GET, "/photos/list.json");
-		if (returnSize != null)
-		{
-			request.addParameter("returnSizes", returnSize.toString());
-		}
-		request.addParameter("sortBy", "dateUploaded,DESC");
+    @Override
+    public PhotosResponse getNewestPhotos(ReturnSizes returnSize, Paging paging)
+            throws ClientProtocolException, IOException, IllegalStateException,
+            JSONException
+    {
+        ApiRequest request = new ApiRequest(ApiRequest.GET, "/photos/list.json");
+        if (returnSize != null)
+        {
+            request.addParameter("returnSizes", returnSize.toString());
+        }
+        request.addParameter("sortBy", "dateUploaded,DESC");
 
-		if (paging != null)
-		{
-			if (paging.hasPage())
-			{
-				request.addParameter("page", Integer.toString(paging.getPage()));
-			}
-			if (paging.hasPageSize())
-			{
-				request.addParameter("pageSize",
-						Integer.toString(paging.getPageSize()));
-			}
-		}
-		ApiResponse response = execute(request);
-		String result = response.getContentAsString();
-		return new PhotosResponse(new JSONObject(result));
-	}
+        if (paging != null)
+        {
+            if (paging.hasPage())
+            {
+                request.addParameter("page", Integer.toString(paging.getPage()));
+            }
+            if (paging.hasPageSize())
+            {
+                request.addParameter("pageSize",
+                        Integer.toString(paging.getPageSize()));
+            }
+        }
+        ApiResponse response = execute(request);
+        String result = response.getContentAsString();
+        return new PhotosResponse(new JSONObject(result));
+    }
 
-	/**
-	 * ONLY FOR TESTING! Will make the class return the given Mock when
-	 * accessing createInstance(..)
-	 * 
-	 * @param mock
-	 *            Mock to be used for OpenPhotoApi
-	 */
+    /**
+     * ONLY FOR TESTING! Will make the class return the given Mock when
+     * accessing createInstance(..)
+     * 
+     * @param mock Mock to be used for OpenPhotoApi
+     */
     public static void injectMock(IOpenPhotoApi mock) {
         OpenPhotoApi.sMock = mock;
     }
 
-	@Override
-	public PhotosResponse getPhotos(String hash)
-			throws ClientProtocolException,
-			IOException, IllegalStateException,
-			JSONException
-	{
-		return getPhotos(null, null, null, hash, null);
-	}
+    @Override
+    public PhotosResponse getPhotos(String hash)
+            throws ClientProtocolException,
+            IOException, IllegalStateException,
+            JSONException
+    {
+        return getPhotos(null, null, null, hash, null);
+    }
 }

@@ -18,11 +18,11 @@ public class CommonDialogFragment extends SDialogFragment
         GuiUtils.alert(msg, getActivity());
     }
 
-	@Override
-	public void onCreate(Bundle savedInstanceState)
-	{
-		super.onCreate(savedInstanceState);
-		setStyle(STYLE_NORMAL, R.style.Theme_OpenPhoto_Dialog_Light);
-	}
+    @Override
+    public void onCreate(Bundle savedInstanceState)
+    {
+        super.onCreate(savedInstanceState);
+        setStyle(STYLE_NORMAL, R.style.Theme_OpenPhoto_Dialog_Light);
+    }
 
 }
