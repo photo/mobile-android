@@ -6,7 +6,6 @@ import java.util.List;
 
 import me.openphoto.android.app.bitmapfun.util.ImageCache;
 import me.openphoto.android.app.bitmapfun.util.ImageFetcher;
-import me.openphoto.android.app.bitmapfun.util.ImageWorker;
 import me.openphoto.android.app.facebook.FacebookBaseDialogListener;
 import me.openphoto.android.app.facebook.FacebookUtils;
 import me.openphoto.android.app.model.Photo;
@@ -41,15 +40,14 @@ import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 import com.facebook.android.R;
 
-public class HomeFragment extends CommonFragment implements Refreshable
+public class HomeFragment extends CommonFrargmentWithImageWorker implements Refreshable
 {
     public static final String TAG = HomeFragment.class.getSimpleName();
-    private static final String IMAGE_CACHE_DIR = "images";
+    public static final String IMAGE_CACHE_DIR = "images";
 
     private LoadingControl loadingControl;
     private NewestPhotosAdapter mAdapter;
     private LayoutInflater mInflater;
-    private ImageWorker mImageWorker;
     private Photo activePhoto;
 
     private ListView list;
@@ -77,11 +75,16 @@ public class HomeFragment extends CommonFragment implements Refreshable
     {
         super.onAttach(activity);
         loadingControl = ((LoadingControl) activity);
+
+    }
+
+    @Override
+    protected void initImageWorker() {
         // Fetch screen height and width, to use as our max size when loading
         // images as this
         // activity runs full screen
         final DisplayMetrics displaymetrics = new DisplayMetrics();
-        activity.getWindowManager().getDefaultDisplay()
+        getActivity().getWindowManager().getDefaultDisplay()
                 .getMetrics(displaymetrics);
         final int height = displaymetrics.heightPixels;
         final int width = displaymetrics.widthPixels;
@@ -90,17 +93,11 @@ public class HomeFragment extends CommonFragment implements Refreshable
         returnSizes = new ReturnSizes(700, 650, true);
         // The ImageWorker takes care of loading images into our ImageView
         // children asynchronously
-        mImageWorker = new ImageFetcher(activity, loadingControl, longest);
-        mImageWorker.setImageCache(ImageCache.findOrCreateCache(activity,
+        mImageWorker = new ImageFetcher(getActivity(), loadingControl, longest);
+        mImageWorker.setImageCache(ImageCache.findOrCreateCache(getActivity(),
                 IMAGE_CACHE_DIR));
         mImageWorker.setImageFadeIn(false);
-        // if (iw == null)
-        // {
-        // iw = new ImageWorker(activity, loadingControl);
-        // }
-
     }
-
     @Override
     public void refresh()
     {
@@ -120,7 +117,6 @@ public class HomeFragment extends CommonFragment implements Refreshable
     {
         super.onDestroyView();
         mAdapter.forceStopLoadingIfNecessary();
-        mImageWorker.getImageCache().clearMemoryCache();
     }
 
     @Override
@@ -163,14 +159,6 @@ public class HomeFragment extends CommonFragment implements Refreshable
     {
         super.onResume();
         FacebookUtils.extendAceessTokenIfNeeded(getActivity());
-        mImageWorker.setExitTasksEarly(false);
-    }
-
-    @Override
-    public void onPause()
-    {
-        super.onPause();
-        mImageWorker.setExitTasksEarly(true);
     }
 
     private void shareViaEMail(Photo photo)

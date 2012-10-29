@@ -1,11 +1,13 @@
 
 package me.openphoto.android.app;
 
+import me.openphoto.android.app.bitmapfun.util.ImageCache;
+import me.openphoto.android.app.bitmapfun.util.ImageFetcher;
 import me.openphoto.android.app.model.Album;
 import me.openphoto.android.app.net.AlbumsResponse;
 import me.openphoto.android.app.net.IOpenPhotoApi;
+import me.openphoto.android.app.net.ReturnSizes;
 import me.openphoto.android.app.ui.adapter.EndlessAdapter;
-import me.openphoto.android.app.ui.lib.ImageStorage;
 import me.openphoto.android.app.util.GalleryOpenControl;
 import me.openphoto.android.app.util.GuiUtils;
 import me.openphoto.android.app.util.LoadingControl;
@@ -27,15 +29,19 @@ import com.WazaBe.HoloEverywhere.app.Activity;
  * 
  * @author Eugene Popovich
  */
-public class AlbumsFragment extends CommonFragment implements
+public class AlbumsFragment extends CommonFrargmentWithImageWorker implements
         OnItemClickListener
 {
     public static final String TAG = AlbumsFragment.class.getSimpleName();
+
+    private static final String IMAGE_CACHE_DIR = SyncImageSelectionFragment.IMAGE_CACHE_DIR;
 
     private LoadingControl loadingControl;
     private GalleryOpenControl galleryOpenControl;
 
     private AlbumsAdapter mAdapter;
+
+    private ReturnSizes returnSizes;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -50,7 +56,6 @@ public class AlbumsFragment extends CommonFragment implements
 
         return v;
     }
-
     @Override
     public void onAttach(Activity activity)
     {
@@ -58,6 +63,16 @@ public class AlbumsFragment extends CommonFragment implements
         loadingControl = ((LoadingControl) activity);
         galleryOpenControl = ((GalleryOpenControl) activity);
 
+    }
+
+    @Override
+    protected void initImageWorker() {
+        int width = 100;
+        int height = 100;
+        returnSizes = new ReturnSizes(width, height, true);
+        mImageWorker = new ImageFetcher(getActivity(), loadingControl, width, height);
+        mImageWorker.setImageCache(ImageCache.findOrCreateCache(getActivity(),
+                IMAGE_CACHE_DIR));
     }
 
     @Override
@@ -78,8 +93,6 @@ public class AlbumsFragment extends CommonFragment implements
     private class AlbumsAdapter extends EndlessAdapter<Album>
     {
         private final IOpenPhotoApi mOpenPhotoApi;
-        private final ImageStorage mStorage = new ImageStorage(
-                getActivity());
 
         public AlbumsAdapter()
         {
@@ -112,11 +125,13 @@ public class AlbumsFragment extends CommonFragment implements
                     .setText(Integer.toString(album
                             .getCount()));
             ImageView image = (ImageView) convertView.findViewById(R.id.cover);
-            image.setImageBitmap(null); // TODO maybe a loading image
             if (album.getCover() != null)
             {
-                mStorage.displayImageFor(image,
-                        album.getCover().getUrl("100x100xCR"));
+                mImageWorker
+                        .loadImage(album.getCover().getUrl(returnSizes.toString()), image);
+            } else
+            {
+                image.setImageBitmap(null);
             }
             return convertView;
         }

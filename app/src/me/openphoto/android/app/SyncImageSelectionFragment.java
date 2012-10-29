@@ -43,15 +43,15 @@ import com.WazaBe.HoloEverywhere.LayoutInflater;
 import com.WazaBe.HoloEverywhere.app.Activity;
 import com.WazaBe.HoloEverywhere.widget.Switch;
 
-public class SyncImageSelectionFragment extends CommonFragment implements Refreshable,
+public class SyncImageSelectionFragment extends CommonFrargmentWithImageWorker implements
+        Refreshable,
         OnItemClickListener
 {
     public static final String TAG = SyncImageSelectionFragment.class.getSimpleName();
-    private static final String IMAGE_CACHE_DIR = "thumbs";
+    public static final String IMAGE_CACHE_DIR = "thumbs";
 
     private LoadingControl loadingControl;
     private CustomImageAdapter mAdapter;
-    private ImageResizer mImageWorker;
     private int mImageThumbSize;
     private int mImageThumbSpacing;
     private int mImageThumbBorder;
@@ -86,16 +86,7 @@ public class SyncImageSelectionFragment extends CommonFragment implements Refres
         mImageThumbBorder = getResources().getDimensionPixelSize(
                 R.dimen.image_thumbnail_border);
 
-        mImageWorker = new CustomImageFileSystemFetcher(getActivity(),
-                loadingControl,
-                mImageThumbSize);
-        mImageWorker.setLoadingImage(R.drawable.empty_photo);
-
-        ImageCacheParams cacheParams = new ImageCacheParams(IMAGE_CACHE_DIR);
-
-        mImageWorker.setImageCache(ImageCache.findOrCreateCache(getActivity(),
-                cacheParams));
-        mAdapter = new CustomImageAdapter(getActivity(), mImageWorker);
+        mAdapter = new CustomImageAdapter(getActivity(), (ImageResizer) mImageWorker);
 
         photosGrid = (GridView) v.findViewById(R.id.grid_photos);
 
@@ -179,6 +170,19 @@ public class SyncImageSelectionFragment extends CommonFragment implements Refres
         }
     }
 
+    @Override
+    protected void initImageWorker()
+    {
+        mImageWorker = new CustomImageFileSystemFetcher(getActivity(),
+                loadingControl,
+                mImageThumbSize);
+        mImageWorker.setLoadingImage(R.drawable.empty_photo);
+
+        ImageCacheParams cacheParams = new ImageCacheParams(IMAGE_CACHE_DIR);
+
+        mImageWorker.setImageCache(ImageCache.findOrCreateCache(getActivity(),
+                cacheParams));
+    }
     protected void switchUploadState(boolean isChecked)
     {
         if (isDataLoaded())
@@ -228,19 +232,12 @@ public class SyncImageSelectionFragment extends CommonFragment implements Refres
     public void onResume()
     {
         super.onResume();
-        mImageWorker.setExitTasksEarly(false);
         if (isDataLoaded())
         {
             mAdapter.notifyDataSetChanged();
         }
     }
 
-    @Override
-    public void onPause()
-    {
-        super.onPause();
-        mImageWorker.setExitTasksEarly(true);
-    }
 
     @Override
     public void onItemClick(AdapterView<?> arg0, View arg1, int position,
