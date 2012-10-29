@@ -38,7 +38,7 @@ public class ImageCache {
     // Default disk cache size
     private static final int DEFAULT_DISK_CACHE_SIZE = 1024 * 1024 * 10; // 10MB
 
-	private static final int DEFAULT_DISK_CACHE_MAX_ITEM_SIZE = 64;
+    private static final int DEFAULT_DISK_CACHE_MAX_ITEM_SIZE = 64;
 
     // Compression settings when writing images to disk cache
     private static final CompressFormat DEFAULT_COMPRESS_FORMAT = CompressFormat.JPEG;
@@ -54,7 +54,7 @@ public class ImageCache {
 
     /**
      * Creating a new ImageCache object using the specified parameters.
-     *
+     * 
      * @param context The context to use
      * @param cacheParams The cache parameters to use to initialize the cache
      */
@@ -64,21 +64,24 @@ public class ImageCache {
 
     /**
      * Creating a new ImageCache object using the default parameters.
-     *
+     * 
      * @param context The context to use
-     * @param uniqueName A unique name that will be appended to the cache directory
+     * @param uniqueName A unique name that will be appended to the cache
+     *            directory
      */
     public ImageCache(Context context, String uniqueName) {
         init(context, new ImageCacheParams(uniqueName));
     }
 
     /**
-     * Find and return an existing ImageCache stored in a {@link RetainFragment}, if not found a new
-     * one is created with defaults and saved to a {@link RetainFragment}.
-     *
+     * Find and return an existing ImageCache stored in a {@link RetainFragment}
+     * , if not found a new one is created with defaults and saved to a
+     * {@link RetainFragment}.
+     * 
      * @param activity The calling {@link FragmentActivity}
      * @param uniqueName A unique name to append to the cache directory
-     * @return An existing retained ImageCache object or a new one if one did not exist.
+     * @return An existing retained ImageCache object or a new one if one did
+     *         not exist.
      */
     public static ImageCache findOrCreateCache(
             final FragmentActivity activity, final String uniqueName) {
@@ -86,12 +89,14 @@ public class ImageCache {
     }
 
     /**
-     * Find and return an existing ImageCache stored in a {@link RetainFragment}, if not found a new
-     * one is created using the supplied params and saved to a {@link RetainFragment}.
-     *
+     * Find and return an existing ImageCache stored in a {@link RetainFragment}
+     * , if not found a new one is created using the supplied params and saved
+     * to a {@link RetainFragment}.
+     * 
      * @param activity The calling {@link FragmentActivity}
      * @param cacheParams The cache parameters to use if creating the ImageCache
-     * @return An existing retained ImageCache object or a new one if one did not exist
+     * @return An existing retained ImageCache object or a new one if one did
+     *         not exist
      */
     public static ImageCache findOrCreateCache(
             final FragmentActivity activity, ImageCacheParams cacheParams) {
@@ -101,8 +106,8 @@ public class ImageCache {
                 activity.getSupportFragmentManager());
 
         // See if we already have an ImageCache stored in RetainFragment
-		ImageCache imageCache = (ImageCache) mRetainFragment
-				.getObject(cacheParams.uniqueName);
+        ImageCache imageCache = (ImageCache) mRetainFragment
+                .getObject(cacheParams.uniqueName);
 
         // No existing ImageCache, create one and store it in RetainFragment
         if (imageCache == null) {
@@ -115,7 +120,7 @@ public class ImageCache {
 
     /**
      * Initialize the cache, providing all parameters.
-     *
+     * 
      * @param context The context to use
      * @param cacheParams The cache parameters to initialize the cache
      */
@@ -124,9 +129,9 @@ public class ImageCache {
 
         // Set up disk cache
         if (cacheParams.diskCacheEnabled) {
-			mDiskCache = DiskLruCache.openCache(context, diskCacheDir,
-					cacheParams.diskCacheSize,
-					cacheParams.diskCacheMaxItemSize);
+            mDiskCache = DiskLruCache.openCache(context, diskCacheDir,
+                    cacheParams.diskCacheSize,
+                    cacheParams.diskCacheMaxItemSize);
             mDiskCache.setCompressParams(cacheParams.compressFormat, cacheParams.compressQuality);
             if (cacheParams.clearDiskCacheOnStart) {
                 mDiskCache.clearCache();
@@ -137,8 +142,8 @@ public class ImageCache {
         if (cacheParams.memoryCacheEnabled) {
             mMemoryCache = new LruCache<String, Bitmap>(cacheParams.memCacheSize) {
                 /**
-                 * Measure item size in bytes rather than units which is more practical for a bitmap
-                 * cache
+                 * Measure item size in bytes rather than units which is more
+                 * practical for a bitmap cache
                  */
                 @Override
                 protected int sizeOf(String key, Bitmap bitmap) {
@@ -166,7 +171,7 @@ public class ImageCache {
 
     /**
      * Get from memory cache.
-     *
+     * 
      * @param data Unique identifier for which item to get
      * @return The bitmap if found in cache, null otherwise
      */
@@ -185,7 +190,7 @@ public class ImageCache {
 
     /**
      * Get from disk cache.
-     *
+     * 
      * @param data Unique identifier for which item to get
      * @return The bitmap if found in cache, null otherwise
      */
@@ -197,20 +202,20 @@ public class ImageCache {
     }
 
     public void clearCaches() {
-		if (mDiskCache != null)
-		{
-			mDiskCache.clearCache();
-		}
-		clearMemoryCache();
+        if (mDiskCache != null)
+        {
+            mDiskCache.clearCache();
+        }
+        clearMemoryCache();
     }
 
-	public void clearMemoryCache()
-	{
-		if (mMemoryCache != null)
-		{
-			mMemoryCache.evictAll();
-		}
-	}
+    public void clearMemoryCache()
+    {
+        if (mMemoryCache != null)
+        {
+            mMemoryCache.evictAll();
+        }
+    }
 
     /**
      * A holder class that contains cache parameters.
@@ -219,7 +224,7 @@ public class ImageCache {
         public String uniqueName;
         public int memCacheSize = DEFAULT_MEM_CACHE_SIZE;
         public int diskCacheSize = DEFAULT_DISK_CACHE_SIZE;
-		public int diskCacheMaxItemSize = DEFAULT_DISK_CACHE_MAX_ITEM_SIZE;
+        public int diskCacheMaxItemSize = DEFAULT_DISK_CACHE_MAX_ITEM_SIZE;
         public CompressFormat compressFormat = DEFAULT_COMPRESS_FORMAT;
         public int compressQuality = DEFAULT_COMPRESS_QUALITY;
         public boolean memoryCacheEnabled = DEFAULT_MEM_CACHE_ENABLED;

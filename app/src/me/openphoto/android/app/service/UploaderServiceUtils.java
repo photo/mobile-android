@@ -1,3 +1,4 @@
+
 package me.openphoto.android.app.service;
 
 import me.openphoto.android.app.OpenPhotoApplication;

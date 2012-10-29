@@ -34,11 +34,11 @@ public class UploadsProviderAccessor {
         mContext = context;
     }
 
-	private void addPendingUpload(Uri photoUri, UploadMetaData metaData,
-			boolean isAutoUpload,
-			boolean isShareOnTwitter,
-			boolean isShareOnFacebook)
-	{
+    private void addPendingUpload(Uri photoUri, UploadMetaData metaData,
+            boolean isAutoUpload,
+            boolean isShareOnTwitter,
+            boolean isShareOnFacebook)
+    {
         ContentResolver cp = mContext.getContentResolver();
         ContentValues values = new ContentValues();
         values.put(UploadsProvider.KEY_URI, photoUri.toString());
@@ -56,27 +56,27 @@ public class UploadsProviderAccessor {
             data.put(JSON_PERMISSION, metaData.getPermission());
             values.put(UploadsProvider.KEY_METADATA_JSON, data.toString());
         } catch (JSONException e) {
-			GuiUtils.noAlertError(TAG, null, e);
+            GuiUtils.noAlertError(TAG, null, e);
         }
         values.put(UploadsProvider.KEY_UPLOADED, 0);
         values.put(UploadsProvider.KEY_IS_AUTOUPLOAD, isAutoUpload ? 1 : 0);
-		values.put(UploadsProvider.KEY_SHARE_ON_FACEBOOK, isShareOnFacebook ? 1
-				: 0);
-		values.put(UploadsProvider.KEY_SHARE_ON_TWITTER, isShareOnTwitter ? 1
-				: 0);
+        values.put(UploadsProvider.KEY_SHARE_ON_FACEBOOK, isShareOnFacebook ? 1
+                : 0);
+        values.put(UploadsProvider.KEY_SHARE_ON_TWITTER, isShareOnTwitter ? 1
+                : 0);
         cp.insert(UploadsProvider.CONTENT_URI, values);
     }
 
     public void addPendingAutoUpload(Uri photoUri, UploadMetaData metaData) {
-		addPendingUpload(photoUri, metaData, true, false, false);
+        addPendingUpload(photoUri, metaData, true, false, false);
     }
 
-	public void addPendingUpload(Uri photoUri, UploadMetaData metaData,
-			boolean isShareOnTwitter,
-			boolean isShareOnFacebook)
-	{
-		addPendingUpload(photoUri, metaData, false, isShareOnTwitter,
-				isShareOnFacebook);
+    public void addPendingUpload(Uri photoUri, UploadMetaData metaData,
+            boolean isShareOnTwitter,
+            boolean isShareOnFacebook)
+    {
+        addPendingUpload(photoUri, metaData, false, isShareOnTwitter,
+                isShareOnFacebook);
     }
 
     public List<PhotoUpload> getPendingUploads() {
@@ -102,35 +102,35 @@ public class UploadsProviderAccessor {
         }
     }
 
-	public List<String> getUploadedOrPendingPhotosFileNames()
-	{
-		String[] projection = new String[]{
-				UploadsProvider.KEY_URI
-		};
-		Cursor cursor = mContext.getContentResolver().query(
-				UploadsProvider.CONTENT_URI, projection,
-				null, null, null);
-		try
-		{
-			List<String> result = new ArrayList<String>(
-					cursor.getCount());
+    public List<String> getUploadedOrPendingPhotosFileNames()
+    {
+        String[] projection = new String[] {
+                UploadsProvider.KEY_URI
+        };
+        Cursor cursor = mContext.getContentResolver().query(
+                UploadsProvider.CONTENT_URI, projection,
+                null, null, null);
+        try
+        {
+            List<String> result = new ArrayList<String>(
+                    cursor.getCount());
 
-			while (cursor.moveToNext())
-			{
-				int ind = 0;
-				Uri photoUri = Uri.parse(cursor.getString(ind));
-				CommonUtils.debug(TAG, "Already uploaded URI: " + photoUri);
-				String filePath = ImageUtils.getRealPathFromURI(mContext,
-						photoUri);
-				CommonUtils.debug(TAG, "Already uploaded file: " + filePath);
-				result.add(filePath);
-			}
-			return result;
-		} finally
-		{
-			closeCursor(cursor);
-		}
-	}
+            while (cursor.moveToNext())
+            {
+                int ind = 0;
+                Uri photoUri = Uri.parse(cursor.getString(ind));
+                CommonUtils.debug(TAG, "Already uploaded URI: " + photoUri);
+                String filePath = ImageUtils.getRealPathFromURI(mContext,
+                        photoUri);
+                CommonUtils.debug(TAG, "Already uploaded file: " + filePath);
+                result.add(filePath);
+            }
+            return result;
+        } finally
+        {
+            closeCursor(cursor);
+        }
+    }
 
     public void closeCursor(Cursor cursor)
     {
@@ -139,7 +139,7 @@ public class UploadsProviderAccessor {
             cursor.close();
         } catch (Exception ex)
         {
-			GuiUtils.noAlertError(TAG, null, ex);
+            GuiUtils.noAlertError(TAG, null, ex);
         }
     }
 
@@ -188,44 +188,44 @@ public class UploadsProviderAccessor {
             pendingUpload.setError(cursor.getString(UploadsProvider.ERROR_COLUMN));
             pendingUpload
                     .setIsAutoUpload(cursor.getInt(UploadsProvider.IS_AUTOUPLOAD_COLUMN) != 0);
-			pendingUpload
-					.setShareOnFacebook(cursor
-							.getInt(UploadsProvider.SHARE_ON_FACEBOOK_COLUMN) != 0);
-			pendingUpload
-					.setShareOnTwitter(cursor
-							.getInt(UploadsProvider.SHARE_ON_TWITTER_COLUMN) != 0);
+            pendingUpload
+                    .setShareOnFacebook(cursor
+                            .getInt(UploadsProvider.SHARE_ON_FACEBOOK_COLUMN) != 0);
+            pendingUpload
+                    .setShareOnTwitter(cursor
+                            .getInt(UploadsProvider.SHARE_ON_TWITTER_COLUMN) != 0);
             return pendingUpload;
         } catch (Exception e) {
-			GuiUtils.noAlertError(TAG, "Could not get pending upload", e);
+            GuiUtils.noAlertError(TAG, "Could not get pending upload", e);
             return null;
         }
     }
 
     public void setUploaded(long id) {
-		Uri contentUri = ContentUris.withAppendedId(
-				UploadsProvider.CONTENT_URI, id);
+        Uri contentUri = ContentUris.withAppendedId(
+                UploadsProvider.CONTENT_URI, id);
         ContentValues values = new ContentValues();
         values.put(UploadsProvider.KEY_UPLOADED, Calendar.getInstance().getTimeInMillis());
         mContext.getContentResolver().update(contentUri, values, null, null);
     }
 
     public void setError(long id, String error) {
-		Uri contentUri = ContentUris.withAppendedId(
-				UploadsProvider.CONTENT_URI, id);
+        Uri contentUri = ContentUris.withAppendedId(
+                UploadsProvider.CONTENT_URI, id);
         ContentValues values = new ContentValues();
         values.put(UploadsProvider.KEY_ERROR, error);
         mContext.getContentResolver().update(contentUri, values, null, null);
     }
 
     public void delete(long id) {
-		Uri contentUri = ContentUris.withAppendedId(
-				UploadsProvider.CONTENT_URI, id);
+        Uri contentUri = ContentUris.withAppendedId(
+                UploadsProvider.CONTENT_URI, id);
         mContext.getContentResolver().delete(contentUri, null, null);
     }
 
-	public void deleteAll()
-	{
-		mContext.getContentResolver().delete(UploadsProvider.CONTENT_URI, null,
-				null);
-	}
+    public void deleteAll()
+    {
+        mContext.getContentResolver().delete(UploadsProvider.CONTENT_URI, null,
+                null);
+    }
 }

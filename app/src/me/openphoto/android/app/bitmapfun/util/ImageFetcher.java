@@ -35,7 +35,8 @@ import android.util.Log;
 import android.widget.Toast;
 
 /**
- * A simple subclass of {@link ImageResizer} that fetches and resizes images fetched from a URL.
+ * A simple subclass of {@link ImageResizer} that fetches and resizes images
+ * fetched from a URL.
  */
 public class ImageFetcher extends ImageResizer {
     private static final String TAG = "ImageFetcher";
@@ -43,33 +44,33 @@ public class ImageFetcher extends ImageResizer {
     public static final String HTTP_CACHE_DIR = "http";
 
     /**
-	 * Initialize providing a target image width and height for the processing
-	 * images.
-	 * 
-	 * @param context
-	 * @param loadingControl
-	 * @param imageWidth
-	 * @param imageHeight
-	 */
-	public ImageFetcher(Context context, LoadingControl loadingControl,
-			int imageWidth, int imageHeight)
-	{
-		super(context, loadingControl, imageWidth, imageHeight);
+     * Initialize providing a target image width and height for the processing
+     * images.
+     * 
+     * @param context
+     * @param loadingControl
+     * @param imageWidth
+     * @param imageHeight
+     */
+    public ImageFetcher(Context context, LoadingControl loadingControl,
+            int imageWidth, int imageHeight)
+    {
+        super(context, loadingControl, imageWidth, imageHeight);
         init(context);
     }
 
     /**
-	 * Initialize providing a single target image size (used for both width and
-	 * height);
-	 * 
-	 * @param context
-	 * @param loadingControl
-	 * @param imageSize
-	 */
-	public ImageFetcher(Context context, LoadingControl loadingControl,
-			int imageSize)
-	{
-		super(context, loadingControl, imageSize);
+     * Initialize providing a single target image size (used for both width and
+     * height);
+     * 
+     * @param context
+     * @param loadingControl
+     * @param imageSize
+     */
+    public ImageFetcher(Context context, LoadingControl loadingControl,
+            int imageSize)
+    {
+        super(context, loadingControl, imageSize);
         init(context);
     }
 
@@ -79,7 +80,7 @@ public class ImageFetcher extends ImageResizer {
 
     /**
      * Simple network connection check.
-     *
+     * 
      * @param context
      */
     private void checkConnection(Context context) {
@@ -93,9 +94,9 @@ public class ImageFetcher extends ImageResizer {
     }
 
     /**
-     * The main process method, which will be called by the ImageWorker in the AsyncTask background
-     * thread.
-     *
+     * The main process method, which will be called by the ImageWorker in the
+     * AsyncTask background thread.
+     * 
      * @param data The data to load the bitmap, in this case, a regular http URL
      * @return The downloaded and resized bitmap
      */
@@ -121,9 +122,9 @@ public class ImageFetcher extends ImageResizer {
     }
 
     /**
-     * Download a bitmap from a URL, write it to a disk and return the File pointer. This
-     * implementation uses a simple disk cache.
-     *
+     * Download a bitmap from a URL, write it to a disk and return the File
+     * pointer. This implementation uses a simple disk cache.
+     * 
      * @param context The context to use
      * @param urlString The URL to fetch
      * @return A File pointing to the fetched bitmap

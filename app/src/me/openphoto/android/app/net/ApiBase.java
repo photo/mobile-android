@@ -44,7 +44,7 @@ public class ApiBase {
     public final static String TAG = ApiBase.class.getSimpleName();
 
     private Context context;
-	static int NetworkConnectionTimeout_ms = 10000;
+    static int NetworkConnectionTimeout_ms = 10000;
 
     public ApiBase(Context context) {
         this.context = context;
@@ -74,19 +74,19 @@ public class ApiBase {
      */
     public ApiResponse execute(ApiRequest request, ProgressListener listener)
             throws ClientProtocolException, IOException {
-		// PoolingClientConnectionManager();
-		HttpParams params = new BasicHttpParams();
+        // PoolingClientConnectionManager();
+        HttpParams params = new BasicHttpParams();
 
-		// set params for connection...
-		HttpConnectionParams.setStaleCheckingEnabled(
-				params, false);
-		HttpConnectionParams.setConnectionTimeout(params,
-				NetworkConnectionTimeout_ms);
-		HttpConnectionParams.setSoTimeout(params,
-				NetworkConnectionTimeout_ms);
-		HttpProtocolParams.setVersion(params, HttpVersion.HTTP_1_1);
+        // set params for connection...
+        HttpConnectionParams.setStaleCheckingEnabled(
+                params, false);
+        HttpConnectionParams.setConnectionTimeout(params,
+                NetworkConnectionTimeout_ms);
+        HttpConnectionParams.setSoTimeout(params,
+                NetworkConnectionTimeout_ms);
+        HttpProtocolParams.setVersion(params, HttpVersion.HTTP_1_1);
 
-		DefaultHttpClient httpClient = new DefaultHttpClient(params);
+        DefaultHttpClient httpClient = new DefaultHttpClient(params);
 
         HttpUriRequest httpRequest = createHttpRequest(request, listener);
 

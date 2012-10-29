@@ -34,21 +34,23 @@ public class TwitterUtils
     static final String ACCESS_TOKEN_TOKEN = "accessTokenToken";
     static final String ACCESS_TOKEN_SECRET = "accessTokenSecret";
 
-	static Runnable runOnceOnSuccessAuthentication;
-	static String getCallbackUrl(Context context)
+    static Runnable runOnceOnSuccessAuthentication;
+
+    static String getCallbackUrl(Context context)
     {
-    	return context.getString(R.string.twitter_callback_url);
+        return context.getString(R.string.twitter_callback_url);
     }
 
-	static String getConsumerKey(Context context)
-	{
-		return context.getString(R.string.twitter_api_consumer_key);
-	}
+    static String getConsumerKey(Context context)
+    {
+        return context.getString(R.string.twitter_api_consumer_key);
+    }
 
-	static String getConsumerSecret(Context context)
-	{
-		return context.getString(R.string.twitter_api_consumer_secret);
-	}
+    static String getConsumerSecret(Context context)
+    {
+        return context.getString(R.string.twitter_api_consumer_secret);
+    }
+
     /**
      * This method checks the shared prefs to see if we have persisted a user
      * token/secret if it has then it logs on using them, otherwise return null
@@ -58,8 +60,8 @@ public class TwitterUtils
      */
     static AccessToken getAccessToken(Context context)
     {
-		SharedPreferences settings = Preferences
-				.getSharedPreferences(PREFS_NAME);
+        SharedPreferences settings = Preferences
+                .getSharedPreferences(PREFS_NAME);
         String token = settings.getString(ACCESS_TOKEN_TOKEN, "");
         String tokenSecret = settings.getString(ACCESS_TOKEN_SECRET, "");
         if (token != null && tokenSecret != null && !"".equals(tokenSecret)
@@ -79,8 +81,8 @@ public class TwitterUtils
      */
     static void storeAccessToken(Context context, AccessToken a)
     {
-		SharedPreferences settings = Preferences
-				.getSharedPreferences(PREFS_NAME);
+        SharedPreferences settings = Preferences
+                .getSharedPreferences(PREFS_NAME);
         SharedPreferences.Editor editor = settings.edit();
         if (a == null)
         {
@@ -111,17 +113,17 @@ public class TwitterUtils
      * @param activity
      * @param uri
      */
-	public static void verifyOAuthResponse(Activity activity, Uri uri,
-			Runnable runOnSuccess)
+    public static void verifyOAuthResponse(Activity activity, Uri uri,
+            Runnable runOnSuccess)
     {
-		if (uri != null
-				&& uri.toString().startsWith(
-						getCallbackUrl(activity)))
+        if (uri != null
+                && uri.toString().startsWith(
+                        getCallbackUrl(activity)))
         {
             String verifier = uri
                     .getQueryParameter(oauth.signpost.OAuth.OAUTH_VERIFIER);
             new VerifyResponseTask(verifier, (LoadingControl) activity,
-					runOnSuccess, activity).execute();
+                    runOnSuccess, activity).execute();
         }
     }
 
@@ -140,8 +142,8 @@ public class TwitterUtils
         {
             // initialize Twitter4J
             twitter = new TwitterFactory().getInstance();
-			twitter.setOAuthConsumer(getConsumerKey(context),
-					getConsumerSecret(context));
+            twitter.setOAuthConsumer(getConsumerKey(context),
+                    getConsumerSecret(context));
             twitter.setOAuthAccessToken(a);
         }
         return twitter;
@@ -165,57 +167,59 @@ public class TwitterUtils
         storeAccessToken(context, null);
     }
 
-	public static void runAfterTwitterAuthentication(
-			final Activity activity,
-			final Runnable runOnSuccessAuthentication)
-	{
-		runAfterTwitterAuthentication(activity, runOnSuccessAuthentication,
-				null);
-	}
-	public static void runAfterTwitterAuthentication(
-			final Activity activity,
-			final Runnable runOnSuccessAuthentication,
-			final Runnable runOnCancelAuthentication)
-	{
-		if (TwitterProvider.getTwitter(activity) == null)
-		{
-			YesNoDialogFragment dialogFragment = YesNoDialogFragment
-					.newInstance(R.string.share_twitter_authorisation_question,
-							new YesNoButtonPressedHandler()
-							{
-								private static final long serialVersionUID = 1L;
+    public static void runAfterTwitterAuthentication(
+            final Activity activity,
+            final Runnable runOnSuccessAuthentication)
+    {
+        runAfterTwitterAuthentication(activity, runOnSuccessAuthentication,
+                null);
+    }
 
-								@Override
-								public void yesButtonPressed(
-										DialogInterface dialog)
-								{
-									addRunOnceOnSuccessAuthenticationAction(runOnSuccessAuthentication);
-									TwitterUtils.askOAuth(activity);
-								}
+    public static void runAfterTwitterAuthentication(
+            final Activity activity,
+            final Runnable runOnSuccessAuthentication,
+            final Runnable runOnCancelAuthentication)
+    {
+        if (TwitterProvider.getTwitter(activity) == null)
+        {
+            YesNoDialogFragment dialogFragment = YesNoDialogFragment
+                    .newInstance(R.string.share_twitter_authorisation_question,
+                            new YesNoButtonPressedHandler()
+                            {
+                                private static final long serialVersionUID = 1L;
 
-								@Override
-								public void noButtonPressed(
-										DialogInterface dialog)
-								{
-									if (runOnCancelAuthentication != null)
-									{
-										runOnCancelAuthentication.run();
-									}
-								}
-							});
-			dialogFragment.replace(((SActivity) activity)
-					.getSupportFragmentManager());
-		} else
-		{
-			runOnSuccessAuthentication.run();
-		}
-	}
+                                @Override
+                                public void yesButtonPressed(
+                                        DialogInterface dialog)
+                                {
+                                    addRunOnceOnSuccessAuthenticationAction(runOnSuccessAuthentication);
+                                    TwitterUtils.askOAuth(activity);
+                                }
 
-	public static void addRunOnceOnSuccessAuthenticationAction(
-			Runnable runOnSuccessAuthentication)
-	{
-		TwitterUtils.runOnceOnSuccessAuthentication = runOnSuccessAuthentication;
-	}
+                                @Override
+                                public void noButtonPressed(
+                                        DialogInterface dialog)
+                                {
+                                    if (runOnCancelAuthentication != null)
+                                    {
+                                        runOnCancelAuthentication.run();
+                                    }
+                                }
+                            });
+            dialogFragment.replace(((SActivity) activity)
+                    .getSupportFragmentManager());
+        } else
+        {
+            runOnSuccessAuthentication.run();
+        }
+    }
+
+    public static void addRunOnceOnSuccessAuthenticationAction(
+            Runnable runOnSuccessAuthentication)
+    {
+        TwitterUtils.runOnceOnSuccessAuthentication = runOnSuccessAuthentication;
+    }
+
     private static class VerifyResponseTask
             extends AsyncTask<Void, Void, Boolean>
     {
@@ -225,17 +229,17 @@ public class TwitterUtils
         TwitterProvider twitterProvider;
         private CommonsHttpOAuthConsumer consumer;
         private OAuthProvider provider;
-		Runnable runOnSuccess;
+        Runnable runOnSuccess;
 
         public VerifyResponseTask(String verifier,
                 LoadingControl loadingControl,
-				Runnable runOnSuccess,
+                Runnable runOnSuccess,
                 Activity activity)
         {
             this.loadingControl = loadingControl;
             this.activity = activity;
             this.verifier = verifier;
-			this.runOnSuccess = runOnSuccess;
+            this.runOnSuccess = runOnSuccess;
             twitterProvider = TwitterProvider.getInstance();
         }
 
@@ -263,9 +267,9 @@ public class TwitterUtils
                 return true;
             } catch (Exception e)
             {
-				GuiUtils.error(TAG,
-						R.string.errorVerifyingTheResponse,
-						e,
+                GuiUtils.error(TAG,
+                        R.string.errorVerifyingTheResponse,
+                        e,
                         activity);
                 return false;
             }
@@ -286,21 +290,21 @@ public class TwitterUtils
 
                     // initialize Twitter4J
                     Twitter twitter = new TwitterFactory().getInstance();
-					twitter.setOAuthConsumer(getConsumerKey(activity),
-							getConsumerSecret(activity));
+                    twitter.setOAuthConsumer(getConsumerKey(activity),
+                            getConsumerSecret(activity));
                     twitter.setOAuthAccessToken(a);
                     twitterProvider.setTwitter(twitter);
-					GuiUtils.info(
-							R.string.share_twitter_success_setup_message);
-					if (runOnSuccess != null)
-					{
-						runOnSuccess.run();
-					}
-					if (runOnceOnSuccessAuthentication != null)
-					{
-						runOnceOnSuccessAuthentication.run();
-						runOnceOnSuccessAuthentication = null;
-					}
+                    GuiUtils.info(
+                            R.string.share_twitter_success_setup_message);
+                    if (runOnSuccess != null)
+                    {
+                        runOnSuccess.run();
+                    }
+                    if (runOnceOnSuccessAuthentication != null)
+                    {
+                        runOnceOnSuccessAuthentication.run();
+                        runOnceOnSuccessAuthentication = null;
+                    }
                 } catch (Exception ex)
                 {
                     GuiUtils.error(TAG, null, ex,
@@ -339,18 +343,18 @@ public class TwitterUtils
             try
             {
                 consumer = new CommonsHttpOAuthConsumer(
-						getConsumerKey(activity),
-						getConsumerSecret(activity));
+                        getConsumerKey(activity),
+                        getConsumerSecret(activity));
                 provider = new DefaultOAuthProvider(
                         "http://twitter.com/oauth/request_token",
                         "http://twitter.com/oauth/access_token",
                         "http://twitter.com/oauth/authorize");
                 authUrl = provider.retrieveRequestToken(consumer,
-                		getCallbackUrl(activity));
+                        getCallbackUrl(activity));
                 return true;
             } catch (Exception e)
             {
-				GuiUtils.error(TAG, R.string.errorWithTwitterAuthentication, e,
+                GuiUtils.error(TAG, R.string.errorWithTwitterAuthentication, e,
                         activity);
                 return false;
             }
@@ -365,7 +369,7 @@ public class TwitterUtils
                 try
                 {
                     GuiUtils.info(
-							R.string.share_twitter_authorise_ask);
+                            R.string.share_twitter_authorise_ask);
                     TwitterProvider twitterProvider = TwitterProvider.getInstance();
                     twitterProvider.setConsumer(consumer);
                     twitterProvider.setProvider(provider);

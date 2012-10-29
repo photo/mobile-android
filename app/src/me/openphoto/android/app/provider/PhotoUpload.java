@@ -10,8 +10,8 @@ public class PhotoUpload {
     private final UploadMetaData mMetaData;
     private String mError;
     private boolean mIsAutoUpload;
-	private boolean shareOnTwitter;
-	private boolean shareOnFacebook;
+    private boolean shareOnTwitter;
+    private boolean shareOnFacebook;
 
     public PhotoUpload(long id, Uri photoUri, UploadMetaData metaData) {
         mId = id;
@@ -51,24 +51,24 @@ public class PhotoUpload {
         mIsAutoUpload = isAutoUpload;
     }
 
-	public boolean isShareOnTwitter()
-	{
-		return shareOnTwitter;
-	}
+    public boolean isShareOnTwitter()
+    {
+        return shareOnTwitter;
+    }
 
-	public void setShareOnTwitter(boolean shareOnTwitter)
-	{
-		this.shareOnTwitter = shareOnTwitter;
-	}
+    public void setShareOnTwitter(boolean shareOnTwitter)
+    {
+        this.shareOnTwitter = shareOnTwitter;
+    }
 
-	public boolean isShareOnFacebook()
-	{
-		return shareOnFacebook;
-	}
+    public boolean isShareOnFacebook()
+    {
+        return shareOnFacebook;
+    }
 
-	public void setShareOnFacebook(boolean shareOnFacebook)
-	{
-		this.shareOnFacebook = shareOnFacebook;
-	}
+    public void setShareOnFacebook(boolean shareOnFacebook)
+    {
+        this.shareOnFacebook = shareOnFacebook;
+    }
 
 }
