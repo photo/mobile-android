@@ -75,6 +75,11 @@
         <activity
             android:name=".AccountActivity"
              />
+                
+        <activity
+            android:name=".SelectTagsActivity"
+            android:label="@string/title_activity_select_tags" >
+        </activity>
 
         <!-- AutoUpload things -->
         <!-- Stuff for auto uploading photos -->
