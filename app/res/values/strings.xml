@@ -73,6 +73,9 @@
     <string name="upload_share_twitter">Twitter</string>
     <string name="upload_button">Upload!</string>
     
+    <!-- SelectTagsActivity -->
+    <string name="title_activity_select_tags">Select Tags</string>
+    
     <!-- Sync screen -->
     <string name="sync_next_button">Next</string>
     <string name="sync_previous_button">Pick photos</string>
