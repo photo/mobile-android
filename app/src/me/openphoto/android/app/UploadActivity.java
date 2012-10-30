@@ -18,6 +18,7 @@ import android.content.DialogInterface.OnCancelListener;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.provider.MediaStore;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -118,7 +119,9 @@ public class UploadActivity extends SActivity {
 
         @Override
         public void onActivityResult(int requestCode, int resultCode, Intent data) {
-            if (resultCode != RESULT_OK) {
+            super.onActivityResult(requestCode, resultCode, data);
+            if (resultCode != RESULT_OK && requestCode == REQUEST_GALLERY
+                    || requestCode == REQUEST_CAMERA) {
                 showSelectionDialog();
                 return;
             }
@@ -144,38 +147,53 @@ public class UploadActivity extends SActivity {
                     }
                     break;
                 default:
-                    super.onActivityResult(requestCode, resultCode, data);
                     break;
             }
         }
 
         void showSelectionDialog()
         {
-            SelectImageDialogFragment imageSelectionFragment =
-                    SelectImageDialogFragment
-                            .newInstance(new SelectImageDialogFragment.SelectedActionHandler() {
+            Handler handler = new Handler();
+            handler.postDelayed(new Runnable() {
 
-                                private static final long serialVersionUID = 1L;
+                @Override
+                public void run() {
+                    SelectImageDialogFragment imageSelectionFragment =
+                            SelectImageDialogFragment
+                                    .newInstance(new SelectImageDialogFragment.SelectedActionHandler() {
 
-                                @Override
-                                public void cameraOptionSelected() {
-                                    try {
-                                        mUploadImageFile = new File(FileUtils
-                                                .getStorageFolder(getActivity()),
-                                                "upload_" + new Date().getTime() + ".jpg");
-                                        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                                        intent.putExtra(android.provider.MediaStore.EXTRA_OUTPUT,
-                                                Uri.fromFile(mUploadImageFile));
-                                        startActivityForResult(intent, REQUEST_CAMERA);
-                                    } catch (IOException e) {
-                                        GuiUtils.error(
-                                                TAG,
-                                                R.string.errorCanNotFindExternalStorageForTakingPicture,
-                                                e);
-                                    }
-                                }
-                            });
-            imageSelectionFragment.replace(getActivity().getSupportFragmentManager());
+                                        private static final long serialVersionUID = 1L;
+
+                                        @Override
+                                        public void cameraOptionSelected() {
+                                            try {
+                                                mUploadImageFile = new File(FileUtils
+                                                        .getStorageFolder(getActivity()),
+                                                        "upload_" + new Date().getTime() + ".jpg");
+                                                Intent intent = new Intent(
+                                                        MediaStore.ACTION_IMAGE_CAPTURE);
+                                                intent.putExtra(
+                                                        android.provider.MediaStore.EXTRA_OUTPUT,
+                                                        Uri.fromFile(mUploadImageFile));
+                                                startActivityForResult(intent, REQUEST_CAMERA);
+                                            } catch (IOException e) {
+                                                GuiUtils.error(
+                                                        TAG,
+                                                        R.string.errorCanNotFindExternalStorageForTakingPicture,
+                                                        e);
+                                            }
+                                        }
+
+                                        @Override
+                                        public void galleryOptionSelected() {
+                                            Intent intent = new Intent(Intent.ACTION_PICK);
+                                            intent.setType("image/*");
+                                            startActivityForResult(intent, REQUEST_GALLERY);
+                                        }
+                                    });
+                    imageSelectionFragment.replace(getActivity().getSupportFragmentManager());
+                }
+            }, 100);
         }
 
         private void setSelectedImageUri(Uri imageUri) {
@@ -235,6 +253,8 @@ public class UploadActivity extends SActivity {
         public static interface SelectedActionHandler extends Serializable
         {
             void cameraOptionSelected();
+
+            void galleryOptionSelected();
         }
 
         private SelectedActionHandler handler;
@@ -259,17 +279,16 @@ public class UploadActivity extends SActivity {
             builder.setItems(items, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int item) {
+                    if (handler == null)
+                    {
+                        return;
+                    }
                     switch (item) {
                         case 0:
-                            if (handler != null)
-                            {
-                                handler.cameraOptionSelected();
-                            }
+                            handler.cameraOptionSelected();
                             return;
                         case 1:
-                            Intent intent = new Intent(Intent.ACTION_PICK);
-                            intent.setType("image/*");
-                            startActivityForResult(intent, REQUEST_GALLERY);
+                            handler.galleryOptionSelected();
                             return;
                     }
                 }
