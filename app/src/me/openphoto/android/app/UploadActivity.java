@@ -24,12 +24,12 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.ToggleButton;
 
 import com.WazaBe.HoloEverywhere.LayoutInflater;
 import com.WazaBe.HoloEverywhere.app.AlertDialog;
 import com.WazaBe.HoloEverywhere.app.Dialog;
 import com.WazaBe.HoloEverywhere.sherlock.SActivity;
+import com.WazaBe.HoloEverywhere.widget.Switch;
 import com.facebook.android.R;
 
 /**
@@ -62,7 +62,7 @@ public class UploadActivity extends SActivity {
     {
         private File mUploadImageFile;
 
-        private ToggleButton mPrivateToggle;
+        private Switch mPrivateToggle;
 
         @Override
         public View onCreateView(LayoutInflater inflater,
@@ -78,7 +78,7 @@ public class UploadActivity extends SActivity {
             v.findViewById(R.id.button_upload).setOnClickListener(this);
             v.findViewById(R.id.select_tags).setOnClickListener(this);
             v.findViewById(R.id.image_upload).setOnClickListener(this);
-            mPrivateToggle = (ToggleButton) v.findViewById(R.id.toggle_private);
+            mPrivateToggle = (Switch) v.findViewById(R.id.private_switch);
             mPrivateToggle.setChecked(true);
 
             Intent intent = getActivity().getIntent();
