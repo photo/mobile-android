@@ -25,7 +25,6 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import com.facebook.android.R;
@@ -42,6 +41,7 @@ public class UploadActivity extends Activity implements OnClickListener {
 
     private static final int REQUEST_GALLERY = 0;
     private static final int REQUEST_CAMERA = 1;
+    private static final int REQUEST_TAGS = 2;
 
     private static final int DIALOG_SELECT_IMAGE = 0;
 
@@ -57,6 +57,7 @@ public class UploadActivity extends Activity implements OnClickListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_upload);
         findViewById(R.id.button_upload).setOnClickListener(this);
+        findViewById(R.id.select_tags).setOnClickListener(this);
         findViewById(R.id.image_upload).setOnClickListener(this);
         mPrivateToggle = (ToggleButton) findViewById(R.id.toggle_private);
         mPrivateToggle.setChecked(true);
@@ -91,6 +92,13 @@ public class UploadActivity extends Activity implements OnClickListener {
         }
 
         switch (requestCode) {
+            case REQUEST_TAGS:
+                if (resultCode == RESULT_OK && data.getExtras() != null) {
+                    String selectedTags = data.getExtras().getString(
+                            "SELECTED_TAGS");
+                    ((EditText) findViewById(R.id.edit_tags)).setText(selectedTags);
+                }
+                break;
             case REQUEST_GALLERY:
                 if (resultCode == RESULT_OK && data.getData() != null) {
                     setSelectedImageUri(data.getData());
@@ -177,6 +185,10 @@ public class UploadActivity extends Activity implements OnClickListener {
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
+            case R.id.select_tags:
+                Intent i = new Intent(this, SelectTagsActivity.class);
+                startActivityForResult(i, REQUEST_TAGS);
+                break;
             case R.id.button_upload:
                 if (mUploadImageFile != null) {
                     startUpload(mUploadImageFile);
@@ -204,7 +216,7 @@ public class UploadActivity extends Activity implements OnClickListener {
         uploads.addPendingUpload(Uri.fromFile(uploadFile), metaData, false,
                 false);
         startService(new Intent(this, UploaderService.class));
-        Toast.makeText(this, R.string.uploading_in_background, Toast.LENGTH_LONG).show();
+        GuiUtils.info(R.string.uploading_in_background);
         finish();
     }
 }
