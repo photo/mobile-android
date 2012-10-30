@@ -3,6 +3,7 @@ package me.openphoto.android.app;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.Date;
 
 import me.openphoto.android.app.net.UploadMetaData;
@@ -12,9 +13,6 @@ import me.openphoto.android.app.service.UploaderService;
 import me.openphoto.android.app.util.FileUtils;
 import me.openphoto.android.app.util.GuiUtils;
 import me.openphoto.android.app.util.ImageUtils;
-import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnCancelListener;
 import android.content.Intent;
@@ -23,10 +21,15 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ToggleButton;
 
+import com.WazaBe.HoloEverywhere.LayoutInflater;
+import com.WazaBe.HoloEverywhere.app.AlertDialog;
+import com.WazaBe.HoloEverywhere.app.Dialog;
+import com.WazaBe.HoloEverywhere.sherlock.SActivity;
 import com.facebook.android.R;
 
 /**
@@ -34,7 +37,7 @@ import com.facebook.android.R;
  * 
  * @author Patrick Boos
  */
-public class UploadActivity extends Activity implements OnClickListener {
+public class UploadActivity extends SActivity {
     public static final String TAG = UploadActivity.class.getSimpleName();
 
     public static final String EXTRA_PENDING_UPLOAD_URI = "pending_upload_uri";
@@ -43,180 +46,241 @@ public class UploadActivity extends Activity implements OnClickListener {
     private static final int REQUEST_CAMERA = 1;
     private static final int REQUEST_TAGS = 2;
 
-    private static final int DIALOG_SELECT_IMAGE = 0;
-
-    private File mUploadImageFile;
-
-    private ToggleButton mPrivateToggle;
-
-    /**
-     * @see android.app.Activity#onCreate(android.os.Bundle)
-     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_upload);
-        findViewById(R.id.button_upload).setOnClickListener(this);
-        findViewById(R.id.select_tags).setOnClickListener(this);
-        findViewById(R.id.image_upload).setOnClickListener(this);
-        mPrivateToggle = (ToggleButton) findViewById(R.id.toggle_private);
-        mPrivateToggle.setChecked(true);
+        if (savedInstanceState == null)
+        {
+        getSupportFragmentManager().beginTransaction()
+                .replace(android.R.id.content, new UiFragment())
+                .commit();
+        }
+    }
 
-        if (getIntent() != null && Intent.ACTION_SEND.equals(getIntent().getAction())
-                && getIntent().getExtras() != null
-                && getIntent().getExtras().containsKey(Intent.EXTRA_STREAM)) {
-            Bundle extras = getIntent().getExtras();
-            setSelectedImageUri((Uri) extras.getParcelable(Intent.EXTRA_STREAM));
-        } else if (getIntent() != null && getIntent().hasExtra(EXTRA_PENDING_UPLOAD_URI)) {
-            Uri uri = getIntent().getParcelableExtra(EXTRA_PENDING_UPLOAD_URI);
-            PhotoUpload pendingUpload = new UploadsProviderAccessor(this).getPendingUpload(uri);
-            new UploadsProviderAccessor(this).delete(pendingUpload.getId());
-            setSelectedImageUri(pendingUpload.getPhotoUri());
-            ((EditText) findViewById(R.id.edit_title)).setText(pendingUpload.getMetaData()
-                    .getTitle());
-            ((EditText) findViewById(R.id.edit_description)).setText(pendingUpload.getMetaData()
-                    .getDescription());
-            ((EditText) findViewById(R.id.edit_tags))
+    public static class UiFragment extends CommonFragment
+            implements OnClickListener
+    {
+        private File mUploadImageFile;
+
+        private ToggleButton mPrivateToggle;
+
+        @Override
+        public View onCreateView(LayoutInflater inflater,
+                ViewGroup container, Bundle savedInstanceState) {
+            super.onCreateView(inflater, container, savedInstanceState);
+            View v = inflater.inflate(R.layout.activity_upload, container, false);
+            init(v);
+            return v;
+        }
+
+        void init(View v)
+        {
+            v.findViewById(R.id.button_upload).setOnClickListener(this);
+            v.findViewById(R.id.select_tags).setOnClickListener(this);
+            v.findViewById(R.id.image_upload).setOnClickListener(this);
+            mPrivateToggle = (ToggleButton) v.findViewById(R.id.toggle_private);
+            mPrivateToggle.setChecked(true);
+
+            Intent intent = getActivity().getIntent();
+            boolean showOptions = true;
+            if (intent != null)
+            {
+                if (Intent.ACTION_SEND.equals(intent.getAction())
+                        && intent.getExtras() != null
+                        && intent.getExtras().containsKey(Intent.EXTRA_STREAM)) {
+                    Bundle extras = intent.getExtras();
+                    setSelectedImageUri((Uri) extras.getParcelable(Intent.EXTRA_STREAM));
+                    showOptions = false;
+                } else if (intent.hasExtra(EXTRA_PENDING_UPLOAD_URI)) {
+                    Uri uri = intent.getParcelableExtra(EXTRA_PENDING_UPLOAD_URI);
+                    PhotoUpload pendingUpload = new UploadsProviderAccessor(getActivity())
+                            .getPendingUpload(uri);
+                    new UploadsProviderAccessor(getActivity()).delete(pendingUpload.getId());
+                    setSelectedImageUri(pendingUpload.getPhotoUri());
+                    ((EditText) v.findViewById(R.id.edit_title)).setText(pendingUpload
+                            .getMetaData()
+                            .getTitle());
+                    ((EditText) v.findViewById(R.id.edit_description)).setText(pendingUpload
+                            .getMetaData()
+                            .getDescription());
+                    ((EditText) v.findViewById(R.id.edit_tags))
                     .setText(pendingUpload.getMetaData().getTags());
-            mPrivateToggle.setChecked(pendingUpload.getMetaData().isPrivate());
-        } else {
-            showDialog(DIALOG_SELECT_IMAGE);
-        }
-    }
+                    mPrivateToggle.setChecked(pendingUpload.getMetaData().isPrivate());
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (resultCode != RESULT_OK) {
-            showDialog(DIALOG_SELECT_IMAGE);
-            return;
+                    showOptions = false;
+                }
+            }
+            if (showOptions)
+            {
+                showSelectionDialog();
+            }
         }
 
-        switch (requestCode) {
-            case REQUEST_TAGS:
-                if (resultCode == RESULT_OK && data.getExtras() != null) {
-                    String selectedTags = data.getExtras().getString(
-                            "SELECTED_TAGS");
-                    ((EditText) findViewById(R.id.edit_tags)).setText(selectedTags);
-                }
-                break;
-            case REQUEST_GALLERY:
-                if (resultCode == RESULT_OK && data.getData() != null) {
-                    setSelectedImageUri(data.getData());
-                }
-                break;
-            case REQUEST_CAMERA:
-                if (resultCode == RESULT_OK) {
-                    setSelectedImageFile(mUploadImageFile);
-                } else {
-                    mUploadImageFile = null;
-                }
-                break;
-            default:
-                super.onActivityResult(requestCode, resultCode, data);
-                break;
+        @Override
+        public void onActivityResult(int requestCode, int resultCode, Intent data) {
+            if (resultCode != RESULT_OK) {
+                showSelectionDialog();
+                return;
+            }
+
+            switch (requestCode) {
+                case REQUEST_TAGS:
+                    if (resultCode == RESULT_OK && data.getExtras() != null) {
+                        String selectedTags = data.getExtras().getString(
+                                "SELECTED_TAGS");
+                        ((EditText) getView().findViewById(R.id.edit_tags)).setText(selectedTags);
+                    }
+                    break;
+                case REQUEST_GALLERY:
+                    if (resultCode == RESULT_OK && data.getData() != null) {
+                        setSelectedImageUri(data.getData());
+                    }
+                    break;
+                case REQUEST_CAMERA:
+                    if (resultCode == RESULT_OK) {
+                        setSelectedImageFile(mUploadImageFile);
+                    } else {
+                        mUploadImageFile = null;
+                    }
+                    break;
+                default:
+                    super.onActivityResult(requestCode, resultCode, data);
+                    break;
+            }
         }
-    }
 
-    @Override
-    protected Dialog onCreateDialog(int id) {
-        Dialog dialog;
-        switch (id) {
-            case DIALOG_SELECT_IMAGE:
-                final CharSequence[] items = {
-                        getString(R.string.upload_camera_option),
-                        getString(R.string.upload_gallery_option)
-                };
+        void showSelectionDialog()
+        {
+            SelectImageDialogFragment imageSelectionFragment =
+                    SelectImageDialogFragment
+                            .newInstance(new SelectImageDialogFragment.SelectedActionHandler() {
 
-                AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                builder.setTitle(R.string.upload_title);
-                builder.setItems(items, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int item) {
-                        switch (item) {
-                            case 0:
-                                try {
-                                    mUploadImageFile = new File(FileUtils
-                                            .getStorageFolder(UploadActivity.this),
-                                            "upload_" + new Date().getTime() + ".jpg");
-                                    Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                                    intent.putExtra(android.provider.MediaStore.EXTRA_OUTPUT,
-                                            Uri.fromFile(mUploadImageFile));
-                                    startActivityForResult(intent, REQUEST_CAMERA);
-                                } catch (IOException e) {
-                                    GuiUtils.error(
-                                            TAG,
-                                            R.string.errorCanNotFindExternalStorageForTakingPicture,
-                                            e,
-                                            UploadActivity.this);
+                                private static final long serialVersionUID = 1L;
+
+                                @Override
+                                public void cameraOptionSelected() {
+                                    try {
+                                        mUploadImageFile = new File(FileUtils
+                                                .getStorageFolder(getActivity()),
+                                                "upload_" + new Date().getTime() + ".jpg");
+                                        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                                        intent.putExtra(android.provider.MediaStore.EXTRA_OUTPUT,
+                                                Uri.fromFile(mUploadImageFile));
+                                        startActivityForResult(intent, REQUEST_CAMERA);
+                                    } catch (IOException e) {
+                                        GuiUtils.error(
+                                                TAG,
+                                                R.string.errorCanNotFindExternalStorageForTakingPicture,
+                                                e);
+                                    }
                                 }
-                                return;
-                            case 1:
-                                Intent intent = new Intent(Intent.ACTION_PICK);
-                                intent.setType("image/*");
-                                startActivityForResult(intent, REQUEST_GALLERY);
-                                return;
-                        }
-                    }
-                }).setOnCancelListener(new OnCancelListener() {
-
-                    @Override
-                    public void onCancel(DialogInterface dialog) {
-                        finish();
-                    }
-                });
-                dialog = builder.create();
-                break;
-            default:
-                dialog = null;
+                            });
+            imageSelectionFragment.replace(getActivity().getSupportFragmentManager());
         }
-        return dialog;
+
+        private void setSelectedImageUri(Uri imageUri) {
+            mUploadImageFile = new File(ImageUtils.getRealPathFromURI(getActivity(), imageUri));
+            setSelectedImageFile(mUploadImageFile);
+        }
+
+        private void setSelectedImageFile(File imageFile) {
+            ImageView previewImage = (ImageView) getView().findViewById(R.id.image_upload);
+            previewImage.setImageBitmap(ImageUtils.decodeFile(mUploadImageFile, 200));
+        }
+
+        @Override
+        public void onClick(View v) {
+            switch (v.getId()) {
+                case R.id.select_tags:
+                    Intent i = new Intent(getActivity(), SelectTagsActivity.class);
+                    startActivityForResult(i, REQUEST_TAGS);
+                    break;
+                case R.id.button_upload:
+                    if (mUploadImageFile != null) {
+                        startUpload(mUploadImageFile);
+                    }
+                    break;
+                case R.id.image_upload:
+                    Intent intent = new Intent();
+                    intent.setAction(android.content.Intent.ACTION_VIEW);
+                    intent.setDataAndType(Uri.fromFile(mUploadImageFile), "image/png");
+                    startActivity(intent);
+                    break;
+            }
+        }
+
+        private void startUpload(File uploadFile) {
+            UploadsProviderAccessor uploads = new UploadsProviderAccessor(getActivity());
+            UploadMetaData metaData = new UploadMetaData();
+
+            metaData.setTitle(((EditText) getView().findViewById(R.id.edit_title)).getText()
+                    .toString());
+            metaData.setDescription(((EditText) getView().findViewById(R.id.edit_description))
+                    .getText()
+                    .toString());
+            metaData.setTags(((EditText) getView().findViewById(R.id.edit_tags)).getText()
+                    .toString());
+            metaData.setPrivate(mPrivateToggle.isChecked());
+
+            uploads.addPendingUpload(Uri.fromFile(uploadFile), metaData, false,
+                    false);
+            getActivity().startService(new Intent(getActivity(), UploaderService.class));
+            GuiUtils.info(R.string.uploading_in_background);
+            getActivity().finish();
+        }
     }
 
-    private void setSelectedImageUri(Uri imageUri) {
-        mUploadImageFile = new File(ImageUtils.getRealPathFromURI(this, imageUri));
-        setSelectedImageFile(mUploadImageFile);
-    }
+    public static class SelectImageDialogFragment extends CommonDialogFragment
+    {
+        public static interface SelectedActionHandler extends Serializable
+        {
+            void cameraOptionSelected();
+        }
 
-    private void setSelectedImageFile(File imageFile) {
-        ImageView previewImage = (ImageView) findViewById(R.id.image_upload);
-        previewImage.setImageBitmap(ImageUtils.decodeFile(mUploadImageFile, 200));
-    }
+        private SelectedActionHandler handler;
 
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.select_tags:
-                Intent i = new Intent(this, SelectTagsActivity.class);
-                startActivityForResult(i, REQUEST_TAGS);
-                break;
-            case R.id.button_upload:
-                if (mUploadImageFile != null) {
-                    startUpload(mUploadImageFile);
+        public static SelectImageDialogFragment newInstance(
+                SelectedActionHandler handler)
+        {
+            SelectImageDialogFragment frag = new SelectImageDialogFragment();
+            frag.handler = handler;
+            return frag;
+        }
+
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            final CharSequence[] items = {
+                    getString(R.string.upload_camera_option),
+                    getString(R.string.upload_gallery_option)
+            };
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+            builder.setTitle(R.string.upload_title);
+            builder.setItems(items, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int item) {
+                    switch (item) {
+                        case 0:
+                            if (handler != null)
+                            {
+                                handler.cameraOptionSelected();
+                            }
+                            return;
+                        case 1:
+                            Intent intent = new Intent(Intent.ACTION_PICK);
+                            intent.setType("image/*");
+                            startActivityForResult(intent, REQUEST_GALLERY);
+                            return;
+                    }
                 }
-                break;
-            case R.id.image_upload:
-                Intent intent = new Intent();
-                intent.setAction(android.content.Intent.ACTION_VIEW);
-                intent.setDataAndType(Uri.fromFile(mUploadImageFile), "image/png");
-                startActivity(intent);
-                break;
+            }).setOnCancelListener(new OnCancelListener() {
+
+                @Override
+                public void onCancel(DialogInterface dialog) {
+                    getActivity().finish();
+                }
+            });
+            return builder.create();
         }
-    }
-
-    private void startUpload(File uploadFile) {
-        UploadsProviderAccessor uploads = new UploadsProviderAccessor(this);
-        UploadMetaData metaData = new UploadMetaData();
-
-        metaData.setTitle(((EditText) findViewById(R.id.edit_title)).getText().toString());
-        metaData.setDescription(((EditText) findViewById(R.id.edit_description)).getText()
-                .toString());
-        metaData.setTags(((EditText) findViewById(R.id.edit_tags)).getText().toString());
-        metaData.setPrivate(mPrivateToggle.isChecked());
-
-        uploads.addPendingUpload(Uri.fromFile(uploadFile), metaData, false,
-                false);
-        startService(new Intent(this, UploaderService.class));
-        GuiUtils.info(R.string.uploading_in_background);
-        finish();
     }
 }
