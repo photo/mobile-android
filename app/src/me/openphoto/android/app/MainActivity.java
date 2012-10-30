@@ -187,9 +187,11 @@ public class MainActivity extends SActivity
         menu.findItem(R.id.menu_camera).setVisible(
                 Preferences.isLoggedIn(this));
         Fragment currentFragment = getCurrentFragment();
-        menu.findItem(R.id.menu_refresh).setVisible(currentFragment != null
+        boolean refreshVisible = currentFragment != null
                 && currentFragment instanceof Refreshable
-                && mLoaders == 0);
+                && mLoaders == 0;
+        menu.findItem(R.id.dummy_menu).setVisible(!refreshVisible);
+        menu.findItem(R.id.menu_refresh).setVisible(refreshVisible);
     }
 
     @Override
@@ -197,8 +199,13 @@ public class MainActivity extends SActivity
     {
         MenuInflater inflater = getSupportMenuInflater();
         inflater.inflate(R.menu.main, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
         reinitMenu(menu);
-        return true;
+        return super.onPrepareOptionsMenu(menu);
     }
 
     @Override
@@ -313,7 +320,7 @@ public class MainActivity extends SActivity
             {
                 ft.attach(mFragment);
             }
-
+            reinitMenu();
         }
 
         @Override
