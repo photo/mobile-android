@@ -4,7 +4,9 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:weightSum="1" >
-
+	<LinearLayout android:focusable="true"
+		android:focusableInTouchMode="true" android:layout_width="0px"
+		android:layout_height="0px" />
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -52,15 +54,23 @@
                         android:id="@+id/edit_title"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="Title"
+                        android:hint="@string/upload_title"
                         android:inputType="textCapWords" />
 
                     <EditText
                         android:id="@+id/edit_tags"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="Tags"
-                        android:inputType="textMultiLine" />
+                        android:ems="10"
+                        android:hint="@string/upload_tags"
+                        android:inputType="textMultiLine" >
+                    </EditText>
+
+                    <Button
+                        android:id="@+id/select_tags"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/upload_select_tags" />
                 </LinearLayout>
             </LinearLayout>
 
@@ -68,7 +78,7 @@
                 android:id="@+id/edit_description"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Description"
+                android:hint="@string/upload_description"
                 android:inputType="textMultiLine|textCapSentences|textLongMessage"
                 android:minLines="3"
                 android:gravity="left|top" />
@@ -77,23 +87,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="20dp" />
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" >
-
-                <TextView
-                    style="@style/TextTitle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:layout_weight="1"
-                    android:text="Private" />
-
-                <ToggleButton
-                    android:id="@+id/toggle_private"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
-            </LinearLayout>
+            <com.WazaBe.HoloEverywhere.widget.Switch
+				style="@style/YesNoSwitch" android:id="@+id/private_switch"
+				android:layout_width="match_parent" android:layout_height="wrap_content"
+				android:text="@string/upload_private" android:checked="true" />
         </LinearLayout>
     </ScrollView>
 
@@ -101,6 +98,6 @@
         android:id="@+id/button_upload"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Upload!" />
+        android:text="@string/upload_button" />
 
 </LinearLayout>

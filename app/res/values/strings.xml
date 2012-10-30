@@ -67,11 +67,17 @@
     <string name="upload_gallery_option">Gallery</string>
     <string name="upload_title">Upload</string>
     <string name="upload_tags">Tags</string>
+    <string name="upload_select_tags">Select Tags</string>
+    <string name="upload_select_tags_finish">Finish</string>
     <string name="upload_title">Title</string>
+    <string name="upload_description">Description</string>
     <string name="upload_private">Private</string>
     <string name="upload_share_facebook">Facebook</string>
     <string name="upload_share_twitter">Twitter</string>
     <string name="upload_button">Upload!</string>
+    
+    <!-- SelectTagsActivity -->
+    <string name="title_activity_select_tags">Select Tags</string>
     
     <!-- Sync screen -->
     <string name="sync_next_button">Next</string>
