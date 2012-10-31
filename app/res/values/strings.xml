@@ -75,6 +75,7 @@
     <string name="upload_share_facebook">Facebook</string>
     <string name="upload_share_twitter">Twitter</string>
     <string name="upload_button">Upload!</string>
+    <string name="upload_pick_photo_first">Please pick a photo first</string>
     
     <!-- SelectTagsActivity -->
     <string name="title_activity_select_tags">Select Tags</string>
