@@ -1,9 +1,10 @@
 
 package me.openphoto.android.app;
 
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import me.openphoto.android.app.model.Tag;
 import me.openphoto.android.app.net.IOpenPhotoApi;
@@ -101,7 +102,7 @@ public class SelectTagsActivity extends SActivity {
         private class TagsAdapter extends EndlessAdapter<Tag> implements
                 OnCheckedChangeListener {
             private final IOpenPhotoApi mOpenPhotoApi;
-            private ArrayList<String> checkedTags = new ArrayList<String>();
+            private Set<String> checkedTags = new HashSet<String>();
 
             public TagsAdapter() {
                 super(Integer.MAX_VALUE);
@@ -126,6 +127,8 @@ public class SelectTagsActivity extends SActivity {
                 CheckBox checkBox = (CheckBox) convertView
                         .findViewById(R.id.tag_checkbox);
                 checkBox.setText(tag.getTag());
+                checkBox.setOnCheckedChangeListener(null);
+                checkBox.setChecked(isChecked(tag.getTag()));
                 checkBox.setOnCheckedChangeListener(this);
 
                 return convertView;
@@ -168,6 +171,15 @@ public class SelectTagsActivity extends SActivity {
                 else
                     checkedTags.remove(text);
 
+            }
+
+            boolean isChecked(String tag)
+            {
+                if (tag == null)
+                {
+                    return false;
+                }
+                return checkedTags.contains(tag);
             }
 
             public String getSelectedTags() {
