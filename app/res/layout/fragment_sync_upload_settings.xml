@@ -31,11 +31,11 @@
 			<com.WazaBe.HoloEverywhere.widget.Switch
 				style="@style/YesNoSwitch" android:id="@+id/twitter_switch"
 				android:layout_width="match_parent" android:layout_height="wrap_content"
-				android:text="@string/upload_share_twitter" android:checked="true" />
+				android:text="@string/upload_share_twitter" android:checked="false" />
 			<com.WazaBe.HoloEverywhere.widget.Switch
 				style="@style/YesNoSwitch" android:id="@+id/facebook_switch"
 				android:layout_width="match_parent" android:layout_height="wrap_content"
-				android:text="@string/upload_share_facebook" android:checked="true" />
+				android:text="@string/upload_share_facebook" android:checked="false" />
 		</LinearLayout>
 	</ScrollView>
 	<Button android:id="@+id/uploadBtn" android:layout_width="match_parent"

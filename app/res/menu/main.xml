@@ -4,6 +4,7 @@
     <item
         android:id="@+id/dummy_menu"
         android:title=""
+        android:enabled="false"
         android:showAsAction="always"/>
     <item
         android:id="@+id/menu_refresh"
