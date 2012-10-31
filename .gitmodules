@@ -1,9 +1,9 @@
 [submodule "submodules/facebook-android-sdk"]
 	path = submodules/facebook-android-sdk
-	url = git://github.com/facebook/facebook-android-sdk.git
+	url = git://github.com/httpdispatch/facebook-android-sdk.git
 [submodule "submodules/GestureImageView"]
 	path = submodules/GestureImageView
-	url = git://github.com/jasonpolites/gesture-imageview.git
+	url = git://github.com/httpdispatch/gesture-imageview.git
 [submodule "submodules/ActionBarSherlock"]
 	path = submodules/ActionBarSherlock
 	url = https://github.com/JakeWharton/ActionBarSherlock.git
