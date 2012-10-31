@@ -78,6 +78,7 @@
                 
         <activity
             android:name=".SelectTagsActivity"
+            android:configChanges="orientation"
             android:label="@string/title_activity_select_tags" >
         </activity>
 

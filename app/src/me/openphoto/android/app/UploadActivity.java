@@ -14,7 +14,6 @@ import me.openphoto.android.app.util.FileUtils;
 import me.openphoto.android.app.util.GuiUtils;
 import me.openphoto.android.app.util.ImageUtils;
 import android.content.DialogInterface;
-import android.content.DialogInterface.OnCancelListener;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -216,13 +215,23 @@ public class UploadActivity extends SActivity {
                 case R.id.button_upload:
                     if (mUploadImageFile != null) {
                         startUpload(mUploadImageFile);
+                    } else
+                    {
+                        GuiUtils.alert(R.string.upload_pick_photo_first);
+                        showSelectionDialog();
                     }
                     break;
                 case R.id.image_upload:
-                    Intent intent = new Intent();
-                    intent.setAction(android.content.Intent.ACTION_VIEW);
-                    intent.setDataAndType(Uri.fromFile(mUploadImageFile), "image/png");
-                    startActivity(intent);
+                    if (mUploadImageFile != null)
+                    {
+                        Intent intent = new Intent();
+                        intent.setAction(android.content.Intent.ACTION_VIEW);
+                        intent.setDataAndType(Uri.fromFile(mUploadImageFile), "image/png");
+                        startActivity(intent);
+                    } else
+                    {
+                        showSelectionDialog();
+                    }
                     break;
             }
         }
@@ -266,6 +275,11 @@ public class UploadActivity extends SActivity {
             frag.handler = handler;
             return frag;
         }
+        @Override
+        public void onCancel(DialogInterface dialog) {
+            super.onCancel(dialog);
+            getActivity().finish();
+        }
 
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -273,6 +287,7 @@ public class UploadActivity extends SActivity {
                     getString(R.string.upload_camera_option),
                     getString(R.string.upload_gallery_option)
             };
+
 
             AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
             builder.setTitle(R.string.upload_title);
@@ -291,12 +306,6 @@ public class UploadActivity extends SActivity {
                             handler.galleryOptionSelected();
                             return;
                     }
-                }
-            }).setOnCancelListener(new OnCancelListener() {
-
-                @Override
-                public void onCancel(DialogInterface dialog) {
-                    getActivity().finish();
                 }
             });
             return builder.create();
