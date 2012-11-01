@@ -22,6 +22,10 @@ public class CommonFragment extends SFragment
 {
     static final String TAG = CommonFragment.class.getSimpleName();
 
+    public CommonFragment()
+    {
+        CommonUtils.debug(TAG, "Constructor: " + getClass().getSimpleName());
+    }
     @Override
     public void onAttach(Activity activity)
     {
@@ -114,6 +118,10 @@ public class CommonFragment extends SFragment
         CommonUtils.debug(TAG, "onStop: " + getClass().getSimpleName());
     }
 
+    public boolean checkLoggedInAndOnline()
+    {
+        return Preferences.isLoggedIn(OpenPhotoApplication.getContext()) && checkOnline();
+    }
     public boolean checkOnline()
     {
         boolean result = Utils.isOnline(getActivity());

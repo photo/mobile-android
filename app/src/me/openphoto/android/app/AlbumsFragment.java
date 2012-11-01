@@ -139,7 +139,7 @@ public class AlbumsFragment extends CommonFrargmentWithImageWorker implements
         @Override
         public LoadResponse loadItems(int page)
         {
-            if (checkOnline())
+            if (checkLoggedInAndOnline())
             {
                 try
                 {
