@@ -18,13 +18,65 @@ import com.WazaBe.HoloEverywhere.app.Activity;
 public class SyncFragment extends CommonFragment implements NextStepFlow,
         PreviousStepFlow, Refreshable, UploadsClearedHandler
 {
-    Fragment activeFragment;
-    static final String FIRST_STEP_TAG = "firstStep";
-    static final String SECOND_STEP_TAG = "secondStep";
+    static final String FIRST_STEP_TAG = "firstStepSync";
+    static final String SECOND_STEP_TAG = "secondStepSync";
+    static final String ACTIVE_STEP = "SyncFragmentActiveStep";
 
+    Fragment activeFragment;
     SyncImageSelectionFragment firstStepFragment;
     SyncUploadFragment secondStepFragment;
     SyncHandler syncHandler;
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        String activeStep = savedInstanceState == null ? FIRST_STEP_TAG :
+                savedInstanceState.getString(ACTIVE_STEP);
+        firstStepFragment = (SyncImageSelectionFragment) getActivity()
+                .getSupportFragmentManager().findFragmentByTag(FIRST_STEP_TAG);
+        if (!activeStep.equals(FIRST_STEP_TAG))
+        {
+            detachFragmentIfNecessary(firstStepFragment);
+        }
+        if (firstStepFragment != null)
+        {
+            firstStepFragment.setNextStepFlow(this);
+        }
+
+        secondStepFragment = (SyncUploadFragment)
+                getActivity().getSupportFragmentManager()
+                        .findFragmentByTag(SECOND_STEP_TAG);
+        if (!activeStep.equals(SECOND_STEP_TAG))
+        {
+            detachFragmentIfNecessary(secondStepFragment);
+        }
+        if (secondStepFragment != null)
+        {
+            secondStepFragment.setPreviousStepFlow(this);
+        }
+        if (activeStep.equals(FIRST_STEP_TAG))
+        {
+            activeFragment = firstStepFragment;
+        } else
+        {
+            activeFragment = secondStepFragment;
+        }
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        if (activeFragment != null)
+        {
+            outState.putString(ACTIVE_STEP, getTagForFragment(activeFragment));
+        }
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -59,7 +111,7 @@ public class SyncFragment extends CommonFragment implements NextStepFlow,
     {
         FragmentTransaction transaction = getActivity()
                 .getSupportFragmentManager().beginTransaction();
-        if (activeFragment != null)
+        if (activeFragment != null && !activeFragment.isDetached())
         {
             transaction.detach(activeFragment);
         }
@@ -68,11 +120,21 @@ public class SyncFragment extends CommonFragment implements NextStepFlow,
             transaction.attach(fragment);
         } else
         {
-            transaction.add(R.id.fragment_container, fragment);
+            transaction.replace(R.id.fragment_container, fragment, getTagForFragment(fragment));
         }
-        // transaction.replace(R.id.fragment_container, fragment);
         transaction.commit();
         activeFragment = fragment;
+    }
+
+    String getTagForFragment(Fragment fragment)
+    {
+        if (fragment == firstStepFragment)
+        {
+            return FIRST_STEP_TAG;
+        } else
+        {
+            return SECOND_STEP_TAG;
+        }
     }
 
     @Override
@@ -84,7 +146,8 @@ public class SyncFragment extends CommonFragment implements NextStepFlow,
 
     public void detachActiveFragment()
     {
-        if (!getActivity().isFinishing())
+        if (activeFragment != null)
+        // if (!getActivity().isFinishing())
         {
             FragmentTransaction transaction = getActivity()
                     .getSupportFragmentManager().beginTransaction();
@@ -94,14 +157,31 @@ public class SyncFragment extends CommonFragment implements NextStepFlow,
         }
     };
 
+    public void detachFragmentIfNecessary(Fragment fragment) {
+        if (fragment != null && !fragment.isDetached())
+        {
+            getActivity().getSupportFragmentManager().beginTransaction()
+                    .detach(fragment)
+                    .commit();
+        }
+    }
+
     @Override
     public void activatePreviousStep()
     {
         if (firstStepFragment == null)
         {
-            firstStepFragment = new SyncImageSelectionFragment();
+            firstStepFragment = (SyncImageSelectionFragment) getActivity()
+                    .getSupportFragmentManager().findFragmentByTag(FIRST_STEP_TAG);
+            detachFragmentIfNecessary(firstStepFragment);
+            boolean attachOnly = true;
+            if (firstStepFragment == null)
+            {
+                firstStepFragment = new SyncImageSelectionFragment();
+                attachOnly = false;
+            }
             firstStepFragment.setNextStepFlow(this);
-            selectFragment(firstStepFragment, false);
+            selectFragment(firstStepFragment, attachOnly);
         } else
         {
             selectFragment(firstStepFragment, true);
@@ -113,9 +193,17 @@ public class SyncFragment extends CommonFragment implements NextStepFlow,
     {
         if (secondStepFragment == null)
         {
-            secondStepFragment = new SyncUploadFragment();
+            secondStepFragment = (SyncUploadFragment) getActivity().getSupportFragmentManager()
+                    .findFragmentByTag(SECOND_STEP_TAG);
+            detachFragmentIfNecessary(secondStepFragment);
+            boolean attachOnly = true;
+            if (secondStepFragment == null)
+            {
+                secondStepFragment = new SyncUploadFragment();
+                attachOnly = false;
+            }
             secondStepFragment.setPreviousStepFlow(this);
-            selectFragment(secondStepFragment, false);
+            selectFragment(secondStepFragment, attachOnly);
         } else
         {
             selectFragment(secondStepFragment, true);

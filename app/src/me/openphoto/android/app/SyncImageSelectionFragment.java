@@ -1,6 +1,7 @@
 
 package me.openphoto.android.app;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -30,8 +31,6 @@ import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.view.ViewTreeObserver;
 import android.widget.AbsListView;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.CompoundButton;
@@ -44,11 +43,12 @@ import com.WazaBe.HoloEverywhere.app.Activity;
 import com.WazaBe.HoloEverywhere.widget.Switch;
 
 public class SyncImageSelectionFragment extends CommonFrargmentWithImageWorker implements
-        Refreshable,
-        OnItemClickListener
+        Refreshable
 {
     public static final String TAG = SyncImageSelectionFragment.class.getSimpleName();
     public static final String IMAGE_CACHE_DIR = "thumbs";
+    public static final String SELECTED_IMAGES = "SyncImageSelectionFragmentSelectedImages";
+    public static final String IMAGE_WORKER_ADAPTER = "SyncImageSelectionFragmentAdapter";
 
     private LoadingControl loadingControl;
     private CustomImageAdapter mAdapter;
@@ -59,11 +59,35 @@ public class SyncImageSelectionFragment extends CommonFrargmentWithImageWorker i
     NextStepFlow nextStepFlow;
     InitTask initTask = null;
     Switch stateSwitch;
+    CustomImageWorkerAdapter customImageWorkerAdapter;
+    SelectionController selectionController;
 
     @Override
     public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
+
+        mImageThumbSize = getResources().getDimensionPixelSize(
+                R.dimen.image_thumbnail_size);
+        mImageThumbSpacing = getResources().getDimensionPixelSize(
+                R.dimen.image_thumbnail_spacing);
+        mImageThumbBorder = getResources().getDimensionPixelSize(
+                R.dimen.image_thumbnail_border);
+
+        customImageWorkerAdapter = CommonUtils.getSerializableFromBundleIfNotNull(
+                IMAGE_WORKER_ADAPTER, savedInstanceState);
+        selectionController = CommonUtils.getSerializableFromBundleIfNotNull(SELECTED_IMAGES,
+                savedInstanceState);
+        if (selectionController == null)
+        {
+            selectionController = new SelectionController();
+        }
+        if (customImageWorkerAdapter != null)
+        {
+            mImageWorker.setAdapter(customImageWorkerAdapter);
+        }
+        mAdapter = new CustomImageAdapter(getActivity(), (ImageResizer) mImageWorker,
+                selectionController);
     }
 
     @Override
@@ -73,21 +97,33 @@ public class SyncImageSelectionFragment extends CommonFrargmentWithImageWorker i
         super.onCreateView(inflater, container, savedInstanceState);
         View v = inflater.inflate(R.layout.fragment_sync_select_photos,
                 container, false);
-        init(v);
         return v;
+    }
+
+    @Override
+    public void onViewCreated(View view) {
+        super.onViewCreated(view);
+        init(view);
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        if (mAdapter != null)
+        {
+            mAdapter.setNumColumns(0);
+        }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putSerializable(SELECTED_IMAGES, selectionController);
+        outState.putSerializable(IMAGE_WORKER_ADAPTER, customImageWorkerAdapter);
     }
 
     public void init(View v)
     {
-        mImageThumbSize = getResources().getDimensionPixelSize(
-                R.dimen.image_thumbnail_size);
-        mImageThumbSpacing = getResources().getDimensionPixelSize(
-                R.dimen.image_thumbnail_spacing);
-        mImageThumbBorder = getResources().getDimensionPixelSize(
-                R.dimen.image_thumbnail_border);
-
-        mAdapter = new CustomImageAdapter(getActivity(), (ImageResizer) mImageWorker);
-
         photosGrid = (GridView) v.findViewById(R.id.grid_photos);
 
         // This listener is used to get the final width of the GridView and then
@@ -135,7 +171,7 @@ public class SyncImageSelectionFragment extends CommonFrargmentWithImageWorker i
             {
                 if (isDataLoaded())
                 {
-                    if (mAdapter.hasSelected())
+                    if (selectionController.hasSelected())
                     {
                         if (nextStepFlow != null)
                         {
@@ -159,7 +195,6 @@ public class SyncImageSelectionFragment extends CommonFrargmentWithImageWorker i
                 switchUploadState(isChecked);
             }
         });
-        photosGrid.setOnItemClickListener(this);
         if (isDataLoaded())
         {
             photosGrid.setAdapter(mAdapter);
@@ -183,21 +218,14 @@ public class SyncImageSelectionFragment extends CommonFrargmentWithImageWorker i
         mImageWorker.setImageCache(ImageCache.findOrCreateCache(getActivity(),
                 cacheParams));
     }
+
     protected void switchUploadState(boolean isChecked)
     {
         if (isDataLoaded())
         {
-            CustomImageWorkerAdapter adapter = getCustomImageWorkerAdapter();
-            adapter.setFiltered(!isChecked);
+            customImageWorkerAdapter.setFiltered(!isChecked);
             mAdapter.notifyDataSetChanged();
         }
-    }
-
-    public CustomImageWorkerAdapter getCustomImageWorkerAdapter()
-    {
-        CustomImageWorkerAdapter adapter = (CustomImageWorkerAdapter) mImageWorker
-                .getAdapter();
-        return adapter;
     }
 
     @Override
@@ -225,7 +253,7 @@ public class SyncImageSelectionFragment extends CommonFrargmentWithImageWorker i
 
     public boolean isDataLoaded()
     {
-        return mImageWorker.getAdapter() != null;
+        return customImageWorkerAdapter != null;
     }
 
     @Override
@@ -236,23 +264,6 @@ public class SyncImageSelectionFragment extends CommonFrargmentWithImageWorker i
         {
             mAdapter.notifyDataSetChanged();
         }
-    }
-
-
-    @Override
-    public void onItemClick(AdapterView<?> arg0, View arg1, int position,
-            long id)
-    {
-        mAdapter.selectedIds.add(id);
-        // Intent intent = new Intent(getActivity(),
-        // PhotoDetailsActivity.class);
-        // intent.putParcelableArrayListExtra(
-        // PhotoDetailsActivity.EXTRA_ADAPTER_PHOTOS,
-        // mAdapter.getItems());
-        // intent.putExtra(PhotoDetailsActivity.EXTRA_ADAPTER_POSITION,
-        // position);
-        // intent.putExtra(PhotoDetailsActivity.EXTRA_ADAPTER_TAGS, mTags);
-        // startActivity(intent);
     }
 
     @Override
@@ -269,20 +280,20 @@ public class SyncImageSelectionFragment extends CommonFrargmentWithImageWorker i
 
     public void clear()
     {
-        mAdapter.clearSelection();
+        selectionController.clearSelection();
     }
 
     public List<String> getSelectedFileNames()
     {
-        if (mImageWorker.getAdapter() == null)
+        if (customImageWorkerAdapter == null)
         {
             return Collections.emptyList();
         }
         List<String> result = new ArrayList<String>();
-        for (int i = 0, size = mAdapter.getCount(); i < size; i++)
+        for (int i = 0, size = customImageWorkerAdapter.getSize(); i < size; i++)
         {
-            ImageData imageData = (ImageData) mAdapter.getItem(i);
-            if (imageData != null && mAdapter.isSelected(imageData.id))
+            ImageData imageData = (ImageData) customImageWorkerAdapter.getItem(i);
+            if (imageData != null && selectionController.isSelected(imageData.id))
             {
                 result.add(imageData.data);
             }
@@ -309,13 +320,14 @@ public class SyncImageSelectionFragment extends CommonFrargmentWithImageWorker i
     {
         if (isDataLoaded())
         {
-            getCustomImageWorkerAdapter().addProcessedValues(values);
+            customImageWorkerAdapter.addProcessedValues(values);
             mAdapter.notifyDataSetChanged();
         }
     }
 
-    static class ImageData
+    static class ImageData implements Serializable
     {
+        private static final long serialVersionUID = 1L;
         long id;
         String data;
 
@@ -360,8 +372,9 @@ public class SyncImageSelectionFragment extends CommonFrargmentWithImageWorker i
             super.onPreExecute();
             loadingControl.startLoading();
             photosGrid.setAdapter(null);
+            customImageWorkerAdapter = null;
             mImageWorker.setAdapter(null);
-            mAdapter.clearSelection();
+            selectionController.clearSelection();
         }
 
         @Override
@@ -381,10 +394,11 @@ public class SyncImageSelectionFragment extends CommonFrargmentWithImageWorker i
             if (!isCancelled())
             {
                 adapter.setFiltered(!stateSwitch.isChecked());
+                customImageWorkerAdapter = adapter;
                 mImageWorker.setAdapter(adapter);
                 if (photosGrid != null)
                 {
-                    mAdapter.selectedIds.clear();
+                    selectionController.clearSelection();
                     photosGrid.setAdapter(mAdapter);
                 }
             }
@@ -392,13 +406,46 @@ public class SyncImageSelectionFragment extends CommonFrargmentWithImageWorker i
 
     }
 
-    private class CustomImageAdapter extends ImageAdapter
+    private static class SelectionController implements Serializable
     {
+        private static final long serialVersionUID = 1L;
         Set<Long> selectedIds = new TreeSet<Long>();
 
-        public CustomImageAdapter(Context context, ImageResizer imageWorker)
+        public boolean isSelected(final long id)
+        {
+            return selectedIds.contains(id);
+        }
+
+        public void addToSelected(final long id)
+        {
+            selectedIds.add(id);
+        }
+
+        public void removeFromSelected(final long id)
+        {
+            selectedIds.remove(id);
+        }
+
+        void clearSelection()
+        {
+            selectedIds.clear();
+        }
+
+        boolean hasSelected()
+        {
+            return !selectedIds.isEmpty();
+        }
+    }
+
+    private class CustomImageAdapter extends ImageAdapter
+    {
+        SelectionController selectionController;
+
+        public CustomImageAdapter(Context context, ImageResizer imageWorker,
+                SelectionController selectionController)
         {
             super(context, imageWorker);
+            this.selectionController = selectionController;
         }
 
         @Override
@@ -429,9 +476,9 @@ public class SyncImageSelectionFragment extends CommonFrargmentWithImageWorker i
             ImageData value = (ImageData) getItem(position);
             final long id = value.id;
 
-            selectedOverlay.setVisibility(isSelected(id) ?
+            selectedOverlay.setVisibility(selectionController.isSelected(id) ?
                     View.VISIBLE : View.INVISIBLE);
-            boolean isProcessed = getCustomImageWorkerAdapter()
+            boolean isProcessed = customImageWorkerAdapter
                     .isProcessedValue(value);
             final View uploadedOverlay = view
                     .findViewById(R.id.uploaded_overlay);
@@ -448,15 +495,15 @@ public class SyncImageSelectionFragment extends CommonFrargmentWithImageWorker i
                     @Override
                     public void onClick(View v)
                     {
-                        boolean selected = isSelected(id);
+                        boolean selected = selectionController.isSelected(id);
                         if (selected)
                         {
-                            removeFromSelected(id);
+                            selectionController.removeFromSelected(id);
                         } else
                         {
-                            addToSelected(id);
+                            selectionController.addToSelected(id);
                         }
-                        selectedOverlay.setVisibility(isSelected(id) ?
+                        selectedOverlay.setVisibility(selectionController.isSelected(id) ?
                                 View.VISIBLE : View.INVISIBLE);
                     }
 
@@ -470,30 +517,6 @@ public class SyncImageSelectionFragment extends CommonFrargmentWithImageWorker i
             return view;
         }
 
-        public boolean isSelected(final long id)
-        {
-            return selectedIds.contains(id);
-        }
-
-        public void addToSelected(final long id)
-        {
-            selectedIds.add(id);
-        }
-
-        public void removeFromSelected(final long id)
-        {
-            selectedIds.remove(id);
-        }
-
-        void clearSelection()
-        {
-            selectedIds.clear();
-        }
-
-        boolean hasSelected()
-        {
-            return !selectedIds.isEmpty();
-        }
     }
 
     /**
@@ -682,9 +705,11 @@ public class SyncImageSelectionFragment extends CommonFrargmentWithImageWorker i
         }
     }
 
-    private class CustomImageWorkerAdapter extends
-            ImageWorkerAdapter
+    private static class CustomImageWorkerAdapter extends
+            ImageWorkerAdapter implements Serializable
     {
+        private static final long serialVersionUID = 1L;
+
         List<ImageData> all;
         Set<String> processedValues;
 
@@ -706,7 +731,7 @@ public class SyncImageSelectionFragment extends CommonFrargmentWithImageWorker i
                     MediaStore.Images.Media._ID,
                     MediaStore.Images.Media.DATA
             };
-            Cursor cursor = getActivity().getContentResolver().query(
+            Cursor cursor = OpenPhotoApplication.getContext().getContentResolver().query(
                     MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
                     projection, // Which columns to return
                     null, // Return all rows
@@ -731,7 +756,7 @@ public class SyncImageSelectionFragment extends CommonFrargmentWithImageWorker i
         public void loadProcessedValues()
         {
             UploadsProviderAccessor uploads = new UploadsProviderAccessor(
-                    getActivity());
+                    OpenPhotoApplication.getContext());
             List<String> fileNames = uploads
                     .getUploadedOrPendingPhotosFileNames();
             processedValues = new TreeSet<String>(fileNames);
@@ -814,7 +839,7 @@ public class SyncImageSelectionFragment extends CommonFrargmentWithImageWorker i
     {
         if (isDataLoaded())
         {
-            getCustomImageWorkerAdapter().clearProcessedValues();
+            customImageWorkerAdapter.clearProcessedValues();
             mAdapter.notifyDataSetChanged();
         }
     }
