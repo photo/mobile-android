@@ -136,7 +136,7 @@ public class SelectTagsActivity extends SActivity {
 
             @Override
             public LoadResponse loadItems(int page) {
-                if (checkOnline()) {
+                if (checkLoggedInAndOnline()) {
                     try {
                         TagsResponse response = mOpenPhotoApi.getTags();
                         return new LoadResponse(response.getTags(), false);

@@ -19,6 +19,7 @@ import android.content.BroadcastReceiver;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.view.View;
@@ -70,7 +71,7 @@ public class MainActivity extends SActivity
         // class in com.actionbarsherlock.view and NOT android.view
 
         setUpTabs(savedInstanceState == null ? 1 : savedInstanceState.getInt(
-                ACTIVE_TAB, 1));
+                ACTIVE_TAB, 1), savedInstanceState);
         receivers.add(UploadsUtils
                 .getAndRegisterOnUploadClearedActionBroadcastReceiver(TAG,
                         this, this));
@@ -88,7 +89,7 @@ public class MainActivity extends SActivity
         }
     }
 
-    private void setUpTabs(int activeTab)
+    private void setUpTabs(int activeTab, Bundle savedInstanceState)
     {
         addTab(R.drawable.tab_home_2states,
                 R.string.tab_home,
@@ -112,11 +113,23 @@ public class MainActivity extends SActivity
                         TagsFragment.class, null));
 
         mActionBar.selectTab(mActionBar.getTabAt(activeTab));
+        // hack which refreshes indeterminate progress state on
+        // orientation change
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+
+            @Override
+            public void run() {
+                startLoading();
+                stopLoading();
+            }
+        }, 100);
     }
 
     @Override
     protected void onSaveInstanceState(Bundle outState)
     {
+        super.onSaveInstanceState(outState);
         outState.putInt(ACTIVE_TAB, mActionBar.getSelectedNavigationIndex());
     }
 
@@ -272,7 +285,6 @@ public class MainActivity extends SActivity
         }
     }
 
-
     private void showLoading(boolean show)
     {
         setSupportProgressBarIndeterminateVisibility(show);
@@ -289,6 +301,12 @@ public class MainActivity extends SActivity
         public TabListener(String tag, Class<T> clz,
                 Bundle args)
         {
+            this(tag, clz, args, false);
+        }
+
+        public TabListener(String tag, Class<T> clz,
+                Bundle args, boolean removeIfExists)
+        {
             mTag = tag;
             mClass = clz;
             mArgs = args;
@@ -304,6 +322,10 @@ public class MainActivity extends SActivity
             {
                 ft.detach(mFragment);
             }
+            if (removeIfExists && mFragment != null)
+            {
+                ft.remove(mFragment);
+            }
         }
 
         @Override
@@ -315,7 +337,7 @@ public class MainActivity extends SActivity
                 mFragment = Fragment.instantiate(MainActivity.this,
                         mClass.getName(),
                         mArgs);
-                ft.add(android.R.id.content, mFragment, mTag);
+                ft.replace(android.R.id.content, mFragment, mTag);
             } else
             {
                 ft.attach(mFragment);
