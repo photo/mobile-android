@@ -161,7 +161,7 @@ public class GalleryFragment extends CommonFrargmentWithImageWorker implements R
         public LoadResponse loadItems(
                 int page)
         {
-            if (checkOnline())
+            if (checkLoggedInAndOnline())
             {
                 return super.loadItems(page);
             } else

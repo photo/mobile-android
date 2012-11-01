@@ -448,7 +448,7 @@ public class HomeFragment extends CommonFrargmentWithImageWorker implements Refr
         @Override
         public LoadResponse loadItems(int page)
         {
-            if (checkOnline() && Preferences.isLoggedIn(mContext))
+            if (checkLoggedInAndOnline())
             {
                 try
                 {
