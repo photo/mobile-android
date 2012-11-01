@@ -55,9 +55,12 @@ public class PhotoDetailsActivity extends SActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getSupportFragmentManager().beginTransaction()
-                .replace(android.R.id.content, new UiFragment())
-                .commit();
+        if (savedInstanceState == null)
+        {
+            getSupportFragmentManager().beginTransaction()
+                    .replace(android.R.id.content, new UiFragment())
+                    .commit();
+        }
     }
 
     public static class UiFragment extends CommonFrargmentWithImageWorker
