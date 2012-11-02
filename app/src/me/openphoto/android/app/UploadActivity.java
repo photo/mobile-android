@@ -10,9 +10,11 @@ import me.openphoto.android.app.net.UploadMetaData;
 import me.openphoto.android.app.provider.PhotoUpload;
 import me.openphoto.android.app.provider.UploadsProviderAccessor;
 import me.openphoto.android.app.service.UploaderService;
+import me.openphoto.android.app.util.CommonUtils;
 import me.openphoto.android.app.util.FileUtils;
 import me.openphoto.android.app.util.GuiUtils;
 import me.openphoto.android.app.util.ImageUtils;
+import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
@@ -51,26 +53,60 @@ public class UploadActivity extends SActivity {
         super.onCreate(savedInstanceState);
         if (savedInstanceState == null)
         {
-        getSupportFragmentManager().beginTransaction()
-                .replace(android.R.id.content, new UiFragment())
-                .commit();
+            getSupportFragmentManager().beginTransaction()
+                    .replace(android.R.id.content, new UiFragment())
+                    .commit();
         }
     }
 
     public static class UiFragment extends CommonFragment
             implements OnClickListener
     {
+        static final String UPLOAD_IMAGE_FILE = "UploadActivityFile";
+        static final String UPLOAD_IMAGE_FILE_URI = "UploadActivityFileUri";
         private File mUploadImageFile;
+        private Uri fileUri;
 
         private Switch mPrivateToggle;
+
+        @Override
+        public void onCreate(Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+
+            if (savedInstanceState != null)
+            {
+                mUploadImageFile = CommonUtils.getSerializableFromBundleIfNotNull(
+                        UPLOAD_IMAGE_FILE, savedInstanceState);
+                String fileUriString = savedInstanceState.getString(UPLOAD_IMAGE_FILE_URI);
+                if (fileUriString != null)
+                {
+                    fileUri = Uri.parse(fileUriString);
+                }
+            }
+        }
 
         @Override
         public View onCreateView(LayoutInflater inflater,
                 ViewGroup container, Bundle savedInstanceState) {
             super.onCreateView(inflater, container, savedInstanceState);
             View v = inflater.inflate(R.layout.activity_upload, container, false);
-            init(v);
             return v;
+        }
+
+        @Override
+        public void onViewCreated(View view) {
+            super.onViewCreated(view);
+            init(view);
+        }
+
+        @Override
+        public void onSaveInstanceState(Bundle outState) {
+            super.onSaveInstanceState(outState);
+            outState.putSerializable(UPLOAD_IMAGE_FILE, mUploadImageFile);
+            if (fileUri != null)
+            {
+                outState.putString(UPLOAD_IMAGE_FILE_URI, fileUri.toString());
+            }
         }
 
         void init(View v)
@@ -104,7 +140,7 @@ public class UploadActivity extends SActivity {
                             .getMetaData()
                             .getDescription());
                     ((EditText) v.findViewById(R.id.edit_tags))
-                    .setText(pendingUpload.getMetaData().getTags());
+                            .setText(pendingUpload.getMetaData().getTags());
                     mPrivateToggle.setChecked(pendingUpload.getMetaData().isPrivate());
 
                     showOptions = false;
@@ -122,6 +158,10 @@ public class UploadActivity extends SActivity {
             if (resultCode != RESULT_OK && (requestCode == REQUEST_GALLERY
                     || requestCode == REQUEST_CAMERA)) {
                 showSelectionDialog();
+                if (requestCode == REQUEST_CAMERA)
+                {
+                    removeGalleryEntryForCurrentFile();
+                }
                 return;
             }
 
@@ -150,6 +190,14 @@ public class UploadActivity extends SActivity {
             }
         }
 
+        void removeGalleryEntryForCurrentFile()
+        {
+            CommonUtils.debug(TAG, "Removing empty gallery entry: " + fileUri);
+            int rowsDeleted = getActivity().getContentResolver().delete(fileUri, null, null);
+
+            CommonUtils.debug(TAG, "Rows deleted:" + rowsDeleted);
+        }
+
         void showSelectionDialog()
         {
             Handler handler = new Handler();
@@ -169,12 +217,26 @@ public class UploadActivity extends SActivity {
                                                 mUploadImageFile = new File(FileUtils
                                                         .getStorageFolder(getActivity()),
                                                         "upload_" + new Date().getTime() + ".jpg");
+                                                // this is a hack for some
+                                                // devices taken from here
+                                                // http://thanksmister.com/2012/03/16/android_null_data_camera_intent/
+                                                ContentValues values = new ContentValues();
+                                                values.put(MediaStore.Images.Media.TITLE,
+                                                        mUploadImageFile.getName());
+                                                values.put(MediaStore.Images.Media.DATA,
+                                                        mUploadImageFile.getAbsolutePath());
+
                                                 Intent intent = new Intent(
                                                         MediaStore.ACTION_IMAGE_CAPTURE);
-                                                intent.putExtra(
-                                                        android.provider.MediaStore.EXTRA_OUTPUT,
-                                                        Uri.fromFile(mUploadImageFile));
+
+                                                fileUri = getActivity()
+                                                        .getContentResolver()
+                                                        .insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                                                                values);
+                                                intent.putExtra(MediaStore.EXTRA_OUTPUT, fileUri);
+
                                                 startActivityForResult(intent, REQUEST_CAMERA);
+
                                             } catch (IOException e) {
                                                 GuiUtils.error(
                                                         TAG,
@@ -275,6 +337,7 @@ public class UploadActivity extends SActivity {
             frag.handler = handler;
             return frag;
         }
+
         @Override
         public void onCancel(DialogInterface dialog) {
             super.onCancel(dialog);
@@ -287,7 +350,6 @@ public class UploadActivity extends SActivity {
                     getString(R.string.upload_camera_option),
                     getString(R.string.upload_gallery_option)
             };
-
 
             AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
             builder.setTitle(R.string.upload_title);
