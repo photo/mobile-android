@@ -146,6 +146,11 @@ public class UploadActivity extends SActivity {
                     showOptions = false;
                 }
             }
+            if (mUploadImageFile != null)
+            {
+                setSelectedImageFile(mUploadImageFile);
+                showOptions = false;
+            }
             if (showOptions)
             {
                 showSelectionDialog();
