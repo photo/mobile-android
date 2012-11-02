@@ -220,7 +220,10 @@ public class SelectTagsActivity extends SActivity {
 
         private void showLoading(boolean show)
         {
-            getView().findViewById(R.id.loading).setVisibility(show ? View.VISIBLE : View.GONE);
+            if (getView() != null)
+            {
+                getView().findViewById(R.id.loading).setVisibility(show ? View.VISIBLE : View.GONE);
+            }
         }
 
     }
