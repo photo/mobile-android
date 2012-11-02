@@ -119,8 +119,8 @@ public class UploadActivity extends SActivity {
         @Override
         public void onActivityResult(int requestCode, int resultCode, Intent data) {
             super.onActivityResult(requestCode, resultCode, data);
-            if (resultCode != RESULT_OK && requestCode == REQUEST_GALLERY
-                    || requestCode == REQUEST_CAMERA) {
+            if (resultCode != RESULT_OK && (requestCode == REQUEST_GALLERY
+                    || requestCode == REQUEST_CAMERA)) {
                 showSelectionDialog();
                 return;
             }
