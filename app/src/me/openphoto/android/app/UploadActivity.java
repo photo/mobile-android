@@ -208,6 +208,12 @@ public class UploadActivity extends SActivity {
 
         void updateIngGalleryPictureSize()
         {
+            int sdk = android.os.Build.VERSION.SDK_INT;
+            if (sdk < android.os.Build.VERSION_CODES.HONEYCOMB)
+            {
+                return;
+            }
+
             CommonUtils.debug(TAG, "Updating gallery entry: " + fileUri);
             BitmapFactory.Options options = ImageResizer.calculateImageSize(mUploadImageFile
                     .getAbsolutePath());
