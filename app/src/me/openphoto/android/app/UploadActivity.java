@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.Date;
 
+import me.openphoto.android.app.bitmapfun.util.ImageResizer;
 import me.openphoto.android.app.net.UploadMetaData;
 import me.openphoto.android.app.provider.PhotoUpload;
 import me.openphoto.android.app.provider.UploadsProviderAccessor;
@@ -17,6 +18,7 @@ import me.openphoto.android.app.util.ImageUtils;
 import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -185,6 +187,7 @@ public class UploadActivity extends SActivity {
                     break;
                 case REQUEST_CAMERA:
                     if (resultCode == RESULT_OK) {
+                        updateIngGalleryPictureSize();
                         setSelectedImageFile(mUploadImageFile);
                     } else {
                         mUploadImageFile = null;
@@ -203,6 +206,18 @@ public class UploadActivity extends SActivity {
             CommonUtils.debug(TAG, "Rows deleted:" + rowsDeleted);
         }
 
+        void updateIngGalleryPictureSize()
+        {
+            CommonUtils.debug(TAG, "Updating gallery entry: " + fileUri);
+            BitmapFactory.Options options = ImageResizer.calculateImageSize(mUploadImageFile
+                    .getAbsolutePath());
+            ContentValues values = new ContentValues();
+            values.put(MediaStore.Images.Media.WIDTH, options.outWidth);
+            values.put(MediaStore.Images.Media.HEIGHT, options.outHeight);
+            int rowsUpdated = getActivity().getContentResolver()
+                    .update(fileUri, values, null, null);
+            CommonUtils.debug(TAG, "Rows updated:" + rowsUpdated);
+        }
         void showSelectionDialog()
         {
             Handler handler = new Handler();
@@ -334,6 +349,7 @@ public class UploadActivity extends SActivity {
         }
 
         private SelectedActionHandler handler;
+        boolean isRestore = false;
 
         public static SelectImageDialogFragment newInstance(
                 SelectedActionHandler handler)
@@ -375,7 +391,17 @@ public class UploadActivity extends SActivity {
                     }
                 }
             });
+            isRestore = savedInstanceState != null;
             return builder.create();
+        }
+
+        @Override
+        public void onResume() {
+            super.onResume();
+            if (isRestore)
+            {
+                dismiss();
+            }
         }
     }
 }
