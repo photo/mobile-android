@@ -57,8 +57,7 @@
             android:name=".PhotoDetailsActivity"
             android:theme="@style/Theme.OpenPhoto.Fullscreen" />
         <activity
-            android:name=".UploadActivity"
-            android:configChanges="orientation" >
+            android:name=".UploadActivity" >
             <intent-filter>
                 <action android:name="android.intent.action.SEND" />
                 <data android:mimeType="image/*" />
