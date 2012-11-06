@@ -425,6 +425,7 @@ public abstract class ImageWorker {
                 new BitmapDrawable(mContext.getResources(), mLoadingBitmap));
     }
 
+    @SuppressWarnings("deprecation")
     public void setBackgroundDrawable(ImageView imageView)
     {
         imageView

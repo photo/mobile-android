@@ -4,16 +4,17 @@
     android:layout_height="match_parent"
     android:orientation="vertical" >
 
-    <GridView
-        android:id="@+id/grid_photos"
+    <ListView
+        android:id="@+id/list_photos"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:columnWidth="@dimen/gallery_item_size"
-        android:drawSelectorOnTop="true"
-        android:listSelector="@drawable/grid_selector"
-        android:numColumns="auto_fit"
-        android:padding="2dp"
-        android:stretchMode="columnWidth" />
+        android:layout_height="0dip"
+        android:clickable="false"
+        android:longClickable="false" 
+        android:layout_weight="1" 
+        android:divider="@null"
+		android:dividerHeight="0dp"
+		android:drawSelectorOnTop="false"
+		android:listSelector="@android:color/transparent"
+        />
 
 </LinearLayout>

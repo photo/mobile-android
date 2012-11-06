@@ -94,11 +94,25 @@ public class ImageResizer extends ImageWorker {
      * @return
      */
     private Bitmap processBitmap(int resId) {
+        return processBitmap(resId, mImageWidth, mImageHeight);
+    }
+
+    /**
+     * The main processing method. This happens in a background task. In this
+     * case we are just sampling down the bitmap and returning it from a
+     * resource.
+     * 
+     * @param resId
+     * @param imageWidth
+     * @param imageHeight
+     * @return
+     */
+    protected Bitmap processBitmap(int resId, int imageWidth, int imageHeight) {
         if (BuildConfig.DEBUG) {
             CommonUtils.debug(TAG, "processBitmap - " + resId);
         }
         return decodeSampledBitmapFromResource(
-                mContext.getResources(), resId, mImageWidth, mImageHeight);
+                mContext.getResources(), resId, imageWidth, imageHeight);
     }
 
     @Override
@@ -149,9 +163,7 @@ public class ImageResizer extends ImageWorker {
             int reqWidth, int reqHeight) {
 
         // First decode with inJustDecodeBounds=true to check dimensions
-        final BitmapFactory.Options options = new BitmapFactory.Options();
-        options.inJustDecodeBounds = true;
-        BitmapFactory.decodeFile(filename, options);
+        final BitmapFactory.Options options = calculateImageSize(filename);
 
         // Calculate inSampleSize
         options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
@@ -159,6 +171,19 @@ public class ImageResizer extends ImageWorker {
         // Decode bitmap with inSampleSize set
         options.inJustDecodeBounds = false;
         return BitmapFactory.decodeFile(filename, options);
+    }
+
+    /**
+     * Calculate the image size for the given file name.
+     * 
+     * @param filename
+     * @return
+     */
+    public static BitmapFactory.Options calculateImageSize(String filename) {
+        final BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+        BitmapFactory.decodeFile(filename, options);
+        return options;
     }
 
     /**

@@ -1,28 +1,31 @@
 
 package me.openphoto.android.app;
 
+import java.util.ArrayList;
+
 import me.openphoto.android.app.bitmapfun.util.ImageCache;
 import me.openphoto.android.app.bitmapfun.util.ImageFetcher;
 import me.openphoto.android.app.model.Photo;
 import me.openphoto.android.app.net.ReturnSizes;
 import me.openphoto.android.app.ui.adapter.PhotosEndlessAdapter;
+import me.openphoto.android.app.util.ImageFlowUtils;
 import me.openphoto.android.app.util.LoadingControl;
 import me.openphoto.android.app.util.Utils;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
-import android.widget.GridView;
+import android.view.ViewTreeObserver;
 import android.widget.ImageView;
+import android.widget.ListView;
 
 import com.WazaBe.HoloEverywhere.LayoutInflater;
 import com.WazaBe.HoloEverywhere.app.Activity;
 
-public class GalleryFragment extends CommonFrargmentWithImageWorker implements Refreshable,
-        OnItemClickListener
+public class GalleryFragment extends CommonFrargmentWithImageWorker implements Refreshable
 {
     public static final String TAG = GalleryFragment.class.getSimpleName();
 
@@ -32,19 +35,48 @@ public class GalleryFragment extends CommonFrargmentWithImageWorker implements R
     public static String EXTRA_ALBUM = "EXTRA_ALBUM";
 
     private LoadingControl loadingControl;
-    private GalleryAdapter mAdapter;
+    private GalleryAdapterExt mAdapter;
     private String mTags;
     private String mAlbum;
 
     private ReturnSizes returnSizes;
 
+    private int mImageThumbSize;
+    private int mImageThumbSpacing;
+    private int mImageThumbBorder;
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        mImageThumbSize = getResources().getDimensionPixelSize(
+                R.dimen.gallery_item_size);
+        mImageThumbSpacing = getResources().getDimensionPixelSize(
+                R.dimen.gallery_item_spacing);
+        mImageThumbBorder = getResources().getDimensionPixelSize(
+                R.dimen.gallery_item_border);
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString(EXTRA_TAG, mTags);
+        outState.putString(EXTRA_ALBUM, mAlbum);
+    }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState)
     {
         View v = inflater.inflate(R.layout.fragment_gallery, container, false);
-        mTags = null;
-        mAlbum = null;
+        if (savedInstanceState != null)
+        {
+            mTags = savedInstanceState.getString(EXTRA_TAG);
+            mAlbum = savedInstanceState.getString(EXTRA_ALBUM);
+        } else
+        {
+            mTags = null;
+            mAlbum = null;
+        }
         refresh(v);
         return v;
     }
@@ -56,10 +88,11 @@ public class GalleryFragment extends CommonFrargmentWithImageWorker implements R
         loadingControl = ((LoadingControl) activity);
 
     }
+
     @Override
     protected void initImageWorker() {
         returnSizes = PhotosEndlessAdapter.SIZE_SMALL;
-        mImageWorker = new ImageFetcher(getActivity(), loadingControl, returnSizes.getWidth(),
+        mImageWorker = new CustomImageFetcher(getActivity(), loadingControl,
                 returnSizes.getHeight());
         mImageWorker.setImageCache(ImageCache.findOrCreateCache(getActivity(),
                 IMAGE_CACHE_DIR));
@@ -80,40 +113,205 @@ public class GalleryFragment extends CommonFrargmentWithImageWorker implements R
                     .getStringExtra(EXTRA_TAG)
                     : null;
             mAlbum = intent != null ? intent.getStringExtra(EXTRA_ALBUM) : null;
-            if (mTags != null || mAlbum != null)
-            {
-                mAdapter = new GalleryAdapter(mTags, mAlbum);
-                getActivity().getIntent().removeExtra(EXTRA_TAG);
-                getActivity().getIntent().removeExtra(EXTRA_ALBUM);
-            } else
-            {
-                mAdapter = new GalleryAdapter();
-            }
+        }
+        if (mTags != null || mAlbum != null)
+        {
+            mAdapter = new GalleryAdapterExt(mTags, mAlbum);
+            removeTagsAndAlbumInformationFromActivityIntent();
+        } else
+        {
+            mAdapter = new GalleryAdapterExt();
         }
 
-        GridView photosGrid = (GridView) v.findViewById(R.id.grid_photos);
+        final ListView photosGrid = (ListView) v.findViewById(R.id.list_photos);
+        photosGrid.getViewTreeObserver().addOnGlobalLayoutListener(
+                new ViewTreeObserver.OnGlobalLayoutListener()
+                {
+                    @Override
+                    public void onGlobalLayout()
+                    {
+                        if (mAdapter != null && mAdapter.imageFlowUtils.getTotalWidth() !=
+                                photosGrid.getWidth())
+                        {
+                            mAdapter.imageFlowUtils.buildGroups(photosGrid.getWidth(),
+                                    mImageThumbSize, mImageThumbBorder + mImageThumbSpacing);
+                            mAdapter.notifyDataSetChanged();
+
+                        }
+                    }
+
+                });
         photosGrid.setAdapter(mAdapter);
-        photosGrid.setOnItemClickListener(this);
     }
 
-    @Override
-    public void onItemClick(AdapterView<?> arg0, View arg1, int position,
-            long arg3)
+    private void removeTagsAndAlbumInformationFromActivityIntent() {
+        Intent intent = getActivity().getIntent();
+        if (intent != null)
+        {
+            intent.removeExtra(EXTRA_TAG);
+            intent.removeExtra(EXTRA_ALBUM);
+        }
+    }
+
+    void saveCurrentTagAndAlbumInformationToActivityIntent()
     {
-        Intent intent = new Intent(getActivity(), PhotoDetailsActivity.class);
-        intent.putParcelableArrayListExtra(
-                PhotoDetailsActivity.EXTRA_ADAPTER_PHOTOS,
-                mAdapter.getItems());
-        intent.putExtra(PhotoDetailsActivity.EXTRA_ADAPTER_POSITION, position);
-        intent.putExtra(PhotoDetailsActivity.EXTRA_ADAPTER_TAGS, mTags);
-        startActivity(intent);
+        Intent intent = getActivity().getIntent();
+        if (intent == null)
+        {
+            intent = new Intent();
+            getActivity().setIntent(intent);
+        }
+        intent.putExtra(GalleryFragment.EXTRA_TAG, mTags);
+        intent.putExtra(GalleryFragment.EXTRA_ALBUM, mAlbum);
     }
-
     @Override
     public void onDestroyView()
     {
         super.onDestroyView();
         mAdapter.forceStopLoadingIfNecessary();
+    }
+
+    /**
+     * Process all the images preserving aspect ratio and using same height
+     */
+    private class CustomImageFetcher extends ImageFetcher
+    {
+
+        public CustomImageFetcher(Context context, LoadingControl loadingControl, int size) {
+            super(context, loadingControl, size);
+        }
+
+        @Override
+        protected Bitmap processBitmap(Object data)
+        {
+            Photo imageData = (Photo) data;
+            double ratio = imageData.getHeight() == 0 ? 1 : (float) imageData.getWidth()
+                    / (float) imageData.getHeight();
+            int height = mImageHeight;
+            int width = (int) (height * ratio);
+            return super.processBitmap(imageData.getUrl(returnSizes.toString()), width, height);
+        }
+
+    }
+
+    /**
+     * Extended adapter which uses photo groups as items instead of Photos
+     */
+    private class GalleryAdapterExt extends
+            GalleryAdapter
+    {
+        ImageFlowUtils<Photo> imageFlowUtils;
+
+        public GalleryAdapterExt()
+        {
+            super();
+            init();
+        }
+
+        public GalleryAdapterExt(String tagFilter, String albumFilter)
+        {
+            super(tagFilter, albumFilter);
+            init();
+        }
+
+        void init()
+        {
+            imageFlowUtils = new ImageFlowUtils<Photo>()
+            {
+
+                @Override
+                public int getHeight(Photo object) {
+                    return object.getHeight();
+                }
+
+                @Override
+                public int getWidth(Photo object) {
+                    return object.getWidth();
+                }
+
+                @Override
+                public int getSuperCount() {
+                    return GalleryAdapterExt.this.getSuperCount();
+                }
+
+                @Override
+                public Photo getSuperItem(int position) {
+                    return GalleryAdapterExt.this.getSuperItem(position);
+                }
+
+                @Override
+                public void additionalSingleImageViewInit(View view,
+                        final Photo value) {
+                    super.additionalSingleImageViewInit(view, value);
+                    ImageView imageView = (ImageView) view.findViewById(R.id.image);
+                    imageView.setOnClickListener(new OnClickListener() {
+
+                        @Override
+                        public void onClick(View v) {
+                            ArrayList<Photo> items = mAdapter.getItems();
+                            saveCurrentTagAndAlbumInformationToActivityIntent();
+                            int position = items.indexOf(value);
+                            Intent intent = new Intent(getActivity(), PhotoDetailsActivity.class);
+                            intent.putParcelableArrayListExtra(
+                                    PhotoDetailsActivity.EXTRA_ADAPTER_PHOTOS,
+                                    items);
+                            intent.putExtra(PhotoDetailsActivity.EXTRA_ADAPTER_POSITION, position);
+                            intent.putExtra(PhotoDetailsActivity.EXTRA_ADAPTER_TAGS, mTags);
+                            startActivity(intent);
+                        }
+                    });
+                }
+            };
+        }
+
+        int getSuperCount()
+        {
+            return super.getCount();
+        }
+
+        Photo getSuperItem(int position)
+        {
+            return (Photo) super.getItem(position);
+        }
+
+        @Override
+        public int getCount() {
+            return imageFlowUtils == null ? 0 : imageFlowUtils.getGroupsCount();
+        }
+
+        @Override
+        public Object getItem(int num) {
+            return imageFlowUtils.getGroupItem(num);
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            if (position == getCount() - 1) {
+                loadNextPage();
+            }
+            return imageFlowUtils.getView(position, convertView, parent,
+                    R.layout.item_gallery_image_line,
+                    R.layout.item_gallery_image,
+                    R.id.image, mImageWorker, getActivity());
+        }
+
+        @Override
+        public void notifyDataSetChanged() {
+            imageFlowUtils.rebuildGroups();
+            super.notifyDataSetChanged();
+        }
+
+        @Override
+        public boolean areAllItemsEnabled()
+        {
+            return false;
+        }
+
+        @Override
+        public boolean isEnabled(int position)
+        {
+            return false;
+        }
     }
 
     private class GalleryAdapter extends PhotosEndlessAdapter
@@ -132,17 +330,7 @@ public class GalleryFragment extends CommonFrargmentWithImageWorker implements R
         @Override
         public View getView(Photo photo, View convertView, ViewGroup parent)
         {
-            if (convertView == null)
-            {
-                final LayoutInflater layoutInflater = (LayoutInflater) getActivity()
-                        .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                convertView = layoutInflater.inflate(
-                        R.layout.item_gallery_image, null);
-            }
-            ImageView image = (ImageView) convertView.findViewById(R.id.image);
-            mImageWorker
-                    .loadImage(photo.getUrl(returnSizes.toString()), image);
-            return convertView;
+            return null;
         }
 
         @Override
@@ -170,5 +358,4 @@ public class GalleryFragment extends CommonFrargmentWithImageWorker implements R
             }
         }
     }
-
 }
