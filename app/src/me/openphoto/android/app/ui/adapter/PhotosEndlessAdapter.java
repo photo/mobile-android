@@ -88,7 +88,7 @@ public abstract class PhotosEndlessAdapter extends EndlessAdapter<Photo>
     @Override
     public long getItemId(int position)
     {
-        return ((Photo) getItem(position)).getId().hashCode();
+        return getItem(position).hashCode();
     }
 
     @Override
