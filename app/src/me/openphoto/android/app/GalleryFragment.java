@@ -58,12 +58,25 @@ public class GalleryFragment extends CommonFrargmentWithImageWorker implements R
     }
 
     @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString(EXTRA_TAG, mTags);
+        outState.putString(EXTRA_ALBUM, mAlbum);
+    }
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState)
     {
         View v = inflater.inflate(R.layout.fragment_gallery, container, false);
-        mTags = null;
-        mAlbum = null;
+        if (savedInstanceState != null)
+        {
+            mTags = savedInstanceState.getString(EXTRA_TAG);
+            mAlbum = savedInstanceState.getString(EXTRA_ALBUM);
+        } else
+        {
+            mTags = null;
+            mAlbum = null;
+        }
         refresh(v);
         return v;
     }
@@ -100,15 +113,14 @@ public class GalleryFragment extends CommonFrargmentWithImageWorker implements R
                     .getStringExtra(EXTRA_TAG)
                     : null;
             mAlbum = intent != null ? intent.getStringExtra(EXTRA_ALBUM) : null;
-            if (mTags != null || mAlbum != null)
-            {
-                mAdapter = new GalleryAdapterExt(mTags, mAlbum);
-                getActivity().getIntent().removeExtra(EXTRA_TAG);
-                getActivity().getIntent().removeExtra(EXTRA_ALBUM);
-            } else
-            {
-                mAdapter = new GalleryAdapterExt();
-            }
+        }
+        if (mTags != null || mAlbum != null)
+        {
+            mAdapter = new GalleryAdapterExt(mTags, mAlbum);
+            removeTagsAndAlbumInformationFromActivityIntent();
+        } else
+        {
+            mAdapter = new GalleryAdapterExt();
         }
 
         final ListView photosGrid = (ListView) v.findViewById(R.id.list_photos);
@@ -132,6 +144,26 @@ public class GalleryFragment extends CommonFrargmentWithImageWorker implements R
         photosGrid.setAdapter(mAdapter);
     }
 
+    private void removeTagsAndAlbumInformationFromActivityIntent() {
+        Intent intent = getActivity().getIntent();
+        if (intent != null)
+        {
+            intent.removeExtra(EXTRA_TAG);
+            intent.removeExtra(EXTRA_ALBUM);
+        }
+    }
+
+    void saveCurrentTagAndAlbumInformationToActivityIntent()
+    {
+        Intent intent = getActivity().getIntent();
+        if (intent == null)
+        {
+            intent = new Intent();
+            getActivity().setIntent(intent);
+        }
+        intent.putExtra(GalleryFragment.EXTRA_TAG, mTags);
+        intent.putExtra(GalleryFragment.EXTRA_ALBUM, mAlbum);
+    }
     @Override
     public void onDestroyView()
     {
@@ -217,6 +249,7 @@ public class GalleryFragment extends CommonFrargmentWithImageWorker implements R
                         @Override
                         public void onClick(View v) {
                             ArrayList<Photo> items = mAdapter.getItems();
+                            saveCurrentTagAndAlbumInformationToActivityIntent();
                             int position = items.indexOf(value);
                             Intent intent = new Intent(getActivity(), PhotoDetailsActivity.class);
                             intent.putParcelableArrayListExtra(
