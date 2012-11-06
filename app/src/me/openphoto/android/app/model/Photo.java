@@ -39,6 +39,8 @@ public class Photo implements Parcelable {
     private String mLatitude;
     private String mLongitude;
     private String mFilenameOriginal;
+    private int width;
+    private int height;
 
     /**
      * Constructor which will not be used externally. Everything should be done
@@ -81,6 +83,8 @@ public class Photo implements Parcelable {
         photo.mUrls.put(URL, json.optString("url"));
         photo.mUrls.put(PATH_ORIGINAL, json.optString(PATH_ORIGINAL));
         photo.mPermission = json.optInt(PERMISSION, PERMISSION_PRIVATE);
+        photo.width = json.getInt("width");
+        photo.height = json.getInt("height");
 
         // dates
         Long dateUploadedInSeconds = Long.parseLong(json.optString("dateUploaded"));
@@ -239,5 +243,23 @@ public class Photo implements Parcelable {
             String[] split = url.split(PARCELABLE_SEPERATOR);
             mUrls.put(split[0], split[1]);
         }
+    }
+
+    /**
+     * Get the photo width
+     * 
+     * @return
+     */
+    public int getWidth() {
+        return width;
+    }
+
+    /**
+     * Get the photo height
+     * 
+     * @return
+     */
+    public int getHeight() {
+        return height;
     }
 }

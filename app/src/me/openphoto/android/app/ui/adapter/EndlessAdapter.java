@@ -45,12 +45,12 @@ public abstract class EndlessAdapter<T> extends BaseAdapter {
     }
 
     @Override
-    public final int getCount() {
+    public int getCount() {
         return mItems.size();
     }
 
     @Override
-    public final Object getItem(int position) {
+    public Object getItem(int position) {
         return mItems.get(position);
     }
 
@@ -60,7 +60,7 @@ public abstract class EndlessAdapter<T> extends BaseAdapter {
 
     @SuppressWarnings("unchecked")
     @Override
-    public final View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(int position, View convertView, ViewGroup parent) {
         if (position == getCount() - 1) {
             loadNextPage();
         }

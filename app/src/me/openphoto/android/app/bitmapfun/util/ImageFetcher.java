@@ -101,6 +101,19 @@ public class ImageFetcher extends ImageResizer {
      * @return The downloaded and resized bitmap
      */
     private Bitmap processBitmap(String data) {
+        return processBitmap(data, mImageWidth, mImageHeight);
+    }
+
+    /**
+     * The main process method, which will be called by the ImageWorker in the
+     * AsyncTask background thread.
+     * 
+     * @param data The data to load the bitmap, in this case, a regular http URL
+     * @param imageWidth
+     * @param imageHeight
+     * @return The downloaded and resized bitmap
+     */
+    protected Bitmap processBitmap(String data, int imageWidth, int imageHeight) {
         if (BuildConfig.DEBUG) {
             Log.d(TAG, "processBitmap - " + data);
         }
@@ -110,7 +123,7 @@ public class ImageFetcher extends ImageResizer {
 
         if (f != null) {
             // Return a sampled down version
-            return decodeSampledBitmapFromFile(f.toString(), mImageWidth, mImageHeight);
+            return decodeSampledBitmapFromFile(f.toString(), imageWidth, imageHeight);
         }
 
         return null;
