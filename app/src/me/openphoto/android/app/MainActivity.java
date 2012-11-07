@@ -98,7 +98,15 @@ public class MainActivity extends SActivity
         addTab(R.drawable.tab_gallery_2states,
                 R.string.tab_gallery,
                 new TabListener<GalleryFragment>(GALLERY_TAG,
-                        GalleryFragment.class, null));
+                        GalleryFragment.class, null, false,
+                        new Runnable() {
+                            @Override
+                            public void run() {
+                                GalleryFragment gf = (GalleryFragment) getSupportFragmentManager()
+                                        .findFragmentByTag(GALLERY_TAG);
+                                gf.cleanRefreshIfFiltered();
+                            }
+                        }));
         addTab(View.NO_ID,
                 R.string.tab_sync,
                 new TabListener<SyncFragment>(SYNC_TAG,
@@ -297,19 +305,22 @@ public class MainActivity extends SActivity
         private final Class<T> mClass;
         private final Bundle mArgs;
         private Fragment mFragment;
+        private Runnable runOnReselect;
 
         public TabListener(String tag, Class<T> clz,
                 Bundle args)
         {
-            this(tag, clz, args, false);
+            this(tag, clz, args, false, null);
         }
 
         public TabListener(String tag, Class<T> clz,
-                Bundle args, boolean removeIfExists)
+                Bundle args, boolean removeIfExists,
+                Runnable runOnReselect)
         {
             mTag = tag;
             mClass = clz;
             mArgs = args;
+            this.runOnReselect = runOnReselect;
             FragmentTransaction ft = getSupportFragmentManager()
                     .beginTransaction();
 
@@ -360,6 +371,10 @@ public class MainActivity extends SActivity
         public void onTabReselected(Tab tab, FragmentTransaction ft)
         {
             CommonUtils.debug(TAG, "onTabReselected");
+            if (runOnReselect != null)
+            {
+                runOnReselect.run();
+            }
         }
     }
 
