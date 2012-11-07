@@ -8,13 +8,13 @@
 # Code Formatting
 Please use the following xml file as formatting in eclipse and make it to be applied whenever a file is saved.
     https://github.com/android/platform_development/raw/master/ide/eclipse/android-formatting.xml
-
+https://github.com/photo/mobile-android/blob/master/README.md
 
 # Facebook SDK
 Install Facebook SDK by cloning the GitHub repository: git clone git://github.com/facebook/facebook-android-sdk.git
 
 
-# Face Account Credentials for OpenPhoto
+# Fake Account Credentials for OpenPhoto
 The file `FakeAccountOpenPhotoApi.java` is a fake implementation for the interface `IAccountOpenOpenphotoApi.java`.
 This fake implementation will return credentials to the site http://apigee.openphoto.me
 
