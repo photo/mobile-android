@@ -144,6 +144,16 @@ public class GalleryFragment extends CommonFrargmentWithImageWorker implements R
         photosGrid.setAdapter(mAdapter);
     }
 
+    public void cleanRefreshIfFiltered()
+    {
+        if (mTags != null || mAlbum != null)
+        {
+            mTags = null;
+            mAlbum = null;
+            refresh();
+        }
+    }
+
     private void removeTagsAndAlbumInformationFromActivityIntent() {
         Intent intent = getActivity().getIntent();
         if (intent != null)
