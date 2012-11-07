@@ -58,4 +58,14 @@ public class PagedResponse extends OpenPhotoResponse {
     public int getTotalPages() {
         return mTotalPages;
     }
+
+    /**
+     * Whether the current page is less than total pages
+     * 
+     * @return
+     */
+    public boolean hasNextPage()
+    {
+        return getCurrentPage() < getTotalPages();
+    }
 }

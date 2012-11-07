@@ -454,7 +454,7 @@ public class HomeFragment extends CommonFrargmentWithImageWorker implements Refr
                 {
                     PhotosResponse response = mOpenPhotoApi
                             .getNewestPhotos(returnSizes, new Paging(page, 25));
-                    return new LoadResponse(response.getPhotos(), false);
+                    return new LoadResponse(response.getPhotos(), response.hasNextPage());
                 } catch (Exception e)
                 {
                     GuiUtils.error(
