@@ -18,6 +18,7 @@ package me.openphoto.android.app.bitmapfun.util;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FilenameFilter;
@@ -32,6 +33,7 @@ import java.util.Map.Entry;
 
 import me.openphoto.android.app.BuildConfig;
 import me.openphoto.android.app.util.CommonUtils;
+import me.openphoto.android.app.util.GuiUtils;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
@@ -219,7 +221,7 @@ public class DiskLruCache {
                 if (BuildConfig.DEBUG) {
                     CommonUtils.debug(TAG, "Disk cache hit");
                 }
-                return BitmapFactory.decodeFile(file);
+                return getBitmap(file);
             } else {
                 final String existingFile = createFilePath(mCacheDir, key);
                 if (new File(existingFile).exists()) {
@@ -227,13 +229,68 @@ public class DiskLruCache {
                     if (BuildConfig.DEBUG) {
                         CommonUtils.debug(TAG, "Disk cache hit (existing file)");
                     }
-                    return BitmapFactory.decodeFile(existingFile);
+                    return getBitmap(existingFile);
                 }
             }
             return null;
         }
     }
+    
+    /**
+     * Out of Memory hack taken from here
+     * http://stackoverflow.com/a/7116158/527759
+     * 
+     * @param path
+     * @return
+     */
+    Bitmap getBitmap(String path)
+    {
+        Bitmap bm = null;
+        BitmapFactory.Options bfOptions = new BitmapFactory.Options();
+        bfOptions.inDither = false; // Disable Dithering mode
+        bfOptions.inPurgeable = true; // Tell to gc that whether it needs
+                                        // free memory, the Bitmap can be
+                                        // cleared
+        bfOptions.inInputShareable = true; // Which kind of reference will
+                                            // be used to recover the Bitmap
+                                            // data after being clear, when
+                                            // it will be used in the future
+        bfOptions.inTempStorage = new byte[32 * 1024];
 
+        File file = new File(path);
+        FileInputStream fs = null;
+        try
+        {
+            fs = new FileInputStream(file);
+        } catch (FileNotFoundException e)
+        {
+            // TODO do something intelligent
+            e.printStackTrace();
+        }
+
+        try
+        {
+            if (fs != null)
+                bm = BitmapFactory.decodeFileDescriptor(fs.getFD(), null,
+                        bfOptions);
+        } catch (IOException e)
+        {
+            GuiUtils.error(TAG, null, e);
+        } finally
+        {
+            if (fs != null)
+            {
+                try
+                {
+                    fs.close();
+                } catch (IOException e)
+                {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return bm;
+    }
     /**
      * Checks if a specific key exist in the cache.
      * 

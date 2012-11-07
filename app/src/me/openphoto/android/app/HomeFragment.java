@@ -3,9 +3,11 @@ package me.openphoto.android.app;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Stack;
 
 import me.openphoto.android.app.bitmapfun.util.ImageCache;
 import me.openphoto.android.app.bitmapfun.util.ImageFetcher;
+import me.openphoto.android.app.bitmapfun.util.ImageWorker;
 import me.openphoto.android.app.facebook.FacebookBaseDialogListener;
 import me.openphoto.android.app.facebook.FacebookUtils;
 import me.openphoto.android.app.model.Photo;
@@ -15,6 +17,7 @@ import me.openphoto.android.app.net.PhotosResponse;
 import me.openphoto.android.app.net.ReturnSizes;
 import me.openphoto.android.app.twitter.TwitterUtils;
 import me.openphoto.android.app.ui.adapter.EndlessAdapter;
+import me.openphoto.android.app.util.CommonUtils;
 import me.openphoto.android.app.util.GuiUtils;
 import me.openphoto.android.app.util.LoadingControl;
 import android.content.Context;
@@ -28,6 +31,7 @@ import android.view.ContextMenu.ContextMenuInfo;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.AbsListView.RecyclerListener;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -109,7 +113,21 @@ public class HomeFragment extends CommonFrargmentWithImageWorker implements Refr
         mAdapter = new NewestPhotosAdapter(getActivity());
         list = (ListView) view.findViewById(R.id.list_newest_photos);
         list.setAdapter(mAdapter);
-        // registerForContextMenu(list);
+        list.setRecyclerListener(new RecyclerListener() {
+
+            @Override
+            public void onMovedToScrapHeap(View view) {
+                CommonUtils.debug(TAG, "Moved to scrap: " + view);
+                ImageView photoView =
+                        (ImageView) view.findViewById(R.id.newest_image);
+                Photo object = (Photo) photoView.getTag();
+                if (object != null)
+                {
+                    ImageWorker.cancelPotentialWork(object, photoView);
+                    // mImageWorker.recycleOldBitmap(object, photoView);
+                }
+            }
+        });
     }
 
     @Override
@@ -262,6 +280,7 @@ public class HomeFragment extends CommonFrargmentWithImageWorker implements Refr
     {
         private final IOpenPhotoApi mOpenPhotoApi;
         private final Context mContext;
+        private Stack<Button> unusedTagButtons = new Stack<Button>();
 
         public NewestPhotosAdapter(Context context)
         {
@@ -290,6 +309,7 @@ public class HomeFragment extends CommonFrargmentWithImageWorker implements Refr
             // load the image in another thread
             ImageView photoView =
                     (ImageView) convertView.findViewById(R.id.newest_image);
+            photoView.setTag(photo);
             mImageWorker
                     .loadImage(photo.getUrl(returnSizes.toString()), photoView);
             // photoView.setTag(photo.getUrl("700x650xCR"));
@@ -376,20 +396,7 @@ public class HomeFragment extends CommonFrargmentWithImageWorker implements Refr
                     .setText(text);
 
             // tags
-            List<String> tags = photo.getTags();
-            if (tags != null)
-            {
-                ViewGroup tagsView = (ViewGroup) convertView
-                        .findViewById(R.id.newest_tag_layout);
-                tagsView.removeAllViews();
-                for (String tag : tags)
-                {
-                    Button tagBtn = (Button) mInflater.inflate(
-                            R.layout.tag_btn, tagsView, false);
-                    tagBtn.setText(tag);
-                    tagsView.addView(tagBtn);
-                }
-            }
+            showTags(photo, convertView);
 
             View privateButton = convertView.findViewById(R.id.button_private);
             privateButton.setVisibility(photo.isPrivate() ? View.VISIBLE
@@ -443,6 +450,50 @@ public class HomeFragment extends CommonFrargmentWithImageWorker implements Refr
                 }
             });
             return convertView;
+        }
+
+        public void showTags(final Photo photo, View convertView) {
+            List<String> tags = photo.getTags();
+            int tagsSize = tags == null ? 0 : tags.size();
+            ViewGroup tagsView = (ViewGroup) convertView
+                    .findViewById(R.id.newest_tag_layout);
+            int childCount = tagsView.getChildCount();
+            if (tags != null)
+            {
+                for (int i = 0; i < tagsSize; i++)
+                {
+                    boolean add = false;
+                    if (i < childCount)
+                    {
+                        convertView = tagsView.getChildAt(i);
+                    } else
+                    {
+                        if (!unusedTagButtons.isEmpty())
+                        {
+                            CommonUtils.debug(TAG, "Reusing tag button from the stack");
+                            convertView = unusedTagButtons.pop();
+                        } else
+                        {
+                            convertView = (Button) mInflater.inflate(
+                                    R.layout.tag_btn, tagsView, false);
+                        }
+                        add = true;
+                    }
+                    Button tagBtn = (Button) convertView;
+                    tagBtn.setText(tags.get(i));
+                    if (add)
+                    {
+                        tagsView.addView(convertView);
+                    }
+                }
+            }
+            for (int i = childCount - 1; i >= tagsSize; i--)
+            {
+                Button tagBtn = (Button) tagsView.getChildAt(i);
+                unusedTagButtons.add(tagBtn);
+                tagsView.removeViewAt(i);
+
+            }
         }
 
         @Override

@@ -106,6 +106,24 @@ public abstract class ImageWorker {
         }
     }
 
+    public void recycleOldBitmap(Object data, ImageView imageView) {
+        Drawable drawable = imageView.getDrawable();
+        if (drawable != null &&
+                drawable instanceof BitmapDrawable
+                && !(drawable instanceof AsyncDrawable))
+        {
+            if (mImageCache != null
+                    && mImageCache.getBitmapFromMemCache(String.valueOf(data)) != null)
+            {
+                return;
+            }
+            Bitmap bitmapToRecycle = ((BitmapDrawable) drawable).getBitmap();
+            imageView.setImageDrawable(null);
+            CommonUtils.debug(TAG, "Recycling bitmap: " + bitmapToRecycle);
+            bitmapToRecycle.recycle();
+        }
+    }
+
     /**
      * Load an image specified from a set adapter into an ImageView (override
      * {@link ImageWorker#processBitmap(Object)} to define the processing
