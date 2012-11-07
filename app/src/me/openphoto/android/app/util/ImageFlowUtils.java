@@ -39,11 +39,13 @@ public abstract class ImageFlowUtils<T>
         int nonRedistributedWidth = 0;
         int totalWidthWithoutBorders = totalWidth - 2 * borderSize * values.size();
         List<Float> ratios = new ArrayList<Float>();
+        float totalRatio = 0;
         for (T value : values)
         {
             float ratio = getHeight(value) == 0 ? 1 : (float) getWidth(value)
                     / (float) getHeight(value);
             ratios.add(ratio);
+            totalRatio += ratio;
             int width = (int) (ratio * itemHeight);
             usedWidth += width;
             CommonUtils.debug(TAG,
@@ -63,8 +65,7 @@ public abstract class ImageFlowUtils<T>
                 + "; Total size:" + totalWidth);
         if (rest > 0)
         {
-            float ratio = (float) usedWidth / (float) itemHeight;
-            itemHeight = (int) ((float) totalWidthWithoutBorders / ratio);
+            itemHeight = (int) ((float) totalWidthWithoutBorders / totalRatio);
             nonRedistributedWidth = totalWidthWithoutBorders;
             for (Float r : ratios)
             {
