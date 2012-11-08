@@ -3,9 +3,9 @@ package me.openphoto.android.app;
 
 import me.openphoto.android.app.facebook.FacebookProvider;
 import me.openphoto.android.app.util.GuiUtils;
-import android.app.Application;
 import android.content.Context;
 
+import com.WazaBe.HoloEverywhere.app.Application;
 import com.bugsense.trace.BugSenseHandler;
 import com.facebook.android.R;
 

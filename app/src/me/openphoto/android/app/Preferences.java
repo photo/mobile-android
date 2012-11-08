@@ -12,11 +12,12 @@ import android.content.SharedPreferences;
 
 public class Preferences {
     public final static int PREFERENCES_MODE = Context.MODE_MULTI_PROCESS;
+    public final static String PREFERENCES_NAME = "default";
 
     public static SharedPreferences getDefaultSharedPreferences(Context context)
     {
         return OpenPhotoApplication.getContext().getSharedPreferences(
-                "default",
+                PREFERENCES_NAME,
                 PREFERENCES_MODE);
     }
 
@@ -34,6 +35,12 @@ public class Preferences {
                         context.getResources().getBoolean(R.bool.setting_autoupload_on_default));
     }
 
+    public static void setAutoUploadActive(Context context, boolean active)
+    {
+        getDefaultSharedPreferences(context).edit()
+                .putBoolean(context.getString(R.string.setting_autoupload_on_key), active).commit();
+    }
+
     public static boolean isWiFiOnlyUploadActive(Context context)
     {
         return getDefaultSharedPreferences(context)
@@ -41,6 +48,13 @@ public class Preferences {
                         context.getString(R.string.setting_wifi_only_upload_on_key),
                         context.getResources().getBoolean(
                                 R.bool.setting_wifi_only_upload_on_default));
+    }
+
+    public static void setWiFiOnlyUploadActive(Context context, boolean active)
+    {
+        getDefaultSharedPreferences(context).edit()
+                .putBoolean(context.getString(R.string.setting_wifi_only_upload_on_key), active)
+                .commit();
     }
 
     public static String getAutoUploadTag(Context context) {
