@@ -57,6 +57,7 @@ public class UploaderService extends Service {
 
     private static ArrayList<NewPhotoObserver> sNewPhotoObservers;
     private static ConnectivityChangeReceiver sReceiver;
+    private static MediaMountedReceiver mediaMountedReceiver;
 
     private volatile Looper mServiceLooper;
     private volatile ServiceHandler mServiceHandler;
@@ -107,12 +108,14 @@ public class UploaderService extends Service {
         mApi = Preferences.getApi(this);
         startFileObserver();
         setUpConnectivityWatcher();
+        setUpMediaWatcher();
         CommonUtils.debug(TAG, "Service created");
     }
 
     @Override
     public void onDestroy() {
         unregisterReceiver(sReceiver);
+        unregisterReceiver(mediaMountedReceiver);
         for (NewPhotoObserver observer : sNewPhotoObservers) {
             observer.stopWatching();
         }
@@ -121,11 +124,12 @@ public class UploaderService extends Service {
     }
 
     @Override
-    public void onStart(Intent intent, int startId) {
+    public int onStartCommand(Intent intent, int flags, int startId) {
         Message msg = mServiceHandler.obtainMessage();
         msg.arg1 = startId;
         msg.obj = intent;
         mServiceHandler.sendMessage(msg);
+        return START_STICKY;
     }
 
     private void handleIntent(Intent intent) {
@@ -421,8 +425,23 @@ public class UploaderService extends Service {
         registerReceiver(sReceiver, filter);
     }
 
-    private void startFileObserver() {
-        sNewPhotoObservers = new ArrayList<NewPhotoObserver>();
+    private void setUpMediaWatcher() {
+        mediaMountedReceiver = new MediaMountedReceiver();
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(Intent.ACTION_MEDIA_MOUNTED);
+        filter.addDataScheme("file");
+        registerReceiver(mediaMountedReceiver, filter);
+    }
+
+    private synchronized void startFileObserver() {
+        if (sNewPhotoObservers == null)
+        {
+            sNewPhotoObservers = new ArrayList<NewPhotoObserver>();
+        }
+        if (!sNewPhotoObservers.isEmpty())
+        {
+            return;
+        }
         File dcim = new File(Environment.getExternalStorageDirectory(), "DCIM");
         if (dcim.isDirectory()) {
             for (String dir : dcim.list()) {
@@ -434,6 +453,9 @@ public class UploaderService extends Service {
                     CommonUtils.debug(TAG, "Started watching " + dir);
                 }
             }
+        } else
+        {
+            CommonUtils.debug(TAG, "Can't find camera storage folder");
         }
     }
 
@@ -451,6 +473,15 @@ public class UploaderService extends Service {
             {
                 context.startService(new Intent(context, UploaderService.class));
             }
+        }
+    }
+
+    private class MediaMountedReceiver extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            CommonUtils.debug(TAG, "Received media mounted intent");
+            startFileObserver();
         }
     }
 }
