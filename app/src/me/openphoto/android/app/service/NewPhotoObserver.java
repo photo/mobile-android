@@ -33,6 +33,7 @@ public class NewPhotoObserver extends FileObserver {
             if (!Preferences.isAutoUploadActive(mContext)) {
                 return;
             }
+            CommonUtils.debug(TAG, "Adding new autoupload to queue for file: " + fileName);
             UploadsProviderAccessor uploads = new UploadsProviderAccessor(mContext);
             UploadMetaData metaData = new UploadMetaData();
             metaData.setTags(Preferences.getAutoUploadTag(mContext));
