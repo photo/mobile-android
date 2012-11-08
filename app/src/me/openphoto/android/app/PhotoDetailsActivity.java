@@ -82,14 +82,16 @@ public class PhotoDetailsActivity extends SActivity {
                 ViewGroup container, Bundle savedInstanceState) {
             super.onCreateView(inflater, container, savedInstanceState);
             View v = inflater.inflate(R.layout.activity_photo_details, container, false);
-            init(v);
             return v;
         }
 
+        @Override
+        public void onViewCreated(View view) {
+            super.onViewCreated(view);
+            init(view);
+        }
         void init(View v)
         {
-            initImageWorker();
-
             Intent intent = getActivity().getIntent();
             if (intent.hasExtra(EXTRA_PHOTO)) {
                 Photo photo = intent.getParcelableExtra(EXTRA_PHOTO);
@@ -220,12 +222,14 @@ public class PhotoDetailsActivity extends SActivity {
                         }
                     }
                 };
+                loadingControl.startLoading();
                 String url = photo.getUrl(returnSizes.toString());
                 if (url != null) {
                     mImageWorker.loadImage(url, imageView, loadingControl);
                 } else {
                     new LoadImageTask(photo, imageView, loadingControl).execute();
                 }
+                loadingControl.stopLoading();
 
                 ((ViewPager) collection).addView(view, 0);
 
@@ -235,7 +239,9 @@ public class PhotoDetailsActivity extends SActivity {
             @Override
             public void destroyItem(View collection, int position, Object view) {
                 View theView = (View) view;
-                ((ImageView) theView.findViewById(R.id.image)).setImageBitmap(null);
+                ImageView imageView = (ImageView) theView.findViewById(R.id.image);
+                ImageWorker.cancelWork(imageView);
+                imageView.setImageBitmap(null);
                 ((ViewPager) collection).removeView(theView);
             }
 
