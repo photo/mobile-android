@@ -297,6 +297,12 @@ public class UploaderService extends Service {
                 .setContentIntent(contentIntent)
                 .setContent(contentView)
                 .build();
+        CommonUtils.debug(TAG, "Is notification content view null: "
+                + (notification.contentView == null));
+        // need to explicitly set contentView again because of bug in compat
+        // library. Solution found here
+        // http://stackoverflow.com/a/12574534/527759
+        notification.contentView = contentView;
 
         mNotificationManager.notify(NOTIFICATION_UPLOAD_PROGRESS, notification);
 
