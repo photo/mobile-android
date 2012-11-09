@@ -133,7 +133,7 @@ public class UploaderService extends Service {
     }
 
     private void handleIntent(Intent intent) {
-        if (!Utils.isOnline(getBaseContext()))
+        if (!Utils.isOnline(getBaseContext()) || !Preferences.isLoggedIn(getApplicationContext()))
         {
             return;
         }

@@ -71,8 +71,7 @@ public class FacebookUtils
      */
     public static void clear(Context context)
     {
-        Editor editor = context.getSharedPreferences(KEY,
-                Preferences.PREFERENCES_MODE)
+        Editor editor = Preferences.getSharedPreferences(KEY)
                 .edit();
         editor.clear();
         editor.commit();
