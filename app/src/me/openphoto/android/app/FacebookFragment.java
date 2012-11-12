@@ -35,6 +35,7 @@ import com.facebook.android.R;
 public class FacebookFragment extends CommonDialogFragment
 {
     public static final String TAG = FacebookFragment.class.getSimpleName();
+    static final String PHOTO = "FacebookFragmentPhoto";
 
     Photo photo;
 
@@ -48,8 +49,22 @@ public class FacebookFragment extends CommonDialogFragment
             Bundle savedInstanceState)
     {
         View view = inflater.inflate(R.layout.fragment_facebook, container);
-        init(view);
+        if (savedInstanceState != null)
+        {
+            photo = savedInstanceState.getParcelable(PHOTO);
+        }
         return view;
+    }
+
+    @Override
+    public void onViewCreated(View view) {
+        super.onViewCreated(view);
+        init(view);
+    }
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelable(PHOTO, photo);
     }
 
     @Override
