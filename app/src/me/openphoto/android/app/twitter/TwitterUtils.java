@@ -186,8 +186,6 @@ public class TwitterUtils
                     .newInstance(R.string.share_twitter_authorisation_question,
                             new YesNoButtonPressedHandler()
                             {
-                                private static final long serialVersionUID = 1L;
-
                                 @Override
                                 public void yesButtonPressed(
                                         DialogInterface dialog)
