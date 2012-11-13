@@ -134,7 +134,10 @@ public class GalleryFragment extends CommonFrargmentWithImageWorker implements R
                                 photosGrid.getWidth())
                         {
                             mAdapter.imageFlowUtils.buildGroups(photosGrid.getWidth(),
-                                    mImageThumbSize, mImageThumbBorder + mImageThumbSpacing);
+                                    mImageThumbSize, photosGrid.getHeight() - 2
+                                            * (mImageThumbBorder
+                                            + mImageThumbSpacing), mImageThumbBorder
+                                            + mImageThumbSpacing);
                             mAdapter.notifyDataSetChanged();
 
                         }
