@@ -15,9 +15,11 @@ import me.openphoto.android.app.TwitterFragment;
 import me.openphoto.android.app.UploadActivity;
 import me.openphoto.android.app.facebook.FacebookProvider;
 import me.openphoto.android.app.model.Photo;
+import me.openphoto.android.app.model.utils.PhotoUtils;
 import me.openphoto.android.app.net.HttpEntityWithProgress.ProgressListener;
 import me.openphoto.android.app.net.IOpenPhotoApi;
 import me.openphoto.android.app.net.PhotosResponse;
+import me.openphoto.android.app.net.ReturnSizes;
 import me.openphoto.android.app.net.UploadResponse;
 import me.openphoto.android.app.provider.PhotoUpload;
 import me.openphoto.android.app.provider.UploadsProviderAccessor;
@@ -256,7 +258,9 @@ public class UploaderService extends Service {
             Facebook facebook = FacebookProvider.getFacebook();
             if (facebook.isSessionValid())
             {
-                FacebookFragment.sharePhoto(null, photo,
+                ReturnSizes thumbSize = FacebookFragment.thumbSize;
+                photo = PhotoUtils.validateUrlForSizeExistAndReturn(photo, thumbSize);
+                FacebookFragment.sharePhoto(null, photo, thumbSize,
                         getApplicationContext());
             }
         } catch (Exception ex)
