@@ -8,8 +8,11 @@ import java.net.MalformedURLException;
 import me.openphoto.android.app.facebook.FacebookProvider;
 import me.openphoto.android.app.facebook.FacebookUtils;
 import me.openphoto.android.app.model.Photo;
+import me.openphoto.android.app.model.utils.PhotoUtils;
+import me.openphoto.android.app.net.ReturnSizes;
 import me.openphoto.android.app.util.GuiUtils;
 import me.openphoto.android.app.util.LoadingControl;
+import me.openphoto.android.app.util.RunnableWithParameter;
 
 import org.json.JSONObject;
 
@@ -35,6 +38,7 @@ import com.facebook.android.R;
 public class FacebookFragment extends CommonDialogFragment
 {
     public static final String TAG = FacebookFragment.class.getSimpleName();
+    static final String PHOTO = "FacebookFragmentPhoto";
 
     Photo photo;
 
@@ -43,13 +47,29 @@ public class FacebookFragment extends CommonDialogFragment
 
     private Button sendButton;
 
+    public static ReturnSizes thumbSize = new ReturnSizes(100, 100);
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState)
     {
         View view = inflater.inflate(R.layout.fragment_facebook, container);
-        init(view);
+        if (savedInstanceState != null)
+        {
+            photo = savedInstanceState.getParcelable(PHOTO);
+        }
         return view;
+    }
+
+    @Override
+    public void onViewCreated(View view) {
+        super.onViewCreated(view);
+        init(view);
+    }
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelable(PHOTO, photo);
     }
 
     @Override
@@ -100,7 +120,14 @@ public class FacebookFragment extends CommonDialogFragment
 
     protected void postPhoto()
     {
-        new PostPhotoTask().execute();
+        RunnableWithParameter<Photo> runnable = new RunnableWithParameter<Photo>() {
+
+            @Override
+            public void run(Photo photo) {
+                new PostPhotoTask(photo).execute();
+            }
+        };
+        PhotoUtils.validateUrlForSizeExistAsyncAndRun(photo, thumbSize, runnable, loadingControl);
     }
 
     private void performFacebookLogout()
@@ -179,8 +206,12 @@ public class FacebookFragment extends CommonDialogFragment
     private class PostPhotoTask extends
             AsyncTask<Void, Void, Boolean>
     {
-        Context activity = getActivity();
+        Photo photo;
 
+        PostPhotoTask(Photo photo)
+        {
+            this.photo = photo;
+        }
         @Override
         protected void onPreExecute()
         {
@@ -192,17 +223,7 @@ public class FacebookFragment extends CommonDialogFragment
         @Override
         protected Boolean doInBackground(Void... params)
         {
-            try
-            {
-                sharePhoto(messageEt.getText().toString(), photo, activity);
-                return true;
-            } catch (Exception ex)
-            {
-                GuiUtils.error(TAG, R.string.errorCouldNotSendFacebookPhoto,
-                        ex,
-                        getActivity());
-            }
-            return false;
+            return sharePhoto(photo);
         }
 
         @Override
@@ -223,9 +244,25 @@ public class FacebookFragment extends CommonDialogFragment
         }
     }
 
+    boolean sharePhoto(Photo photo)
+    {
+        try
+        {
+            sharePhoto(messageEt.getText().toString(), photo, thumbSize,
+                    OpenPhotoApplication.getContext());
+            return true;
+        } catch (Exception ex)
+        {
+            GuiUtils.error(TAG, R.string.errorCouldNotSendFacebookPhoto,
+                    ex,
+                    getActivity());
+        }
+        return false;
+    }
     public static void sharePhoto(
             String message,
             Photo photo,
+            ReturnSizes thumbSize,
             Context context) throws FileNotFoundException,
             MalformedURLException, IOException
     {
@@ -239,10 +276,11 @@ public class FacebookFragment extends CommonDialogFragment
                 photo.getTitle());
         bparams.putString(
                 "caption",
-                context.getString(R.string.share_facebook_default_caption));
+                photo.getTitle());
         bparams.putString("description", context
                 .getString(R.string.share_facebook_default_description));
-        bparams.putString("picture", photo.getUrl(Photo.URL));
+        bparams.putString("picture", photo.getUrl(thumbSize.toString()));
+        bparams.putString("link", photo.getUrl(Photo.URL));
         facebook.request("feed", bparams, "POST");
     }
 }

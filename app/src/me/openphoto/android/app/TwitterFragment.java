@@ -29,6 +29,7 @@ import com.WazaBe.HoloEverywhere.app.Dialog;
 public class TwitterFragment extends CommonDialogFragment
 {
     public static final String TAG = TwitterFragment.class.getSimpleName();
+    static final String TWEET = "TwitterFragmentTweet";
 
     Photo photo;
 
@@ -42,8 +43,14 @@ public class TwitterFragment extends CommonDialogFragment
             Bundle savedInstanceState)
     {
         View view = inflater.inflate(R.layout.fragment_twitter, container);
-        init(view);
+        init(view, savedInstanceState);
         return view;
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString(TWEET, messageEt.getText().toString());
     }
 
     @Override
@@ -58,15 +65,21 @@ public class TwitterFragment extends CommonDialogFragment
         this.photo = photo;
     }
 
-    void init(View view)
+    void init(View view, Bundle savedInstanceState)
     {
         try
         {
             new ShowCurrentlyLoggedInUserTask(view).execute();
             messageEt = (EditText) view.findViewById(R.id.message);
-            messageEt.setText(String.format(
-                    getString(R.string.share_twitter_default_msg),
-                    photo.getUrl(Photo.URL)));
+            if (savedInstanceState != null)
+            {
+                messageEt.setText(savedInstanceState.getString(TWEET));
+            } else
+            {
+                messageEt.setText(String.format(
+                        getString(R.string.share_twitter_default_msg),
+                        photo.getUrl(Photo.URL)));
+            }
             Button logOutButton = (Button) view.findViewById(R.id.logoutBtn);
             logOutButton.setOnClickListener(new OnClickListener()
             {
