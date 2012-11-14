@@ -6,12 +6,10 @@ import me.openphoto.android.app.facebook.FacebookSessionEvents;
 import me.openphoto.android.app.facebook.FacebookSessionEvents.LogoutListener;
 import me.openphoto.android.app.facebook.FacebookUtils;
 import me.openphoto.android.app.provider.UploadsUtils;
-import me.openphoto.android.app.util.CommonUtils;
 import android.app.Activity;
 import android.content.DialogInterface;
 
 import com.WazaBe.HoloEverywhere.app.AlertDialog;
-import com.WazaBe.HoloEverywhere.preference.CheckBoxPreference;
 import com.WazaBe.HoloEverywhere.preference.EditTextPreference;
 import com.WazaBe.HoloEverywhere.preference.Preference;
 import com.WazaBe.HoloEverywhere.preference.Preference.OnPreferenceChangeListener;
@@ -28,8 +26,6 @@ public class SettingsCommon implements
     Preference mSyncClearPreference;
     PreferenceCategory loginCategory;
     Preference mServerUrl;
-    CheckBoxPreference autoUploadActive;
-    CheckBoxPreference wiFiOnlyUpload;
 
     public SettingsCommon(Activity activity)
     {
@@ -207,35 +203,4 @@ public class SettingsCommon implements
                     }
                 });
     }
-
-    public void setAutoUploadActive(CheckBoxPreference autoUploadActive) {
-        this.autoUploadActive = autoUploadActive;
-        autoUploadActive.setOnPreferenceChangeListener(null);
-        autoUploadActive.setChecked(Preferences.isAutoUploadActive(activity));
-        autoUploadActive.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
-
-            @Override
-            public boolean onPreferenceChange(Preference preference, Object newValue) {
-                CommonUtils.debug(TAG, "AutoUpload preference changed. New value is:" + newValue);
-                Preferences.setAutoUploadActive(activity, (Boolean) newValue);
-                return true;
-            }
-        });
-    }
-
-    public void setWiFiOnlyUpload(CheckBoxPreference wiFiOnlyUpload) {
-        this.wiFiOnlyUpload = wiFiOnlyUpload;
-        wiFiOnlyUpload.setOnPreferenceChangeListener(null);
-        wiFiOnlyUpload.setChecked(Preferences.isWiFiOnlyUploadActive(activity));
-        wiFiOnlyUpload.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
-
-            @Override
-            public boolean onPreferenceChange(Preference preference, Object newValue) {
-                CommonUtils.debug(TAG, "WiFi only preference changed. New value is:" + newValue);
-                Preferences.setWiFiOnlyUploadActive(activity, (Boolean) newValue);
-                return true;
-            }
-        });
-    }
-
 }

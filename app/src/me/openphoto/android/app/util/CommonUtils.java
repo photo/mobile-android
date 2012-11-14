@@ -20,4 +20,14 @@ public class CommonUtils
     {
         return (T) (bundle == null ? null : bundle.getSerializable(key));
     }
+
+    /**
+     * Checks whether the running platform version is 4.x or higher
+     * 
+     * @return
+     */
+    public static boolean isIceCreamSandwichOrHigher()
+    {
+        return android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.ICE_CREAM_SANDWICH;
+    }
 }

@@ -15,9 +15,11 @@ import me.openphoto.android.app.TwitterFragment;
 import me.openphoto.android.app.UploadActivity;
 import me.openphoto.android.app.facebook.FacebookProvider;
 import me.openphoto.android.app.model.Photo;
+import me.openphoto.android.app.model.utils.PhotoUtils;
 import me.openphoto.android.app.net.HttpEntityWithProgress.ProgressListener;
 import me.openphoto.android.app.net.IOpenPhotoApi;
 import me.openphoto.android.app.net.PhotosResponse;
+import me.openphoto.android.app.net.ReturnSizes;
 import me.openphoto.android.app.net.UploadResponse;
 import me.openphoto.android.app.provider.PhotoUpload;
 import me.openphoto.android.app.provider.UploadsProviderAccessor;
@@ -133,7 +135,7 @@ public class UploaderService extends Service {
     }
 
     private void handleIntent(Intent intent) {
-        if (!Utils.isOnline(getBaseContext()))
+        if (!Utils.isOnline(getBaseContext()) || !Preferences.isLoggedIn(getApplicationContext()))
         {
             return;
         }
@@ -171,7 +173,11 @@ public class UploaderService extends Service {
                     photo = photos.getPhotos().get(0);
                 } else
                 {
-                    final Notification notification = showUploadNotification(file);
+                    final Notification notification = CommonUtils.isIceCreamSandwichOrHigher() ? null
+                            : showUploadNotification(file);
+                    final NotificationCompat.Builder builder = CommonUtils
+                            .isIceCreamSandwichOrHigher() ? getStandardUploadNotification(file)
+                            : null;
                     UploadResponse uploadResponse = mApi.uploadPhoto(file,
                             photoUpload.getMetaData(),
                             new ProgressListener()
@@ -186,8 +192,15 @@ public class UploaderService extends Service {
                                     if (mLastProgress < newProgress)
                                     {
                                         mLastProgress = newProgress;
-                                        updateUploadNotification(notification,
-                                                mLastProgress, 100);
+                                        if (builder != null)
+                                        {
+                                            updateUploadNotification(builder,
+                                                    mLastProgress, 100);
+                                        } else
+                                        {
+                                            updateUploadNotification(notification, mLastProgress,
+                                                    100);
+                                        }
                                     }
                                 }
                             });
@@ -245,7 +258,9 @@ public class UploaderService extends Service {
             Facebook facebook = FacebookProvider.getFacebook();
             if (facebook.isSessionValid())
             {
-                FacebookFragment.sharePhoto(null, photo,
+                ReturnSizes thumbSize = FacebookFragment.thumbSize;
+                photo = PhotoUtils.validateUrlForSizeExistAndReturn(photo, thumbSize);
+                FacebookFragment.sharePhoto(null, photo, thumbSize,
                         getApplicationContext());
             }
         } catch (Exception ex)
@@ -276,7 +291,31 @@ public class UploaderService extends Service {
                     !silent);
         }
     }
+    /**
+     * This is used for the devices with android version >= 4.x
+     */
+    private NotificationCompat.Builder getStandardUploadNotification(File file)
+    {
+        int icon = R.drawable.icon;
+        CharSequence tickerText = getString(R.string.notification_uploading_photo, file.getName());
+        long when = System.currentTimeMillis();
+        CharSequence contentMessageTitle = getString(R.string.notification_uploading_photo,
+                file.getName());
 
+        // TODO adjust this to show the upload manager
+        Intent notificationIntent = new Intent(this, MainActivity.class);
+        PendingIntent contentIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(
+                this);
+        builder
+                .setTicker(tickerText)
+                .setWhen(when)
+                .setSmallIcon(icon)
+                .setContentTitle(contentMessageTitle)
+                .setProgress(100, 0, true)
+                .setContentIntent(contentIntent);
+        return builder;
+    }
     private Notification showUploadNotification(File file)
     {
         int icon = R.drawable.icon;
@@ -326,6 +365,25 @@ public class UploaderService extends Service {
             notification.contentView.setProgressBar(R.id.progress, 0, 0, true);
         }
         mNotificationManager.notify(NOTIFICATION_UPLOAD_PROGRESS, notification);
+    }
+    /**
+     * This is used to update progress in the notification message for
+     * the platform version >= 4.x
+     */
+    protected void updateUploadNotification(final NotificationCompat.Builder builder, int progress,
+            int max) {
+        if (progress < max) {
+            long now = System.currentTimeMillis();
+            if (now - mNotificationLastUpdateTime < 500) {
+                return;
+            }
+            mNotificationLastUpdateTime = now;
+
+            builder.setProgress(max, progress, false);
+        } else {
+            builder.setProgress(0, 0, true);
+        }
+        mNotificationManager.notify(NOTIFICATION_UPLOAD_PROGRESS, builder.build());
     }
 
     private void stopUploadNotification() {

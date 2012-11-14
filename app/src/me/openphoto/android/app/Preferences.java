@@ -10,20 +10,22 @@ import oauth.signpost.commonshttp.CommonsHttpOAuthConsumer;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import com.WazaBe.HoloEverywhere.preference.PreferenceManager;
+
 public class Preferences {
     public final static int PREFERENCES_MODE = Context.MODE_MULTI_PROCESS;
     public final static String PREFERENCES_NAME = "default";
 
     public static SharedPreferences getDefaultSharedPreferences(Context context)
     {
-        return OpenPhotoApplication.getContext().getSharedPreferences(
+        return PreferenceManager.wrap(OpenPhotoApplication.getContext(),
                 PREFERENCES_NAME,
                 PREFERENCES_MODE);
     }
 
     public static SharedPreferences getSharedPreferences(String name)
     {
-        return OpenPhotoApplication.getContext().getSharedPreferences(
+        return PreferenceManager.wrap(OpenPhotoApplication.getContext(),
                 name,
                 PREFERENCES_MODE);
     }

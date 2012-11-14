@@ -36,6 +36,20 @@ public class SyncUploadFragment extends CommonFragment
     Switch twitterSwitch;
     Switch facebookSwitch;
 
+    static SyncUploadFragment instance;
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        instance = this;
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        instance = null;
+    }
+
     @Override
     public void onAttach(Activity activity)
     {
@@ -100,7 +114,7 @@ public class SyncUploadFragment extends CommonFragment
                 @Override
                 public void run()
                 {
-                    uploadSelectedFiles(false, checkFacebook);
+                    instance.uploadSelectedFiles(false, checkFacebook);
                 }
             };
             TwitterUtils.runAfterTwitterAuthentication(getActivity(),
@@ -115,7 +129,7 @@ public class SyncUploadFragment extends CommonFragment
                 @Override
                 public void run()
                 {
-                    uploadSelectedFiles(checkTwitter, false);
+                    instance.uploadSelectedFiles(checkTwitter, false);
                 }
             };
             FacebookUtils.runAfterFacebookAuthentication(getActivity(),

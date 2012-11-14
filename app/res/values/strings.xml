@@ -40,7 +40,7 @@
     <string name="share_facebook_photo">Share Photo</string>
     <string name="share_facebook_default_action">Shared via OpenPhoto</string>
     <string name="share_facebook_default_caption">Some caption</string>
-    <string name="share_facebook_default_description">Some description</string>
+    <string name="share_facebook_default_description">OpenPhoto is the easiest way to share, enjoy and organize your photos using Dropbox, Box.net or Amazon S3</string>
     <string name="share_facebook_success_message">Photo has been shared successfully</string>
     <string name="share_facebook_share_canceled_message">Update status cancelled</string>
     <string name="share_facebook_no_wall_post_made">No wall post made</string>

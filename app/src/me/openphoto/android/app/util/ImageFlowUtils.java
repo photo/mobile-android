@@ -28,6 +28,7 @@ public abstract class ImageFlowUtils<T>
     List<List<T>> itemGroups;
     int totalWidth;
     int imageHeight;
+    int maxImageHeight;
     int borderSize;
     Stack<View> unusedViews = new Stack<View>();
 
@@ -35,7 +36,7 @@ public abstract class ImageFlowUtils<T>
             List<T> values
             ) {
         int usedWidth = 0;
-        int itemHeight = imageHeight;
+        int imageHeight = this.imageHeight;
         int nonRedistributedWidth = 0;
         int totalWidthWithoutBorders = totalWidth - 2 * borderSize * values.size();
         List<Float> ratios = new ArrayList<Float>();
@@ -46,7 +47,7 @@ public abstract class ImageFlowUtils<T>
                     / (float) getHeight(value);
             ratios.add(ratio);
             totalRatio += ratio;
-            int width = (int) (ratio * itemHeight);
+            int width = (int) (ratio * imageHeight);
             usedWidth += width;
             CommonUtils.debug(TAG,
                     "Width: " + getWidth(value)
@@ -58,21 +59,28 @@ public abstract class ImageFlowUtils<T>
         int rest = totalWidthWithoutBorders - usedWidth;
 
         CommonUtils.debug(TAG, "Used width:" + usedWidth
-                + "; Item height" + itemHeight
+                + "; Item height" + imageHeight
                 + "; Total width without borders:" + totalWidthWithoutBorders
                 + "; Rest: " + rest
                 + "; Border size:" + borderSize
                 + "; Total size:" + totalWidth);
         if (rest > 0)
         {
-            itemHeight = (int) ((float) totalWidthWithoutBorders / totalRatio);
-            nonRedistributedWidth = totalWidthWithoutBorders;
-            for (Float r : ratios)
+            imageHeight = (int) ((float) totalWidthWithoutBorders / totalRatio);
+            boolean limitReached = maxImageHeight > 0 && imageHeight >= maxImageHeight;
+            if (limitReached)
             {
-                nonRedistributedWidth -= (int) (r * itemHeight);
+                imageHeight = maxImageHeight;
+            } else
+            {
+                nonRedistributedWidth = totalWidthWithoutBorders;
+                for (Float r : ratios)
+                {
+                    nonRedistributedWidth -= (int) (r * imageHeight);
+                }
             }
         }
-        return new ImageHeightResult(itemHeight, Math.max(0, nonRedistributedWidth));
+        return new ImageHeightResult(imageHeight, Math.max(0, nonRedistributedWidth));
     }
 
     /**
@@ -80,7 +88,7 @@ public abstract class ImageFlowUtils<T>
      */
     public void rebuildGroups()
     {
-        buildGroups(totalWidth, imageHeight, borderSize, true);
+        buildGroups(totalWidth, imageHeight, maxImageHeight, borderSize, true);
     }
 
     /**
@@ -95,7 +103,7 @@ public abstract class ImageFlowUtils<T>
             int imageHeight,
             int borderSize)
     {
-        buildGroups(totalWidth, imageHeight, borderSize, false);
+        buildGroups(totalWidth, imageHeight, -1, borderSize);
     }
 
     /**
@@ -103,6 +111,26 @@ public abstract class ImageFlowUtils<T>
      * 
      * @param totalWidth the parent container total width
      * @param imageHeight the desired height of the image
+     * @param maxImageHeight the max possible height of the image. If it is <= 0
+     *            then ignored
+     * @param borderSize the border size of each image container
+     */
+    public void buildGroups(
+            int totalWidth,
+            int imageHeight,
+            int maxImageHeight,
+            int borderSize)
+    {
+        buildGroups(totalWidth, imageHeight, maxImageHeight, borderSize, false);
+    }
+
+    /**
+     * Build images groups
+     * 
+     * @param totalWidth the parent container total width
+     * @param imageHeight the desired height of the image
+     * @param maxImageHeight the max possible height of the image. If it is <= 0
+     *            then ignored
      * @param borderSize the border size of each image container
      * @param force if true the groups will rebuild even if totalWidth is the
      *            same as was in previous buildGroups call
@@ -110,6 +138,7 @@ public abstract class ImageFlowUtils<T>
     public void buildGroups(
             int totalWidth,
             int imageHeight,
+            int maxImageHeight,
             int borderSize,
             boolean force)
     {
@@ -120,6 +149,7 @@ public abstract class ImageFlowUtils<T>
         this.totalWidth = totalWidth;
         this.imageHeight = imageHeight;
         this.borderSize = borderSize;
+        this.maxImageHeight = maxImageHeight;
         itemGroups = new ArrayList<List<T>>();
         if (totalWidth == 0)
         {

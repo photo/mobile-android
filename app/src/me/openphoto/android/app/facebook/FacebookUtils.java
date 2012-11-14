@@ -71,8 +71,7 @@ public class FacebookUtils
      */
     public static void clear(Context context)
     {
-        Editor editor = context.getSharedPreferences(KEY,
-                Preferences.PREFERENCES_MODE)
+        Editor editor = Preferences.getSharedPreferences(KEY)
                 .edit();
         editor.clear();
         editor.commit();
@@ -174,8 +173,6 @@ public class FacebookUtils
                     .newInstance(R.string.share_facbook_authorisation_question,
                             new YesNoButtonPressedHandler()
                             {
-                                private static final long serialVersionUID = 1L;
-
                                 @Override
                                 public void yesButtonPressed(
                                         DialogInterface dialog)
