@@ -15,6 +15,9 @@
     <string name="menu_share_email">E-Mail</string>
     <string name="menu_share_twitter">Twitter</string>
     <string name="menu_share_facebook">Facebook</string>
+    
+    <!-- Share -->
+    <string name="share_private_photo_forbidden">Private photo can\'t be shared</string>
 
     <!-- Share E-Mail -->
     <string name="share_email_default_title">I\'m using OpenPhoto to share my moments</string>
@@ -69,7 +72,6 @@
     <string name="upload_tags">Tags</string>
     <string name="upload_select_tags">Select Tags</string>
     <string name="upload_select_tags_finish">Finish</string>
-    <string name="upload_title">Title</string>
     <string name="upload_description">Description</string>
     <string name="upload_private">Private</string>
     <string name="upload_share_facebook">Facebook</string>
