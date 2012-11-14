@@ -19,6 +19,8 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
 
 import com.WazaBe.HoloEverywhere.LayoutInflater;
@@ -100,13 +102,32 @@ public class SyncUploadFragment extends CommonFragment
         privateSwitch = (Switch) v.findViewById(R.id.private_switch);
         twitterSwitch = (Switch) v.findViewById(R.id.twitter_switch);
         facebookSwitch = (Switch) v.findViewById(R.id.facebook_switch);
+
+        privateSwitch.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                reinitShareSwitches(!isChecked);
+            }
+        });
+        reinitShareSwitches();
     }
 
+    void reinitShareSwitches()
+    {
+        reinitShareSwitches(!privateSwitch.isChecked());
+    }
+
+    void reinitShareSwitches(boolean enabled)
+    {
+        twitterSwitch.setEnabled(enabled);
+        facebookSwitch.setEnabled(enabled);
+    }
     void uploadSelectedFiles(
             final boolean checkTwitter,
             final boolean checkFacebook)
     {
-        if (checkTwitter && twitterSwitch.isChecked())
+        if (checkTwitter && twitterSwitch.isEnabled() && twitterSwitch.isChecked())
         {
             Runnable runnable = new Runnable()
             {
@@ -121,7 +142,7 @@ public class SyncUploadFragment extends CommonFragment
                     runnable, runnable);
             return;
         }
-        if (checkFacebook && facebookSwitch.isChecked())
+        if (checkFacebook && facebookSwitch.isEnabled() && facebookSwitch.isChecked())
         {
             Runnable runnable = new Runnable()
             {

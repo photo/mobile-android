@@ -238,7 +238,7 @@ public class UploaderService extends Service {
     public void shareIfRequested(PhotoUpload photoUpload,
             Photo photo, boolean silent)
     {
-        if (photo != null)
+        if (photo != null && !photo.isPrivate())
         {
             if (photoUpload.isShareOnTwitter())
             {

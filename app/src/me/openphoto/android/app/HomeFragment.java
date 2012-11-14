@@ -418,10 +418,15 @@ public class HomeFragment extends CommonFrargmentWithImageWorker implements Refr
                 public void onClick(View v)
                 {
                     activePhoto = photo;
-                    registerForContextMenu(v);
-                    v.showContextMenu();
-                    // getSupportActivity().openContextMenu(v);
-                    unregisterForContextMenu(v);
+                    if (photo.isPrivate())
+                    {
+                        GuiUtils.alert(R.string.share_private_photo_forbidden);
+                    } else
+                    {
+                        registerForContextMenu(v);
+                        v.showContextMenu();
+                        unregisterForContextMenu(v);
+                    }
                 }
             });
             return convertView;
