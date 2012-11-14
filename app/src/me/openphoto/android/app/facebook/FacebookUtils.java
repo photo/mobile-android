@@ -177,26 +177,8 @@ public class FacebookUtils
                                 public void yesButtonPressed(
                                         DialogInterface dialog)
                                 {
-                                    AuthListener listener = new AuthListener()
-                                    {
-                                        @Override
-                                        public void onAuthSucceed()
-                                        {
-                                            FacebookSessionEvents
-                                                    .removeAuthListener(this);
-                                            Handler handler = new Handler();
-                                            handler.postDelayed(
-                                                    runOnSuccessAuthentication,
-                                                    1000);
-                                        }
-
-                                        @Override
-                                        public void onAuthFail(String error)
-                                        {
-                                            FacebookSessionEvents
-                                                    .removeAuthListener(this);
-                                        }
-                                    };
+                                    AuthListener listener = new SelfRemovingWithDelayAuthListener(
+                                            runOnSuccessAuthentication);
                                     FacebookSessionEvents
                                             .addAuthListener(listener);
                                     FacebookUtils
@@ -284,6 +266,48 @@ public class FacebookUtils
         }
     }
 
+    private static class SelfRemovingWithDelayAuthListener implements AuthListener
+    {
+        Runnable runOnSuccessAuthentication;
+
+        public SelfRemovingWithDelayAuthListener(Runnable runOnSuccessAuthentication)
+        {
+            this.runOnSuccessAuthentication = runOnSuccessAuthentication;
+        }
+
+        @Override
+        public void onAuthSucceed()
+        {
+            Handler handler = new Handler();
+            handler.postDelayed(
+                    new Runnable() {
+
+                        @Override
+                        public void run() {
+                            FacebookSessionEvents
+                                    .removeAuthListener(SelfRemovingWithDelayAuthListener.this);
+                            runOnSuccessAuthentication.run();
+                        }
+                    },
+                    1000);
+        }
+
+        @Override
+        public void onAuthFail(String error)
+        {
+            Handler handler = new Handler();
+            handler.postDelayed(
+                    new Runnable() {
+
+                        @Override
+                        public void run() {
+                            FacebookSessionEvents
+                                    .removeAuthListener(SelfRemovingWithDelayAuthListener.this);
+                        }
+                    },
+                    1000);
+        }
+    }
     private static class SessionListener implements AuthListener,
             LogoutListener
     {
