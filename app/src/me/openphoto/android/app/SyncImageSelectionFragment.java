@@ -13,6 +13,7 @@ import me.openphoto.android.app.bitmapfun.util.ImageCache;
 import me.openphoto.android.app.bitmapfun.util.ImageCache.ImageCacheParams;
 import me.openphoto.android.app.bitmapfun.util.ImageFileSystemFetcher;
 import me.openphoto.android.app.bitmapfun.util.ImageResizer;
+import me.openphoto.android.app.bitmapfun.util.ImageWorker;
 import me.openphoto.android.app.bitmapfun.util.ImageWorker.ImageWorkerAdapter;
 import me.openphoto.android.app.provider.UploadsProviderAccessor;
 import me.openphoto.android.app.util.CommonUtils;
@@ -31,6 +32,7 @@ import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.view.ViewTreeObserver;
 import android.widget.AbsListView;
+import android.widget.AbsListView.RecyclerListener;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.CompoundButton;
@@ -163,6 +165,27 @@ public class SyncImageSelectionFragment extends CommonFrargmentWithImageWorker i
                         }
                     }
                 });
+        photosGrid.setRecyclerListener(new RecyclerListener() {
+
+            @Override
+            public void onMovedToScrapHeap(View view) {
+                CommonUtils.debug(TAG, "Moved to scrap: " + view);
+                cancelPotentialWorkForImageView(view);
+            }
+
+            public void cancelPotentialWorkForImageView(View view) {
+                ImageView photoView = (ImageView) view.findViewById(R.id.image);
+                if (photoView != null)
+                {
+                    ImageData object = (ImageData) photoView.getTag();
+                    if (object != null)
+                    {
+                        CommonUtils.debug(TAG, "Canceling potential work from the scrap view");
+                        ImageWorker.cancelPotentialWork(object, photoView);
+                    }
+                }
+            }
+        });
         Button nextStepBtn = (Button) v.findViewById(R.id.nextBtn);
         nextStepBtn.setOnClickListener(new OnClickListener()
         {
@@ -510,6 +533,7 @@ public class SyncImageSelectionFragment extends CommonFrargmentWithImageWorker i
                 });
             }
             ImageView imageView = (ImageView) view.findViewById(R.id.image);
+            imageView.setTag(value);
             // Finally load the image asynchronously into the ImageView, this
             // also takes care of
             // setting a placeholder image while the background thread runs
@@ -643,7 +667,6 @@ public class SyncImageSelectionFragment extends CommonFrargmentWithImageWorker i
             {
                 imageView.setLayoutParams(mImageViewLayoutParams);
             }
-
             // Finally load the image asynchronously into the ImageView, this
             // also takes care of
             // setting a placeholder image while the background thread runs
