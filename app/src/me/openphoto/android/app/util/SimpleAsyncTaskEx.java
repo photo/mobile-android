@@ -1,16 +1,16 @@
 package me.openphoto.android.app.util;
 
-import android.os.AsyncTask;
+import me.openphoto.android.app.util.concurrent.AsyncTaskEx;
 
 /**
  * The simple async task with the loading control
  * 
  * @author Eugene Popovich
  */
-public abstract class SimpleAsyncTask extends AsyncTask<Void, Void, Boolean> {
+public abstract class SimpleAsyncTaskEx extends AsyncTaskEx<Void, Void, Boolean> {
     private final LoadingControl loadingControl;
 
-    public SimpleAsyncTask(
+    public SimpleAsyncTaskEx(
             LoadingControl loadingControl) {
         this.loadingControl = loadingControl;
     }

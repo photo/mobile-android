@@ -10,7 +10,7 @@ import twitter4j.StatusUpdate;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import android.content.Context;
-import android.os.AsyncTask;
+import me.openphoto.android.app.util.concurrent.AsyncTaskEx;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -127,7 +127,7 @@ public class TwitterFragment extends CommonDialogFragment
     }
 
     private class ShowCurrentlyLoggedInUserTask extends
-            AsyncTask<Void, Void, Boolean>
+            AsyncTaskEx<Void, Void, Boolean>
     {
         TextView loggedInAsText;
         String name;
@@ -181,7 +181,7 @@ public class TwitterFragment extends CommonDialogFragment
     }
 
     private class TweetTask extends
-            AsyncTask<Void, Void, Boolean>
+            AsyncTaskEx<Void, Void, Boolean>
     {
         Context activity = getActivity();
 

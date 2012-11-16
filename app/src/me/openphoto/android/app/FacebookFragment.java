@@ -17,7 +17,7 @@ import me.openphoto.android.app.util.RunnableWithParameter;
 import org.json.JSONObject;
 
 import android.content.Context;
-import android.os.AsyncTask;
+import me.openphoto.android.app.util.concurrent.AsyncTaskEx;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -145,7 +145,7 @@ public class FacebookFragment extends CommonDialogFragment
     }
 
     private class ShowCurrentlyLoggedInUserTask extends
-            AsyncTask<Void, Void, Boolean>
+            AsyncTaskEx<Void, Void, Boolean>
     {
         TextView loggedInAsText;
         String name;
@@ -204,7 +204,7 @@ public class FacebookFragment extends CommonDialogFragment
     }
 
     private class PostPhotoTask extends
-            AsyncTask<Void, Void, Boolean>
+            AsyncTaskEx<Void, Void, Boolean>
     {
         Photo photo;
 

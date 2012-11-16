@@ -13,7 +13,7 @@ import me.openphoto.android.app.util.GuiUtils;
 import me.openphoto.android.app.util.LoadingControl;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.AsyncTask;
+import me.openphoto.android.app.util.concurrent.AsyncTaskEx;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -180,7 +180,7 @@ public class SyncUploadFragment extends CommonFragment
     }
 
     private class UploadInitTask extends
-            AsyncTask<Void, Void, Boolean>
+            AsyncTaskEx<Void, Void, Boolean>
     {
 
         private List<String> selectedFiles;

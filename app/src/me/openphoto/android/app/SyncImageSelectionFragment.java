@@ -22,7 +22,7 @@ import me.openphoto.android.app.util.LoadingControl;
 import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.os.AsyncTask;
+import me.openphoto.android.app.util.concurrent.AsyncTaskEx;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.TypedValue;
@@ -369,7 +369,7 @@ public class SyncImageSelectionFragment extends CommonFrargmentWithImageWorker i
     }
 
     private class InitTask extends
-            AsyncTask<Void, Void, Boolean>
+            AsyncTaskEx<Void, Void, Boolean>
     {
         CustomImageWorkerAdapter adapter;
 

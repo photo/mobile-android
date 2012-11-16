@@ -14,7 +14,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.AsyncTask;
+import me.openphoto.android.app.util.concurrent.AsyncTaskEx;
 
 public class OAuthUtils
 {
@@ -80,7 +80,7 @@ public class OAuthUtils
         }
     }
 
-    private static class PostTask extends AsyncTask<Void, Void, Boolean>
+    private static class PostTask extends AsyncTaskEx<Void, Void, Boolean>
     {
         private final Uri mUri;
         private OAuthConsumer mUsedConsumer;
