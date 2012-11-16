@@ -58,7 +58,7 @@ public class SettingsCommon implements
                                     {
                                         Preferences
                                                 .logout(activity);
-                                        refresh();
+                                        activity.finish();
                                     }
                                 })
                         .setNegativeButton(R.string.no, null)
