@@ -19,7 +19,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
-import android.os.AsyncTask;
+import me.openphoto.android.app.util.concurrent.AsyncTaskEx;
 
 import com.WazaBe.HoloEverywhere.sherlock.SActivity;
 
@@ -219,7 +219,7 @@ public class TwitterUtils
     }
 
     private static class VerifyResponseTask
-            extends AsyncTask<Void, Void, Boolean>
+            extends AsyncTaskEx<Void, Void, Boolean>
     {
         private LoadingControl loadingControl;
         private Activity activity;
@@ -313,7 +313,7 @@ public class TwitterUtils
     }
 
     private static class AccessRequestTask extends
-            AsyncTask<Void, Void, Boolean>
+            AsyncTaskEx<Void, Void, Boolean>
     {
         CommonsHttpOAuthConsumer consumer;
         OAuthProvider provider;

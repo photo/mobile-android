@@ -11,7 +11,7 @@ import me.openphoto.android.app.util.CommonUtils;
 import me.openphoto.android.app.util.GuiUtils;
 import me.openphoto.android.app.util.LoadingControl;
 import me.openphoto.android.app.util.RunnableWithParameter;
-import me.openphoto.android.app.util.SimpleAsyncTask;
+import me.openphoto.android.app.util.SimpleAsyncTaskEx;
 
 import org.apache.http.client.ClientProtocolException;
 import org.json.JSONException;
@@ -104,7 +104,7 @@ public class PhotoUtils {
         return photo;
     }
 
-    private static class RetrieveThumbUrlTask extends SimpleAsyncTask {
+    private static class RetrieveThumbUrlTask extends SimpleAsyncTaskEx {
         private Photo mPhoto;
         private ReturnSizes photoSize;
         private RunnableWithParameter<Photo> runnable;

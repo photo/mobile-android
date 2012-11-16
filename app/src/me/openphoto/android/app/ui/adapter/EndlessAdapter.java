@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import android.os.AsyncTask;
+import me.openphoto.android.app.util.concurrent.AsyncTaskEx;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -95,7 +95,7 @@ public abstract class EndlessAdapter<T> extends BaseAdapter {
         }
     }
 
-    private class LoadNextTask extends AsyncTask<Void, Void, List<T>> {
+    private class LoadNextTask extends AsyncTaskEx<Void, Void, List<T>> {
 
         @Override
         protected void onPreExecute() {

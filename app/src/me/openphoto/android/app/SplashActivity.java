@@ -3,7 +3,7 @@ package me.openphoto.android.app;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.os.AsyncTask;
+import me.openphoto.android.app.util.concurrent.AsyncTaskEx;
 import android.os.Bundle;
 
 /**
@@ -38,9 +38,9 @@ public class SplashActivity extends Activity {
      * Async task to do whatever loading will be required before going to the
      * Main screen
      */
-    private class InitialLoad extends AsyncTask<Void, Void, Void> {
+    private class InitialLoad extends AsyncTaskEx<Void, Void, Void> {
         /**
-         * @see android.os.AsyncTask#doInBackground(Params[])
+         * @see me.openphoto.android.app.util.concurrent.AsyncTaskEx#doInBackground(Params[])
          */
         @Override
         protected Void doInBackground(Void... params) {
@@ -55,7 +55,7 @@ public class SplashActivity extends Activity {
         }
 
         /**
-         * @see android.os.AsyncTask#onPostExecute(java.lang.Object)
+         * @see me.openphoto.android.app.util.concurrent.AsyncTaskEx#onPostExecute(java.lang.Object)
          */
         @Override
         protected void onPostExecute(Void result) {

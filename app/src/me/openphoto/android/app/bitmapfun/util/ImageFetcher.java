@@ -95,7 +95,7 @@ public class ImageFetcher extends ImageResizer {
 
     /**
      * The main process method, which will be called by the ImageWorker in the
-     * AsyncTask background thread.
+     * AsyncTaskEx background thread.
      * 
      * @param data The data to load the bitmap, in this case, a regular http URL
      * @return The downloaded and resized bitmap
@@ -106,7 +106,7 @@ public class ImageFetcher extends ImageResizer {
 
     /**
      * The main process method, which will be called by the ImageWorker in the
-     * AsyncTask background thread.
+     * AsyncTaskEx background thread.
      * 
      * @param data The data to load the bitmap, in this case, a regular http URL
      * @param imageWidth
