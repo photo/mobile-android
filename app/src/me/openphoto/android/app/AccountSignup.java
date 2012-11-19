@@ -10,7 +10,7 @@ import me.openphoto.android.app.util.LoadingControl;
 import me.openphoto.android.app.util.LoginUtils;
 import android.app.Activity;
 import android.content.Intent;
-import android.os.AsyncTask;
+import me.openphoto.android.app.util.concurrent.AsyncTaskEx;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
@@ -102,7 +102,7 @@ public class AccountSignup extends SActivity
     }
 
     private class NewUserTask extends
-            AsyncTask<Void, Void, AccountOpenPhotoResponse>
+            AsyncTaskEx<Void, Void, AccountOpenPhotoResponse>
     {
         String username, password, email;
         Activity activity;

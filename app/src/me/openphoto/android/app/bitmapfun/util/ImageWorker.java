@@ -30,7 +30,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.TransitionDrawable;
-import android.os.AsyncTask;
+import me.openphoto.android.app.util.concurrent.AsyncTaskEx;
 import android.widget.ImageView;
 
 /**
@@ -64,7 +64,7 @@ public abstract class ImageWorker {
      * logic). A memory and disk cache will be used if an {@link ImageCache} has
      * been set using {@link ImageWorker#setImageCache(ImageCache)}. If the
      * image is found in the memory cache, it is set immediately, otherwise an
-     * {@link AsyncTask} will be created to asynchronously load the bitmap.
+     * {@link AsyncTaskEx} will be created to asynchronously load the bitmap.
      * 
      * @param data The URL of the image to download.
      * @param imageView The ImageView to bind the downloaded image to.
@@ -80,7 +80,7 @@ public abstract class ImageWorker {
      * logic). A memory and disk cache will be used if an {@link ImageCache} has
      * been set using {@link ImageWorker#setImageCache(ImageCache)}. If the
      * image is found in the memory cache, it is set immediately, otherwise an
-     * {@link AsyncTask} will be created to asynchronously load the bitmap.
+     * {@link AsyncTaskEx} will be created to asynchronously load the bitmap.
      * 
      * @param data The URL of the image to download.
      * @param imageView The ImageView to bind the downloaded image to.
@@ -130,7 +130,7 @@ public abstract class ImageWorker {
      * logic). A memory and disk cache will be used if an {@link ImageCache} has
      * been set using {@link ImageWorker#setImageCache(ImageCache)}. If the
      * image is found in the memory cache, it is set immediately, otherwise an
-     * {@link AsyncTask} will be created to asynchronously load the bitmap.
+     * {@link AsyncTaskEx} will be created to asynchronously load the bitmap.
      * {@link ImageWorker#setAdapter(ImageWorkerAdapter)} must be called before
      * using this method.
      * 
@@ -255,9 +255,9 @@ public abstract class ImageWorker {
     }
 
     /**
-     * The actual AsyncTask that will asynchronously process the image.
+     * The actual AsyncTaskEx that will asynchronously process the image.
      */
-    private class BitmapWorkerTask extends AsyncTask<Object, Void, Bitmap> {
+    private class BitmapWorkerTask extends AsyncTaskEx<Object, Void, Bitmap> {
         private Object data;
         private final WeakReference<ImageView> imageViewReference;
         LoadingControl loadingControl;

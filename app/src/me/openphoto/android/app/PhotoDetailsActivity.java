@@ -17,7 +17,7 @@ import me.openphoto.android.app.util.LoadingControl;
 import android.content.Context;
 import android.content.Intent;
 import android.database.DataSetObserver;
-import android.os.AsyncTask;
+import me.openphoto.android.app.util.concurrent.AsyncTaskEx;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.v4.view.PagerAdapter;
@@ -313,7 +313,7 @@ public class PhotoDetailsActivity extends SActivity {
 
         }
 
-        private class LoadImageTask extends AsyncTask<Void, Void, Boolean> {
+        private class LoadImageTask extends AsyncTaskEx<Void, Void, Boolean> {
             private Photo mPhoto;
             private final ImageView mImageView;
             private final LoadingControl loadingControl;

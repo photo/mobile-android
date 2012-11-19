@@ -10,7 +10,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.os.AsyncTask;
+import me.openphoto.android.app.util.concurrent.AsyncTaskEx;
 
 public class UploadsUtils
 {
@@ -49,7 +49,7 @@ public class UploadsUtils
     }
 
     public static class ClearUploadsTask extends
-            AsyncTask<Void, Void, Boolean>
+            AsyncTaskEx<Void, Void, Boolean>
     {
         @Override
         protected Boolean doInBackground(Void... params)
