@@ -19,10 +19,10 @@ import me.openphoto.android.app.provider.UploadsProviderAccessor;
 import me.openphoto.android.app.util.CommonUtils;
 import me.openphoto.android.app.util.GuiUtils;
 import me.openphoto.android.app.util.LoadingControl;
+import me.openphoto.android.app.util.concurrent.AsyncTaskEx;
 import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Bitmap;
-import me.openphoto.android.app.util.concurrent.AsyncTaskEx;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.TypedValue;
@@ -760,19 +760,26 @@ public class SyncImageSelectionFragment extends CommonFrargmentWithImageWorker i
                     null, // Return all rows
                     null,
                     MediaStore.Images.Media.BUCKET_ID);
-            try
+            if (cursor != null)
             {
-                int count = cursor.getCount();
-                all = new ArrayList<ImageData>(count);
-                while (cursor.moveToNext())
+                try
                 {
-                    int ind = 0;
-                    all.add(new ImageData(cursor.getLong(ind++), cursor
-                            .getString(ind)));
+                    int count = cursor.getCount();
+                    all = new ArrayList<ImageData>(count);
+                    while (cursor.moveToNext())
+                    {
+                        int ind = 0;
+                        all.add(new ImageData(cursor.getLong(ind++), cursor
+                                .getString(ind)));
+                    }
+                } finally
+                {
+
+                    cursor.close();
                 }
-            } finally
+            }else
             {
-                cursor.close();
+                all = new ArrayList<ImageData>();
             }
         }
 
