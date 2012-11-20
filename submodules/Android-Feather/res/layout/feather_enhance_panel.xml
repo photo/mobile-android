@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/FeatherOptionPanel"
+    android:layout_width="match_parent"
+    android:layout_height="?attr/optionPanelHeight"
+    android:orientation="vertical" >
+
+    <LinearLayout style="@style/FeatherOptionPanel.TopLine" />
+
+    <RelativeLayout
+        style="@style/FeatherOptionPanel.Background"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:weightSum="10" >
+
+            <com.aviary.android.feather.widget.ImageButtonRadioGroup
+                android:id="@+id/radio"
+                style="@style/FeatherRadioButtonGroup"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="8"
+                android:gravity="center"
+                android:measureWithLargestChild="true"
+                android:orientation="horizontal" >
+
+                <com.aviary.android.feather.widget.ImageButtonRadioButton
+                    android:id="@+id/button1"
+                    style="@style/FeatherRadioButton.Auto"
+                    android:layout_weight="1" />
+
+                <com.aviary.android.feather.widget.ImageButtonRadioButton
+                    android:id="@+id/button2"
+                    style="@style/FeatherRadioButton.Night"
+                    android:layout_weight="1" />
+
+                <com.aviary.android.feather.widget.ImageButtonRadioButton
+                    android:id="@+id/button3"
+                    style="@style/FeatherRadioButton.Back"
+                    android:layout_weight="1" />
+
+                <com.aviary.android.feather.widget.ImageButtonRadioButton
+                    android:id="@+id/button4"
+                    style="@style/FeatherRadioButton.Balance"
+                    android:layout_weight="1" />
+            </com.aviary.android.feather.widget.ImageButtonRadioGroup>
+        </LinearLayout>
+
+        <include layout="@layout/feather_full_shadow" />
+    </RelativeLayout>
+
+</LinearLayout>

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- height of the main toolbar -->
+	<dimen name="feather_toolbar_height">62.5dp</dimen>
+	<dimen name="feather_text_size_small">18sp</dimen>
+	<dimen name="feather_text_size_medium">17.5sp</dimen>
+	<dimen name="feather_text_size_large">25sp</dimen>
+	
+    <!-- Workspace, used for the main tools and sticker packs -->
+    <!-- workspace height -->
+    <dimen name="feather_workspace_height">127.5dip</dimen>	
+    <!-- padding before the first cell -->
+    <dimen name="feather_workspace_start_padding">7.5dip</dimen>
+    <!-- padding after the last cell -->
+    <dimen name="feather_workspace_end_padding">7.5dip</dimen>
+    <!-- padding above the first cells row -->
+    <dimen name="feather_workspace_top_padding">15.0dip</dimen>
+    <!-- padding below the last cells row -->
+    <dimen name="feather_workspace_bottom_padding">0.0dip</dimen>
+    <!-- padding horiz between columns -->
+    <dimen name="feather_workspace_cell_horizontal_padding">7.5dip</dimen>
+    <!-- padding vert between rows -->
+    <dimen name="feather_workspace_cell_vertical_padding">7.5dip</dimen>
+    
+    <!-- option panel top line height -->
+    <dimen name="feather_panel_top_line_height">6dp</dimen>
+    <!-- option panel dark top line height -->
+    <dimen name="feather_panel_top_line_height_dark">6dp</dimen>
+    <!-- option panel bottom line height -->
+    <dimen name="feather_panel_bottom_line_height">6dp</dimen>
+    
+    <dimen name="feather_options_panel_height">150dp</dimen>
+    <dimen name="feather_options_panel_height_with_shadow">157.5dp</dimen>
+    <dimen name="feather_options_panel_height_shadow">7.5dp</dimen>
+    <dimen name="feather_borders_panel_height">240dp</dimen>
+    
+    <dimen name="feather_default_panel_checkbox_width">84dp</dimen>
+    <dimen name="feather_default_panel_checkbox_padding_bottom">12dp</dimen>
+    
+    <dimen name="feather_borders_panel_top_bg_height">67.5dip</dimen>
+    	
+    <dimen name="feather_effects_panel_height">180dp</dimen>
+    <dimen name="feather_effects_panel_top_bg_height">100dip</dimen>
+    <dimen name="feather_effects_cell_width">105dip</dimen>
+    
+    <!-- get more layout -->
+    <dimen name="feather_effects_getmore_image_margin_left">12dip</dimen>
+    <dimen name="feather_effects_getmore_image_margin_right">16dip</dimen>
+    <dimen name="feather_effects_getmore_image_margin_top">12dip</dimen>
+    <dimen name="feather_effects_getmore_text_margin_right">4dip</dimen>
+    <dimen name="feather_effects_getmore_bubble_margin_right">14dip</dimen>
+    <dimen name="feather_effects_getmore_bubble_text_padding_bottom">5dip</dimen>    
+</resources>

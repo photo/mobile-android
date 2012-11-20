@@ -81,6 +81,26 @@
             android:label="@string/title_activity_select_tags" >
         </activity>
 
+		<activity
+		    android:name="com.aviary.android.feather.FeatherActivity"
+		    android:configChanges="orientation|keyboardHidden"
+		    android:screenOrientation="unspecified"
+		    android:hardwareAccelerated="true"
+		    android:largeHeap="true"
+		    android:theme="@style/FeatherDefaultTheme" />
+
+		<receiver
+		    android:name="com.aviary.android.feather.receivers.FeatherSystemReceiver"
+		    android:exported="true"
+		    android:process=":feather_system_receiver" >
+		        <intent-filter>
+		            <action android:name="android.intent.action.PACKAGE_ADDED" />
+		            <action android:name="android.intent.action.PACKAGE_REMOVED" />
+		            <action android:name="android.intent.action.PACKAGE_REPLACED" />
+		            <data android:scheme="package" />
+		        </intent-filter>
+		</receiver>
+		
         <!-- AutoUpload things -->
         <!-- Stuff for auto uploading photos -->
         <receiver android:name=".receiver.BootCompletedReceiver" >
@@ -95,6 +115,13 @@
         <provider
             android:name=".provider.UploadsProvider"
             android:authorities="me.openphoto.android.app" />
+            <!-- Required for the hi-res image processing -->
+	    <!-- authorities can have the value you prefer -->
+	    <provider 
+	        android:name="com.aviary.android.feather.library.providers.FeatherContentProvider"
+	        android:exported="false"
+	        android:authorities="me.openphoto.aviary.launcher.HiResProvider">
+	    </provider>
     </application>
 
 </manifest>

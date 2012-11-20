@@ -7,10 +7,12 @@ import java.io.Serializable;
 import java.util.Date;
 
 import me.openphoto.android.app.bitmapfun.util.ImageResizer;
+import me.openphoto.android.app.feather.FeatherFragment;
 import me.openphoto.android.app.net.UploadMetaData;
 import me.openphoto.android.app.provider.PhotoUpload;
 import me.openphoto.android.app.provider.UploadsProviderAccessor;
 import me.openphoto.android.app.service.UploaderService;
+import me.openphoto.android.app.ui.widget.ClosableOnRestoreDialogFragment;
 import me.openphoto.android.app.util.CommonUtils;
 import me.openphoto.android.app.util.FileUtils;
 import me.openphoto.android.app.util.GuiUtils;
@@ -18,6 +20,7 @@ import me.openphoto.android.app.util.ImageUtils;
 import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
@@ -32,6 +35,7 @@ import android.widget.ImageView;
 import com.WazaBe.HoloEverywhere.LayoutInflater;
 import com.WazaBe.HoloEverywhere.app.AlertDialog;
 import com.WazaBe.HoloEverywhere.app.Dialog;
+import com.WazaBe.HoloEverywhere.app.Fragment;
 import com.WazaBe.HoloEverywhere.sherlock.SActivity;
 import com.WazaBe.HoloEverywhere.widget.Switch;
 import com.facebook.android.R;
@@ -49,6 +53,7 @@ public class UploadActivity extends SActivity {
     private static final int REQUEST_GALLERY = 0;
     private static final int REQUEST_CAMERA = 1;
     private static final int REQUEST_TAGS = 2;
+    private static final int ACTION_REQUEST_FEATHER = 100;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,10 +71,12 @@ public class UploadActivity extends SActivity {
     {
         static final String UPLOAD_IMAGE_FILE = "UploadActivityFile";
         static final String UPLOAD_IMAGE_FILE_URI = "UploadActivityFileUri";
+
         private File mUploadImageFile;
         private Uri fileUri;
 
         private Switch mPrivateToggle;
+        FeatherFragment featherFragment;
 
         @Override
         public void onCreate(Bundle savedInstanceState) {
@@ -87,11 +94,22 @@ public class UploadActivity extends SActivity {
             }
         }
 
+        FeatherFragment getFeatherFragment()
+        {
+            if (featherFragment == null)
+            {
+                featherFragment = FeatherFragment.findOrCreateFeatherFragment(getSupportActivity()
+                        .getSupportFragmentManager(),
+                        new CustomFeatherFragmentParameters());
+            }
+            return featherFragment;
+        }
         @Override
         public View onCreateView(LayoutInflater inflater,
                 ViewGroup container, Bundle savedInstanceState) {
             super.onCreateView(inflater, container, savedInstanceState);
             View v = inflater.inflate(R.layout.activity_upload, container, false);
+            getFeatherFragment().onCallingViewCreated();
             return v;
         }
 
@@ -116,6 +134,7 @@ public class UploadActivity extends SActivity {
             v.findViewById(R.id.button_upload).setOnClickListener(this);
             v.findViewById(R.id.select_tags).setOnClickListener(this);
             v.findViewById(R.id.image_upload).setOnClickListener(this);
+            v.findViewById(R.id.button_edit).setOnClickListener(this);
             mPrivateToggle = (Switch) v.findViewById(R.id.private_switch);
             mPrivateToggle.setChecked(true);
 
@@ -193,6 +212,11 @@ public class UploadActivity extends SActivity {
                         mUploadImageFile = null;
                     }
                     break;
+                case ACTION_REQUEST_FEATHER:
+                    if (resultCode == RESULT_OK)
+                    {
+                        getFeatherFragment().onFeatherActivitySuccessResult(data);
+                    }
                 default:
                     break;
             }
@@ -224,6 +248,14 @@ public class UploadActivity extends SActivity {
                     .update(fileUri, values, null, null);
             CommonUtils.debug(TAG, "Rows updated:" + rowsUpdated);
         }
+
+        File getNextFileName(String prefix) throws IOException
+        {
+            return new File(FileUtils
+                    .getStorageFolder(getActivity()),
+                    prefix + new Date().getTime() + ".jpg");
+        }
+
         void showSelectionDialog()
         {
             Handler handler = new Handler();
@@ -240,9 +272,7 @@ public class UploadActivity extends SActivity {
                                         @Override
                                         public void cameraOptionSelected() {
                                             try {
-                                                mUploadImageFile = new File(FileUtils
-                                                        .getStorageFolder(getActivity()),
-                                                        "upload_" + new Date().getTime() + ".jpg");
+                                                mUploadImageFile = getNextFileName("upload_");
                                                 // this is a hack for some
                                                 // devices taken from here
                                                 // http://thanksmister.com/2012/03/16/android_null_data_camera_intent/
@@ -309,6 +339,10 @@ public class UploadActivity extends SActivity {
                         showSelectionDialog();
                     }
                     break;
+                case R.id.button_edit:
+                    getFeatherFragment().startFeather(mUploadImageFile,
+                            ACTION_REQUEST_FEATHER);
+                    break;
                 case R.id.image_upload:
                     if (mUploadImageFile != null)
                     {
@@ -343,70 +377,107 @@ public class UploadActivity extends SActivity {
             GuiUtils.info(R.string.uploading_in_background);
             getActivity().finish();
         }
-    }
-
-    public static class SelectImageDialogFragment extends CommonDialogFragment
-    {
-        public static interface SelectedActionHandler extends Serializable
-        {
-            void cameraOptionSelected();
-
-            void galleryOptionSelected();
-        }
-
-        private SelectedActionHandler handler;
-        boolean isRestore = false;
-
-        public static SelectImageDialogFragment newInstance(
-                SelectedActionHandler handler)
-        {
-            SelectImageDialogFragment frag = new SelectImageDialogFragment();
-            frag.handler = handler;
-            return frag;
-        }
 
         @Override
-        public void onCancel(DialogInterface dialog) {
-            super.onCancel(dialog);
-            getActivity().finish();
+        public void onDestroyView() {
+            super.onDestroyView();
+            getFeatherFragment().onCallingViewDestroyed();
         }
 
-        @Override
-        public Dialog onCreateDialog(Bundle savedInstanceState) {
-            final CharSequence[] items = {
-                    getString(R.string.upload_camera_option),
-                    getString(R.string.upload_gallery_option)
-            };
+        class CustomFeatherFragmentParameters implements FeatherFragment.FeatherFragmentParameters
+        {
 
-            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-            builder.setTitle(R.string.upload_title);
-            builder.setItems(items, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int item) {
-                    if (handler == null)
-                    {
-                        return;
-                    }
-                    switch (item) {
-                        case 0:
-                            handler.cameraOptionSelected();
-                            return;
-                        case 1:
-                            handler.galleryOptionSelected();
-                            return;
-                    }
+            @Override
+            public File getNextFileName(String prefix) throws IOException {
+                return UiFragment.this.getNextFileName(prefix);
+            }
+
+            @Override
+            public void setImageUri(Uri uri) {
+                mUploadImageFile = new File(ImageUtils.getRealPathFromURI(getActivity(), uri));
+            }
+
+            @Override
+            public void setHDFile(String path) {
+                mUploadImageFile = new File(path);
+            }
+
+            @Override
+            public void setImageBitmap(Bitmap result) {
+                ImageView previewImage = getImageView();
+                if (previewImage != null)
+                {
+                    previewImage.setImageBitmap(result);
                 }
-            });
-            isRestore = savedInstanceState != null;
-            return builder.create();
-        }
+            }
 
-        @Override
-        public void onResume() {
-            super.onResume();
-            if (isRestore)
+            @Override
+            public ImageView getImageView() {
+                if (getView() != null)
+                {
+                    return (ImageView) getView().findViewById(R.id.image_upload);
+                }
+                return null;
+            }
+
+            @Override
+            public Fragment getCallingFragment() {
+                return UiFragment.this;
+            }
+
+        }
+        public static class SelectImageDialogFragment extends ClosableOnRestoreDialogFragment
+        {
+            public static interface SelectedActionHandler extends Serializable
             {
-                dismiss();
+                void cameraOptionSelected();
+
+                void galleryOptionSelected();
+            }
+
+            private SelectedActionHandler handler;
+
+            public static SelectImageDialogFragment newInstance(
+                    SelectedActionHandler handler)
+            {
+                SelectImageDialogFragment frag = new SelectImageDialogFragment();
+                frag.handler = handler;
+                return frag;
+            }
+
+            @Override
+            public void onCancel(DialogInterface dialog) {
+                super.onCancel(dialog);
+                getActivity().finish();
+            }
+
+            @Override
+            public Dialog onCreateDialog(Bundle savedInstanceState) {
+                final CharSequence[] items = {
+                        getString(R.string.upload_camera_option),
+                        getString(R.string.upload_gallery_option)
+                };
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                builder.setTitle(R.string.upload_title);
+                builder.setItems(items, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int item) {
+                        if (handler == null)
+                        {
+                            return;
+                        }
+                        switch (item) {
+                            case 0:
+                                handler.cameraOptionSelected();
+                                return;
+                            case 1:
+                                handler.galleryOptionSelected();
+                                return;
+                        }
+                    }
+                });
+                return builder.create();
             }
         }
     }

@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="feather_text_drawable_min_size">18sp</dimen>
+    <dimen name="feather_text_default_size">22sp</dimen>
+</resources>

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/FeatherPanelCustomCheckbox"
+    android:layout_height="match_parent"
+    android:clickable="false"
+    android:focusable="false"
+    android:focusableInTouchMode="false"
+    android:layerType="hardware"
+    android:text="@string/crop" >
+
+    <com.aviary.android.feather.widget.TextViewCustomFont
+        android:id="@+id/text"
+        style="@style/FeatherPanelCustomCheckbox.Text"
+        android:bufferType="normal"
+        android:clickable="false"
+        android:focusable="false"
+        android:focusableInTouchMode="false"
+        android:text="@string/crop" />
+
+    <ImageView
+        android:id="@+id/invertCropArrow"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"
+        android:clickable="false"
+        android:focusable="false"
+        android:focusableInTouchMode="false"
+        android:scaleType="fitCenter"
+        android:src="@drawable/feather_crop_arrow"
+        android:textOff=""
+        android:textOn="" />
+
+</RelativeLayout>

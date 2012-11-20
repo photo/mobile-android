@@ -404,7 +404,11 @@ public class MainActivity extends SActivity
         {
             case HOME_INDEX:
             case GALLERY_INDEX:
-                ((Refreshable) getCurrentFragment()).refresh();
+                Fragment fragment = getCurrentFragment();
+                if (fragment != null)
+                {
+                    ((Refreshable) fragment).refresh();
+                }
                 break;
         }
     }

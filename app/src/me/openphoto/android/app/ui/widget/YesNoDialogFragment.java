@@ -23,24 +23,45 @@ public class YesNoDialogFragment extends ClosableOnRestoreDialogFragment
     }
 
     YesNoButtonPressedHandler handler;
+    boolean cancelable;
+    int message;
+
+    /**
+     * @param message
+     * @param handler
+     * @return
+     */
     public static YesNoDialogFragment newInstance(
             int message,
             YesNoButtonPressedHandler handler)
     {
+        return newInstance(message, true, handler);
+    }
+
+    /**
+     * @param message
+     * @param cancelable whether dialog can be cancelled by the back button
+     * @param handler
+     * @return
+     */
+    public static YesNoDialogFragment newInstance(
+            int message,
+            boolean cancelable,
+            YesNoButtonPressedHandler handler)
+    {
         YesNoDialogFragment frag = new YesNoDialogFragment();
-        Bundle args = new Bundle();
-        args.putInt("message", message);
         frag.handler = handler;
-        frag.setArguments(args);
+        frag.message = message;
+        frag.cancelable = cancelable;
         return frag;
     }
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState)
     {
-        int message = getArguments().getInt("message");
         return new AlertDialog.Builder(getActivity())
                 .setMessage(message)
+                .setCancelable(cancelable)
                 .setPositiveButton(R.string.yes,
                         new DialogInterface.OnClickListener()
                         {

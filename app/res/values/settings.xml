@@ -44,6 +44,9 @@
   <string name="twitter_api_consumer_secret">wt2PQuFHwai0ffPvAnlPsQc8W0DIUjeUyvnCOvbQb3E</string>
   <string name="twitter_callback_url">openphoto-t://twitter-callback</string>
   <string name="openphoto_oauth_callback_url">openphoto://callback</string>
+  <string name="feather_api_key">69696cd0e</string>
+  
+  
   
   <!--  Facebook preferences -->
   <string-array name="share_facebook_permissions">

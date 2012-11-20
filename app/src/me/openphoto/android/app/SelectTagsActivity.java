@@ -1,20 +1,18 @@
 
 package me.openphoto.android.app;
 
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
 import me.openphoto.android.app.model.Tag;
 import me.openphoto.android.app.net.IOpenPhotoApi;
 import me.openphoto.android.app.net.TagsResponse;
 import me.openphoto.android.app.ui.adapter.EndlessAdapter;
+import me.openphoto.android.app.util.GuiUtils;
 import me.openphoto.android.app.util.LoadingControl;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -26,7 +24,6 @@ import android.widget.ListView;
 
 import com.WazaBe.HoloEverywhere.LayoutInflater;
 import com.WazaBe.HoloEverywhere.sherlock.SActivity;
-import com.bugsense.trace.BugSenseHandler;
 import com.facebook.android.R;
 
 public class SelectTagsActivity extends SActivity {
@@ -141,11 +138,8 @@ public class SelectTagsActivity extends SActivity {
                         TagsResponse response = mOpenPhotoApi.getTags();
                         return new LoadResponse(response.getTags(), false);
                     } catch (Exception e) {
-                        Log.e(TAG, "Could not load next tags in list", e);
-                        Map<String, String> extraData = new HashMap<String, String>();
-                        extraData.put("message",
-                                "Could not load next tags in list");
-                        BugSenseHandler.log(TAG, extraData, e);
+                        GuiUtils.error(TAG,
+                                R.string.errorCouldNotLoadNextTagsInList, e);
                     }
                 }
                 return new LoadResponse(null, false);

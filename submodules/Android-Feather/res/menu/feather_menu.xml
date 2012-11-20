@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+	<item
+		android:id="@+id/edit_reset"
+		android:title="@string/menu_reset"
+		android:showAsAction="never" />
+	
+	<item
+		android:id="@+id/edit_premium"
+		android:title="@string/menu_premium"
+		android:showAsAction="never" />
+	
+	<item
+		android:id="@+id/edit_cancel"
+		android:title="@string/menu_cancel"
+		android:showAsAction="never" />
+	
+	<item
+		android:id="@+id/edit_save"
+		android:title="@string/save"
+		android:showAsAction="never" />
+</menu>

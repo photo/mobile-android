@@ -1,0 +1,255 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    
+    <!-- The duration (in milliseconds) of activities animation. -->
+    <integer name="config_activityAnimTime">300</integer>
+    
+    <!-- ADJUST/ORIENTATION TOOL -->
+    <!-- default rotation/flip animation time -->
+    <integer name="feather_adjust_tool_anim_time">350</integer>
+    <!-- animation duration for reset operations -->
+    <integer name="feather_adjust_tool_reset_anim_time">200</integer>
+    <!-- on ICS this will enable the flip in 3D style, otherwise a simple flat 2d flip will be used -->
+    <integer name="feather_adjust_tool_enable_3d_flip">0</integer>
+    
+    <!-- users will be able to free rotate the image using fingers -->
+    <!-- 0 = disable free rotation -->
+    <!-- 1 = enable free rotation -->
+    <integer name="feather_rotate_enable_free_rotate">1</integer>
+
+    <!-- if free rotate is enabled, this will paint the clipping area -->
+    <integer name="feather_rotate_highlight_grid_stroke_width">1</integer>
+    <integer name="feather_rotate_highlight_stroke_width">2</integer>
+
+    <!-- TEXT TOOL -->
+    <integer name="feather_text_padding">30</integer>
+    <integer name="feather_text_highlight_stroke_width">2</integer>
+    <integer name="feather_text_highlight_ellipse">10</integer>
+    <integer name="feather_text_selected_color">0</integer>
+    
+    <!-- text fill color -->
+    <integer-array name="feather_text_fill_colors">
+        <item>0xff000000</item>
+        <item>0xffffffff</item>
+        <item>0xffff0000</item>
+        <item>0xffff5500</item>
+        <item>0xffffa300</item>
+        <item>0xffffff00</item>
+        <item>0xff65ce00</item>
+        <item>0xff008903</item>
+        <item>0xff007c53</item>
+        <item>0xff00c3ff</item>
+        <item>0xff0049ff</item>
+        <item>0xff001b8c</item>
+        <item>0xff8900a5</item>
+        <item>0xffd30060</item>
+        <item>0xff693300</item>
+        <item>0xff7a6946</item>
+        <item>0xff486d7c</item>
+        <item>0xffffb8cb</item>
+        <item>0xff545454</item>
+        <item>0xffa8a8a8</item>
+    </integer-array>   
+    
+    <!-- text stroke color -->
+    <integer-array name="feather_text_stroke_colors">
+        <item>0xFFFFFFFF</item>
+        <item>0xFF000000</item>
+        <item>0xFFFFFFFF</item>
+        <item>0xFFFFFFFF</item>
+        <item>0xFFFFFFFF</item>
+        <item>0xFF000000</item>
+        <item>0xFFFFFFFF</item>
+        <item>0xFFFFFFFF</item>
+        <item>0xFFFFFFFF</item>
+        <item>0xFFFFFFFF</item>
+        <item>0xFFFFFFFF</item>
+        <item>0xFFFFFFFF</item>
+        <item>0xFFFFFFFF</item>
+        <item>0xFFFFFFFF</item>
+        <item>0xFFFFFFFF</item>
+        <item>0xFFFFFFFF</item>
+        <item>0xFFFFFFFF</item>
+        <item>0xFFFFFFFF</item>
+        <item>0xFFFFFFFF</item>
+        <item>0xFFFFFFFF</item>
+    </integer-array>       
+
+    <!-- BRIGHTNESS/CONTRAST/SATURATION -->
+    <!-- in the brightness, contrast and saturation tool enable/disable -->
+    <!-- the live preview, when wheel is scrolling -->
+    <integer name="feather_brightness_live_preview">1</integer>
+    
+    
+    <!-- CROP TOOL -->
+    <!-- min size of the crop area -->
+    <integer name="feather_crop_min_size">100</integer>
+    <integer name="feather_crop_highlight_stroke_width">2</integer>
+    <integer name="feather_crop_highlight_internal_stroke_width">1</integer>
+
+    <!-- crop area invert policy -->
+    <!-- if the value is '1' then the passed crop rects cannot be inverted by the user -->
+    <!-- if the value is '0' the crop rects can be inverted -->
+    <integer name="feather_crop_invert_policy">0</integer>
+
+    <!-- aspect ratio display names -->
+    <!-- note that the corresponding ratio value is defined in the -->
+    <!-- "crop_values" array and it also must contain the same number of entries -->
+    <string-array name="feather_crop_names">
+        <item>original</item>
+        <item>square</item>
+        <item>custom</item>
+        <item>3:2</item>
+        <item>4:3</item>
+        <item>5:3</item>
+        <item>5:4</item>
+        <item>6:4</item>
+        <item>6:5</item>
+        <item>7:5</item>
+        <item>14:11</item>
+        <item>16:9</item>
+        <item>16:10</item>
+        <item>2.35:1</item>
+    </string-array>
+
+
+    <!-- define the 'ratio' value of the 'crop_names' array -->
+    <!-- ratio is defined by 'aspectX:aspectY', so the final apsect -->
+    <!-- ratio will be defined as aspectX/aspectY -->
+    <!-- only integer values allowed here -->
+    <!-- value '0' means not aspect ratio at all, so user will be free to change the crop rectangle without restrictions -->
+    <!-- value '-1' means use the same aspect(X or Y) of the original image -->
+    <string-array name="feather_crop_values">
+        <item>-1:-1</item>
+        <item>1:1</item>
+        <item>0:0</item>
+        <item>3:2</item>
+        <item>4:3</item>
+        <item>5:3</item>
+        <item>5:4</item>
+        <item>6:4</item>
+        <item>6:5</item>
+        <item>7:5</item>
+        <item>14:11</item>
+        <item>16:9</item>
+        <item>16:10</item>
+        <item>235:100</item>
+    </string-array>
+    
+    <integer name="feather_crop_selected_value">2</integer>
+    
+    
+    <!-- default colors for drawing -->
+    <integer-array name="feather_default_colors">
+        <item>0xffff0000</item>
+        <item>0xffff5500</item>
+        <item>0xffffa300</item>
+        <item>0xffffff00</item>
+        <item>0xff65ce00</item>
+        <item>0xff008903</item>
+        <item>0xff007c53</item>
+        <item>0xff00c3ff</item>
+        <item>0xff0049ff</item>
+        <item>0xff001b8c</item>
+        <item>0xff8900a5</item>
+        <item>0xffd30060</item>
+        <item>0xff693300</item>
+        <item>0xff7a6946</item>
+        <item>0xff486d7c</item>
+        <item>0xffffb8cb</item>
+        <item>0xff000000</item>
+        <item>0xff545454</item>
+        <item>0xffa8a8a8</item>
+        <item>0xffffffff</item>
+    </integer-array>
+
+    <!-- REDEYE -->
+    <integer-array name="feather_spot_brush_sizes">
+        <item>7</item>
+        <item>12</item>
+        <item>17</item>
+        <item>22</item>
+        <item>27</item>
+        <item>32</item>
+    </integer-array>
+    
+    <!-- selected brush size index -->
+    <integer name="feather_spot_brush_selected_size_index">2</integer>
+
+    <!-- DRAW PANEL -->
+    <integer name="feather_brush_softValue">1</integer>
+    <integer-array name="feather_brush_sizes">
+        <item>7</item>
+        <item>12</item>
+        <item>17</item>
+        <item>22</item>
+        <item>27</item>
+        <item>32</item>
+    </integer-array>    
+
+    <!-- MEME PANEL -->
+
+
+    <!-- change the default font used for the meme pane -->
+    <!-- or leave empty to use the default system font -->
+    <string name="feather_meme_default_font">meme/Impact.ttf</string>
+
+    <!-- STICKERS PANEL -->
+    <integer name="feather_sticker_highlight_ellipse">10</integer>
+    
+    
+    <integer name="feather_sticker_highlight_minsize">100</integer>
+    <integer name="feather_sticker_highlight_padding">16</integer>
+    <integer name="feather_sticker_highlight_stroke_width">2</integer>
+	<string name="feather_sticker_pack_font">fonts/Roboto-Light.ttf</string>
+
+    <!-- filters -->
+    <integer name="feather_cannister_in_animation_duration">300</integer>
+    <integer name="feather_effect_selection_animation_duration">80</integer>
+    <string name="feather_effect_pack_font">fonts/Roboto-Light.ttf</string>
+
+    <!-- MISC -->
+    
+    <!-- bottom tools open/close animation duration -->
+    <integer name="feather_config_bottom_animTime">300</integer>
+    <integer name="feather_bottombar_close_offset">0</integer>
+    <integer name="feather_bottombar_open_offset">0</integer>
+	
+    <!-- infoscreen open/close animation duration -->
+    <integer name="feather_config_infoscreen_animTime">650</integer>
+    <integer name="feather_config_mediumAnimTime">300</integer>
+    <integer name="feather_config_shortAnimTime">200</integer>
+    <integer name="feather_config_portraitRows">1</integer>
+
+    <!-- BORDERS PANEL -->
+    
+    <!-- default colors -->
+    <integer-array name="feather_border_panel_colors">
+        <item>0xff000000</item>
+        <item>0xff545454</item>
+        <item>0xffa8a8a8</item>
+        <item>0xffffffff</item>
+        <item>0xffff0000</item>
+        <item>0xffff5500</item>
+        <item>0xffffa300</item>
+        <item>0xffffff00</item>
+        <item>0xff65ce00</item>
+        <item>0xff008903</item>
+        <item>0xff007c53</item>
+        <item>0xff00c3ff</item>
+        <item>0xff0049ff</item>
+        <item>0xff001b8c</item>
+        <item>0xff8900a5</item>
+        <item>0xffd30060</item>
+        <item>0xff693300</item>
+        <item>0xff7a6946</item>
+        <item>0xff486d7c</item>
+        <item>0xffffb8cb</item>
+    </integer-array>
+    
+    <!-- default color selected at start -->
+    <integer name="feather_border_panel_selected_color">0</integer>
+    
+    <!-- market links -->
+    
+</resources>
