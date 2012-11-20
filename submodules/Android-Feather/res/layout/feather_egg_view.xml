@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/egg_view"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="top|center_horizontal"
+    android:orientation="vertical" >
+
+    <ImageView
+        android:id="@+id/tool_image"
+        style="@style/FeatherTool"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:clickable="true"
+        android:focusable="true"
+        android:scaleType="fitCenter"
+        android:src="@drawable/feather_tool_icon_blemish" />
+
+    <com.aviary.android.feather.widget.TextViewCustomFont
+        android:id="@+id/tool_text"
+        style="@style/FeatherToolText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="0"
+        android:clickable="false"
+        android:gravity="center"
+        android:singleLine="true"
+        android:text="@string/crop" />
+
+</LinearLayout>

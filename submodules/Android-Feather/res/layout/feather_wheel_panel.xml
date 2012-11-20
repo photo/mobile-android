@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/FeatherOptionPanelWheel"
+    android:layout_width="match_parent"
+    android:layout_height="?attr/optionPanelHeightWithShadow"
+    android:orientation="vertical" >
+
+    <ImageView
+        android:id="@+id/shadow_up"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/optionPanelShadowHeight"
+        android:layout_weight="0"
+        android:scaleType="fitXY"
+        android:src="@drawable/feather_shadow_up" />
+
+    <LinearLayout
+        style="@style/FeatherOptionPanelWheel.Background"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:orientation="vertical" >
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="20dp"
+            android:orientation="vertical"
+            android:padding="5dp" >
+
+            <com.aviary.android.feather.widget.WheelRadio
+                android:id="@+id/wheel_radio"
+                style="@style/FeatherWheelRadio"
+                android:layout_width="match_parent"
+                android:layout_height="0dip"
+                android:layout_weight="1"
+                android:background="@drawable/feather_wheel_radio_background_shape" />
+        </LinearLayout>
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:scaleType="fitXY"
+            android:src="@drawable/feather_horizontal_line" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dip"
+            android:layout_gravity="center_vertical|center_horizontal"
+            android:layout_weight="1"
+            android:id="@+id/wheel_parent"
+            android:orientation="horizontal"
+            android:paddingBottom="10dp"
+            android:paddingTop="10dp" >
+
+            <ImageView
+                android:id="@+id/icon_small"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_margin="10dp"
+                android:layout_weight="0"
+                android:scaleType="fitCenter" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                android:orientation="vertical" >
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0"
+                    android:scaleType="fitXY"
+                    android:src="@drawable/feather_wheel_background_top" />
+
+                <com.aviary.android.feather.widget.Wheel
+                    android:id="@+id/wheel"
+                    style="@style/FeatherWheel"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1" />
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0"
+                    android:scaleType="fitXY"
+                    android:src="@drawable/feather_wheel_background_bottom" />
+            </LinearLayout>
+
+            <ImageView
+                android:id="@+id/icon_big"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_margin="10dp"
+                android:layout_weight="0"
+                android:scaleType="fitCenter" />
+        </LinearLayout>
+    </LinearLayout>
+
+</LinearLayout>

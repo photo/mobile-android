@@ -10,7 +10,6 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import me.openphoto.android.app.bitmapfun.util.ImageCache;
-import me.openphoto.android.app.bitmapfun.util.ImageCache.ImageCacheParams;
 import me.openphoto.android.app.bitmapfun.util.ImageFileSystemFetcher;
 import me.openphoto.android.app.bitmapfun.util.ImageResizer;
 import me.openphoto.android.app.bitmapfun.util.ImageWorker;
@@ -19,10 +18,10 @@ import me.openphoto.android.app.provider.UploadsProviderAccessor;
 import me.openphoto.android.app.util.CommonUtils;
 import me.openphoto.android.app.util.GuiUtils;
 import me.openphoto.android.app.util.LoadingControl;
+import me.openphoto.android.app.util.concurrent.AsyncTaskEx;
 import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Bitmap;
-import me.openphoto.android.app.util.concurrent.AsyncTaskEx;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.TypedValue;
@@ -236,10 +235,8 @@ public class SyncImageSelectionFragment extends CommonFrargmentWithImageWorker i
                 mImageThumbSize);
         mImageWorker.setLoadingImage(R.drawable.empty_photo);
 
-        ImageCacheParams cacheParams = new ImageCacheParams(IMAGE_CACHE_DIR);
-
         mImageWorker.setImageCache(ImageCache.findOrCreateCache(getActivity(),
-                cacheParams));
+                IMAGE_CACHE_DIR));
     }
 
     protected void switchUploadState(boolean isChecked)
@@ -760,19 +757,26 @@ public class SyncImageSelectionFragment extends CommonFrargmentWithImageWorker i
                     null, // Return all rows
                     null,
                     MediaStore.Images.Media.BUCKET_ID);
-            try
+            if (cursor != null)
             {
-                int count = cursor.getCount();
-                all = new ArrayList<ImageData>(count);
-                while (cursor.moveToNext())
+                try
                 {
-                    int ind = 0;
-                    all.add(new ImageData(cursor.getLong(ind++), cursor
-                            .getString(ind)));
+                    int count = cursor.getCount();
+                    all = new ArrayList<ImageData>(count);
+                    while (cursor.moveToNext())
+                    {
+                        int ind = 0;
+                        all.add(new ImageData(cursor.getLong(ind++), cursor
+                                .getString(ind)));
+                    }
+                } finally
+                {
+
+                    cursor.close();
                 }
-            } finally
+            }else
             {
-                cursor.close();
+                all = new ArrayList<ImageData>();
             }
         }
 

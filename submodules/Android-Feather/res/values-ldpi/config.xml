@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <dimen name="feather_default_panel_checkbox_padding_bottom">4dp</dimen>
+
+    <integer name="feather_sticker_highlight_minsize">20</integer>
+    <integer name="feather_sticker_highlight_padding">8</integer>
+    <integer name="feather_sticker_highlight_stroke_width">1</integer>
+    <integer name="feather_crop_min_size">20</integer>
+    <integer name="feather_text_defaultSize">22</integer>
+    <integer name="feather_text_padding">10</integer>
+    <integer name="feather_text_highlight_stroke_width">2</integer>
+    <integer name="feather_text_highlight_ellipse">6</integer>
+    <integer name="feather_sticker_highlight_ellipse">6</integer>
+
+</resources>

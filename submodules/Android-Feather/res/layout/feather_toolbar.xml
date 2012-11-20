@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.aviary.android.feather.widget.ToolbarView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    style="@style/FeatherToolbar"
+    android:layout_width="fill_parent"
+    android:layout_gravity="center"
+    android:gravity="center" >
+
+    <RelativeLayout
+        android:id="@+id/toolbar_main_panel"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical" >
+
+        <com.aviary.android.feather.widget.TextViewCustomFont
+            android:id="@+id/aviary_logo"
+            style="@style/FeatherToolbarTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:singleLine="true"
+            android:text="@string/edit_your_photo" />
+
+        <include
+            android:id="@+id/top_indicator_main"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_gravity="right|center_vertical"
+            android:layout_marginRight="5dp"
+            android:layout_toLeftOf="@+id/button_save"
+            layout="@layout/feather_top_indicator" />
+
+        <com.aviary.android.feather.widget.ButtonCustomFont
+            android:id="@+id/button_save"
+            style="@style/FeatherToolbarButton"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
+            android:text="@string/save" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/toolbar_content_panel"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:visibility="invisible" >
+
+        <TextSwitcher
+            android:id="@+id/toolbar_title"
+            style="@style/FeatherToolbarTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:animateFirstView="false"
+            android:inAnimation="@android:anim/slide_in_left"
+            android:outAnimation="@android:anim/slide_out_right"
+            android:singleLine="true" />
+
+        <include
+            android:id="@+id/top_indicator_panel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_gravity="right|center_vertical"
+            android:layout_marginRight="5dp"
+            android:layout_toLeftOf="@+id/button_apply"
+            layout="@layout/feather_top_indicator" />
+
+        <com.aviary.android.feather.widget.ButtonCustomFont
+            android:id="@+id/button_apply"
+            style="@style/FeatherToolbarButton"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
+            android:text="@string/apply" />
+    </RelativeLayout>
+
+</com.aviary.android.feather.widget.ToolbarView>

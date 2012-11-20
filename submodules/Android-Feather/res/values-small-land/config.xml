@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <integer name="toolCount">6</integer>
+    <integer name="featherfilterPacksCount">6</integer>
+    <integer name="featherStickerPacksCount">5</integer>
+</resources>

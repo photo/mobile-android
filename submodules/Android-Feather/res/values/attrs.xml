@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <declare-styleable name="FeatherDefaultTheme">
+        <attr name="fontFamilyLight" format="string"></attr>
+        <attr name="fontFamilyMedium" format="string"></attr>
+        <attr name="fontFamilyBold" format="string"></attr>
+        <attr name="toolbarTitleFontFamily" format="string"></attr>
+        <attr name="toolbarButtonFontFamily" format="string"></attr>
+        <attr name="thumbTextFontFamily" format="string"></attr>
+        <attr name="toolbarHeight" format="reference|dimension"></attr>
+        <attr name="shadowColorPrimary" format="reference|color"></attr>
+        <attr name="shadowColorPrimaryInverse" format="reference|color"></attr>
+        <attr name="shadowDxSmall" format="float"></attr>
+        <attr name="shadowDySmall" format="float"></attr>
+        <attr name="shadowRadiusSmall" format="float"></attr>
+        <attr name="shadowDxMedium" format="float"></attr>
+        <attr name="shadowDyMedium" format="float"></attr>
+        <attr name="shadowRadiusMedium" format="float"></attr>
+        <attr name="textSizeSmall" format="reference|dimension"></attr>
+        <attr name="textSizeMedium" format="reference|dimension"></attr>
+        <attr name="textSizeLarge" format="reference|dimension"></attr>
+        <attr name="workspaceHeight" format="reference|dimension"></attr>
+        <attr name="workspaceIndicator" format="reference"></attr>
+        <attr name="imageSelection" format="reference|color"></attr>
+        <attr name="optionPanelHeight" format="dimension"></attr>
+        <attr name="optionPanelShadowHeight" format="dimension"></attr>
+        <attr name="optionPanelHeightWithShadow" format="dimension"></attr>
+        <attr name="optionPanelButtonCheckboxWidth" format="dimension"></attr>
+        <attr name="optionPanelBackground" format="reference|color"></attr>
+        <attr name="optionPanelBackground2" format="reference"></attr>
+        <attr name="textAppearanceThumbSmall" format="reference"></attr>
+        
+    </declare-styleable>
+    
+    <!-- used for com.aviary.android.feather.widget.TextViewCustomFont -->
+    <declare-styleable name="TextViewCustomFont">
+        <attr name="font" format="string"></attr>
+    </declare-styleable>
+    
+    <declare-styleable name="Wheel">
+        <attr format="integer" name="ticks" />
+        <attr format="integer" name="numRotations" />
+    </declare-styleable>
+    
+    <declare-styleable name="WheelRadio">
+        <attr format="integer" name="smallTicks" />
+        <attr format="integer" name="bigTicks" />
+        <attr format="color|reference" name="valueIndicatorColor" />
+        <attr format="color|reference" name="bigIndicatorColor" />
+        <attr format="color|reference" name="smallIndicatorColor" />        
+    </declare-styleable>
+    
+    <declare-styleable name="ImageRadioButton">
+        <attr format="integer" name="buttonIcon" />
+        <attr format="integer" name="buttonText" />
+        <attr format="boolean" name="checked" />
+    </declare-styleable>
+    
+    <declare-styleable name="ImageViewWithSelection">
+        <attr format="reference" name="selectionSrc" />
+        <attr format="dimension" name="selectionPaddingLeft" />
+        <attr format="dimension" name="selectionPaddingTop" />
+        <attr format="dimension" name="selectionPaddingRight" />
+        <attr format="dimension" name="selectionPaddingBottom" />
+    </declare-styleable>
+    
+    <declare-styleable name="ImageViewWithShadow">
+        <attr format="reference|color" name="shadowDrawable" />
+        <attr format="integer" name="shadowOffsetX" />
+        <attr format="integer" name="shadowOffsetY" />
+    </declare-styleable>
+        
+    <declare-styleable name="EffectThumbLayout">
+        <attr format="dimension" name="selectedHeight" />
+        <attr format="integer" name="selectionAnimationDuration" />
+    </declare-styleable>
+    
+    <declare-styleable name="ImageButtonRadioGroup">
+        <attr format="integer" name="checkedButton" />
+        <attr format="integer" name="firstButton" />
+        <attr format="integer" name="centerButton" />
+        <attr format="integer" name="lastButton" />
+        <attr name="orientation" />
+    </declare-styleable>
+
+    <declare-styleable name="WorkspaceIndicator">
+        <attr name="indicatorId" format="reference" />
+    </declare-styleable>
+    
+    <declare-styleable name="Workspace">
+        <attr name="defaultScreen" format="integer"  />
+        <attr name="overscroll" format="integer" />
+    </declare-styleable>   
+    
+    <declare-styleable name="CellLayout">
+        <attr name="startPadding" format="dimension" />
+        <attr name="endPadding" format="dimension" />
+        <attr name="topPadding" format="dimension" />
+        <attr name="bottomPadding" format="dimension" />
+        <attr name="horizontalPadding" format="dimension" />
+        <attr name="verticalPadding" format="dimension" />
+        <attr name="cells" format="integer" />
+        <attr name="rows" format="integer" />
+    </declare-styleable>
+    
+    <!-- <attr format="reference" name="imageButtonRadioButtonStyle" /> -->
+    
+    <attr name="orientation">
+        <enum name="horizontal" value="0" />
+        <enum name="vertical" value="1" />
+    </attr>
+
+</resources>

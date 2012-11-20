@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/egg_info_view"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="top|center_horizontal"
+    android:focusable="false"
+    android:focusableInTouchMode="false"
+    android:paddingLeft="20dp"
+    android:paddingRight="20dp"
+    android:orientation="vertical" >
+
+    <com.aviary.android.feather.widget.ToggleButtonCustomFont
+        android:id="@+id/tool_image"
+        style="@style/FeatherTool.Info"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:clickable="true"
+        android:focusable="true"
+        android:gravity="center"
+        android:scaleType="fitXY"
+        android:singleLine="true"
+        android:textOn="@string/infoscreen_bottom_button"
+        android:textOff="@string/infoscreen_bottom_button"
+        />
+
+</LinearLayout>

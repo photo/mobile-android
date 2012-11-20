@@ -95,6 +95,11 @@
     </ScrollView>
 
     <Button
+        android:id="@+id/button_edit"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/upload_image_edit_button" />
+    <Button
         android:id="@+id/button_upload"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

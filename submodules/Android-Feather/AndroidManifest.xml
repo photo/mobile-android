@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.aviary.android.feather"
+    android:versionCode="1"
+    android:versionName="1.0" >
+
+    <!-- minimum sdk version, required -->
+    <uses-sdk android:minSdkVersion="8" />
+
+    <!-- REQUIRED PERMISSIONS -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+
+    <!--
+    You need to define these 2 activity entries in your 
+    application manifest
+    -->
+
+    <application
+        android:debuggable="true"
+        android:hardwareAccelerated="true"
+        android:icon="@drawable/feather_icon"
+        android:label="Aviary" >
+
+        <!-- this is the main activity -->
+        <activity
+            android:name="com.aviary.android.feather.FeatherActivity"
+            android:configChanges="orientation|keyboardHidden"
+            android:screenOrientation="portrait"
+            android:theme="@style/FeatherDefaultTheme" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <!-- we need this receiver in order to intercept newly installed packages on the phone -->
+        <receiver
+            android:name="com.aviary.android.feather.receivers.FeatherSystemReceiver"
+            android:exported="true"
+            android:process=":feather_system_receiver" >
+            <intent-filter>
+                <action android:name="android.intent.action.PACKAGE_ADDED" />
+                <action android:name="android.intent.action.PACKAGE_REMOVED" />
+                <action android:name="android.intent.action.PACKAGE_REPLACED" />
+
+                <data android:scheme="package" />
+            </intent-filter>
+        </receiver>
+    </application>
+
+</manifest>

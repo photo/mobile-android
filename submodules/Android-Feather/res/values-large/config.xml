@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <integer name="feather_filter_cell_width">150</integer>
+
+</resources>

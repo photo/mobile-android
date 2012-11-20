@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/FeatherOptionPanel"
+    android:layout_width="match_parent"
+    android:layout_height="?attr/optionPanelHeightWithShadow"
+    android:orientation="vertical" >
+
+    <ImageView
+        android:id="@+id/shadow_up"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/optionPanelShadowHeight"
+        android:layout_weight="0"
+        android:scaleType="fitXY"
+        android:src="@drawable/feather_shadow_up" />
+
+    <LinearLayout
+        style="@style/FeatherOptionPanel.Background"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:orientation="vertical" >
+
+        <LinearLayout style="@style/FeatherOptionPanel.TopLine" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1" >
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical" >
+
+                <com.aviary.android.feather.widget.Gallery
+                    android:id="@+id/gallery"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:clipChildren="true"
+                    android:clipToPadding="true"
+                    android:overScrollMode="always"
+                    android:spacing="1dp"
+                    android:unselectedAlpha="1" />
+
+                <com.aviary.android.feather.widget.Gallery
+                    android:id="@+id/gallery_color"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:clipChildren="true"
+                    android:clipToPadding="true"
+                    android:overScrollMode="always"
+                    android:spacing="1dp"
+                    android:unselectedAlpha="1" />
+            </LinearLayout>
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="6dp"
+                android:layout_centerInParent="true"
+                android:scaleType="fitXY"
+                android:src="@drawable/feather_draw_panel_hline" />
+
+            <include layout="@layout/feather_full_shadow" />
+            
+            <LinearLayout android:layout_width="match_parent" android:layout_height="match_parent" android:id="@+id/disable_status"
+                android:background="#66000000" android:visibility="invisible">
+            </LinearLayout>
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:src="@drawable/feather_panel_top_indicator" />
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
+                android:src="@drawable/feather_panel_bottom_indicator" />
+        </RelativeLayout>
+
+        <LinearLayout style="@style/FeatherOptionPanel.BottomLine" />
+    </LinearLayout>
+
+</LinearLayout>
