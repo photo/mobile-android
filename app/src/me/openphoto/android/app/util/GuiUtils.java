@@ -118,6 +118,10 @@ public class GuiUtils
         processError(TAG, message, ex, context, true);
     }
 
+    public static void noAlertError(String TAG, Exception ex)
+    {
+        noAlertError(TAG, null, ex);
+    }
     public static void noAlertError(String TAG, String message, Exception ex)
     {
         processError(TAG, message, ex, null, false);

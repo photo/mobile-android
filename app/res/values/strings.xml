@@ -78,6 +78,7 @@
     <string name="upload_share_twitter">Twitter</string>
     <string name="upload_button">Upload!</string>
     <string name="upload_pick_photo_first">Please pick a photo first</string>
+    <string name="upload_image_edit_button">Image Editor</string>
     
     <!-- SelectTagsActivity -->
     <string name="title_activity_select_tags">Select Tags</string>
@@ -114,6 +115,8 @@
     <string name="pleaseSpecifyFirst">Please specify %1$s first!</string>
     <string name="logOut">Log out</string>
     <string name="areYouSureQuestion">Are you sure?</string>
+    <string name="external_storage_na_message">sdcard is missing or currently not mounted. Cannot continue.</string>
+    <string name="action_not_supported_on_os_version">This action is not supported on your device OS version.</string>
     
     <!-- Errors -->
     <string name="errorWithAuthentication">Error with authentication</string>
@@ -170,5 +173,17 @@
     <string name="field_password">password</string>
     <string name="field_username">username</string>
     
+    
+    <!-- Feather -->
+    <string name="feather_hi_res_dialog_title">HiRes</string>
+    <string name="feather_hi_res_dialog_question">A low-resolution image was created. Do you want to save the hi-res image too?</string>
+    <string name="feather_failed_to_retrieve_the_list_of_acitions">Failed to retrieve the list of actions!</string>
+    <string name="feather_failed_to_retrieve_the_session_information">Failed to retrieve the session informations</string>
+    <string name="feather_processing_hi_res_image">Processing Hi-res image</string>
+    <string name="feather_loading_image">Loading image…</string>
+    <string name="feather_saving_image">Saving image…</string>
+    <string name="feather_applying_action">Applying action %1$s from %2$s</string>
+    <string name="feather_error_occurred">There was an error: %1$s</string>
+    <string name="feather_failed_to_load_image">Failed to load image %1$s</string>
 
 </resources>

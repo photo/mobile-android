@@ -20,6 +20,7 @@ import java.io.File;
 
 import me.openphoto.android.app.BuildConfig;
 import me.openphoto.android.app.util.CommonUtils;
+import android.app.ActivityManager;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
@@ -85,7 +86,18 @@ public class ImageCache {
      */
     public static ImageCache findOrCreateCache(
             final FragmentActivity activity, final String uniqueName) {
-        return findOrCreateCache(activity, new ImageCacheParams(uniqueName));
+        ImageCacheParams params = new ImageCacheParams(uniqueName);
+        // Get memory class of this device, exceeding this amount will throw an
+        // OutOfMemory exception.
+        final int memClass = ((ActivityManager) activity.getSystemService(
+                Context.ACTIVITY_SERVICE)).getMemoryClass();
+
+        // Use 1/8th of the available memory for this memory cache.
+        params.memCacheSize = 1024 * 1024 * memClass / 8;
+
+        CommonUtils.debug(TAG, "Calculated memory cache size: " + params.memCacheSize);
+
+        return findOrCreateCache(activity, params);
     }
 
     /**

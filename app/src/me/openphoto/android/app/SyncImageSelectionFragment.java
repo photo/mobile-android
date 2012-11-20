@@ -10,7 +10,6 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import me.openphoto.android.app.bitmapfun.util.ImageCache;
-import me.openphoto.android.app.bitmapfun.util.ImageCache.ImageCacheParams;
 import me.openphoto.android.app.bitmapfun.util.ImageFileSystemFetcher;
 import me.openphoto.android.app.bitmapfun.util.ImageResizer;
 import me.openphoto.android.app.bitmapfun.util.ImageWorker;
@@ -236,10 +235,8 @@ public class SyncImageSelectionFragment extends CommonFrargmentWithImageWorker i
                 mImageThumbSize);
         mImageWorker.setLoadingImage(R.drawable.empty_photo);
 
-        ImageCacheParams cacheParams = new ImageCacheParams(IMAGE_CACHE_DIR);
-
         mImageWorker.setImageCache(ImageCache.findOrCreateCache(getActivity(),
-                cacheParams));
+                IMAGE_CACHE_DIR));
     }
 
     protected void switchUploadState(boolean isChecked)
