@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.aviary.android.feather.widget.BottombarViewFlipper xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_alignParentBottom="true"
+    android:animateFirstView="false"
+    android:autoStart="false"
+    android:clickable="false"
+    android:focusable="false" >
+
+    <!-- need to add the content panel here! -->
+
+    <include layout="@layout/feather_option_panel_content" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="?attr/optionPanelHeightWithShadow"
+        android:layout_alignParentBottom="true"
+        android:layout_gravity="bottom"
+        android:gravity="bottom" >
+
+        <ImageView
+            android:id="@+id/shadow_up"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/optionPanelShadowHeight"
+            android:scaleType="fitXY"
+            android:src="@drawable/feather_shadow_up" />
+
+        <LinearLayout
+            android:id="@+id/workspace_container"
+            style="@style/FeatherWorkspaceContainer"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@id/shadow_up"
+            android:layout_marginBottom="0dp"
+            android:gravity="top"
+            android:orientation="vertical"
+            android:weightSum="1" >
+
+            <com.aviary.android.feather.widget.wp.Workspace
+                android:id="@+id/workspace"
+                style="@style/FeatherToolsWorkspace"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/workspaceHeight"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:visibility="visible" />
+
+            <com.aviary.android.feather.widget.wp.WorkspaceIndicator
+                android:id="@+id/workspace_indicator"
+                style="@style/FeatherToolsIndicator"
+                android:layout_width="match_parent"
+                android:layout_height="10dip"
+                android:layout_gravity="bottom|center_horizontal"
+                android:layout_marginBottom="5dp"
+                android:layout_weight="1"
+                android:gravity="bottom|center_horizontal" />
+        </LinearLayout>
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginBottom="2dp"
+            android:layout_marginRight="8dp"
+            android:src="@drawable/aviary_logo_small" />
+    </RelativeLayout>
+
+</com.aviary.android.feather.widget.BottombarViewFlipper>

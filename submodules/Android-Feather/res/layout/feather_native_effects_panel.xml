@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aviary="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/feather_effects_panel_height"
+    android:paddingBottom="0dp"
+    android:paddingLeft="0dp"
+    android:paddingRight="0dp"
+    android:paddingTop="0dp" >
+
+    <RelativeLayout
+        android:id="@+id/RelativeLayout01"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/optionPanelHeight"
+        android:layout_alignParentBottom="true"
+        android:background="#FF363636"
+        android:paddingBottom="0dp"
+        android:paddingLeft="0dp"
+        android:paddingRight="0dp"
+        android:paddingTop="0dp"
+        android:visibility="visible" />
+
+    <RelativeLayout
+        android:id="@+id/roll_open_container"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/optionPanelHeight"
+        android:layout_alignBottom="@+id/RelativeLayout01" >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:weightSum="1" >
+
+            <com.aviary.android.feather.widget.HorizontalFixedListView
+                android:id="@+id/gallery"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:paddingBottom="5dp"
+                android:paddingTop="9dp" />
+        </LinearLayout>
+    </RelativeLayout>
+
+    <LinearLayout
+        android:id="@+id/top_shadow"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/optionPanelShadowHeight"
+        android:layout_above="@+id/RelativeLayout01"
+        android:background="@drawable/feather_shadow_up" >
+    </LinearLayout>
+
+    <!-- content -->
+
+    <LinearLayout
+        android:id="@+id/workspace_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_gravity="center_horizontal|bottom"
+        android:gravity="center_horizontal|bottom"
+        android:orientation="vertical"
+        android:weightSum="1" >
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="?attr/optionPanelHeightWithShadow"
+            android:background="@drawable/feather_stickers_panel_background_upper" >
+
+            <com.aviary.android.feather.widget.wp.Workspace
+                android:id="@+id/workspace"
+                style="@style/FeatherStickersWorkspace"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:visibility="invisible" />
+
+        </RelativeLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="15dp"
+            android:background="@drawable/feather_stickers_panel_background_lower" >
+
+            <com.aviary.android.feather.widget.wp.WorkspaceIndicator
+                android:id="@+id/workspace_indicator"
+                style="@style/FeatherStickersIndicator"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="bottom|center_horizontal"
+                android:layout_marginBottom="5dp"
+                android:layout_marginTop="5dp"
+                android:gravity="bottom|center_horizontal" />
+        </LinearLayout>
+        
+    </LinearLayout>
+	<include layout="@layout/feather_include_small_loader" android:layout_width="match_parent" android:layout_height="?attr/optionPanelHeight" android:layout_alignParentBottom="true" />
+
+    <!-- end of content -->
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="?attr/optionPanelHeight"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:scaleType="fitXY"
+        android:src="@drawable/feather_shadow_left" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="?attr/optionPanelHeight"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:scaleType="fitXY"
+        android:src="@drawable/feather_shadow_right" />
+
+    <AbsoluteLayout
+        android:id="@+id/cannister_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="visible" >
+    </AbsoluteLayout>
+
+</RelativeLayout>

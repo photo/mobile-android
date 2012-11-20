@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:baselineAligned="false"
+    android:focusable="false"
+    android:focusableInTouchMode="false"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:visibility="gone" >
+
+    <ScrollView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="20dp"
+        android:background="@drawable/feather_infoscreen_background"
+        android:padding="20dp" >
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:orientation="vertical" >
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:scaleType="centerInside"
+                android:src="@drawable/aviary_logo_big" />
+
+            <com.aviary.android.feather.widget.TextViewCustomFont
+                android:id="@+id/version_text"
+                style="@style/FeatherInfoScreen.Version"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="" />
+
+            <com.aviary.android.feather.widget.TextViewCustomFont
+                style="@style/FeatherInfoScreen.Content"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:text="@string/infoscreen_text" />
+
+            <com.aviary.android.feather.widget.ButtonCustomFont
+                android:id="@+id/aviary_infoscreen_submit"
+                style="@style/FeatherTool"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="@string/infoscreen_submit" />
+        </LinearLayout>
+    </ScrollView>
+
+</LinearLayout>

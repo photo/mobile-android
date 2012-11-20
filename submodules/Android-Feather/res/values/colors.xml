@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="feather_shadow_white">@android:color/white</color>
+    <color name="feather_shadow_black">@android:color/black</color>
+    
+    <color name="feather_text_color_primary">#FF383838</color>
+    <color name="feather_text_color_secondary">#ff999999</color>
+    <color name="feather_text_color_tertiary">#FF3f4040</color>
+    
+    <!-- option panel background color -->
+    <color name="feather_default_panel_color">#FF404040</color>
+    <!-- option panel topline color -->
+    <color name="feather_panel_top_line_color">#FFEAEAEA</color>
+    <!-- option panel bottom line color -->
+    <color name="feather_panel_bottom_line_color">#FFEAEAEA</color>
+    
+    <!-- rotation panel grid colors -->
+    <color name="feather_rotate_highlight_stroke_color">#ffe1e1e1</color>
+    <color name="feather_rotate_highlight_grid_stroke_color">#ffe1e1e1</color>
+    <color name="feather_rotate_highlight_outside">#88000000</color>
+    
+    <!-- text panel -->
+    
+    <!-- colors for the default drawable item used in all the Gallery views -->
+    <color name="feather_crop_adapter_background_normal">#FF2e2e2e</color>
+    <color name="feather_crop_adapter_background_selected">#FF404040</color>
+    <color name="feather_crop_adapter_border_normal">#ff535353</color>
+    <color name="feather_crop_adapter_border_selected">#FF626262</color>
+    
+    <!-- crop panel grid -->
+    <color name="feather_crop_highlight">#ffe1e1e1</color>
+    <color name="feather_crop_highlight_down">#ffe1e1e1</color>
+    <color name="feather_crop_highlight_outside">#99000000</color>
+    <color name="feather_crop_highlight_outside_down">#99000000</color>
+    <color name="feather_crop_highlight_internal">#c9e1e1e1</color>
+    <color name="feather_crop_highlight_internal_down">#7fe1e1e1</color>
+    
+    <!-- stickers selection color -->
+    
+    <!-- misc -->
+    
+    <!-- default highlight drawable colors -->
+	<color name="feather_drawable_highlight_focus">#FFA0CE00</color>
+    <color name="feather_drawable_highlight_down">#FFFFA500</color>
+    
+    <!-- inline loading progress text color -->
+    <color name="feather_inline_loading_color">#AAFFFFFF</color>
+    
+</resources>

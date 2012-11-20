@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<dimen name="feather_text_size_small">13dp</dimen>
+	<dimen name="feather_text_size_medium">16dp</dimen>
+	<dimen name="feather_text_size_large">22dp</dimen>
+</resources>

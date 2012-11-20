@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layerType="software"
+	android:orientation="vertical"
+	android:layout_width="fill_parent"
+	android:layout_height="fill_parent">
+	<EditText
+		android:layout_width="wrap_content"
+		android:layout_centerInParent="true"
+		android:textSize="1sp"
+		android:maxHeight="10dp"
+		android:singleLine="true"
+		android:imeOptions="actionDone"
+		android:layout_height="wrap_content"
+		android:id="@+id/invisible_text"
+		android:inputType="textNoSuggestions"
+		android:editable="true" />
+	<view
+		class="com.aviary.android.feather.widget.ImageViewDrawableOverlay"
+		android:id="@+id/overlay"
+		android:scaleType="matrix"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent" />
+</RelativeLayout>

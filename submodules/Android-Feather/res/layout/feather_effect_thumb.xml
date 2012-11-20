@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.aviary.android.feather.widget.EffectThumbLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    style="@style/FeatherOptionPanel.EffectThumbLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:clickable="true"
+    android:focusable="true"
+    android:gravity="center_horizontal|bottom"
+    
+    android:orientation="vertical" >
+
+    <ImageView
+        android:id="@+id/hidden"
+        android:layout_above="@+id/text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:paddingBottom="2dip"
+        android:paddingLeft="0dip"
+        android:paddingRight="0dip"
+        android:paddingTop="0dip"
+        android:visibility="invisible"
+        android:src="@drawable/feather_effect_thumb_selected_image" />
+    
+    <ImageView
+        android:id="@+id/image"
+        style="@style/FeatherOptionPanel.EffectThumb"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/text"
+        android:visibility="invisible"
+        android:layout_centerHorizontal="true" />    
+
+    <com.aviary.android.feather.widget.TextViewCustomFont
+        android:id="@+id/text"
+        style="@style/FeatherOptionPanel.ThumbText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:text="@android:string/ok" />
+
+</com.aviary.android.feather.widget.EffectThumbLayout>

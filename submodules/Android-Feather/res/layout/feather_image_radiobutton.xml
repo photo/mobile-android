@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="match_parent"
+    android:layout_weight="1"
+    android:orientation="vertical" >
+
+    <ImageButton
+        android:id="@+id/image"
+        android:src="@drawable/feather_icon_enhance"
+        android:layout_weight="1"
+        android:layout_height="0dip"
+        android:paddingTop="4dp"
+        android:paddingBottom="4dp"
+        android:paddingLeft="16dp" 
+        android:paddingRight="16dp"
+        android:scaleType="centerInside"
+        android:layout_width="match_parent"
+         />
+
+    <com.aviary.android.feather.widget.TextViewCustomFont
+        android:id="@+id/text"
+        style="@style/FeatherOptionPanelTextButton"
+        android:singleLine="true"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="3dp"
+        android:layout_marginBottom="0dp"
+        android:layout_weight="0"
+        android:text="@string/auto_enhance_label" />
+
+</LinearLayout>

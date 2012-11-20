@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/FeatherOptionPanel"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/feather_effects_panel_height"
+    android:layout_gravity="bottom"
+    android:orientation="vertical" >
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+        <RelativeLayout
+            android:id="@+id/background"
+            style="@style/FeatherOptionPanel.Background2"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/feather_effects_panel_top_bg_height"
+            android:layout_alignParentBottom="true" >
+        </RelativeLayout>
+
+        <ImageView
+            android:id="@+id/shadow_up"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/optionPanelShadowHeight"
+            android:layout_above="@+id/background"
+            android:scaleType="fitXY"
+            android:src="@drawable/feather_shadow_up" />
+    </RelativeLayout>
+
+    <com.aviary.android.feather.widget.HorizontalFixedListView
+        android:id="@+id/list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentBottom="true"
+        android:gravity="bottom|center_vertical"
+        android:paddingBottom="0dp"
+        android:paddingTop="0dp" />
+    
+    <include layout="@layout/feather_include_small_loader" android:layout_width="match_parent" android:layout_height="match_parent" />
+
+</RelativeLayout>

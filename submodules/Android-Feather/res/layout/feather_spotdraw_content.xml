@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout 
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <view
+        android:id="@+id/image"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        class="com.aviary.android.feather.widget.ImageViewSpotDraw"
+        android:clickable="true"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:hapticFeedbackEnabled="true" />
+
+    <ImageButton
+        android:id="@+id/lens_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_margin="5dp"
+        android:padding="8dp"
+        android:background="@drawable/feather_lens_button_background_selector"
+        android:visibility="invisible"
+        android:src="@drawable/feather_lens_normal" />    
+    
+</RelativeLayout>

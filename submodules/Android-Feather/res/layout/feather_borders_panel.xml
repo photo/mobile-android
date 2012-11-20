@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/FeatherOptionPanel"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/feather_borders_panel_height"
+    android:gravity="bottom"
+    android:weightSum="100"
+    android:orientation="vertical" >
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="65" >
+
+        <RelativeLayout
+            style="@style/FeatherOptionPanel.BorderTopBackground"
+            android:id="@+id/frames_bg"
+            android:layout_width="match_parent"
+            android:layout_alignParentBottom="true" >
+        </RelativeLayout>
+
+        <ImageView
+            android:id="@+id/shadow_up"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/optionPanelShadowHeight"
+            android:layout_above="@+id/frames_bg"
+            android:scaleType="fitXY"
+            android:src="@drawable/feather_shadow_up" />
+
+        <com.aviary.android.feather.widget.HorizontalFixedListView
+            android:id="@+id/list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="bottom|center_vertical"
+            android:paddingBottom="1dp"
+            android:paddingTop="0dp" />
+    </RelativeLayout>
+
+    <LinearLayout
+        style="@style/FeatherOptionPanel.Background"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="35"
+        android:gravity="center"
+        android:orientation="vertical" >
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" >
+
+            <com.aviary.android.feather.widget.Gallery
+                android:id="@+id/gallery"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:clipChildren="true"
+                android:clipToPadding="true"
+                android:overScrollMode="always"
+                android:spacing="1dp"
+                android:unselectedAlpha="1" />
+
+            <include layout="@layout/feather_full_shadow" />
+
+        </RelativeLayout>
+    </LinearLayout>
+
+</LinearLayout>

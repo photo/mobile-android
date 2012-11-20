@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.aviary.android.feather.library.services.drag.DragLayer 
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/dragLayer"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical" >
+
+        <include
+            android:id="@+id/toolbar"
+            layout="@layout/feather_toolbar" />
+
+        <LinearLayout
+            android:id="@+id/main_content"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@id/toolbar"
+            android:background="@drawable/feather_main_image_background_repeater"
+            android:baselineAligned="false"
+            android:orientation="vertical"
+            android:weightSum="1" >
+
+            <ViewAnimator
+                android:id="@+id/main_flipper"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:animationCache="true"
+                android:persistentDrawingCache="none" >
+
+                <RelativeLayout
+                    android:id="@+id/image_container"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1" >
+
+                    <RelativeLayout
+                        android:id="@+id/drawing_view_container"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent" >
+                    </RelativeLayout>
+
+                    <view
+                        android:id="@+id/image"
+                        android:layout_width="fill_parent"
+                        android:layout_height="fill_parent"
+                        class="it.sephiroth.android.library.imagezoom.ImageViewTouch"
+                        android:scaleType="fitCenter"
+                        android:visibility="invisible" />
+
+                    <include
+                        android:id="@+id/image_loading_view"
+                        layout="@layout/feather_loading_view" />
+                </RelativeLayout>
+
+                <!-- info screen -->
+
+                <include layout="@layout/feather_infoscreen" />
+            </ViewAnimator>
+
+            <LinearLayout
+                android:id="@+id/unused"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/optionPanelHeight" />
+        </LinearLayout>
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/toolbar"
+            android:scaleType="fitXY"
+            android:src="@drawable/feather_shadow_down" />
+
+        <include
+            android:id="@+id/bottombar_view_flipper"
+            android:layout_alignParentBottom="true"
+            layout="@layout/feather_bottombar" />
+    </RelativeLayout>
+
+</com.aviary.android.feather.library.services.drag.DragLayer>
