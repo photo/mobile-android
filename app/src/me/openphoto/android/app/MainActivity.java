@@ -70,7 +70,7 @@ public class MainActivity extends SActivity
         // This has to be called before setContentView and you must use the
         // class in com.actionbarsherlock.view and NOT android.view
 
-        setUpTabs(savedInstanceState == null ? 1 : savedInstanceState.getInt(
+        setUpTabs(savedInstanceState == null ? 0 : savedInstanceState.getInt(
                 ACTIVE_TAB, 1), savedInstanceState);
         receivers.add(UploadsUtils
                 .getAndRegisterOnUploadClearedActionBroadcastReceiver(TAG,
