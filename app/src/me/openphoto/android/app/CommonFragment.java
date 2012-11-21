@@ -4,7 +4,9 @@ package me.openphoto.android.app;
 import me.openphoto.android.app.util.CommonUtils;
 import me.openphoto.android.app.util.GuiUtils;
 import me.openphoto.android.app.util.Utils;
+import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -130,5 +132,25 @@ public class CommonFragment extends SFragment
             GuiUtils.alert(R.string.noInternetAccess);
         }
         return result;
+    }
+
+    @Override
+    public void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        CommonUtils.debug(TAG, "onActivityResult: " + getClass().getSimpleName());
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+
+            @Override
+            public void run() {
+                onActivityResultDelayed(requestCode, resultCode, data);
+            }
+
+        }, 100);
+    }
+
+    public void onActivityResultDelayed(int requestCode, int resultCode, Intent data)
+    {
+        CommonUtils.debug(TAG, "onActivityResultDelayed: " + getClass().getSimpleName());
     }
 }
