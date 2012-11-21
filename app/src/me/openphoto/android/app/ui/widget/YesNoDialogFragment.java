@@ -59,8 +59,7 @@ public class YesNoDialogFragment extends ClosableOnRestoreDialogFragment
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState)
     {
-        return new AlertDialog.Builder(getActivity())
-                .setMessage(message)
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity())
                 .setCancelable(cancelable)
                 .setPositiveButton(R.string.yes,
                         new DialogInterface.OnClickListener()
@@ -89,7 +88,11 @@ public class YesNoDialogFragment extends ClosableOnRestoreDialogFragment
                                 }
                             }
                         }
-                )
-                .create();
+                );
+        if(message != 0)
+        {
+            builder.setMessage(message);
+        }
+        return builder.create();
     }
 }
