@@ -1,4 +1,8 @@
+
 package me.openphoto.android.app;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import me.openphoto.android.app.bitmapfun.util.ImageWorker;
 import android.os.Bundle;
@@ -8,6 +12,7 @@ import android.os.Bundle;
  */
 public abstract class CommonFrargmentWithImageWorker extends CommonFragment {
     protected ImageWorker mImageWorker;
+    protected List<ImageWorker> imageWorkers = new ArrayList<ImageWorker>();
 
     protected abstract void initImageWorker();
 
@@ -15,14 +20,18 @@ public abstract class CommonFrargmentWithImageWorker extends CommonFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         initImageWorker();
+        imageWorkers.add(mImageWorker);
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        if (mImageWorker != null && mImageWorker.getImageCache() != null)
+        for (ImageWorker mImageWorker : imageWorkers)
         {
-            mImageWorker.getImageCache().clearMemoryCache();
+            if (mImageWorker != null && mImageWorker.getImageCache() != null)
+            {
+                mImageWorker.getImageCache().clearMemoryCache();
+            }
         }
     }
 
@@ -30,9 +39,12 @@ public abstract class CommonFrargmentWithImageWorker extends CommonFragment {
     public void onResume()
     {
         super.onResume();
-        if (mImageWorker != null)
+        for (ImageWorker mImageWorker : imageWorkers)
         {
-            mImageWorker.setExitTasksEarly(false);
+            if (mImageWorker != null)
+            {
+                mImageWorker.setExitTasksEarly(false);
+            }
         }
     }
 
@@ -40,9 +52,12 @@ public abstract class CommonFrargmentWithImageWorker extends CommonFragment {
     public void onPause()
     {
         super.onPause();
-        if (mImageWorker != null)
+        for (ImageWorker mImageWorker : imageWorkers)
         {
-            mImageWorker.setExitTasksEarly(true);
+            if (mImageWorker != null)
+            {
+                mImageWorker.setExitTasksEarly(true);
+            }
         }
     }
 }

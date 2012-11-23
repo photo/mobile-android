@@ -13,6 +13,8 @@ import me.openphoto.android.app.net.PhotosResponse;
 import me.openphoto.android.app.net.ReturnSizes;
 import me.openphoto.android.app.util.GuiUtils;
 import android.content.Context;
+import android.os.Parcel;
+import android.os.Parcelable;
 
 public abstract class PhotosEndlessAdapter extends EndlessAdapter<Photo>
 {
@@ -85,6 +87,11 @@ public abstract class PhotosEndlessAdapter extends EndlessAdapter<Photo>
         }
     }
 
+    public PhotosEndlessAdapter(Context context, ParametersHolder holder)
+    {
+        this(context, holder.pageSize, holder.items, holder.tagFilter, holder.albumFilter);
+    }
+
     @Override
     public long getItemId(int position)
     {
@@ -109,5 +116,94 @@ public abstract class PhotosEndlessAdapter extends EndlessAdapter<Photo>
                     R.string.errorCouldNotLoadNextPhotosInList, e);
         }
         return new LoadResponse(null, false);
+    }
+
+    public String getTagFilter() {
+        return mTagFilter.isEmpty() ? null : mTagFilter.get(0);
+    }
+
+    public String getAlbumFilter() {
+        return mAlbumFilter;
+    }
+
+    public static class ParametersHolder implements Parcelable
+    {
+        int page;
+        int pageSize;
+        int position;
+        String tagFilter;
+        String albumFilter;
+        ArrayList<Photo> items;
+
+        ParametersHolder() {
+        }
+
+        public ParametersHolder(PhotosEndlessAdapter adapter,
+                Photo value) {
+            items = adapter.getItems();
+            pageSize = adapter.getPageSize();
+            page = adapter.getCurrentPage();
+            position = items.indexOf(value);
+            tagFilter = adapter.getTagFilter();
+            albumFilter = adapter.getAlbumFilter();
+        }
+
+        public int getPage() {
+            return page;
+        }
+
+        public int getPageSize() {
+            return pageSize;
+        }
+
+        public int getPosition() {
+            return position;
+        }
+
+        public ArrayList<Photo> getItems() {
+            return items;
+        }
+
+        /*****************************
+         * PARCELABLE IMPLEMENTATION *
+         *****************************/
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        @Override
+        public void writeToParcel(Parcel out, int flags) {
+            out.writeInt(page);
+            out.writeInt(pageSize);
+            out.writeInt(position);
+            out.writeString(tagFilter);
+            out.writeString(albumFilter);
+            out.writeList(items);
+        }
+
+        public static final Parcelable.Creator<ParametersHolder> CREATOR = new Parcelable.Creator<ParametersHolder>() {
+            @Override
+            public ParametersHolder createFromParcel(Parcel in) {
+                return new ParametersHolder(in);
+            }
+
+            @Override
+            public ParametersHolder[] newArray(int size) {
+                return new ParametersHolder[size];
+            }
+        };
+
+        private ParametersHolder(Parcel in) {
+            this();
+            page = in.readInt();
+            pageSize = in.readInt();
+            position = in.readInt();
+            tagFilter = in.readString();
+            albumFilter = in.readString();
+            items = new ArrayList<Photo>();
+            in.readList(items, getClass().getClassLoader());
+        }
     }
 }

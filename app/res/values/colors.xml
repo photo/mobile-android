@@ -6,5 +6,8 @@
     <color name="actionbar_line_bottom">#222</color>
     <color name="grid_selector">#99cfcfcf</color>
     <color name="tab_bar_line_top">#e3cea2</color>
+    <color name="detail_thumb_unselected_border">#000</color>
+    <color name="detail_thumb_selected_border">#9eddff</color>
+    
 
 </resources>
