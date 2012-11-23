@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import me.openphoto.android.app.util.concurrent.AsyncTaskEx;
+import android.util.FloatMath;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -33,6 +34,7 @@ public abstract class EndlessAdapter<T> extends BaseAdapter {
     private final int mPageSize;
 
     private LoadNextTask loadNextTask;
+    protected int itemsBeforeLoadNextPage = 1;
 
     public EndlessAdapter(int pageSize) {
         this(pageSize, null);
@@ -41,7 +43,12 @@ public abstract class EndlessAdapter<T> extends BaseAdapter {
     public EndlessAdapter(int pageSize, ArrayList<T> items) {
         mItems = items != null ? items : new ArrayList<T>();
         mPageSize = pageSize;
-        mCurrentPage = 1 + mItems.size() / mPageSize;
+        int loadedPages = (int) FloatMath.ceil((float) mItems.size() / mPageSize);
+        if (mItems.size() > 0 && loadedPages * mPageSize > mItems.size())
+        {
+            mKeepOnAppending.set(false);
+        }
+        mCurrentPage = 1 + loadedPages;
     }
 
     @Override
@@ -61,7 +68,7 @@ public abstract class EndlessAdapter<T> extends BaseAdapter {
     @SuppressWarnings("unchecked")
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        if (position == getCount() - 1) {
+        if (position >= getCount() - itemsBeforeLoadNextPage) {
             loadNextPage();
         }
         return getView((T) getItem(position), convertView, parent);
@@ -134,4 +141,9 @@ public abstract class EndlessAdapter<T> extends BaseAdapter {
     protected abstract void onStartLoading();
 
     protected abstract void onStoppedLoading();
+
+    public int getCurrentPage()
+    {
+        return mCurrentPage;
+    }
 }

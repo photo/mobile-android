@@ -10,20 +10,24 @@ import me.openphoto.android.app.model.Photo;
 import me.openphoto.android.app.net.PhotoResponse;
 import me.openphoto.android.app.net.ReturnSizes;
 import me.openphoto.android.app.ui.adapter.PhotosEndlessAdapter;
+import me.openphoto.android.app.ui.adapter.PhotosEndlessAdapter.ParametersHolder;
+import me.openphoto.android.app.ui.widget.HorizontalListView;
 import me.openphoto.android.app.ui.widget.ViewPagerWithDisableSupport;
 import me.openphoto.android.app.ui.widget.ViewPagerWithDisableSupport.GesturesEnabledHandler;
+import me.openphoto.android.app.util.CommonUtils;
 import me.openphoto.android.app.util.GuiUtils;
 import me.openphoto.android.app.util.LoadingControl;
+import me.openphoto.android.app.util.concurrent.AsyncTaskEx;
 import android.content.Context;
 import android.content.Intent;
 import android.database.DataSetObserver;
-import me.openphoto.android.app.util.concurrent.AsyncTaskEx;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.text.TextUtils;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -48,9 +52,6 @@ public class PhotoDetailsActivity extends SActivity {
     public static final String EXTRA_PHOTO = "EXTRA_PHOTO";
 
     public static final String EXTRA_ADAPTER_PHOTOS = "EXTRA_ADAPTER_PHOTOS";
-    public static final String EXTRA_ADAPTER_POSITION = "EXTRA_ADAPTER_POSITION";
-    public static final String EXTRA_ADAPTER_TAGS = "EXTRA_ADAPTER_TAGS";
-    public static final String EXTRA_ADAPTER_ALBUM = "EXTRA_ADAPTER_ALBUM";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,14 +69,27 @@ public class PhotoDetailsActivity extends SActivity {
         private static final String TAG = PhotoDetailsActivity.class.getSimpleName();
 
         private static final String IMAGE_CACHE_DIR = HomeFragment.IMAGE_CACHE_DIR;
+        private static final String IMAGE_CACHE_DIR2 = SyncImageSelectionFragment.IMAGE_CACHE_DIR;
 
         private ViewPagerWithDisableSupport mViewPager;
+        private HorizontalListView thumbnailsList;
 
         private PhotoDetailPagerAdapter mAdapter;
+        private ThumbnailsAdapter thumbnailsAdapter;
 
-        private ImageWorker mImageWorker;
+        private ImageWorker mImageWorker2;
 
         private ReturnSizes returnSizes;
+        private ReturnSizes returnSizes2;
+
+        private int mImageThumbWithBorderSize;
+
+        @Override
+        public void onCreate(Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+            mImageThumbWithBorderSize = getResources().getDimensionPixelSize(
+                    R.dimen.detail_thumbnail_with_border_size);
+        }
 
         @Override
         public View onCreateView(LayoutInflater inflater,
@@ -90,23 +104,26 @@ public class PhotoDetailsActivity extends SActivity {
             super.onViewCreated(view);
             init(view);
         }
+
         void init(View v)
         {
             Intent intent = getActivity().getIntent();
+            int position = 0;
             if (intent.hasExtra(EXTRA_PHOTO)) {
                 Photo photo = intent.getParcelableExtra(EXTRA_PHOTO);
                 ArrayList<Photo> photos = new ArrayList<Photo>();
                 photos.add(photo);
-                mAdapter = new PhotoDetailPagerAdapter(new PhotosAdapter(getActivity(), photos));
+                thumbnailsAdapter = new ThumbnailsAdapter(photos);
             } else if (getActivity().getIntent().hasExtra(EXTRA_ADAPTER_PHOTOS)) {
-                ArrayList<Photo> photos = intent.getParcelableArrayListExtra(
-                        EXTRA_ADAPTER_PHOTOS);
-                String tags = intent.getStringExtra(EXTRA_ADAPTER_TAGS);
-                String album = intent.getStringExtra(EXTRA_ADAPTER_ALBUM);
-                mAdapter = new PhotoDetailPagerAdapter(new PhotosAdapter(getActivity(),
-                        photos, tags, album));
-            }
+                PhotosEndlessAdapter.ParametersHolder parameters = (ParametersHolder) intent
+                        .getParcelableExtra(EXTRA_ADAPTER_PHOTOS);
+                position = parameters.getPosition();
 
+                thumbnailsAdapter = new ThumbnailsAdapter(parameters);
+            }
+            mAdapter = new PhotoDetailPagerAdapter(thumbnailsAdapter);
+            thumbnailsList = (HorizontalListView) v.findViewById(R.id.thumbs);
+            thumbnailsList.setAdapter(thumbnailsAdapter);
             mViewPager = (ViewPagerWithDisableSupport) v.findViewById(R.id.photos);
             mViewPager.setAdapter(mAdapter);
             mViewPager.setGesturesEnabledHandler(new GesturesEnabledHandler() {
@@ -117,9 +134,16 @@ public class PhotoDetailsActivity extends SActivity {
                 }
             });
 
-            int position = intent.getIntExtra(EXTRA_ADAPTER_POSITION, 0);
             if (position > 0) {
                 mViewPager.setCurrentItem(position);
+                final int pos = position;
+                thumbnailsList.postDelayed(new Runnable() {
+
+                    @Override
+                    public void run() {
+                        ensureThumbVisible((Photo) mAdapter.mAdapter.getItem(pos));
+                    }
+                }, 100);
             }
         }
 
@@ -127,18 +151,103 @@ public class PhotoDetailsActivity extends SActivity {
         protected void initImageWorker()
         {
             returnSizes = PhotosEndlessAdapter.SIZE_BIG;
+            returnSizes2 = PhotosEndlessAdapter.SIZE_SMALL;
             mImageWorker = new ImageFetcher(getActivity(), null, returnSizes.getWidth(),
                     returnSizes.getHeight());
             mImageWorker.setImageCache(ImageCache.findOrCreateCache(getActivity(),
                     IMAGE_CACHE_DIR));
             mImageWorker.setImageFadeIn(false);
+            mImageWorker2 = new ImageFetcher(getActivity(), null, returnSizes2.getWidth(),
+                    returnSizes2.getHeight());
+            mImageWorker2.setImageCache(ImageCache.findOrCreateCache(getActivity(),
+                    IMAGE_CACHE_DIR2));
+            mImageWorker2.setLoadingImage(R.drawable.empty_photo);
+            imageWorkers.add(mImageWorker2);
+        }
+
+        /**
+         * Ensure photo thumb is visible
+         * 
+         * @param photo
+         */
+        void ensureThumbVisible(final Photo photo)
+        {
+            thumbnailsList.post(new Runnable() {
+
+                @Override
+                public void run() {
+                    int startX = thumbnailsList.getStartX();
+                    int position = -1;
+                    int count = 0;
+                    for (Photo p : thumbnailsAdapter.getItems())
+                    {
+                        if (p.getId().equals(photo.getId()))
+                        {
+                            position = count;
+                            break;
+                        }
+                        count++;
+                    }
+                    int offset = position * mImageThumbWithBorderSize;
+                    int width = thumbnailsList.getWidth();
+                    // mImageThumbWithBorderSize, middle);
+                    CommonUtils.debug(TAG, "offset: " + offset + "; width: " + width + "; startX: "
+                            + startX);
+                    if (offset < startX + mImageThumbWithBorderSize)
+                    {
+                        CommonUtils.debug(TAG, "Thumbnail is on the left, need to scroll left");
+                        thumbnailsList.scrollTo(offset
+                                - Math.min(mImageThumbWithBorderSize,
+                                        (width - mImageThumbWithBorderSize) / 2));
+                    } else if (offset > startX + width - 2 * mImageThumbWithBorderSize)
+                    {
+                        CommonUtils.debug(TAG, "Thumbnail is on the right, need to scroll right");
+                        thumbnailsList.scrollTo(offset
+                                - width
+                                + Math.min(2 * mImageThumbWithBorderSize,
+                                        (width + mImageThumbWithBorderSize) / 2));
+                    } else
+                    {
+                        CommonUtils.debug(TAG,
+                                "Thumbnail is already visible. Only invalidating view.");
+                    }
+                    for (int i = 0, size = thumbnailsList.getChildCount(); i < size; i++)
+                    {
+                        View view = thumbnailsList.getChildAt(i);
+                        invalidateSelection(view);
+                    }
+                }
+            });
+        }
+
+        void invalidateSelection(View view)
+        {
+            View border = view.findViewById(R.id.background_container);
+            Photo photo = (Photo) border.getTag();
+            border.setBackgroundResource(isSelected(photo) ?
+                    R.color.detail_thumb_selected_border :
+                    R.color.detail_thumb_unselected_border);
+        }
+
+        boolean isSelected(Photo photo)
+        {
+            if (mAdapter != null)
+            {
+                Photo selectedPhoto = mAdapter.currentPhoto;
+                boolean result = selectedPhoto != null
+                        && selectedPhoto.getId().equals(photo.getId());
+                CommonUtils.debug(TAG, "Is selected: " + result);
+                return result;
+            }
+            return false;
         }
 
         private class PhotoDetailPagerAdapter extends PagerAdapter {
 
             private final LayoutInflater mInflator;
-            private final PhotosAdapter mAdapter;
+            private final ThumbnailsAdapter mAdapter;
             private View mCurrentView;
+            private Photo currentPhoto;
             private final DataSetObserver mObserver = new DataSetObserver() {
 
                 @Override
@@ -154,7 +263,7 @@ public class PhotoDetailsActivity extends SActivity {
                 }
             };
 
-            public PhotoDetailPagerAdapter(PhotosAdapter adatper) {
+            public PhotoDetailPagerAdapter(ThumbnailsAdapter adatper) {
                 mAdapter = adatper;
                 mAdapter.registerDataSetObserver(mObserver);
                 mInflator = (LayoutInflater) getActivity()
@@ -168,9 +277,9 @@ public class PhotoDetailsActivity extends SActivity {
 
             @Override
             public Object instantiateItem(View collection, int position) {
-                if (getCount() > 1 && position > getCount() - 6) {
-                    mAdapter.loadNextPage();
-                }
+                // if (getCount() > 1 && position > getCount() - 6) {
+                // mAdapter.loadNextPage();
+                // }
                 Photo photo = (Photo) mAdapter.getItem(position);
 
                 final View view = mInflator.inflate(R.layout.item_photo_detail,
@@ -227,9 +336,25 @@ public class PhotoDetailsActivity extends SActivity {
                 if (url != null) {
                     mImageWorker.loadImage(url, imageView, loadingControl);
                 } else {
-                    new LoadImageTask(photo, imageView, loadingControl).execute();
+                    new LoadImageTask(photo, imageView, returnSizes, mImageWorker, loadingControl)
+                            .execute();
                 }
                 loadingControl.stopLoading();
+
+                imageView.setOnClickListener(new OnClickListener() {
+
+                    @Override
+                    public void onClick(View v) {
+                        CommonUtils.debug(TAG, "ImageView on click");
+                        if (thumbnailsList.getVisibility() == View.VISIBLE)
+                        {
+                            thumbnailsList.setVisibility(View.GONE);
+                        } else
+                        {
+                            thumbnailsList.setVisibility(View.VISIBLE);
+                        }
+                    }
+                });
 
                 ((ViewPager) collection).addView(view, 0);
 
@@ -271,6 +396,8 @@ public class PhotoDetailsActivity extends SActivity {
             public void setPrimaryItem(ViewGroup container, int position, Object object) {
                 super.setPrimaryItem(container, position, object);
                 mCurrentView = (View) object;
+                currentPhoto = (Photo) mAdapter.getItem(position);
+                ensureThumbVisible(currentPhoto);
             }
 
             boolean isCurrentImageZoomed()
@@ -285,48 +412,32 @@ public class PhotoDetailsActivity extends SActivity {
             }
         }
 
-        private class PhotosAdapter extends PhotosEndlessAdapter {
-
-            public PhotosAdapter(Context context, ArrayList<Photo> photos) {
-                super(context, photos);
-            }
-
-            public PhotosAdapter(Context context, ArrayList<Photo> photos,
-                    String tags,
-                    String album)
-            {
-                super(context, photos, tags, album);
-            }
-
-            @Override
-            protected void onStartLoading() {
-            }
-
-            @Override
-            protected void onStoppedLoading() {
-            }
-
-            @Override
-            public View getView(Photo item, View convertView, ViewGroup parent) {
-                return null;
-            }
-
-        }
-
         private class LoadImageTask extends AsyncTaskEx<Void, Void, Boolean> {
             private Photo mPhoto;
             private final ImageView mImageView;
             private final LoadingControl loadingControl;
+            ReturnSizes returnSizes;
+            ImageWorker imageWorker;
 
-            public LoadImageTask(Photo photo, ImageView imageView, LoadingControl loadingControl) {
+            public LoadImageTask(Photo photo,
+                    ImageView imageView,
+                    ReturnSizes returnSizes,
+                    ImageWorker imageWorker,
+                    LoadingControl loadingControl) {
                 mPhoto = photo;
                 mImageView = imageView;
                 this.loadingControl = loadingControl;
+                this.returnSizes = returnSizes;
+                this.imageWorker = imageWorker;
             }
+
             @Override
             protected void onPreExecute() {
                 super.onPreExecute();
-                loadingControl.startLoading();
+                if (loadingControl != null)
+                {
+                    loadingControl.startLoading();
+                }
             }
 
             @Override
@@ -335,7 +446,9 @@ public class PhotoDetailsActivity extends SActivity {
                     PhotoResponse response = Preferences.getApi(getActivity())
                             .getPhoto(
                                     mPhoto.getId(), returnSizes);
-                    mPhoto = response.getPhoto();
+                    Photo mPhoto2 = response.getPhoto();
+                    String size = returnSizes.toString();
+                    mPhoto.putUrl(size, mPhoto2.getUrl(size));
                     return true;
                 } catch (Exception e) {
                     GuiUtils.error(TAG, R.string.errorCouldNotGetPhoto, e);
@@ -349,12 +462,103 @@ public class PhotoDetailsActivity extends SActivity {
                 if (result.booleanValue())
                 {
                     String url = mPhoto.getUrl(returnSizes.toString());
-                    mImageWorker.loadImage(url, mImageView, loadingControl);
+                    imageWorker.loadImage(url, mImageView, loadingControl);
                 }
-                loadingControl.stopLoading();
+                if (loadingControl != null)
+                {
+                    loadingControl.stopLoading();
+                }
             }
 
         }
 
+        private class ThumbnailsAdapter extends PhotosEndlessAdapter
+        {
+            public ThumbnailsAdapter(ArrayList<Photo> photos)
+            {
+                super(getActivity(), photos);
+            }
+
+            public ThumbnailsAdapter(PhotosEndlessAdapter.ParametersHolder parameters)
+            {
+                super(getActivity(), parameters);
+                itemsBeforeLoadNextPage = 5;
+            }
+
+            @Override
+            public View getView(final Photo photo, View convertView, ViewGroup parent)
+            {
+                View view;
+                if (convertView == null)
+                { // if it's not recycled, instantiate and initialize
+                    view = LayoutInflater.from(parent.getContext())
+                            .inflate(R.layout.item_details_thumb_image, null);
+                }
+                else
+                { // Otherwise re-use the converted view
+                    view = convertView;
+                }
+
+                ImageView imageView = (ImageView) view.findViewById(R.id.image);
+                imageView.setOnClickListener(new OnClickListener() {
+
+                    @Override
+                    public void onClick(View v) {
+                        CommonUtils.debug(TAG, "Thumb clicked.");
+                        int count = 0;
+                        for (Photo p : mAdapter.mAdapter.getItems())
+                        {
+                            if (p.getId().equals(photo.getId()))
+                            {
+                                mViewPager.setCurrentItem(count);
+                                break;
+                            }
+                            count++;
+                        }
+                    }
+                });
+                View border = view.findViewById(R.id.background_container);
+                border.setTag(photo);
+                invalidateSelection(view);
+
+                String url = photo.getUrl(returnSizes2.toString());
+                // Finally load the image asynchronously into the ImageView,
+                // this
+                // also takes care of
+                // setting a placeholder image while the background thread runs
+                if (url != null) {
+                    mImageWorker2.loadImage(url, imageView, null);
+                } else {
+                    new LoadImageTask(photo, imageView, returnSizes2, mImageWorker2, null)
+                            .execute();
+                }
+                return view;
+            }
+
+            @Override
+            protected void onStartLoading()
+            {
+                // loadingControl.startLoading();
+            }
+
+            @Override
+            protected void onStoppedLoading()
+            {
+                // loadingControl.stopLoading();
+            }
+
+            @Override
+            public LoadResponse loadItems(
+                    int page)
+            {
+                if (checkLoggedInAndOnline())
+                {
+                    return super.loadItems(page);
+                } else
+                {
+                    return new LoadResponse(null, false);
+                }
+            }
+        }
     }
 }

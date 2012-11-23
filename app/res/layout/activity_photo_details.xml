@@ -1,12 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical" >
+    android:clickable="true">
 
     <me.openphoto.android.app.ui.widget.ViewPagerWithDisableSupport
         android:id="@+id/photos"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
-
-</LinearLayout>
+    <me.openphoto.android.app.ui.widget.HorizontalListView 
+        android:layout_width="match_parent" 
+        android:layout_height="@dimen/detail_thumbnail_with_border_size" 
+        android:id="@+id/thumbs"
+        android:layout_above="@+id/gap"
+        android:visibility="visible">
+        
+    </me.openphoto.android.app.ui.widget.HorizontalListView>
+    
+    <View android:id="@+id/gap" android:layout_height="50dp"
+		android:layout_width="0dp"
+		android:layout_alignParentBottom="true"
+		android:visibility="invisible"/>
+</RelativeLayout>
