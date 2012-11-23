@@ -290,7 +290,6 @@ public class SyncImageSelectionFragment extends CommonFrargmentWithImageWorker i
     public void onDestroyView()
     {
         super.onDestroyView();
-        mImageWorker.getImageCache().clearMemoryCache();
         if (initTask != null)
         {
             initTask.cancel(true);

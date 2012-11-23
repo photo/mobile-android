@@ -1,8 +1,6 @@
 
 package me.openphoto.android.app;
 
-import java.util.ArrayList;
-
 import me.openphoto.android.app.bitmapfun.util.ImageCache;
 import me.openphoto.android.app.bitmapfun.util.ImageFetcher;
 import me.openphoto.android.app.model.Photo;
@@ -44,6 +42,7 @@ public class GalleryFragment extends CommonFrargmentWithImageWorker implements R
     private int mImageThumbSize;
     private int mImageThumbSpacing;
     private int mImageThumbBorder;
+    private int pageSize;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -55,6 +54,8 @@ public class GalleryFragment extends CommonFrargmentWithImageWorker implements R
                 R.dimen.gallery_item_spacing);
         mImageThumbBorder = getResources().getDimensionPixelSize(
                 R.dimen.gallery_item_border);
+        pageSize = Utils.isTablet(getActivity()) ? 45
+                : PhotosEndlessAdapter.DEFAULT_PAGE_SIZE;
     }
 
     @Override
@@ -261,15 +262,9 @@ public class GalleryFragment extends CommonFrargmentWithImageWorker implements R
 
                         @Override
                         public void onClick(View v) {
-                            ArrayList<Photo> items = mAdapter.getItems();
-                            saveCurrentTagAndAlbumInformationToActivityIntent();
-                            int position = items.indexOf(value);
                             Intent intent = new Intent(getActivity(), PhotoDetailsActivity.class);
-                            intent.putParcelableArrayListExtra(
-                                    PhotoDetailsActivity.EXTRA_ADAPTER_PHOTOS,
-                                    items);
-                            intent.putExtra(PhotoDetailsActivity.EXTRA_ADAPTER_POSITION, position);
-                            intent.putExtra(PhotoDetailsActivity.EXTRA_ADAPTER_TAGS, mTags);
+                            intent.putExtra(PhotoDetailsActivity.EXTRA_ADAPTER_PHOTOS,
+                                    new PhotosEndlessAdapter.ParametersHolder(mAdapter, value));
                             startActivity(intent);
                         }
                     });
@@ -336,8 +331,7 @@ public class GalleryFragment extends CommonFrargmentWithImageWorker implements R
 
         public GalleryAdapter(String tagFilter, String albumFilter)
         {
-            super(getActivity(), Utils.isTablet(getActivity()) ? 45
-                    : PhotosEndlessAdapter.DEFAULT_PAGE_SIZE, tagFilter, albumFilter);
+            super(getActivity(), pageSize, tagFilter, albumFilter);
         }
 
         @Override

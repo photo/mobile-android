@@ -225,6 +225,7 @@ public class ImageCache {
     {
         if (mMemoryCache != null)
         {
+            CommonUtils.debug(TAG, "Requested memory cache cleaning");
             mMemoryCache.evictAll();
         }
     }

@@ -155,6 +155,17 @@ public class Photo implements Parcelable {
         return mUrls.get(size);
     }
 
+    /**
+     * Put an url for the size
+     * 
+     * @param size
+     * @param url
+     */
+    public void putUrl(String size, String url)
+    {
+        mUrls.put(size, url);
+    }
+
     public String getTitle() {
         return mTitle;
     }
