@@ -26,6 +26,7 @@ public class SyncFragment extends CommonFragment implements NextStepFlow,
     SyncImageSelectionFragment firstStepFragment;
     SyncUploadFragment secondStepFragment;
     SyncHandler syncHandler;
+    boolean instanceSaved = false;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -76,6 +77,7 @@ public class SyncFragment extends CommonFragment implements NextStepFlow,
         {
             outState.putString(ACTIVE_STEP, getTagForFragment(activeFragment));
         }
+        instanceSaved = true;
     }
 
     @Override
@@ -141,19 +143,18 @@ public class SyncFragment extends CommonFragment implements NextStepFlow,
     public void onDestroyView()
     {
         super.onDestroyView();
-        // detachActiveFragment();
+        detachActiveFragment();
     }
 
     public void detachActiveFragment()
     {
-        if (activeFragment != null)
-        // if (!getActivity().isFinishing())
+        if (activeFragment != null && !instanceSaved && !getActivity().isFinishing())
         {
             FragmentTransaction transaction = getActivity()
                     .getSupportFragmentManager().beginTransaction();
             transaction.detach(activeFragment);
             transaction.commit();
-            activeFragment = null;
+            // activeFragment = null;
         }
     };
 
