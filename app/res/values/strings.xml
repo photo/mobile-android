@@ -25,6 +25,8 @@
     <string name="share_email_send_title">Send E-Mail…</string>
 
     <!-- Share Twitter -->
+    <string name="share_twitter_requesting_authentication">Requesting twitter authentication…</string>
+    <string name="share_twitter_verifying_authentication">Veryfying twitter authentication…</string>
     <string name="share_twitter_authorise_ask">Please authorize this app!</string>
     <string name="share_twitter_authorisation_question">You have not authorized OpenPhoto to access your Twitter account. Do you want to do it now?</string>
     <string name="share_twitter_logged_in_as">Logged in as %1$s</string>
@@ -131,6 +133,7 @@
     <string name="errorCouldNotUseIntentsToOpenMaps">Could not use Intent to open maps</string>
     <string name="errorCouldNotLoadNextPhotosInList">Could not load next photos in list</string>
     <string name="errorCouldNotGetPhoto">Could not get photo</string>
+    <string name="errorCouldNotDeletePhoto">Could not delete photo</string>
     <string name="errorOccured">Error occured</string>
     <string name="errorCouldNotLoadNextTagsInList">Could not load next tags in list</string>
     <string name="errorCouldNotInitTwitterFragment">Could not init twitter fragment</string>
@@ -185,5 +188,12 @@
     <string name="feather_applying_action">Applying action %1$s from %2$s</string>
     <string name="feather_error_occurred">There was an error: %1$s</string>
     <string name="feather_failed_to_load_image">Failed to load image %1$s</string>
+    
+    <!-- Photo details -->
+    <string name="details_title_and_date_header">%1$s taken at %2$s</string>
+    <string name="delete_photo_confirmation_question">Are you sure want to remove this photo from the server?</string>
+    <string name="menu_delete">Delete</string>
+    <string name="menu_cancel">Cancel</string>
+    <string name="deleting_photo_message">Deleting photo…</string>
 
 </resources>

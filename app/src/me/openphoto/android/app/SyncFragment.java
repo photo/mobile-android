@@ -170,6 +170,10 @@ public class SyncFragment extends CommonFragment implements NextStepFlow,
     @Override
     public void activatePreviousStep()
     {
+        if (getActivity() == null || getActivity().isFinishing() || instanceSaved)
+        {
+            return;
+        }
         if (firstStepFragment == null)
         {
             firstStepFragment = (SyncImageSelectionFragment) getActivity()

@@ -1,8 +1,11 @@
 
 package me.openphoto.android.app;
 
+import java.io.Serializable;
+
 import me.openphoto.android.app.util.CommonUtils;
 import me.openphoto.android.app.util.GuiUtils;
+import me.openphoto.android.app.util.RunnableWithResult;
 import me.openphoto.android.app.util.Utils;
 import android.content.Intent;
 import android.os.Bundle;
@@ -152,5 +155,11 @@ public class CommonFragment extends SFragment
     public void onActivityResultDelayed(int requestCode, int resultCode, Intent data)
     {
         CommonUtils.debug(TAG, "onActivityResultDelayed: " + getClass().getSimpleName());
+    }
+
+    public static interface FragmentAccessor<T extends CommonFragment> extends
+            RunnableWithResult<T>, Serializable
+    {
+
     }
 }

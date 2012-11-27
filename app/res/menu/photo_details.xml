@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+	<item 
+	    android:id="@+id/menu_share" 
+	    android:icon="@drawable/ic_menu_share"
+		android:showAsAction="always">
+		<menu>
+		    <group android:id="@+id/share_group">
+				<item android:id="@+id/menu_share_email" 
+				    android:title="@string/menu_share_email" />
+				<item android:id="@+id/menu_share_twitter" 
+				    android:title="@string/menu_share_twitter" />
+				<item android:id="@+id/menu_share_facebook" 
+				    android:title="@string/menu_share_facebook" />
+			</group>
+		</menu>
+	</item>
+	<item 
+	    android:id="@+id/menu_delete_parent" 
+	    android:icon="@drawable/ic_menu_delete"
+		android:showAsAction="always">
+		<menu>
+			<item 
+		    	android:id="@+id/menu_delete" 
+		    	android:icon="@drawable/ic_menu_delete"
+		    	android:title="@string/menu_delete"/>
+			<item 
+		    	android:id="@+id/menu_cancel" 
+		    	android:icon="@drawable/ic_menu_close_clear_cancel"
+		    	android:title="@string/menu_cancel"/>
+	    </menu>
+	</item>
+
+</menu>

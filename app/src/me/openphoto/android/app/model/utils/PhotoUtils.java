@@ -5,6 +5,7 @@ import java.io.IOException;
 import me.openphoto.android.app.OpenPhotoApplication;
 import me.openphoto.android.app.Preferences;
 import me.openphoto.android.app.model.Photo;
+import me.openphoto.android.app.net.OpenPhotoResponse;
 import me.openphoto.android.app.net.PhotoResponse;
 import me.openphoto.android.app.net.ReturnSizes;
 import me.openphoto.android.app.util.CommonUtils;
@@ -104,6 +105,13 @@ public class PhotoUtils {
         return photo;
     }
 
+    public static void deletePhoto(Photo photo,
+            RunnableWithParameter<Boolean> runnable,
+            LoadingControl loadingControl)
+    {
+        new DeletePhotoTask(photo, runnable, loadingControl).execute();
+    }
+
     private static class RetrieveThumbUrlTask extends SimpleAsyncTaskEx {
         private Photo mPhoto;
         private ReturnSizes photoSize;
@@ -123,7 +131,9 @@ public class PhotoUtils {
         @Override
         protected Boolean doInBackground(Void... params) {
             try {
-                mPhoto = getThePhotoWithReturnSize(mPhoto, photoSize);
+                Photo mPhoto2 = getThePhotoWithReturnSize(mPhoto, photoSize);
+                String size = photoSize.toString();
+                mPhoto.putUrl(size, mPhoto2.getUrl(size));
                 return true;
             } catch (Exception e) {
                 GuiUtils.error(TAG, R.string.errorCouldNotGetPhoto, e);
@@ -136,5 +146,41 @@ public class PhotoUtils {
             runnable.run(mPhoto);
         }
 
+    }
+
+    private static class DeletePhotoTask extends SimpleAsyncTaskEx {
+        private Photo photo;
+        private RunnableWithParameter<Boolean> runnable;
+
+        public DeletePhotoTask(Photo photo,
+                RunnableWithParameter<Boolean> runnable,
+                LoadingControl loadingControl) {
+            super(loadingControl);
+            this.photo = photo;
+            this.runnable = runnable;
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... params) {
+            try {
+                OpenPhotoResponse response =
+                        Preferences.getApi(OpenPhotoApplication.getContext())
+                                .deletePhoto(photo.getId());
+                return response.isSuccess();
+            } catch (Exception e) {
+                GuiUtils.error(TAG, R.string.errorCouldNotDeletePhoto, e);
+            }
+            return false;
+        }
+
+        @Override
+        protected void onSuccessPostExecute() {
+            runnable.run(true);
+        }
+
+        @Override
+        protected void onFailedPostExecute() {
+            runnable.run(false);
+        }
     }
 }

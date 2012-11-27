@@ -7,6 +7,7 @@ import me.openphoto.android.app.ui.widget.YesNoDialogFragment;
 import me.openphoto.android.app.ui.widget.YesNoDialogFragment.YesNoButtonPressedHandler;
 import me.openphoto.android.app.util.GuiUtils;
 import me.openphoto.android.app.util.LoadingControl;
+import me.openphoto.android.app.util.concurrent.AsyncTaskEx;
 import oauth.signpost.OAuthProvider;
 import oauth.signpost.basic.DefaultOAuthProvider;
 import oauth.signpost.commonshttp.CommonsHttpOAuthConsumer;
@@ -19,7 +20,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
-import me.openphoto.android.app.util.concurrent.AsyncTaskEx;
 
 import com.WazaBe.HoloEverywhere.sherlock.SActivity;
 
@@ -36,9 +36,14 @@ public class TwitterUtils
 
     static Runnable runOnceOnSuccessAuthentication;
 
-    static String getCallbackUrl(Context context)
+    public static String getDefaultCallbackUrl(Context context)
     {
         return context.getString(R.string.twitter_callback_url);
+    }
+
+    public static String getSecondCallbackUrl(Context context)
+    {
+        return context.getString(R.string.twitter_callback_url2);
     }
 
     static String getConsumerKey(Context context)
@@ -101,10 +106,11 @@ public class TwitterUtils
      * redirect the user back to activity!
      * 
      * @param activity
+     * @param callbackUrl
      */
-    public static void askOAuth(Activity activity)
+    public static void askOAuth(LoadingControl loadingControl, Activity activity, String callbackUrl)
     {
-        new AccessRequestTask((LoadingControl) activity, activity).execute();
+        new AccessRequestTask(loadingControl, activity, callbackUrl).execute();
     }
 
     /**
@@ -113,16 +119,20 @@ public class TwitterUtils
      * @param activity
      * @param uri
      */
-    public static void verifyOAuthResponse(Activity activity, Uri uri,
+    public static void verifyOAuthResponse(
+            LoadingControl loadingControl,
+            Activity activity,
+            Uri uri,
+            String callbackUrl,
             Runnable runOnSuccess)
     {
         if (uri != null
                 && uri.toString().startsWith(
-                        getCallbackUrl(activity)))
+                        callbackUrl))
         {
             String verifier = uri
                     .getQueryParameter(oauth.signpost.OAuth.OAUTH_VERIFIER);
-            new VerifyResponseTask(verifier, (LoadingControl) activity,
+            new VerifyResponseTask(verifier, loadingControl,
                     runOnSuccess, activity).execute();
         }
     }
@@ -168,15 +178,39 @@ public class TwitterUtils
     }
 
     public static void runAfterTwitterAuthentication(
+            LoadingControl loadingControl,
             final Activity activity,
             final Runnable runOnSuccessAuthentication)
     {
-        runAfterTwitterAuthentication(activity, runOnSuccessAuthentication,
+        runAfterTwitterAuthentication(loadingControl, activity, getDefaultCallbackUrl(activity),
+                runOnSuccessAuthentication);
+    }
+
+    public static void runAfterTwitterAuthentication(
+            LoadingControl loadingControl,
+            final Activity activity,
+            String callbackUrl,
+            final Runnable runOnSuccessAuthentication)
+    {
+        runAfterTwitterAuthentication(loadingControl, activity, callbackUrl,
+                runOnSuccessAuthentication,
                 null);
     }
 
     public static void runAfterTwitterAuthentication(
+            LoadingControl loadingControl,
             final Activity activity,
+            final Runnable runOnSuccessAuthentication,
+            final Runnable runOnCancelAuthentication)
+    {
+        runAfterTwitterAuthentication(loadingControl, activity, getDefaultCallbackUrl(activity),
+                runOnSuccessAuthentication, runOnCancelAuthentication);
+    }
+
+    public static void runAfterTwitterAuthentication(
+            final LoadingControl loadingControl,
+            final Activity activity,
+            final String callbackUrl,
             final Runnable runOnSuccessAuthentication,
             final Runnable runOnCancelAuthentication)
     {
@@ -191,7 +225,7 @@ public class TwitterUtils
                                         DialogInterface dialog)
                                 {
                                     addRunOnceOnSuccessAuthenticationAction(runOnSuccessAuthentication);
-                                    TwitterUtils.askOAuth(activity);
+                                    TwitterUtils.askOAuth(loadingControl, activity, callbackUrl);
                                 }
 
                                 @Override
@@ -320,19 +354,25 @@ public class TwitterUtils
         String authUrl;
         private LoadingControl loadingControl;
         private Activity activity;
+        private String callbackUrl;
 
         public AccessRequestTask(LoadingControl loadingControl,
-                Activity activity)
+                Activity activity,
+                String callbackUrl)
         {
             this.loadingControl = loadingControl;
             this.activity = activity;
+            this.callbackUrl = callbackUrl;
         }
 
         @Override
         protected void onPreExecute()
         {
             super.onPreExecute();
-            loadingControl.startLoading();
+            if (loadingControl != null)
+            {
+                loadingControl.startLoading();
+            }
         }
 
         @Override
@@ -348,7 +388,7 @@ public class TwitterUtils
                         "http://twitter.com/oauth/access_token",
                         "http://twitter.com/oauth/authorize");
                 authUrl = provider.retrieveRequestToken(consumer,
-                        getCallbackUrl(activity));
+                        callbackUrl);
                 return true;
             } catch (Exception e)
             {
@@ -361,7 +401,10 @@ public class TwitterUtils
         @Override
         protected void onPostExecute(Boolean result)
         {
-            loadingControl.stopLoading();
+            if (loadingControl != null)
+            {
+                loadingControl.stopLoading();
+            }
             if (result.booleanValue())
             {
                 try
