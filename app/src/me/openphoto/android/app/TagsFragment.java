@@ -5,6 +5,7 @@ import me.openphoto.android.app.model.Tag;
 import me.openphoto.android.app.net.IOpenPhotoApi;
 import me.openphoto.android.app.net.TagsResponse;
 import me.openphoto.android.app.ui.adapter.EndlessAdapter;
+import me.openphoto.android.app.util.CommonUtils;
 import me.openphoto.android.app.util.GalleryOpenControl;
 import me.openphoto.android.app.util.GuiUtils;
 import me.openphoto.android.app.util.LoadingControl;
@@ -13,6 +14,7 @@ import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.EditText;
@@ -55,10 +57,20 @@ public class TagsFragment extends CommonFragment implements
                 switch (event.getKeyCode())
                 {
                     case KeyEvent.KEYCODE_ENTER:
-                        if (KeyEvent.ACTION_DOWN == actionId)
+                        CommonUtils.debug(TAG, "Key code enter");
+                        if (KeyEvent.ACTION_DOWN == event.getAction())
                         {
-                            galleryOpenControl.openGallery(search.getText()
-                                    .toString().trim(), null);
+                            CommonUtils.debug(TAG, "Opening gallery");
+                            search.post(new Runnable() {
+
+                                @Override
+                                public void run() {
+                                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                                    imm.hideSoftInputFromWindow(search.getWindowToken(), 0);
+                                    galleryOpenControl.openGallery(search.getText()
+                                            .toString().trim(), null);
+                                }
+                            });
                             return true;
                         }
                         break;
