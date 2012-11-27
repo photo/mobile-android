@@ -142,6 +142,7 @@ public abstract class ImageFlowUtils<T>
             int borderSize,
             boolean force)
     {
+        this.maxImageHeight = maxImageHeight;
         if (!force && totalWidth == this.totalWidth)
         {
             return;
@@ -149,7 +150,6 @@ public abstract class ImageFlowUtils<T>
         this.totalWidth = totalWidth;
         this.imageHeight = imageHeight;
         this.borderSize = borderSize;
-        this.maxImageHeight = maxImageHeight;
         itemGroups = new ArrayList<List<T>>();
         if (totalWidth == 0)
         {

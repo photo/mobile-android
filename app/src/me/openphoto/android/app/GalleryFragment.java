@@ -6,6 +6,7 @@ import me.openphoto.android.app.bitmapfun.util.ImageFetcher;
 import me.openphoto.android.app.model.Photo;
 import me.openphoto.android.app.net.ReturnSizes;
 import me.openphoto.android.app.ui.adapter.PhotosEndlessAdapter;
+import me.openphoto.android.app.util.CommonUtils;
 import me.openphoto.android.app.util.ImageFlowUtils;
 import me.openphoto.android.app.util.LoadingControl;
 import me.openphoto.android.app.util.Utils;
@@ -128,19 +129,21 @@ public class GalleryFragment extends CommonFrargmentWithImageWorker implements R
         photosGrid.getViewTreeObserver().addOnGlobalLayoutListener(
                 new ViewTreeObserver.OnGlobalLayoutListener()
                 {
+                    int lastHeight = 0;
                     @Override
                     public void onGlobalLayout()
                     {
-                        if (mAdapter != null && mAdapter.imageFlowUtils.getTotalWidth() !=
-                                photosGrid.getWidth())
+                        if (mAdapter != null && (mAdapter.imageFlowUtils.getTotalWidth() !=
+                                photosGrid.getWidth() || photosGrid.getHeight() != lastHeight))
                         {
+                            CommonUtils.debug(TAG, "Reinit grid groups");
                             mAdapter.imageFlowUtils.buildGroups(photosGrid.getWidth(),
                                     mImageThumbSize, photosGrid.getHeight() - 2
                                             * (mImageThumbBorder
                                             + mImageThumbSpacing), mImageThumbBorder
                                             + mImageThumbSpacing);
                             mAdapter.notifyDataSetChanged();
-
+                            lastHeight = photosGrid.getHeight();
                         }
                     }
 
