@@ -7,12 +7,12 @@
 	<classpathentry kind="lib" path="libs/signpost-core-1.2.1.1.jar"/>
 	<classpathentry kind="lib" path="libs/commons-codec-1.4.jar"/>
 	<classpathentry exported="true" kind="con" path="com.android.ide.eclipse.adt.LIBRARIES"/>
-	<classpathentry kind="lib" path="libs/bugsense-1.9.jar"/>
 	<classpathentry kind="lib" path="libs/twitter4j-async-android-2.2.6.jar"/>
 	<classpathentry kind="lib" path="libs/twitter4j-core-android-2.2.6.jar"/>
 	<classpathentry kind="lib" path="libs/twitter4j-media-support-android-2.2.6.jar"/>
 	<classpathentry kind="lib" path="libs/twitter4j-stream-android-2.2.6.jar"/>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="gen"/>
+	<classpathentry kind="lib" path="libs/bugsense3.0.7.jar"/>
 	<classpathentry kind="output" path="bin/classes"/>
 </classpath>
