@@ -8,6 +8,7 @@ import java.util.Iterator;
 
 import me.openphoto.android.app.Preferences;
 import me.openphoto.android.app.net.HttpEntityWithProgress.ProgressListener;
+import me.openphoto.android.app.util.CommonUtils;
 
 import org.apache.http.client.ClientProtocolException;
 import org.json.JSONException;
@@ -256,5 +257,17 @@ public class OpenPhotoApi extends ApiBase implements IOpenPhotoApi {
             JSONException
     {
         return getPhotos(null, null, null, hash, null);
+    }
+
+    @Override
+    public OpenPhotoResponse deletePhoto(String photoId) throws ClientProtocolException,
+            IOException, IllegalStateException, JSONException
+    {
+        ApiRequest request = new ApiRequest(ApiRequest.POST, "/photo/" + photoId
+                + "/delete.json");
+        ApiResponse response = execute(request);
+        String content = response.getContentAsString();
+        CommonUtils.debug(TAG, content);
+        return new OpenPhotoResponse(new JSONObject(content));
     }
 }

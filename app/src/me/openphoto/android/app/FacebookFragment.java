@@ -13,11 +13,11 @@ import me.openphoto.android.app.net.ReturnSizes;
 import me.openphoto.android.app.util.GuiUtils;
 import me.openphoto.android.app.util.LoadingControl;
 import me.openphoto.android.app.util.RunnableWithParameter;
+import me.openphoto.android.app.util.concurrent.AsyncTaskEx;
 
 import org.json.JSONObject;
 
 import android.content.Context;
-import me.openphoto.android.app.util.concurrent.AsyncTaskEx;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -76,7 +76,7 @@ public class FacebookFragment extends CommonDialogFragment
     public void onAttach(Activity activity)
     {
         super.onAttach(activity);
-        loadingControl = (LoadingControl) activity;
+        loadingControl = ((FacebookLoadingControlAccessor) activity).getFacebookLoadingControl();
     }
 
     public void setPhoto(Photo photo)
@@ -282,5 +282,10 @@ public class FacebookFragment extends CommonDialogFragment
         bparams.putString("picture", photo.getUrl(thumbSize.toString()));
         bparams.putString("link", photo.getUrl(Photo.URL));
         facebook.request("feed", bparams, "POST");
+    }
+
+    public static interface FacebookLoadingControlAccessor
+    {
+        LoadingControl getFacebookLoadingControl();
     }
 }

@@ -11,9 +11,10 @@ import me.openphoto.android.app.service.UploaderService;
 import me.openphoto.android.app.twitter.TwitterUtils;
 import me.openphoto.android.app.util.GuiUtils;
 import me.openphoto.android.app.util.LoadingControl;
+import me.openphoto.android.app.util.ProgressDialogLoadingControl;
+import me.openphoto.android.app.util.concurrent.AsyncTaskEx;
 import android.content.Intent;
 import android.net.Uri;
-import me.openphoto.android.app.util.concurrent.AsyncTaskEx;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -138,7 +139,10 @@ public class SyncUploadFragment extends CommonFragment
                     instance.uploadSelectedFiles(false, checkFacebook);
                 }
             };
-            TwitterUtils.runAfterTwitterAuthentication(getActivity(),
+            TwitterUtils.runAfterTwitterAuthentication(
+                    new ProgressDialogLoadingControl(getActivity(), true, false,
+                            getString(R.string.share_twitter_requesting_authentication)),
+                    getActivity(),
                     runnable, runnable);
             return;
         }

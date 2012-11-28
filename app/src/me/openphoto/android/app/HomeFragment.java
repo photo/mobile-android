@@ -1,7 +1,6 @@
 
 package me.openphoto.android.app;
 
-import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 import java.util.Stack;
@@ -16,17 +15,20 @@ import me.openphoto.android.app.net.IOpenPhotoApi;
 import me.openphoto.android.app.net.Paging;
 import me.openphoto.android.app.net.PhotosResponse;
 import me.openphoto.android.app.net.ReturnSizes;
+import me.openphoto.android.app.share.ShareUtils;
+import me.openphoto.android.app.share.ShareUtils.FacebookShareRunnable;
+import me.openphoto.android.app.share.ShareUtils.TwitterShareRunnable;
 import me.openphoto.android.app.twitter.TwitterUtils;
 import me.openphoto.android.app.ui.adapter.EndlessAdapter;
 import me.openphoto.android.app.util.CommonUtils;
 import me.openphoto.android.app.util.GuiUtils;
 import me.openphoto.android.app.util.LoadingControl;
+import me.openphoto.android.app.util.ProgressDialogLoadingControl;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.net.Uri;
 import android.os.Bundle;
-import android.text.Html;
 import android.util.DisplayMetrics;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.View;
@@ -59,6 +61,14 @@ public class HomeFragment extends CommonFrargmentWithImageWorker implements Refr
     private ReturnSizes returnSizes;
 
     static HomeFragment currentInstance;
+    static FragmentAccessor<HomeFragment> currentInstanceAccessor = new FragmentAccessor<HomeFragment>() {
+        private static final long serialVersionUID = 1L;
+
+        @Override
+        public HomeFragment run() {
+            return currentInstance;
+        }
+    };
 
     @Override
     public void onCreate(Bundle savedInstanceState)
@@ -190,28 +200,18 @@ public class HomeFragment extends CommonFrargmentWithImageWorker implements Refr
 
     private void shareViaEMail(Photo photo)
     {
-        String mailId = "";
-        Intent emailIntent = new Intent(Intent.ACTION_SENDTO,
-                Uri.fromParts("mailto", mailId, null));
-        emailIntent.putExtra(android.content.Intent.EXTRA_SUBJECT,
-                getString(R.string.share_email_default_title));
-        String url = photo.getUrl(Photo.URL);
-        String bodyText = String.format(getString(R.string.share_email_default_body),
-                url, url);
-        emailIntent.putExtra(
-                Intent.EXTRA_TEXT,
-                Html.fromHtml(bodyText)
-                );
-        startActivity(Intent.createChooser(emailIntent,
-                getString(R.string.share_email_send_title)));
+        ShareUtils.shareViaEMail(photo, getActivity());
     }
 
     public void shareActivePhotoViaTwitter()
     {
         if (activePhoto != null)
         {
-            TwitterUtils.runAfterTwitterAuthentication(getActivity(),
-                    new TwitterShareRunnable(activePhoto));
+            TwitterUtils.runAfterTwitterAuthentication(
+                    new ProgressDialogLoadingControl(getActivity(), true, false,
+                            getString(R.string.share_twitter_requesting_authentication)),
+                    getActivity(),
+                    new TwitterShareRunnable(activePhoto, currentInstanceAccessor));
         }
     }
 
@@ -219,8 +219,9 @@ public class HomeFragment extends CommonFrargmentWithImageWorker implements Refr
     {
         if (activePhoto != null)
         {
-            FacebookUtils.runAfterFacebookAuthentication(getActivity(), new FacebookShareRunnable(
-                    activePhoto));
+            FacebookUtils.runAfterFacebookAuthentication(getActivity(),
+                    new FacebookShareRunnable(
+                            activePhoto, currentInstanceAccessor));
         }
     }
 
@@ -479,7 +480,7 @@ public class HomeFragment extends CommonFrargmentWithImageWorker implements Refr
         @Override
         public LoadResponse loadItems(int page)
         {
-            if (checkLoggedInAndOnline())
+            if (CommonUtils.checkLoggedInAndOnline())
             {
                 try
                 {
@@ -507,60 +508,6 @@ public class HomeFragment extends CommonFrargmentWithImageWorker implements Refr
         protected void onStoppedLoading()
         {
             loadingControl.stopLoading();
-        }
-    }
-
-    static class FacebookShareRunnable implements Runnable, Serializable
-    {
-        private static final long serialVersionUID = 1L;
-
-        Photo photo;
-
-        FacebookShareRunnable(Photo photo)
-        {
-            this.photo = photo;
-        }
-
-        @Override
-        public void run()
-        {
-            try
-            {
-                FacebookFragment facebookDialog = new FacebookFragment();
-                facebookDialog.setPhoto(photo);
-                facebookDialog.replace(currentInstance.getActivity()
-                        .getSupportFragmentManager());
-            } catch (Exception ex)
-            {
-                GuiUtils.error(TAG, null, ex);
-            }
-        }
-    }
-
-    static class TwitterShareRunnable implements Runnable, Serializable
-    {
-        private static final long serialVersionUID = 1L;
-
-        Photo photo;
-
-        TwitterShareRunnable(Photo photo)
-        {
-            this.photo = photo;
-        }
-
-        @Override
-        public void run()
-        {
-            try
-            {
-                TwitterFragment twitterDialog = new TwitterFragment();
-                twitterDialog.setPhoto(photo);
-                twitterDialog.replace(currentInstance.getActivity()
-                        .getSupportFragmentManager());
-            } catch (Exception ex)
-            {
-                GuiUtils.error(TAG, null, ex);
-            }
         }
     }
 }

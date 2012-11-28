@@ -55,7 +55,17 @@
         </activity>
         <activity
             android:name=".PhotoDetailsActivity"
-            android:theme="@style/Theme.OpenPhoto.Fullscreen" />
+            android:theme="@style/Theme.OpenPhoto.TransparentActionBar" 
+            android:launchMode="singleTask">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data android:scheme="openphoto-t2" />
+            </intent-filter>
+        </activity>
         <activity
             android:name=".UploadActivity" >
             <intent-filter>

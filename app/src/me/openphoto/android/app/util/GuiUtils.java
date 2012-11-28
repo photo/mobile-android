@@ -2,7 +2,6 @@
 package me.openphoto.android.app.util;
 
 import java.util.HashMap;
-import java.util.Map;
 
 import me.openphoto.android.app.OpenPhotoApplication;
 import me.openphoto.android.app.R;
@@ -136,12 +135,13 @@ public class GuiUtils
     public static void processError(String TAG, String message, Exception ex,
             Context context, boolean alertMessage)
     {
-        Map<String, String> extraData = new HashMap<String, String>();
+        HashMap<String, String> extraData = new HashMap<String, String>();
         if (message != null)
         {
             extraData.put("message", message);
         }
-        BugSenseHandler.log(TAG, extraData, ex);
+        BugSenseHandler.sendExceptionMap(extraData, ex);
+        BugSenseHandler.flush(OpenPhotoApplication.getContext());
         Log.e(TAG, message, ex);
         if (alertMessage)
         {

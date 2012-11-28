@@ -8,6 +8,11 @@
         <item name="actionBarStyle">@style/solid_ActionBar</item>
         <item name="android:actionBarStyle">@style/solid_ActionBar</item>
     </style>
+    <style name="Theme.OpenPhoto.TransparentActionBar" parent="Holo.Theme.Sherlock.Light.Fullscreen">
+	    <item name="actionBarStyle">@style/transparent_ActionBar</item>
+        <item name="android:actionBarStyle">@style/transparent_ActionBar</item>
+        <item name="android:windowBackground">@drawable/bg</item>
+	</style>
     <style name="NotificationText" parent="android:TextAppearance.StatusBar.EventContent" />
 
     <style name="NotificationTitle" parent="android:TextAppearance.StatusBar.EventContent.Title" />
@@ -19,4 +24,10 @@
         <item name="android:background">@drawable/bg_actionbar</item>
         <item name="android:backgroundStacked">@drawable/bg_tab</item>
     </style>
+    <style name="transparent_ActionBar" parent="@style/Widget.Sherlock.Light.ActionBar">
+	    <item name="background">@drawable/ab_bg_black</item>
+        <item name="android:background">@drawable/ab_bg_black</item>
+        <item name="titleTextStyle">@style/transparent_ActionBar_TitleTextStyle</item>
+        <item name="android:titleTextStyle">@style/transparent_ActionBar_TitleTextStyle</item>
+	</style>
 </resources>

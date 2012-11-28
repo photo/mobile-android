@@ -23,6 +23,15 @@ public abstract class SimpleAsyncTaskEx extends AsyncTaskEx<Void, Void, Boolean>
             loadingControl.startLoading();
         }
     }
+    @Override
+    protected void onCancelled() {
+        super.onCancelled();
+        if (loadingControl != null)
+        {
+            loadingControl.stopLoading();
+        }
+
+    }
 
     @Override
     protected final void onPostExecute(Boolean result) {

@@ -9,9 +9,9 @@
     android:paddingRight="@dimen/site_padding"
     android:paddingTop="@dimen/site_padding_half" >
 
-    <TextView
-        android:id="@+id/text_tag"
-        android:layout_width="wrap_content"
+    <CheckBox
+        android:id="@+id/tag_checkbox"
+        android:layout_width="0dip"
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:text="tag" />
