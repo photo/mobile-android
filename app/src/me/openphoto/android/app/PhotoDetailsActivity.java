@@ -192,9 +192,6 @@ public class PhotoDetailsActivity extends SActivity implements TwitterLoadingCon
     {
         private static final String TAG = PhotoDetailsActivity.class.getSimpleName();
 
-        private static final String IMAGE_CACHE_DIR = HomeFragment.IMAGE_CACHE_DIR;
-        private static final String IMAGE_CACHE_DIR2 = SyncImageSelectionFragment.IMAGE_CACHE_DIR;
-
         static UiFragment currentInstance;
         static FragmentAccessor<UiFragment> currentInstanceAccessor = new FragmentAccessor<UiFragment>() {
             private static final long serialVersionUID = 1L;
@@ -390,12 +387,12 @@ public class PhotoDetailsActivity extends SActivity implements TwitterLoadingCon
             final int longest = height > width ? height : width;
             mImageWorker = new ImageFetcher(getActivity(), null, longest);
             mImageWorker.setImageCache(ImageCache.findOrCreateCache(getActivity(),
-                    IMAGE_CACHE_DIR));
+                    ImageCache.LARGE_IMAGES_CACHE_DIR));
             mImageWorker.setImageFadeIn(false);
             mImageWorker2 = new ImageFetcher(getActivity(), null, thumbSize.getWidth(),
                     thumbSize.getHeight());
             mImageWorker2.setImageCache(ImageCache.findOrCreateCache(getActivity(),
-                    IMAGE_CACHE_DIR2));
+                    ImageCache.THUMBS_CACHE_DIR));
             mImageWorker2.setLoadingImage(R.drawable.empty_photo);
             imageWorkers.add(mImageWorker2);
         }

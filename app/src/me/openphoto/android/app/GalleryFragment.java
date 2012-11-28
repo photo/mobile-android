@@ -29,8 +29,6 @@ public class GalleryFragment extends CommonFrargmentWithImageWorker implements R
 {
     public static final String TAG = GalleryFragment.class.getSimpleName();
 
-    private static final String IMAGE_CACHE_DIR = SyncImageSelectionFragment.IMAGE_CACHE_DIR;
-
     public static String EXTRA_TAG = "EXTRA_TAG";
     public static String EXTRA_ALBUM = "EXTRA_ALBUM";
 
@@ -104,7 +102,7 @@ public class GalleryFragment extends CommonFrargmentWithImageWorker implements R
         mImageWorker = new CustomImageFetcher(getActivity(), loadingControl,
                 thumbSize.getHeight());
         mImageWorker.setImageCache(ImageCache.findOrCreateCache(getActivity(),
-                IMAGE_CACHE_DIR));
+                ImageCache.THUMBS_CACHE_DIR));
     }
 
     @Override

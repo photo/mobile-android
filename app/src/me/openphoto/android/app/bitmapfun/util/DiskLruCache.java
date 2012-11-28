@@ -334,6 +334,22 @@ public class DiskLruCache {
     }
 
     /**
+     * Removes all disk cache entries from the application cache directory in
+     * all the uniqueNames sub-directories.
+     * 
+     * @param context The context to use
+     * @param uniqueNames An array of unique cache directory names to append to
+     *            the app cache directory
+     */
+    public static void clearCaches(Context context, String... uniqueNames)
+    {
+        for (String uniqueName : uniqueNames)
+        {
+            clearCache(context, uniqueName);
+        }
+    }
+
+    /**
      * Removes all disk cache entries from the given directory. This should not
      * be called directly, call {@link DiskLruCache#clearCache(Context, String)}
      * or {@link DiskLruCache#clearCache()} instead.

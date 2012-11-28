@@ -19,6 +19,7 @@ package me.openphoto.android.app.bitmapfun.util;
 import java.io.File;
 
 import me.openphoto.android.app.BuildConfig;
+import me.openphoto.android.app.OpenPhotoApplication;
 import me.openphoto.android.app.util.CommonUtils;
 import android.app.ActivityManager;
 import android.content.Context;
@@ -32,6 +33,10 @@ import android.support.v4.util.LruCache;
  */
 public class ImageCache {
     private static final String TAG = "ImageCache";
+
+    public static final String THUMBS_CACHE_DIR = "thumbs";
+    public static final String LOCAL_THUMBS_CACHE_DIR = "thumbs_local";
+    public static final String LARGE_IMAGES_CACHE_DIR = "images";
 
     // Default memory cache size
     private static final int DEFAULT_MEM_CACHE_SIZE = 1024 * 1024 * 5; // 5MB
@@ -48,7 +53,7 @@ public class ImageCache {
     // Constants to easily toggle various caches
     private static final boolean DEFAULT_MEM_CACHE_ENABLED = true;
     private static final boolean DEFAULT_DISK_CACHE_ENABLED = true;
-    private static final boolean DEFAULT_CLEAR_DISK_CACHE_ON_START = false;
+    private static final boolean DEFAULT_CLEAR_DISK_CACHE_ON_START = true;
 
     private DiskLruCache mDiskCache;
     private LruCache<String, Bitmap> mMemoryCache;
@@ -86,6 +91,24 @@ public class ImageCache {
      */
     public static ImageCache findOrCreateCache(
             final FragmentActivity activity, final String uniqueName) {
+        return findOrCreateCache(activity, uniqueName, DEFAULT_CLEAR_DISK_CACHE_ON_START);
+    }
+
+    /**
+     * Find and return an existing ImageCache stored in a {@link RetainFragment}
+     * , if not found a new one is created with defaults and saved to a
+     * {@link RetainFragment}.
+     * 
+     * @param activity The calling {@link FragmentActivity}
+     * @param uniqueName A unique name to append to the cache directory
+     * @return An existing retained ImageCache object or a new one if one did
+     *         not exist.
+     * @param clearDiskCacheOnStart whether to clear disk cache on start
+     * @return
+     */
+    public static ImageCache findOrCreateCache(
+            final FragmentActivity activity, final String uniqueName,
+            boolean clearDiskCacheOnStart) {
         ImageCacheParams params = new ImageCacheParams(uniqueName);
         // Get memory class of this device, exceeding this amount will throw an
         // OutOfMemory exception.
@@ -94,7 +117,7 @@ public class ImageCache {
 
         // Use 1/8th of the available memory for this memory cache.
         params.memCacheSize = 1024 * 1024 * memClass / 8;
-
+        params.clearDiskCacheOnStart = clearDiskCacheOnStart;
         CommonUtils.debug(TAG, "Calculated memory cache size: " + params.memCacheSize);
 
         return findOrCreateCache(activity, params);
@@ -214,11 +237,15 @@ public class ImageCache {
     }
 
     public void clearCaches() {
+        clearDiskCache();
+        clearMemoryCache();
+    }
+
+    public void clearDiskCache() {
         if (mDiskCache != null)
         {
             mDiskCache.clearCache();
         }
-        clearMemoryCache();
     }
 
     public void clearMemoryCache()
@@ -228,6 +255,13 @@ public class ImageCache {
             CommonUtils.debug(TAG, "Requested memory cache cleaning");
             mMemoryCache.evictAll();
         }
+    }
+
+    public static void clearDiskCaches()
+    {
+        DiskLruCache.clearCaches(OpenPhotoApplication.getContext(),
+                THUMBS_CACHE_DIR, LOCAL_THUMBS_CACHE_DIR,
+                LARGE_IMAGES_CACHE_DIR, ImageFetcher.HTTP_CACHE_DIR);
     }
 
     /**
