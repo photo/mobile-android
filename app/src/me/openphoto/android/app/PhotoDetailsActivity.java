@@ -213,8 +213,9 @@ public class PhotoDetailsActivity extends SActivity implements TwitterLoadingCon
 
         private ImageWorker mImageWorker2;
 
+        private ReturnSizes bigPhotoSize;
+        private ReturnSizes thumbSize;
         private ReturnSizes returnSizes;
-        private ReturnSizes returnSizes2;
 
         private int mImageThumbWithBorderSize;
 
@@ -376,8 +377,11 @@ public class PhotoDetailsActivity extends SActivity implements TwitterLoadingCon
         @Override
         protected void initImageWorker()
         {
-            returnSizes = PhotosEndlessAdapter.SIZE_BIG;
-            returnSizes2 = PhotosEndlessAdapter.SIZE_SMALL;
+            int imageThumbnailSize = getResources().getDimensionPixelSize(
+                    R.dimen.detail_thumbnail_size);
+            bigPhotoSize = PhotosEndlessAdapter.getBigImageSize(getActivity());
+            thumbSize = new ReturnSizes(imageThumbnailSize, imageThumbnailSize, true);
+            returnSizes = PhotosEndlessAdapter.getReturnSizes(thumbSize, bigPhotoSize);
             final DisplayMetrics displaymetrics = new DisplayMetrics();
             getActivity().getWindowManager().getDefaultDisplay()
                     .getMetrics(displaymetrics);
@@ -388,8 +392,8 @@ public class PhotoDetailsActivity extends SActivity implements TwitterLoadingCon
             mImageWorker.setImageCache(ImageCache.findOrCreateCache(getActivity(),
                     IMAGE_CACHE_DIR));
             mImageWorker.setImageFadeIn(false);
-            mImageWorker2 = new ImageFetcher(getActivity(), null, returnSizes2.getWidth(),
-                    returnSizes2.getHeight());
+            mImageWorker2 = new ImageFetcher(getActivity(), null, thumbSize.getWidth(),
+                    thumbSize.getHeight());
             mImageWorker2.setImageCache(ImageCache.findOrCreateCache(getActivity(),
                     IMAGE_CACHE_DIR2));
             mImageWorker2.setLoadingImage(R.drawable.empty_photo);
@@ -663,12 +667,12 @@ public class PhotoDetailsActivity extends SActivity implements TwitterLoadingCon
                 // this
                 // also takes care of
                 // setting a placeholder image while the background thread runs
-                PhotoUtils.validateUrlForSizeExistAsyncAndRun(photo, returnSizes,
+                PhotoUtils.validateUrlForSizeExistAsyncAndRun(photo, bigPhotoSize,
                         new RunnableWithParameter<Photo>() {
 
                             @Override
                             public void run(Photo photo) {
-                                String url = photo.getUrl(returnSizes.toString());
+                                String url = photo.getUrl(bigPhotoSize.toString());
                                 mImageWorker.loadImage(url, imageView, loadingControl);
                             }
                         }, loadingControl);
@@ -760,12 +764,12 @@ public class PhotoDetailsActivity extends SActivity implements TwitterLoadingCon
         {
             public ThumbnailsAdapter(ArrayList<Photo> photos)
             {
-                super(getActivity(), photos);
+                super(getActivity(), photos, returnSizes);
             }
 
             public ThumbnailsAdapter(PhotosEndlessAdapter.ParametersHolder parameters)
             {
-                super(getActivity(), parameters);
+                super(getActivity(), parameters, returnSizes);
                 itemsBeforeLoadNextPage = 5;
             }
 
@@ -810,12 +814,12 @@ public class PhotoDetailsActivity extends SActivity implements TwitterLoadingCon
                 // this
                 // also takes care of
                 // setting a placeholder image while the background thread runs
-                PhotoUtils.validateUrlForSizeExistAsyncAndRun(photo, returnSizes2,
+                PhotoUtils.validateUrlForSizeExistAsyncAndRun(photo, thumbSize,
                         new RunnableWithParameter<Photo>() {
 
                             @Override
                             public void run(Photo photo) {
-                                String url = photo.getUrl(returnSizes2.toString());
+                                String url = photo.getUrl(thumbSize.toString());
                                 mImageWorker2.loadImage(url, imageView, null);
                             }
                         }, null);

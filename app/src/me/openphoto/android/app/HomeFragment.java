@@ -112,8 +112,9 @@ public class HomeFragment extends CommonFrargmentWithImageWorker implements Refr
         final int height = displaymetrics.heightPixels;
         final int width = displaymetrics.widthPixels;
         final int longest = height > width ? height : width;
+        float aspectRatio = 14f / 13f;
 
-        returnSizes = new ReturnSizes(700, 650, true);
+        returnSizes = new ReturnSizes(longest, (int) (longest / aspectRatio), true);
         // The ImageWorker takes care of loading images into our ImageView
         // children asynchronously
         mImageWorker = new ImageFetcher(getActivity(), loadingControl, longest);
