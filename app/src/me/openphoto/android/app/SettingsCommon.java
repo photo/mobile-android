@@ -1,11 +1,15 @@
 
 package me.openphoto.android.app;
 
+import me.openphoto.android.app.bitmapfun.util.ImageCache;
 import me.openphoto.android.app.facebook.FacebookProvider;
 import me.openphoto.android.app.facebook.FacebookSessionEvents;
 import me.openphoto.android.app.facebook.FacebookSessionEvents.LogoutListener;
 import me.openphoto.android.app.facebook.FacebookUtils;
 import me.openphoto.android.app.provider.UploadsUtils;
+import me.openphoto.android.app.util.GuiUtils;
+import me.openphoto.android.app.util.ProgressDialogLoadingControl;
+import me.openphoto.android.app.util.SimpleAsyncTaskEx;
 import android.app.Activity;
 import android.content.DialogInterface;
 
@@ -58,7 +62,7 @@ public class SettingsCommon implements
                                     {
                                         Preferences
                                                 .logout(activity);
-                                        activity.finish();
+                                        new ClearCachesTask().execute();
                                     }
                                 })
                         .setNegativeButton(R.string.no, null)
@@ -202,5 +206,44 @@ public class SettingsCommon implements
                         return true;
                     }
                 });
+    }
+
+    public class ClearCachesTask extends SimpleAsyncTaskEx
+    {
+
+        public ClearCachesTask() {
+            super(new ProgressDialogLoadingControl(activity, true, false,
+                    activity.getString(R.string.loading)));
+        }
+
+        @Override
+        protected void onSuccessPostExecute() {
+            if (activity != null)
+            {
+                activity.finish();
+            }
+        }
+
+        @Override
+        protected void onFailedPostExecute() {
+            if (activity != null)
+            {
+                activity.finish();
+            }
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... params) {
+            try
+            {
+                ImageCache.clearDiskCaches();
+                return true;
+            } catch (Exception ex)
+            {
+                GuiUtils.noAlertError(TAG, ex);
+            }
+            return false;
+        }
+
     }
 }

@@ -12,9 +12,11 @@ import me.openphoto.android.app.net.Paging;
 import me.openphoto.android.app.net.PhotosResponse;
 import me.openphoto.android.app.net.ReturnSizes;
 import me.openphoto.android.app.util.GuiUtils;
+import android.app.Activity;
 import android.content.Context;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.DisplayMetrics;
 
 public abstract class PhotosEndlessAdapter extends EndlessAdapter<Photo>
 {
@@ -23,57 +25,57 @@ public abstract class PhotosEndlessAdapter extends EndlessAdapter<Photo>
     private final IOpenPhotoApi mOpenPhotoApi;
     private final List<String> mTagFilter;
     private final String mAlbumFilter;
-    private static final ReturnSizes mSizes;
-    public static ReturnSizes SIZE_SMALL = new ReturnSizes(200, 200);
-    public static ReturnSizes SIZE_BIG = new ReturnSizes(1024, 1024);
+    private ReturnSizes returnSizes;
 
-    static
+    public PhotosEndlessAdapter(Context context,
+            ReturnSizes returnSizes)
     {
-        mSizes = new ReturnSizes(SIZE_SMALL);
-        mSizes.add(SIZE_BIG);
+        this(context, DEFAULT_PAGE_SIZE, returnSizes);
     }
 
-    public PhotosEndlessAdapter(Context context)
+    public PhotosEndlessAdapter(Context context, int pageSize,
+            ReturnSizes returnSizes)
     {
-        this(context, DEFAULT_PAGE_SIZE);
-    }
-
-    public PhotosEndlessAdapter(Context context, int pageSize)
-    {
-        this(context, pageSize, null, null);
+        this(context, pageSize, null, null, returnSizes);
     }
 
     public PhotosEndlessAdapter(Context context, String tagFilter,
-            String albumFilter)
+            String albumFilter,
+            ReturnSizes returnSizes)
     {
-        this(context, DEFAULT_PAGE_SIZE, tagFilter, albumFilter);
+        this(context, DEFAULT_PAGE_SIZE, tagFilter, albumFilter, returnSizes);
     }
 
     public PhotosEndlessAdapter(Context context, int pageSize, String tagFilter,
-            String albumFilter)
+            String albumFilter,
+            ReturnSizes returnSizes)
     {
-        this(context, pageSize, null, tagFilter, albumFilter);
+        this(context, pageSize, null, tagFilter, albumFilter, returnSizes);
     }
 
-    public PhotosEndlessAdapter(Context context, ArrayList<Photo> photos)
+    public PhotosEndlessAdapter(Context context, ArrayList<Photo> photos,
+            ReturnSizes returnSizes)
     {
-        this(context, photos, null, null);
+        this(context, photos, null, null, returnSizes);
     }
 
     public PhotosEndlessAdapter(Context context, ArrayList<Photo> photos,
             String tagFilter,
-            String albumFilter)
+            String albumFilter,
+            ReturnSizes returnSizes)
     {
-        this(context, DEFAULT_PAGE_SIZE, photos, tagFilter, albumFilter);
+        this(context, DEFAULT_PAGE_SIZE, photos, tagFilter, albumFilter, returnSizes);
     }
 
     public PhotosEndlessAdapter(Context context,
             int pageSize,
             ArrayList<Photo> photos,
             String tagFilter,
-            String albumFilter)
+            String albumFilter,
+            ReturnSizes returnSizes)
     {
         super(pageSize, photos);
+        this.returnSizes = returnSizes;
         mOpenPhotoApi = Preferences.getApi(context);
         mTagFilter = new ArrayList<String>(1);
         if (tagFilter != null)
@@ -87,9 +89,11 @@ public abstract class PhotosEndlessAdapter extends EndlessAdapter<Photo>
         }
     }
 
-    public PhotosEndlessAdapter(Context context, ParametersHolder holder)
+    public PhotosEndlessAdapter(Context context, ParametersHolder holder,
+            ReturnSizes returnSizes)
     {
-        this(context, holder.pageSize, holder.items, holder.tagFilter, holder.albumFilter);
+        this(context, holder.pageSize, holder.items, holder.tagFilter, holder.albumFilter,
+                returnSizes);
     }
 
     @Override
@@ -107,7 +111,7 @@ public abstract class PhotosEndlessAdapter extends EndlessAdapter<Photo>
     public LoadResponse loadItemsGeneral(int page, int pageSize) {
         try
         {
-            PhotosResponse response = mOpenPhotoApi.getPhotos(mSizes,
+            PhotosResponse response = mOpenPhotoApi.getPhotos(returnSizes,
                     mTagFilter, mAlbumFilter, new Paging(page,
                             pageSize));
             boolean hasNextPage = response.getCurrentPage() < response
@@ -135,6 +139,43 @@ public abstract class PhotosEndlessAdapter extends EndlessAdapter<Photo>
         return mAlbumFilter;
     }
 
+    /**
+     * Get the return sizes by clonning returnSize and adding additionalSizes as
+     * a childs
+     * 
+     * @param returnSize
+     * @param additionalSizes
+     * @return
+     */
+    public static ReturnSizes getReturnSizes(
+            ReturnSizes returnSize,
+            ReturnSizes... additionalSizes
+            )
+    {
+        ReturnSizes result = new ReturnSizes(returnSize);
+        for (ReturnSizes additionalSize : additionalSizes)
+        {
+            result.add(additionalSize);
+        }
+        return result;
+    }
+
+    /**
+     * Get the big image size which depends on the screen dimension
+     * 
+     * @param activity
+     * @return
+     */
+    public static ReturnSizes getBigImageSize(Activity activity) {
+        final DisplayMetrics displaymetrics = new DisplayMetrics();
+        activity.getWindowManager().getDefaultDisplay()
+                .getMetrics(displaymetrics);
+        final int height = displaymetrics.heightPixels;
+        final int width = displaymetrics.widthPixels;
+        final int longest = height > width ? height : width;
+        ReturnSizes bigSize = new ReturnSizes(longest, longest);
+        return bigSize;
+    }
     public static class ParametersHolder implements Parcelable
     {
         int page;
