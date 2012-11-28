@@ -82,6 +82,9 @@
     <string name="upload_pick_photo_first">Please pick a photo first</string>
     <string name="upload_image_edit_button">Image Editor</string>
     
+    <!-- Tags -->
+    <string name="tags_view_in_gallery">View tagged images</string>
+    
     <!-- SelectTagsActivity -->
     <string name="title_activity_select_tags">Select Tags</string>
     

@@ -1,14 +1,8 @@
 
 package me.openphoto.android.app;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import me.openphoto.android.app.model.Tag;
-import me.openphoto.android.app.net.IOpenPhotoApi;
-import me.openphoto.android.app.net.TagsResponse;
-import me.openphoto.android.app.ui.adapter.EndlessAdapter;
-import me.openphoto.android.app.util.GuiUtils;
+import me.openphoto.android.app.ui.adapter.MultiSelectTagsAdapter;
 import me.openphoto.android.app.util.LoadingControl;
 import android.content.Context;
 import android.content.Intent;
@@ -18,8 +12,6 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
-import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.ListView;
 
 import com.WazaBe.HoloEverywhere.LayoutInflater;
@@ -96,20 +88,10 @@ public class SelectTagsActivity extends SActivity {
 
         }
 
-        private class TagsAdapter extends EndlessAdapter<Tag> implements
-                OnCheckedChangeListener {
-            private final IOpenPhotoApi mOpenPhotoApi;
-            private Set<String> checkedTags = new HashSet<String>();
+        private class TagsAdapter extends MultiSelectTagsAdapter {
 
             public TagsAdapter() {
-                super(Integer.MAX_VALUE);
-                mOpenPhotoApi = Preferences.getApi(getActivity());
-                loadFirstPage();
-            }
-
-            @Override
-            public long getItemId(int position) {
-                return ((Tag) getItem(position)).getTag().hashCode();
+                super(UiFragment.this);
             }
 
             @Override
@@ -123,75 +105,10 @@ public class SelectTagsActivity extends SActivity {
 
                 CheckBox checkBox = (CheckBox) convertView
                         .findViewById(R.id.tag_checkbox);
-                checkBox.setText(tag.getTag());
-                checkBox.setOnCheckedChangeListener(null);
-                checkBox.setChecked(isChecked(tag.getTag()));
-                checkBox.setOnCheckedChangeListener(this);
+                initTagCheckbox(tag, checkBox);
 
                 return convertView;
             }
-
-            @Override
-            public LoadResponse loadItems(int page) {
-                if (checkLoggedInAndOnline()) {
-                    try {
-                        TagsResponse response = mOpenPhotoApi.getTags();
-                        return new LoadResponse(response.getTags(), false);
-                    } catch (Exception e) {
-                        GuiUtils.error(TAG,
-                                R.string.errorCouldNotLoadNextTagsInList, e);
-                    }
-                }
-                return new LoadResponse(null, false);
-            }
-
-            @Override
-            protected void onStartLoading() {
-                startLoading();
-            }
-
-            @Override
-            protected void onStoppedLoading() {
-                stopLoading();
-            }
-
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView,
-                    boolean isChecked) {
-
-                String text = (String) buttonView.getText();
-                if (isChecked)
-                    checkedTags.add(text);
-                else
-                    checkedTags.remove(text);
-
-            }
-
-            boolean isChecked(String tag)
-            {
-                if (tag == null)
-                {
-                    return false;
-                }
-                return checkedTags.contains(tag);
-            }
-
-            public String getSelectedTags() {
-
-                StringBuffer buf = new StringBuffer("");
-
-                if (checkedTags.size() > 0) {
-
-                    for (String tagText : checkedTags) {
-                        buf.append(tagText).append(",");
-                    }
-
-                    // remove last comma
-                    buf.deleteCharAt(buf.length() - 1);
-                }
-                return buf.toString();
-            }
-
         }
 
         @Override

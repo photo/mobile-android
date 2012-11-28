@@ -480,7 +480,7 @@ public class HomeFragment extends CommonFrargmentWithImageWorker implements Refr
         @Override
         public LoadResponse loadItems(int page)
         {
-            if (checkLoggedInAndOnline())
+            if (CommonUtils.checkLoggedInAndOnline())
             {
                 try
                 {

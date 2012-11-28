@@ -8,6 +8,7 @@ import me.openphoto.android.app.net.AlbumsResponse;
 import me.openphoto.android.app.net.IOpenPhotoApi;
 import me.openphoto.android.app.net.ReturnSizes;
 import me.openphoto.android.app.ui.adapter.EndlessAdapter;
+import me.openphoto.android.app.util.CommonUtils;
 import me.openphoto.android.app.util.GalleryOpenControl;
 import me.openphoto.android.app.util.GuiUtils;
 import me.openphoto.android.app.util.LoadingControl;
@@ -139,7 +140,7 @@ public class AlbumsFragment extends CommonFrargmentWithImageWorker implements
         @Override
         public LoadResponse loadItems(int page)
         {
-            if (checkLoggedInAndOnline())
+            if (CommonUtils.checkLoggedInAndOnline())
             {
                 try
                 {

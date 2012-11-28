@@ -838,7 +838,7 @@ public class PhotoDetailsActivity extends SActivity implements TwitterLoadingCon
             public LoadResponse loadItems(
                     int page)
             {
-                if (checkLoggedInAndOnline())
+                if (CommonUtils.checkLoggedInAndOnline())
                 {
                     return super.loadItems(page);
                 } else

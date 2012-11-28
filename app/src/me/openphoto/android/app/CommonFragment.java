@@ -4,9 +4,7 @@ package me.openphoto.android.app;
 import java.io.Serializable;
 
 import me.openphoto.android.app.util.CommonUtils;
-import me.openphoto.android.app.util.GuiUtils;
 import me.openphoto.android.app.util.RunnableWithResult;
-import me.openphoto.android.app.util.Utils;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -121,20 +119,6 @@ public class CommonFragment extends SFragment
     {
         super.onStop();
         CommonUtils.debug(TAG, "onStop: " + getClass().getSimpleName());
-    }
-
-    public boolean checkLoggedInAndOnline()
-    {
-        return Preferences.isLoggedIn(OpenPhotoApplication.getContext()) && checkOnline();
-    }
-    public boolean checkOnline()
-    {
-        boolean result = Utils.isOnline(getActivity());
-        if (!result)
-        {
-            GuiUtils.alert(R.string.noInternetAccess);
-        }
-        return result;
     }
 
     @Override
