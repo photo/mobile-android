@@ -101,11 +101,15 @@ public abstract class PhotosEndlessAdapter extends EndlessAdapter<Photo>
     @Override
     public LoadResponse loadItems(int page)
     {
+        return loadItemsGeneral(page, getPageSize());
+    }
+
+    public LoadResponse loadItemsGeneral(int page, int pageSize) {
         try
         {
             PhotosResponse response = mOpenPhotoApi.getPhotos(mSizes,
                     mTagFilter, mAlbumFilter, new Paging(page,
-                            getPageSize()));
+                            pageSize));
             boolean hasNextPage = response.getCurrentPage() < response
                     .getTotalPages();
             return new LoadResponse(response.getPhotos(), hasNextPage);
@@ -116,6 +120,11 @@ public abstract class PhotosEndlessAdapter extends EndlessAdapter<Photo>
                     R.string.errorCouldNotLoadNextPhotosInList, e);
         }
         return new LoadResponse(null, false);
+    }
+
+    @Override
+    public LoadResponse loadOneMoreItem(int index) {
+        return loadItemsGeneral(index, 1);
     }
 
     public String getTagFilter() {

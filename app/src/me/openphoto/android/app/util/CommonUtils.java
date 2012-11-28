@@ -2,6 +2,9 @@
 package me.openphoto.android.app.util;
 
 import me.openphoto.android.app.BuildConfig;
+import me.openphoto.android.app.OpenPhotoApplication;
+import me.openphoto.android.app.Preferences;
+import me.openphoto.android.app.R;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
@@ -64,5 +67,31 @@ public class CommonUtils
     public static boolean isFroyoOrHigher()
     {
         return android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.FROYO;
+    }
+
+    /**
+     * Checks whether user is logged in and internet is available
+     * 
+     * @return
+     */
+    public static boolean checkLoggedInAndOnline()
+    {
+        return Preferences.isLoggedIn(OpenPhotoApplication.getContext()) && checkOnline();
+    }
+
+    /**
+     * Checks whether network connection is available. Otherwise shows warning
+     * message
+     * 
+     * @return
+     */
+    public static boolean checkOnline()
+    {
+        boolean result = Utils.isOnline(OpenPhotoApplication.getContext());
+        if (!result)
+        {
+            GuiUtils.alert(R.string.noInternetAccess);
+        }
+        return result;
     }
 }

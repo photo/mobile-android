@@ -26,6 +26,11 @@ public abstract class EndlessAdapter<T> extends BaseAdapter {
      */
     public abstract LoadResponse loadItems(int page);
 
+    public LoadResponse loadOneMoreItem(int index)
+    {
+        return null;
+    }
+
     private final AtomicBoolean mKeepOnAppending = new AtomicBoolean(true);
 
     private final ArrayList<T> mItems;
@@ -56,6 +61,10 @@ public abstract class EndlessAdapter<T> extends BaseAdapter {
         return mItems.size();
     }
 
+    public int itemIndex(Object item)
+    {
+        return mItems.indexOf(item);
+    }
     @Override
     public Object getItem(int position) {
         return mItems.get(position);
@@ -87,6 +96,25 @@ public abstract class EndlessAdapter<T> extends BaseAdapter {
         }
     }
 
+    public void loadOneMoreItemForCurrentPageEnd()
+    {
+        if (mKeepOnAppending.getAndSet(false)) {
+            loadNextTask = new LoadOneMoreItemTask();
+            loadNextTask.execute();
+        }
+    }
+
+    public void deleteItemAt(int index)
+    {
+        mItems.remove(index);
+        notifyDataSetChanged();
+    }
+
+    public void deleteItemAtAndLoadOneMoreItem(int index)
+    {
+        deleteItemAt(index);
+        loadOneMoreItemForCurrentPageEnd();
+    }
     public int getPageSize() {
         return mPageSize;
     }
@@ -126,6 +154,16 @@ public abstract class EndlessAdapter<T> extends BaseAdapter {
             notifyDataSetChanged();
         }
 
+    }
+
+    private class LoadOneMoreItemTask extends LoadNextTask
+    {
+        @Override
+        protected List<T> doInBackground(Void... params) {
+            LoadResponse response = loadOneMoreItem(mItems.size() + 1);
+            mKeepOnAppending.set(response.hasNext);
+            return response.items;
+        }
     }
 
     protected class LoadResponse {

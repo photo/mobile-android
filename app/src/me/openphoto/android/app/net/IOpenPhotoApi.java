@@ -194,4 +194,17 @@ public interface IOpenPhotoApi {
     PhotosResponse getPhotos(String hash) throws ClientProtocolException,
             IOException, IllegalStateException,
             JSONException;
+
+    /**
+     * Delete the photo from the server by id
+     * 
+     * @param photoId id of the photo
+     * @return
+     * @throws ClientProtocolException
+     * @throws IOException
+     * @throws IllegalStateException
+     * @throws JSONException
+     */
+    public OpenPhotoResponse deletePhoto(String photoId) throws ClientProtocolException,
+            IOException, IllegalStateException, JSONException;
 }

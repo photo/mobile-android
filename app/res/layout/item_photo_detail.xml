@@ -40,31 +40,4 @@
         </LinearLayout>
     </FrameLayout>
 
-    <LinearLayout
-        android:id="@+id/image_details"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:background="#66000000"
-        android:orientation="vertical"
-        android:paddingLeft="@dimen/site_padding"
-        android:paddingRight="@dimen/site_padding"
-        android:paddingTop="@dimen/site_padding_half"
-        android:paddingBottom="@dimen/site_padding_half" 
-        android:visibility="gone">
-
-        <TextView
-            android:id="@+id/image_title"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textStyle="bold"
-            android:textColor="#fff" />
-
-        <TextView
-            android:id="@+id/image_description"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textColor="#fff" />
-    </LinearLayout>
-
 </RelativeLayout>

@@ -8,6 +8,7 @@
     <color name="tab_bar_line_top">#e3cea2</color>
     <color name="detail_thumb_unselected_border">#000</color>
     <color name="detail_thumb_selected_border">#9eddff</color>
-    
+    <drawable name="ab_bg_black">#66000000</drawable>
+    <color name="ab_fg_white">#ffffff</color>
 
 </resources>

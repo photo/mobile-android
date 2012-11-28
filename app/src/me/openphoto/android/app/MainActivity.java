@@ -4,7 +4,9 @@ package me.openphoto.android.app;
 import java.util.ArrayList;
 import java.util.List;
 
+import me.openphoto.android.app.FacebookFragment.FacebookLoadingControlAccessor;
 import me.openphoto.android.app.SyncFragment.SyncHandler;
+import me.openphoto.android.app.TwitterFragment.TwitterLoadingControlAccessor;
 import me.openphoto.android.app.facebook.FacebookProvider;
 import me.openphoto.android.app.provider.UploadsUtils;
 import me.openphoto.android.app.provider.UploadsUtils.UploadsClearedHandler;
@@ -34,7 +36,8 @@ import com.actionbarsherlock.view.Window;
 
 public class MainActivity extends SActivity
         implements LoadingControl, GalleryOpenControl, SyncHandler,
-        UploadsClearedHandler, PhotoUploadedHandler
+        UploadsClearedHandler, PhotoUploadedHandler, TwitterLoadingControlAccessor,
+        FacebookLoadingControlAccessor
 {
     private static final int HOME_INDEX = 0;
     private static final int GALLERY_INDEX = 1;
@@ -175,7 +178,8 @@ public class MainActivity extends SActivity
         if (intent != null && intent.getData() != null)
         {
             Uri uri = intent.getData();
-            TwitterUtils.verifyOAuthResponse(this, uri,
+            TwitterUtils.verifyOAuthResponse(this, this, uri,
+                    TwitterUtils.getDefaultCallbackUrl(this),
                     null);
         }
     }
@@ -411,6 +415,16 @@ public class MainActivity extends SActivity
                 }
                 break;
         }
+    }
+
+    @Override
+    public LoadingControl getTwitterLoadingControl() {
+        return this;
+    }
+
+    @Override
+    public LoadingControl getFacebookLoadingControl() {
+        return this;
     }
 
 }

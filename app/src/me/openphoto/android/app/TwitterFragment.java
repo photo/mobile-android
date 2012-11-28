@@ -6,11 +6,11 @@ import me.openphoto.android.app.twitter.TwitterProvider;
 import me.openphoto.android.app.twitter.TwitterUtils;
 import me.openphoto.android.app.util.GuiUtils;
 import me.openphoto.android.app.util.LoadingControl;
+import me.openphoto.android.app.util.concurrent.AsyncTaskEx;
 import twitter4j.StatusUpdate;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import android.content.Context;
-import me.openphoto.android.app.util.concurrent.AsyncTaskEx;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -57,7 +57,7 @@ public class TwitterFragment extends CommonDialogFragment
     public void onAttach(Activity activity)
     {
         super.onAttach(activity);
-        loadingControl = (LoadingControl) activity;
+        loadingControl = ((TwitterLoadingControlAccessor) activity).getTwitterLoadingControl();
     }
 
     public void setPhoto(Photo photo)
@@ -242,5 +242,10 @@ public class TwitterFragment extends CommonDialogFragment
     {
         StatusUpdate update = new StatusUpdate(message);
         twitter.updateStatus(update);
+    }
+
+    public static interface TwitterLoadingControlAccessor
+    {
+        LoadingControl getTwitterLoadingControl();
     }
 }

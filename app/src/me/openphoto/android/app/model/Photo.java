@@ -219,6 +219,10 @@ public class Photo implements Parcelable {
         out.writeString(mAppId);
         out.writeStringList(mTags);
         out.writeInt(mPermission);
+        out.writeLong(mDateTaken.getTime());
+        out.writeInt(width);
+        out.writeInt(height);
+        out.writeString(mFilenameOriginal);
 
         List<String> urls = new ArrayList<String>(mUrls.size());
         for (Map.Entry<String, String> e : mUrls.entrySet()) {
@@ -247,6 +251,10 @@ public class Photo implements Parcelable {
         mAppId = in.readString();
         in.readStringList(mTags);
         mPermission = in.readInt();
+        mDateTaken = new Date(in.readLong());
+        width = in.readInt();
+        height = in.readInt();
+        mFilenameOriginal = in.readString();
 
         List<String> urls = new ArrayList<String>();
         in.readStringList(urls);

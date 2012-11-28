@@ -12,7 +12,10 @@
     <ListView
         android:id="@+id/list_tags"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0dip"
         android:layout_weight="1" />
+    
+    <Button android:id="@+id/filterBtn" android:layout_width="match_parent"
+		android:layout_height="wrap_content" android:text="@string/tags_view_in_gallery" />
 
 </LinearLayout>
