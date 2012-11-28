@@ -64,7 +64,6 @@ public abstract class ImageFlowUtils<T>
                 + "; Rest: " + rest
                 + "; Border size:" + borderSize
                 + "; Total size:" + totalWidth);
-        if (rest > 0)
         {
             imageHeight = (int) ((float) totalWidthWithoutBorders / totalRatio);
             boolean limitReached = maxImageHeight > 0 && imageHeight >= maxImageHeight;
