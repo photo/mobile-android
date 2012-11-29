@@ -35,8 +35,6 @@ public class AlbumsFragment extends CommonFrargmentWithImageWorker implements
 {
     public static final String TAG = AlbumsFragment.class.getSimpleName();
 
-    private static final String IMAGE_CACHE_DIR = SyncImageSelectionFragment.IMAGE_CACHE_DIR;
-
     private LoadingControl loadingControl;
     private GalleryOpenControl galleryOpenControl;
 
@@ -73,7 +71,7 @@ public class AlbumsFragment extends CommonFrargmentWithImageWorker implements
         returnSizes = new ReturnSizes(width, height, true);
         mImageWorker = new ImageFetcher(getActivity(), loadingControl, width, height);
         mImageWorker.setImageCache(ImageCache.findOrCreateCache(getActivity(),
-                IMAGE_CACHE_DIR));
+                ImageCache.THUMBS_CACHE_DIR));
     }
 
     @Override

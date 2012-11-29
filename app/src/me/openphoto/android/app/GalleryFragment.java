@@ -23,12 +23,11 @@ import android.widget.ListView;
 
 import com.WazaBe.HoloEverywhere.LayoutInflater;
 import com.WazaBe.HoloEverywhere.app.Activity;
+import com.facebook.android.R;
 
 public class GalleryFragment extends CommonFrargmentWithImageWorker implements Refreshable
 {
     public static final String TAG = GalleryFragment.class.getSimpleName();
-
-    private static final String IMAGE_CACHE_DIR = SyncImageSelectionFragment.IMAGE_CACHE_DIR;
 
     public static String EXTRA_TAG = "EXTRA_TAG";
     public static String EXTRA_ALBUM = "EXTRA_ALBUM";
@@ -38,6 +37,7 @@ public class GalleryFragment extends CommonFrargmentWithImageWorker implements R
     private String mTags;
     private String mAlbum;
 
+    private ReturnSizes thumbSize;
     private ReturnSizes returnSizes;
 
     private int mImageThumbSize;
@@ -49,12 +49,6 @@ public class GalleryFragment extends CommonFrargmentWithImageWorker implements R
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mImageThumbSize = getResources().getDimensionPixelSize(
-                R.dimen.gallery_item_size);
-        mImageThumbSpacing = getResources().getDimensionPixelSize(
-                R.dimen.gallery_item_spacing);
-        mImageThumbBorder = getResources().getDimensionPixelSize(
-                R.dimen.gallery_item_border);
         pageSize = Utils.isTablet(getActivity()) ? 45
                 : PhotosEndlessAdapter.DEFAULT_PAGE_SIZE;
     }
@@ -93,11 +87,22 @@ public class GalleryFragment extends CommonFrargmentWithImageWorker implements R
 
     @Override
     protected void initImageWorker() {
-        returnSizes = PhotosEndlessAdapter.SIZE_SMALL;
+        mImageThumbSize = getResources().getDimensionPixelSize(
+                R.dimen.gallery_item_size);
+        mImageThumbSpacing = getResources().getDimensionPixelSize(
+                R.dimen.gallery_item_spacing);
+        mImageThumbBorder = getResources().getDimensionPixelSize(
+                R.dimen.gallery_item_border);
+        thumbSize = new ReturnSizes(mImageThumbSize * 2, mImageThumbSize * 2);
+        int detailsThumbnailSize = getResources().getDimensionPixelSize(
+                R.dimen.detail_thumbnail_size);
+        returnSizes = PhotosEndlessAdapter.getReturnSizes(thumbSize, new ReturnSizes(
+                detailsThumbnailSize, detailsThumbnailSize, true), PhotosEndlessAdapter
+                .getBigImageSize(getActivity()));
         mImageWorker = new CustomImageFetcher(getActivity(), loadingControl,
-                returnSizes.getHeight());
+                thumbSize.getHeight());
         mImageWorker.setImageCache(ImageCache.findOrCreateCache(getActivity(),
-                IMAGE_CACHE_DIR));
+                ImageCache.THUMBS_CACHE_DIR));
     }
 
     @Override
@@ -206,7 +211,7 @@ public class GalleryFragment extends CommonFrargmentWithImageWorker implements R
                     / (float) imageData.getHeight();
             int height = mImageHeight;
             int width = (int) (height * ratio);
-            return super.processBitmap(imageData.getUrl(returnSizes.toString()), width, height);
+            return super.processBitmap(imageData.getUrl(thumbSize.toString()), width, height);
         }
 
     }
@@ -334,7 +339,7 @@ public class GalleryFragment extends CommonFrargmentWithImageWorker implements R
 
         public GalleryAdapter(String tagFilter, String albumFilter)
         {
-            super(getActivity(), pageSize, tagFilter, albumFilter);
+            super(getActivity(), pageSize, tagFilter, albumFilter, returnSizes);
         }
 
         @Override

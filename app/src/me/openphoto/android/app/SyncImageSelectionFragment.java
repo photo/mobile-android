@@ -47,7 +47,6 @@ public class SyncImageSelectionFragment extends CommonFrargmentWithImageWorker i
         Refreshable
 {
     public static final String TAG = SyncImageSelectionFragment.class.getSimpleName();
-    public static final String IMAGE_CACHE_DIR = "thumbs";
     public static final String SELECTED_IMAGES = "SyncImageSelectionFragmentSelectedImages";
     public static final String IMAGE_WORKER_ADAPTER = "SyncImageSelectionFragmentAdapter";
 
@@ -236,7 +235,7 @@ public class SyncImageSelectionFragment extends CommonFrargmentWithImageWorker i
         mImageWorker.setLoadingImage(R.drawable.empty_photo);
 
         mImageWorker.setImageCache(ImageCache.findOrCreateCache(getActivity(),
-                IMAGE_CACHE_DIR));
+                ImageCache.LOCAL_THUMBS_CACHE_DIR, false));
     }
 
     protected void switchUploadState(boolean isChecked)

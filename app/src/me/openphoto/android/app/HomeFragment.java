@@ -50,7 +50,6 @@ import com.facebook.android.R;
 public class HomeFragment extends CommonFrargmentWithImageWorker implements Refreshable
 {
     public static final String TAG = HomeFragment.class.getSimpleName();
-    public static final String IMAGE_CACHE_DIR = "images";
 
     private LoadingControl loadingControl;
     private NewestPhotosAdapter mAdapter;
@@ -112,13 +111,14 @@ public class HomeFragment extends CommonFrargmentWithImageWorker implements Refr
         final int height = displaymetrics.heightPixels;
         final int width = displaymetrics.widthPixels;
         final int longest = height > width ? height : width;
+        float aspectRatio = 14f / 13f;
 
-        returnSizes = new ReturnSizes(700, 650, true);
+        returnSizes = new ReturnSizes(longest, (int) (longest / aspectRatio), true);
         // The ImageWorker takes care of loading images into our ImageView
         // children asynchronously
         mImageWorker = new ImageFetcher(getActivity(), loadingControl, longest);
         mImageWorker.setImageCache(ImageCache.findOrCreateCache(getActivity(),
-                IMAGE_CACHE_DIR));
+                ImageCache.LARGE_IMAGES_CACHE_DIR));
         mImageWorker.setImageFadeIn(false);
     }
     @Override
