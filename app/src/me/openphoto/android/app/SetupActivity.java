@@ -98,8 +98,6 @@ public class SetupActivity extends SActivity implements
                     .inflate(R.layout.activity_setup, container, false);
             ((Button) v.findViewById(R.id.button_login))
                     .setOnClickListener(this);
-            ((Button) v.findViewById(R.id.button_create_account))
-                    .setOnClickListener(this);
             return v;
         }
 
@@ -115,11 +113,6 @@ public class SetupActivity extends SActivity implements
                             .getText().toString();
                     Preferences.setServer(getActivity(), server);
                     OAuthUtils.askOAuth(getActivity());
-                    break;
-                case R.id.button_create_account:
-                    Intent browserIntent = new Intent(Intent.ACTION_VIEW,
-                            Uri.parse("https://openphoto.me/"));
-                    startActivity(browserIntent);
                     break;
             }
 
