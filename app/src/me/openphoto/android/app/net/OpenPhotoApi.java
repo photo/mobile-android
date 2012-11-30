@@ -241,7 +241,7 @@ public class OpenPhotoApi extends ApiBase implements IOpenPhotoApi {
             IOException, IllegalStateException,
             JSONException
     {
-        return getPhotos(null, null, null, hash, null);
+        return getPhotos(null, null, null, hash, null, null);
     }
 
     @Override

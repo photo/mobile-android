@@ -67,7 +67,7 @@
     <string name="tab_sync">Sync</string>
 
     <!-- UploadActivity -->
-    <string name="uploading_in_background">Started upload in background</string>
+    <string name="uploading_in_background">Your upload has been started</string>
     <string name="upload_camera_option">Camera</string>
     <string name="upload_gallery_option">Gallery</string>
     <string name="upload_title">Upload</string>
@@ -81,10 +81,10 @@
     <string name="upload_share_twitter">Twitter</string>
     <string name="upload_button">Upload!</string>
     <string name="upload_pick_photo_first">Please pick a photo first</string>
-    <string name="upload_image_edit_button">Image Editor</string>
+    <string name="upload_image_edit_button">Crop &amp; effects</string>
     
     <!-- Tags -->
-    <string name="tags_view_in_gallery">View tagged images</string>
+    <string name="tags_view_in_gallery">View tagged photos</string>
     
     <!-- SelectTagsActivity -->
     <string name="title_activity_select_tags">Select Tags</string>
