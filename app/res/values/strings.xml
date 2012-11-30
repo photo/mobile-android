@@ -71,6 +71,7 @@
     <string name="upload_camera_option">Camera</string>
     <string name="upload_gallery_option">Gallery</string>
     <string name="upload_title">Upload</string>
+    <string name="upload_title_hint">Title</string>
     <string name="upload_tags">Tags</string>
     <string name="upload_select_tags">Select Tags</string>
     <string name="upload_select_tags_finish">Finish</string>
