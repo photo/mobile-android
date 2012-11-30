@@ -9,7 +9,6 @@ import android.os.Bundle;
 import android.view.View;
 
 import com.WazaBe.HoloEverywhere.sherlock.SActivity;
-import com.actionbarsherlock.view.Menu;
 
 public class AccountActivity extends SActivity
 {
@@ -31,12 +30,6 @@ public class AccountActivity extends SActivity
     {
         super.onDestroy();
         unregisterReceiver(loginBroadcastReceiver);
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getSupportMenuInflater().inflate(R.menu.activity_account, menu);
-        return true;
     }
 
     public void accountSignupButtonAction(View view) {

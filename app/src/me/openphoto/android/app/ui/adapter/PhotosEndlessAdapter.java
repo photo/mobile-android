@@ -25,6 +25,7 @@ public abstract class PhotosEndlessAdapter extends EndlessAdapter<Photo>
     private final IOpenPhotoApi mOpenPhotoApi;
     private final List<String> mTagFilter;
     private final String mAlbumFilter;
+    private final String sortBy;
     private ReturnSizes returnSizes;
 
     public PhotosEndlessAdapter(Context context,
@@ -36,35 +37,38 @@ public abstract class PhotosEndlessAdapter extends EndlessAdapter<Photo>
     public PhotosEndlessAdapter(Context context, int pageSize,
             ReturnSizes returnSizes)
     {
-        this(context, pageSize, null, null, returnSizes);
+        this(context, pageSize, null, null, null, returnSizes);
     }
 
     public PhotosEndlessAdapter(Context context, String tagFilter,
             String albumFilter,
+            String sortBy,
             ReturnSizes returnSizes)
     {
-        this(context, DEFAULT_PAGE_SIZE, tagFilter, albumFilter, returnSizes);
+        this(context, DEFAULT_PAGE_SIZE, tagFilter, albumFilter, sortBy, returnSizes);
     }
 
     public PhotosEndlessAdapter(Context context, int pageSize, String tagFilter,
             String albumFilter,
+            String sortBy,
             ReturnSizes returnSizes)
     {
-        this(context, pageSize, null, tagFilter, albumFilter, returnSizes);
+        this(context, pageSize, null, tagFilter, albumFilter, sortBy, returnSizes);
     }
 
     public PhotosEndlessAdapter(Context context, ArrayList<Photo> photos,
             ReturnSizes returnSizes)
     {
-        this(context, photos, null, null, returnSizes);
+        this(context, photos, null, null, null, returnSizes);
     }
 
     public PhotosEndlessAdapter(Context context, ArrayList<Photo> photos,
             String tagFilter,
             String albumFilter,
+            String sortBy,
             ReturnSizes returnSizes)
     {
-        this(context, DEFAULT_PAGE_SIZE, photos, tagFilter, albumFilter, returnSizes);
+        this(context, DEFAULT_PAGE_SIZE, photos, tagFilter, albumFilter, sortBy, returnSizes);
     }
 
     public PhotosEndlessAdapter(Context context,
@@ -72,6 +76,7 @@ public abstract class PhotosEndlessAdapter extends EndlessAdapter<Photo>
             ArrayList<Photo> photos,
             String tagFilter,
             String albumFilter,
+            String sortBy,
             ReturnSizes returnSizes)
     {
         super(pageSize, photos);
@@ -83,6 +88,7 @@ public abstract class PhotosEndlessAdapter extends EndlessAdapter<Photo>
             mTagFilter.add(tagFilter);
         }
         mAlbumFilter = albumFilter;
+        this.sortBy = sortBy;
         if (isEmpty())
         {
             loadFirstPage();
@@ -93,6 +99,7 @@ public abstract class PhotosEndlessAdapter extends EndlessAdapter<Photo>
             ReturnSizes returnSizes)
     {
         this(context, holder.pageSize, holder.items, holder.tagFilter, holder.albumFilter,
+                holder.sortBy,
                 returnSizes);
     }
 
@@ -112,7 +119,7 @@ public abstract class PhotosEndlessAdapter extends EndlessAdapter<Photo>
         try
         {
             PhotosResponse response = mOpenPhotoApi.getPhotos(returnSizes,
-                    mTagFilter, mAlbumFilter, new Paging(page,
+                    mTagFilter, mAlbumFilter, sortBy, new Paging(page,
                             pageSize));
             boolean hasNextPage = response.getCurrentPage() < response
                     .getTotalPages();
@@ -139,6 +146,10 @@ public abstract class PhotosEndlessAdapter extends EndlessAdapter<Photo>
         return mAlbumFilter;
     }
 
+    public String getSortBy() {
+        return sortBy;
+    }
+
     /**
      * Get the return sizes by clonning returnSize and adding additionalSizes as
      * a childs
@@ -161,6 +172,23 @@ public abstract class PhotosEndlessAdapter extends EndlessAdapter<Photo>
     }
 
     /**
+     * Get the return sizes by clonning returnSize and adding detailsReturnSizes
+     * fields as a childs
+     * 
+     * @param returnSize
+     * @param detailsReturnSizes
+     * @return
+     */
+    public static ReturnSizes getReturnSizes(
+            ReturnSizes returnSize,
+            DetailsReturnSizes detailsReturnSizes
+            )
+    {
+        return getReturnSizes(returnSize, detailsReturnSizes.detailsBigPhotoSize,
+                detailsReturnSizes.detailsThumbSize);
+    }
+
+    /**
      * Get the big image size which depends on the screen dimension
      * 
      * @param activity
@@ -176,6 +204,31 @@ public abstract class PhotosEndlessAdapter extends EndlessAdapter<Photo>
         ReturnSizes bigSize = new ReturnSizes(longest, longest);
         return bigSize;
     }
+
+    /**
+     * Get the return sizes for the gallery activity
+     * 
+     * @param activity
+     * @return
+     */
+    public static DetailsReturnSizes getDetailsReturnSizes(Activity activity)
+    {
+        DetailsReturnSizes result = new DetailsReturnSizes();
+        
+        int detailsThumbnailSize = activity.getResources().getDimensionPixelSize(
+                R.dimen.detail_thumbnail_size);
+        result.detailsThumbSize = new ReturnSizes(
+                detailsThumbnailSize, detailsThumbnailSize, true);
+        result.detailsBigPhotoSize = getBigImageSize(activity);
+        
+        return result;
+    }
+
+    public static class DetailsReturnSizes
+    {
+        public ReturnSizes detailsThumbSize;
+        public ReturnSizes detailsBigPhotoSize;
+    }
     public static class ParametersHolder implements Parcelable
     {
         int page;
@@ -183,6 +236,7 @@ public abstract class PhotosEndlessAdapter extends EndlessAdapter<Photo>
         int position;
         String tagFilter;
         String albumFilter;
+        String sortBy;
         ArrayList<Photo> items;
 
         ParametersHolder() {
@@ -196,6 +250,7 @@ public abstract class PhotosEndlessAdapter extends EndlessAdapter<Photo>
             position = items.indexOf(value);
             tagFilter = adapter.getTagFilter();
             albumFilter = adapter.getAlbumFilter();
+            sortBy = adapter.getSortBy();
         }
 
         public int getPage() {
@@ -230,6 +285,7 @@ public abstract class PhotosEndlessAdapter extends EndlessAdapter<Photo>
             out.writeInt(position);
             out.writeString(tagFilter);
             out.writeString(albumFilter);
+            out.writeString(sortBy);
             out.writeList(items);
         }
 
@@ -252,6 +308,7 @@ public abstract class PhotosEndlessAdapter extends EndlessAdapter<Photo>
             position = in.readInt();
             tagFilter = in.readString();
             albumFilter = in.readString();
+            sortBy = in.readString();
             items = new ArrayList<Photo>();
             in.readList(items, getClass().getClassLoader());
         }

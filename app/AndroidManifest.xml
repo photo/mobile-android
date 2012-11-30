@@ -77,12 +77,15 @@
 
         <activity
             android:name=".AccountLogin"
+            android:theme="@style/Theme.OpenPhoto.Light.NoActionBar"
             />
         <activity
             android:name=".AccountSignup"
+            android:theme="@style/Theme.OpenPhoto.Light.NoActionBar"
              />
         <activity
             android:name=".AccountActivity"
+            android:theme="@style/Theme.OpenPhoto.Light.NoActionBar"
              />
                 
         <activity

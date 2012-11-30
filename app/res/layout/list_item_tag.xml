@@ -16,16 +16,24 @@
         android:layout_weight="1"
         android:text="tag" />
 
-    <TextView
-        android:id="@+id/text_count"
+    <LinearLayout 
+        android:id="@+id/tag_click_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginRight="5dp"
-        android:text="5" />
-
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/ic_right" />
-
+        android:gravity="center_vertical"
+        android:clickable="true">
+	    <TextView
+	        android:id="@+id/text_count"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_marginRight="5dp"
+	        android:duplicateParentState="true"
+	        android:text="5" />
+	
+	    <ImageView
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:duplicateParentState="true"
+	        android:src="@drawable/ic_right" />
+	</LinearLayout>
 </LinearLayout>
