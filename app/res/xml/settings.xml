@@ -13,12 +13,6 @@
         <!-- PreferenceScreen holo:key="@string/setting_account_facebook_loggedin_key" 
             holo:title="@string/setting_account_facebook_loggedin_logout"/-->
     </PreferenceCategory>
-    <PreferenceCategory holo:title="@string/sync_preference_category">
-        <Preference holo:key="@string/setting_sync_clear_key" 
-            holo:title="@string/sync_clear"
-            holo:summary="@string/sync_clear_comment"
-            />
-    </PreferenceCategory>
     
     <PreferenceCategory holo:title="@string/upload_preference_category" >
         <CheckBoxPreference
@@ -35,9 +29,16 @@
         <EditTextPreference
             holo:defaultValue="@string/setting_autoupload_tag_default"
             holo:dependency="@string/setting_autoupload_on_key"
-            holo:dialogTitle="Set tag for uploaded pictures:"
+            holo:dialogTitle="@string/setting_set_tag_dialog_title"
             holo:key="@string/setting_autoupload_tag_key"
-            holo:title="Tag" />
+            holo:title="@string/setting_set_tag_hint" />
+    </PreferenceCategory>
+    
+    <PreferenceCategory holo:title="@string/sync_preference_category">
+        <Preference holo:key="@string/setting_sync_clear_key" 
+            holo:title="@string/sync_clear"
+            holo:summary="@string/sync_clear_comment"
+            />
     </PreferenceCategory>
 
 </PreferenceScreen>
