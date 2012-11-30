@@ -107,7 +107,8 @@ public class TagsFragment extends CommonFragment
         mAdapter.forceStopLoadingIfNecessary();
     }
 
-    private class TagsAdapter extends MultiSelectTagsAdapter
+    private class TagsAdapter extends MultiSelectTagsAdapter implements
+            OnClickListener
     {
         public TagsAdapter()
         {
@@ -128,10 +129,20 @@ public class TagsFragment extends CommonFragment
                     .findViewById(R.id.tag_checkbox);
             initTagCheckbox(tag, checkBox);
 
+            View clickView = convertView.findViewById(R.id.tag_click_view);
+            clickView.setTag(tag);
+            clickView.setOnClickListener(this);
+
             ((TextView) convertView.findViewById(R.id.text_count))
                     .setText(Integer.toString(tag
                             .getCount()));
             return convertView;
+        }
+
+        @Override
+        public void onClick(View v) {
+            Tag tag = (Tag) v.getTag();
+            galleryOpenControl.openGallery(tag.getTag(), null);
         }
 
     }
