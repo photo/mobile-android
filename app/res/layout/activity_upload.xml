@@ -54,7 +54,7 @@
                         android:id="@+id/edit_title"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="@string/upload_title"
+                        android:hint="@string/upload_title_hint"
                         android:inputType="textCapWords" />
 
                     <EditText
