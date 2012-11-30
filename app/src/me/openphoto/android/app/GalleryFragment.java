@@ -94,11 +94,8 @@ public class GalleryFragment extends CommonFrargmentWithImageWorker implements R
         mImageThumbBorder = getResources().getDimensionPixelSize(
                 R.dimen.gallery_item_border);
         thumbSize = new ReturnSizes(mImageThumbSize * 2, mImageThumbSize * 2);
-        int detailsThumbnailSize = getResources().getDimensionPixelSize(
-                R.dimen.detail_thumbnail_size);
-        returnSizes = PhotosEndlessAdapter.getReturnSizes(thumbSize, new ReturnSizes(
-                detailsThumbnailSize, detailsThumbnailSize, true), PhotosEndlessAdapter
-                .getBigImageSize(getActivity()));
+        returnSizes = PhotosEndlessAdapter.getReturnSizes(thumbSize,
+                PhotosEndlessAdapter.getDetailsReturnSizes(getActivity()));
         mImageWorker = new CustomImageFetcher(getActivity(), loadingControl,
                 thumbSize.getHeight());
         mImageWorker.setImageCache(ImageCache.findOrCreateCache(getActivity(),
@@ -339,7 +336,7 @@ public class GalleryFragment extends CommonFrargmentWithImageWorker implements R
 
         public GalleryAdapter(String tagFilter, String albumFilter)
         {
-            super(getActivity(), pageSize, tagFilter, albumFilter, returnSizes);
+            super(getActivity(), pageSize, tagFilter, albumFilter, null, returnSizes);
         }
 
         @Override

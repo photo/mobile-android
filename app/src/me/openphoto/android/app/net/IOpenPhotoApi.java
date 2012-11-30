@@ -125,6 +125,7 @@ public interface IOpenPhotoApi {
      * @param resize which sizes should be returned
      * @param tags filter potos by these tags
      * @param album filter potos by this album
+     * @param sortBy sort photos condition
      * @param pageing page and pageSize to be retrieved
      * @return the photos
      * @throws ClientProtocolException
@@ -134,6 +135,7 @@ public interface IOpenPhotoApi {
      */
     PhotosResponse getPhotos(ReturnSizes resize, Collection<String> tags,
             String album,
+            String sortBy,
             Paging paging) throws ClientProtocolException, IOException,
             IllegalStateException, JSONException;
 

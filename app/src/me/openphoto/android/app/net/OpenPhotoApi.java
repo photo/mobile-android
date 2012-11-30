@@ -24,6 +24,7 @@ import android.content.Context;
 public class OpenPhotoApi extends ApiBase implements IOpenPhotoApi {
 
     private static IOpenPhotoApi sMock;
+    public static final String NEWEST_PHOTO_SORT_ORDER = "dateUploaded,DESC";
 
     public static IOpenPhotoApi createInstance(Context context) {
         if (sMock != null) {
@@ -79,21 +80,21 @@ public class OpenPhotoApi extends ApiBase implements IOpenPhotoApi {
     @Override
     public PhotosResponse getPhotos() throws ClientProtocolException,
             IllegalStateException, IOException, JSONException {
-        return getPhotos(null, null, null, null);
+        return getPhotos(null, null);
     }
 
     @Override
     public PhotosResponse getPhotos(ReturnSizes resize)
             throws ClientProtocolException, IllegalStateException, IOException,
             JSONException {
-        return getPhotos(resize, null, null, null);
+        return getPhotos(resize, null);
     }
 
     @Override
     public PhotosResponse getPhotos(ReturnSizes resize, Paging paging)
             throws ClientProtocolException, IllegalStateException, IOException,
             JSONException {
-        return getPhotos(resize, null, null, paging);
+        return getPhotos(resize, null, null, null, paging);
     }
 
     @Override
@@ -102,7 +103,7 @@ public class OpenPhotoApi extends ApiBase implements IOpenPhotoApi {
             String album)
             throws ClientProtocolException, IllegalStateException, IOException,
             JSONException {
-        return getPhotos(resize, tags, album, null);
+        return getPhotos(resize, tags, album, null, null);
     }
 
     /*
@@ -115,16 +116,18 @@ public class OpenPhotoApi extends ApiBase implements IOpenPhotoApi {
     @Override
     public PhotosResponse getPhotos(ReturnSizes resize,
             Collection<String> tags,
-            String album, Paging paging)
+            String album,
+            String sortBy, Paging paging)
             throws ClientProtocolException, IOException, IllegalStateException,
             JSONException {
-        return getPhotos(resize, tags, album, null, paging);
+        return getPhotos(resize, tags, album, null, sortBy, paging);
     }
 
     public PhotosResponse getPhotos(ReturnSizes resize,
             Collection<String> tags,
             String album,
             String hash,
+            String sortBy,
             Paging paging)
             throws ClientProtocolException, IOException, IllegalStateException,
             JSONException
@@ -142,7 +145,10 @@ public class OpenPhotoApi extends ApiBase implements IOpenPhotoApi {
         {
             request.addParameter("hash", hash);
         }
-
+        if (sortBy != null)
+        {
+            request.addParameter("sortBy", sortBy);
+        }
         if (resize != null)
         {
             request.addParameter("returnSizes", resize.toString());
@@ -216,28 +222,7 @@ public class OpenPhotoApi extends ApiBase implements IOpenPhotoApi {
             throws ClientProtocolException, IOException, IllegalStateException,
             JSONException
     {
-        ApiRequest request = new ApiRequest(ApiRequest.GET, "/photos/list.json");
-        if (returnSize != null)
-        {
-            request.addParameter("returnSizes", returnSize.toString());
-        }
-        request.addParameter("sortBy", "dateUploaded,DESC");
-
-        if (paging != null)
-        {
-            if (paging.hasPage())
-            {
-                request.addParameter("page", Integer.toString(paging.getPage()));
-            }
-            if (paging.hasPageSize())
-            {
-                request.addParameter("pageSize",
-                        Integer.toString(paging.getPageSize()));
-            }
-        }
-        ApiResponse response = execute(request);
-        String result = response.getContentAsString();
-        return new PhotosResponse(new JSONObject(result));
+        return getPhotos(returnSize, null, null, NEWEST_PHOTO_SORT_ORDER, paging);
     }
 
     /**
