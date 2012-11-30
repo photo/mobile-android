@@ -18,6 +18,7 @@ import me.openphoto.android.app.share.ShareUtils;
 import me.openphoto.android.app.share.ShareUtils.TwitterShareRunnable;
 import me.openphoto.android.app.twitter.TwitterUtils;
 import me.openphoto.android.app.ui.adapter.PhotosEndlessAdapter;
+import me.openphoto.android.app.ui.adapter.PhotosEndlessAdapter.DetailsReturnSizes;
 import me.openphoto.android.app.ui.adapter.PhotosEndlessAdapter.ParametersHolder;
 import me.openphoto.android.app.ui.widget.HorizontalListView;
 import me.openphoto.android.app.ui.widget.ViewPagerWithDisableSupport;
@@ -39,7 +40,6 @@ import android.os.Parcelable;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.text.TextUtils;
-import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -374,18 +374,14 @@ public class PhotoDetailsActivity extends SActivity implements TwitterLoadingCon
         @Override
         protected void initImageWorker()
         {
-            int imageThumbnailSize = getResources().getDimensionPixelSize(
-                    R.dimen.detail_thumbnail_size);
-            bigPhotoSize = PhotosEndlessAdapter.getBigImageSize(getActivity());
-            thumbSize = new ReturnSizes(imageThumbnailSize, imageThumbnailSize, true);
+            DetailsReturnSizes detailReturnSizes = PhotosEndlessAdapter
+                    .getDetailsReturnSizes(getActivity());
+            bigPhotoSize = detailReturnSizes.detailsBigPhotoSize;
+            thumbSize = detailReturnSizes.detailsThumbSize;
             returnSizes = PhotosEndlessAdapter.getReturnSizes(thumbSize, bigPhotoSize);
-            final DisplayMetrics displaymetrics = new DisplayMetrics();
-            getActivity().getWindowManager().getDefaultDisplay()
-                    .getMetrics(displaymetrics);
-            final int height = displaymetrics.heightPixels;
-            final int width = displaymetrics.widthPixels;
-            final int longest = height > width ? height : width;
-            mImageWorker = new ImageFetcher(getActivity(), null, longest);
+
+            mImageWorker = new ImageFetcher(getActivity(), null, bigPhotoSize.getWidth(),
+                    bigPhotoSize.getHeight());
             mImageWorker.setImageCache(ImageCache.findOrCreateCache(getActivity(),
                     ImageCache.LARGE_IMAGES_CACHE_DIR));
             mImageWorker.setImageFadeIn(false);

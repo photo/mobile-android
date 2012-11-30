@@ -8,16 +8,15 @@ import me.openphoto.android.app.util.CommonUtils;
 import me.openphoto.android.app.util.GuiUtils;
 import me.openphoto.android.app.util.LoadingControl;
 import me.openphoto.android.app.util.LoginUtils;
+import me.openphoto.android.app.util.concurrent.AsyncTaskEx;
 import android.app.Activity;
 import android.content.Intent;
-import me.openphoto.android.app.util.concurrent.AsyncTaskEx;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
 
 import com.WazaBe.HoloEverywhere.app.ProgressDialog;
 import com.WazaBe.HoloEverywhere.sherlock.SActivity;
-import com.actionbarsherlock.view.Menu;
 
 /**
  * Class to create new accounts on OpenPhoto
@@ -36,13 +35,6 @@ public class AccountSignup extends SActivity
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_account_signup);
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu)
-    {
-        getSupportMenuInflater().inflate(R.menu.activity_account_signup, menu);
-        return true;
     }
 
     public void createAccountButtonAction(View view)

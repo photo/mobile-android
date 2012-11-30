@@ -11,15 +11,13 @@ import me.openphoto.android.app.bitmapfun.util.ImageWorker;
 import me.openphoto.android.app.facebook.FacebookBaseDialogListener;
 import me.openphoto.android.app.facebook.FacebookUtils;
 import me.openphoto.android.app.model.Photo;
-import me.openphoto.android.app.net.IOpenPhotoApi;
-import me.openphoto.android.app.net.Paging;
-import me.openphoto.android.app.net.PhotosResponse;
+import me.openphoto.android.app.net.OpenPhotoApi;
 import me.openphoto.android.app.net.ReturnSizes;
 import me.openphoto.android.app.share.ShareUtils;
 import me.openphoto.android.app.share.ShareUtils.FacebookShareRunnable;
 import me.openphoto.android.app.share.ShareUtils.TwitterShareRunnable;
 import me.openphoto.android.app.twitter.TwitterUtils;
-import me.openphoto.android.app.ui.adapter.EndlessAdapter;
+import me.openphoto.android.app.ui.adapter.PhotosEndlessAdapter;
 import me.openphoto.android.app.util.CommonUtils;
 import me.openphoto.android.app.util.GuiUtils;
 import me.openphoto.android.app.util.LoadingControl;
@@ -57,6 +55,7 @@ public class HomeFragment extends CommonFrargmentWithImageWorker implements Refr
     private Photo activePhoto;
 
     private ListView list;
+    private ReturnSizes photoSize;
     private ReturnSizes returnSizes;
 
     static HomeFragment currentInstance;
@@ -113,7 +112,10 @@ public class HomeFragment extends CommonFrargmentWithImageWorker implements Refr
         final int longest = height > width ? height : width;
         float aspectRatio = 14f / 13f;
 
-        returnSizes = new ReturnSizes(longest, (int) (longest / aspectRatio), true);
+        photoSize = new ReturnSizes(longest, (int) (longest / aspectRatio), true);
+
+        returnSizes = PhotosEndlessAdapter.getReturnSizes(photoSize,
+                PhotosEndlessAdapter.getDetailsReturnSizes(getActivity()));
         // The ImageWorker takes care of loading images into our ImageView
         // children asynchronously
         mImageWorker = new ImageFetcher(getActivity(), loadingControl, longest);
@@ -252,24 +254,13 @@ public class HomeFragment extends CommonFrargmentWithImageWorker implements Refr
         }
     }
 
-    private class NewestPhotosAdapter extends EndlessAdapter<Photo>
+    private class NewestPhotosAdapter extends PhotosEndlessAdapter
     {
-        private final IOpenPhotoApi mOpenPhotoApi;
-        private final Context mContext;
         private Stack<Button> unusedTagButtons = new Stack<Button>();
 
         public NewestPhotosAdapter(Context context)
         {
-            super(Integer.MAX_VALUE);
-            mOpenPhotoApi = Preferences.getApi(getActivity());
-            mContext = context;
-            loadFirstPage();
-        }
-
-        @Override
-        public long getItemId(int position)
-        {
-            return ((Photo) getItem(position)).getId().hashCode();
+            super(context, 25, null, null, OpenPhotoApi.NEWEST_PHOTO_SORT_ORDER, returnSizes);
         }
 
         @Override
@@ -286,8 +277,18 @@ public class HomeFragment extends CommonFrargmentWithImageWorker implements Refr
             ImageView photoView =
                     (ImageView) convertView.findViewById(R.id.newest_image);
             photoView.setTag(photo);
+            photoView.setOnClickListener(new OnClickListener() {
+
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(getActivity(), PhotoDetailsActivity.class);
+                    intent.putExtra(PhotoDetailsActivity.EXTRA_ADAPTER_PHOTOS,
+                            new PhotosEndlessAdapter.ParametersHolder(mAdapter, photo));
+                    startActivity(intent);
+                }
+            });
             mImageWorker
-                    .loadImage(photo.getUrl(returnSizes.toString()), photoView);
+                    .loadImage(photo.getUrl(photoSize.toString()), photoView);
             // photoView.setTag(photo.getUrl("700x650xCR"));
             // Drawable dr =
             // iw.loadImage(this, photoView);
@@ -475,27 +476,6 @@ public class HomeFragment extends CommonFrargmentWithImageWorker implements Refr
                 tagsView.removeViewAt(i);
 
             }
-        }
-
-        @Override
-        public LoadResponse loadItems(int page)
-        {
-            if (CommonUtils.checkLoggedInAndOnline())
-            {
-                try
-                {
-                    PhotosResponse response = mOpenPhotoApi
-                            .getNewestPhotos(returnSizes, new Paging(page, 25));
-                    return new LoadResponse(response.getPhotos(), response.hasNextPage());
-                } catch (Exception e)
-                {
-                    GuiUtils.error(
-                            TAG,
-                            R.string.errorCouldNotLoadNextPhotosInList,
-                            e, mContext);
-                }
-            }
-            return new LoadResponse(null, false);
         }
 
         @Override
