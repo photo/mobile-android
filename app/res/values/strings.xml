@@ -185,8 +185,6 @@
     
     
     <!-- Feather -->
-    <string name="feather_hi_res_dialog_title">HiRes</string>
-    <string name="feather_hi_res_dialog_question">A low-resolution image was created. Do you want to save the hi-res image too?</string>
     <string name="feather_failed_to_retrieve_the_list_of_acitions">Failed to retrieve the list of actions!</string>
     <string name="feather_failed_to_retrieve_the_session_information">Failed to retrieve the session informations</string>
     <string name="feather_processing_hi_res_image">Processing Hi-res image</string>

@@ -1,7 +1,10 @@
 
 package me.openphoto.android.app.ui.adapter;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import me.openphoto.android.app.OpenPhotoApplication;
@@ -12,6 +15,7 @@ import me.openphoto.android.app.net.TagsResponse;
 import me.openphoto.android.app.util.CommonUtils;
 import me.openphoto.android.app.util.GuiUtils;
 import me.openphoto.android.app.util.LoadingControl;
+import me.openphoto.android.app.util.compare.ToStringComparator;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
@@ -26,7 +30,7 @@ public abstract class MultiSelectTagsAdapter extends EndlessAdapter<Tag>
 {
     static final String TAG = MultiSelectTagsAdapter.class.getSimpleName();
     private final IOpenPhotoApi mOpenPhotoApi;
-    private Set<String> checkedTags = new HashSet<String>();
+    protected Set<String> checkedTags = new HashSet<String>();
     private LoadingControl loadingControl;
 
     public MultiSelectTagsAdapter(LoadingControl loadingControl)
@@ -70,7 +74,12 @@ public abstract class MultiSelectTagsAdapter extends EndlessAdapter<Tag>
             try
             {
                 TagsResponse response = mOpenPhotoApi.getTags();
-                return new LoadResponse(response.getTags(), false);
+                List<Tag> tags = response.getTags();
+                if (tags != null)
+                {
+                    Collections.sort(tags, new ToStringComparator());
+                }
+                return new LoadResponse(tags, false);
             } catch (Exception e)
             {
                 GuiUtils.error(TAG,
@@ -101,9 +110,10 @@ public abstract class MultiSelectTagsAdapter extends EndlessAdapter<Tag>
     public String getSelectedTags() {
 
         StringBuffer buf = new StringBuffer("");
-
         if (checkedTags.size() > 0) {
-            for (String tagText : checkedTags) {
+            List<String> sortedTags = new ArrayList<String>(checkedTags);
+            Collections.sort(sortedTags, new ToStringComparator());
+            for (String tagText : sortedTags) {
                 if (buf.length() > 0)
                 {
                     buf.append(",");

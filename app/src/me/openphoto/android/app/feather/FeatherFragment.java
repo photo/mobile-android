@@ -8,8 +8,6 @@ import java.io.InputStream;
 import java.util.Date;
 
 import me.openphoto.android.app.OpenPhotoApplication;
-import me.openphoto.android.app.ui.widget.YesNoDialogFragment;
-import me.openphoto.android.app.ui.widget.YesNoDialogFragment.YesNoButtonPressedHandler;
 import me.openphoto.android.app.util.CommonUtils;
 import me.openphoto.android.app.util.GuiUtils;
 import android.annotation.SuppressLint;
@@ -131,36 +129,8 @@ public class FeatherFragment extends Fragment {
 
         if (mSessionId != null) {
 
-            YesNoDialogFragment dialogFragment =
-                    YesNoDialogFragment.newInstance(
-                            R.string.feather_hi_res_dialog_question,
-                            false,
-                            new YesNoButtonPressedHandler() {
-
-                                @Override
-                                public void yesButtonPressed(DialogInterface dialog) {
-                                    if (null != mSessionId) {
-                                        processHD(mSessionId, filepath);
-                                    }
-                                    mSessionId = null;
-                                }
-
-                                @Override
-                                public void noButtonPressed(DialogInterface dialog) {
-                                    if (null != mSessionId) {
-                                        deleteSession(mSessionId);
-                                    }
-
-                                    if (!getCallingFragment().getActivity().isFinishing()) {
-                                        dialog.dismiss();
-                                    }
-                                    mSessionId = null;
-                                }
-                            }
-                            );
-
-            dialogFragment.replace(getCallingFragment().getSupportActivity()
-                    .getSupportFragmentManager());
+            processHD(mSessionId, filepath);
+            mSessionId = null;
         }
     }
 

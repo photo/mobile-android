@@ -35,6 +35,18 @@ public class Tag {
     }
 
     /**
+     * Creates a Tag object for tag name
+     * 
+     * @param tag the tag name
+     * @return
+     */
+    public static Tag fromTagName(String tag)
+    {
+        Tag result = new Tag();
+        result.mTag = tag;
+        return result;
+    }
+    /**
      * @return The tag string
      */
     public String getTag() {
@@ -46,5 +58,10 @@ public class Tag {
      */
     public int getCount() {
         return mCount;
+    }
+
+    @Override
+    public String toString() {
+        return mTag;
     }
 }
