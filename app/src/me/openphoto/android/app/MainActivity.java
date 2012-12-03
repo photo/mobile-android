@@ -14,6 +14,7 @@ import me.openphoto.android.app.service.UploaderService;
 import me.openphoto.android.app.service.UploaderServiceUtils;
 import me.openphoto.android.app.service.UploaderServiceUtils.PhotoUploadedHandler;
 import me.openphoto.android.app.twitter.TwitterUtils;
+import me.openphoto.android.app.util.BackKeyControl;
 import me.openphoto.android.app.util.CommonUtils;
 import me.openphoto.android.app.util.GalleryOpenControl;
 import me.openphoto.android.app.util.LoadingControl;
@@ -427,4 +428,17 @@ public class MainActivity extends SActivity
         return this;
     }
 
+    @Override
+    public void onBackPressed() {
+        Fragment fragment = getCurrentFragment();
+        boolean proceed = true;
+        if (fragment != null && fragment instanceof BackKeyControl)
+        {
+            proceed &= !((BackKeyControl) fragment).isBackKeyOverrode();
+        }
+        if (proceed)
+        {
+            super.onBackPressed();
+        }
+    }
 }

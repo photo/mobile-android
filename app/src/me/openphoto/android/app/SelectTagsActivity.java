@@ -1,12 +1,21 @@
 
 package me.openphoto.android.app;
 
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import me.openphoto.android.app.model.Tag;
+import me.openphoto.android.app.model.utils.TagUtils;
 import me.openphoto.android.app.ui.adapter.MultiSelectTagsAdapter;
 import me.openphoto.android.app.util.LoadingControl;
+import me.openphoto.android.app.util.compare.ToStringComparator;
 import android.content.Context;
 import android.content.Intent;
+import android.database.DataSetObserver;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -21,6 +30,7 @@ import com.facebook.android.R;
 public class SelectTagsActivity extends SActivity {
 
     public static final String TAG = SelectTagsActivity.class.getSimpleName();
+    public static final String SELECTED_TAGS = "SELECTED_TAGS";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,7 +67,9 @@ public class SelectTagsActivity extends SActivity {
         }
         void init(View v)
         {
-            mAdapter = new TagsAdapter();
+            Set<String> tags = TagUtils.getTags(getActivity().getIntent().getStringExtra(
+                    SELECTED_TAGS));
+            mAdapter = new TagsAdapter(tags);
             list = (ListView) v.findViewById(R.id.list_select_tags);
 
             list.setAdapter(mAdapter);
@@ -82,7 +94,7 @@ public class SelectTagsActivity extends SActivity {
             Intent data = new Intent();
             String selectedTags = mAdapter.getSelectedTags().trim();
 
-            data.putExtra("SELECTED_TAGS", selectedTags);
+            data.putExtra(SELECTED_TAGS, selectedTags);
             getActivity().setResult(RESULT_OK, data);
             getActivity().finish();
 
@@ -90,8 +102,60 @@ public class SelectTagsActivity extends SActivity {
 
         private class TagsAdapter extends MultiSelectTagsAdapter {
 
-            public TagsAdapter() {
+            private final DataSetObserver mObserver = new DataSetObserver() {
+                boolean ignoreChanges = false;
+                @Override
+                public void onChanged() {
+                    super.onChanged();
+                    if (ignoreChanges)
+                    {
+                        return;
+                    }
+                    ToStringComparator comparator = new ToStringComparator();
+                    List<Tag> items = getItems();
+                    Collections.sort(items, comparator);
+                    Set<String> notProcessedTags = new HashSet<String>(checkedTags);
+                    for (Tag tag : items)
+                    {
+                        if (notProcessedTags.contains(tag.getTag()))
+                        {
+                            notProcessedTags.remove(tag.getTag());
+                        }
+                    }
+                    if (!notProcessedTags.isEmpty())
+                    {
+                        for (String tagString : notProcessedTags)
+                        {
+                            if (!TextUtils.isEmpty(tagString))
+                            {
+                                Tag tag = Tag.fromTagName(tagString);
+                                int ix = Collections.binarySearch(items, tag, comparator);
+                                if (ix > 0)
+                                {
+                                    items.add(ix, tag);
+                                } else
+                                {
+                                    items.add(-ix - 1, tag);
+                                }
+                            } else
+                            {
+                                checkedTags.remove(tagString);
+                            }
+                        }
+                        ignoreChanges = true;
+                        notifyDataSetChanged();
+                        ignoreChanges = false;
+                    }
+                }
+            };
+
+            public TagsAdapter(Set<String> alreadySelectedTags) {
                 super(UiFragment.this);
+                if (alreadySelectedTags != null)
+                {
+                    checkedTags.addAll(alreadySelectedTags);
+                }
+                registerDataSetObserver(mObserver);
             }
 
             @Override

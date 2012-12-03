@@ -6,6 +6,8 @@ import java.util.List;
 import me.openphoto.android.app.SyncImageSelectionFragment.NextStepFlow;
 import me.openphoto.android.app.SyncUploadFragment.PreviousStepFlow;
 import me.openphoto.android.app.provider.UploadsUtils.UploadsClearedHandler;
+import me.openphoto.android.app.util.BackKeyControl;
+import me.openphoto.android.app.util.CommonUtils;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -16,7 +18,7 @@ import com.WazaBe.HoloEverywhere.LayoutInflater;
 import com.WazaBe.HoloEverywhere.app.Activity;
 
 public class SyncFragment extends CommonFragment implements NextStepFlow,
-        PreviousStepFlow, Refreshable, UploadsClearedHandler
+        PreviousStepFlow, Refreshable, UploadsClearedHandler, BackKeyControl
 {
     static final String FIRST_STEP_TAG = "firstStepSync";
     static final String SECOND_STEP_TAG = "secondStepSync";
@@ -32,16 +34,22 @@ public class SyncFragment extends CommonFragment implements NextStepFlow,
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        initInnerFragments(savedInstanceState);
+    }
+
+    public void initInnerFragments(Bundle savedInstanceState) {
         String activeStep = savedInstanceState == null ? FIRST_STEP_TAG :
                 savedInstanceState.getString(ACTIVE_STEP);
         firstStepFragment = (SyncImageSelectionFragment) getActivity()
                 .getSupportFragmentManager().findFragmentByTag(FIRST_STEP_TAG);
+
         if (!activeStep.equals(FIRST_STEP_TAG))
         {
             detachFragmentIfNecessary(firstStepFragment);
         }
         if (firstStepFragment != null)
         {
+            CommonUtils.debug(TAG, "First step fragment is not null. Setting next step flow...");
             firstStepFragment.setNextStepFlow(this);
         }
 
@@ -54,8 +62,11 @@ public class SyncFragment extends CommonFragment implements NextStepFlow,
         }
         if (secondStepFragment != null)
         {
+            CommonUtils.debug(TAG,
+                    "Second step fragment is not null. Setting previous step flow...");
             secondStepFragment.setPreviousStepFlow(this);
         }
+        CommonUtils.debug(TAG, "Active step: " + activeStep);
         if (activeStep.equals(FIRST_STEP_TAG))
         {
             activeFragment = firstStepFragment;
@@ -88,6 +99,8 @@ public class SyncFragment extends CommonFragment implements NextStepFlow,
         View v = inflater.inflate(R.layout.fragment_sync_switch, container,
                 false);
         init(v);
+        // fix for the issue #216
+        instanceSaved = false;
         return v;
     }
 
@@ -111,6 +124,7 @@ public class SyncFragment extends CommonFragment implements NextStepFlow,
 
     void selectFragment(Fragment fragment, boolean attachOnly)
     {
+        CommonUtils.debug(TAG, "Selecting fragment: " + fragment + "; attachOnly: " + attachOnly);
         FragmentTransaction transaction = getActivity()
                 .getSupportFragmentManager().beginTransaction();
         if (activeFragment != null && !activeFragment.isDetached())
@@ -161,6 +175,7 @@ public class SyncFragment extends CommonFragment implements NextStepFlow,
     public void detachFragmentIfNecessary(Fragment fragment) {
         if (fragment != null && !fragment.isDetached())
         {
+            CommonUtils.debug(TAG, "Detaching fragment: " + fragment);
             getActivity().getSupportFragmentManager().beginTransaction()
                     .detach(fragment)
                     .commit();
@@ -172,6 +187,9 @@ public class SyncFragment extends CommonFragment implements NextStepFlow,
     {
         if (getActivity() == null || getActivity().isFinishing() || instanceSaved)
         {
+            CommonUtils
+                    .debug(TAG,
+                            "Skipping previous step activation because of finishing activity or saved instance state.");
             return;
         }
         if (firstStepFragment == null)
@@ -253,5 +271,15 @@ public class SyncFragment extends CommonFragment implements NextStepFlow,
     public void uploadsCleared()
     {
         firstStepFragment.uploadsCleared();
+    }
+
+    @Override
+    public boolean isBackKeyOverrode() {
+        if (activeFragment != null && activeFragment == secondStepFragment)
+        {
+            activatePreviousStep();
+            return true;
+        }
+        return false;
     }
 }
