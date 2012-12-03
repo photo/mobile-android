@@ -76,6 +76,7 @@ public class UploadActivity extends SActivity {
 
         private Switch mPrivateToggle;
         FeatherFragment featherFragment;
+        EditText tagsText;
 
         @Override
         public void onCreate(Bundle savedInstanceState) {
@@ -135,6 +136,8 @@ public class UploadActivity extends SActivity {
             v.findViewById(R.id.select_tags).setOnClickListener(this);
             v.findViewById(R.id.image_upload).setOnClickListener(this);
             v.findViewById(R.id.button_edit).setOnClickListener(this);
+            tagsText = ((EditText) v.findViewById(R.id.edit_tags));
+
             mPrivateToggle = (Switch) v.findViewById(R.id.private_switch);
             mPrivateToggle.setChecked(true);
 
@@ -195,8 +198,8 @@ public class UploadActivity extends SActivity {
                 case REQUEST_TAGS:
                     if (resultCode == RESULT_OK && data.getExtras() != null) {
                         String selectedTags = data.getExtras().getString(
-                                "SELECTED_TAGS");
-                        ((EditText) getView().findViewById(R.id.edit_tags)).setText(selectedTags);
+                                SelectTagsActivity.SELECTED_TAGS);
+                        tagsText.setText(selectedTags);
                     }
                     break;
                 case REQUEST_GALLERY:
@@ -321,6 +324,7 @@ public class UploadActivity extends SActivity {
             switch (v.getId()) {
                 case R.id.select_tags:
                     Intent i = new Intent(getActivity(), SelectTagsActivity.class);
+                    i.putExtra(SelectTagsActivity.SELECTED_TAGS, tagsText.getText().toString());
                     startActivityForResult(i, REQUEST_TAGS);
                     break;
                 case R.id.button_upload:
