@@ -1,12 +1,9 @@
 [submodule "submodules/facebook-android-sdk"]
 	path = submodules/facebook-android-sdk
 	url = git://github.com/photo/facebook-android-sdk.git
-[submodule "submodules/GestureImageView"]
-	path = submodules/GestureImageView
-	url = git://github.com/photo/gesture-imageview.git
-[submodule "submodules/ActionBarSherlock"]
-	path = submodules/ActionBarSherlock
-	url = https://github.com/JakeWharton/ActionBarSherlock.git
 [submodule "submodules/HoloEverywhere"]
 	path = submodules/HoloEverywhere
 	url = git://github.com/ChristopheVersieux/HoloEverywhere.git
+[submodule "submodules/PhotoView"]
+	path = submodules/PhotoView
+	url = https://github.com/chrisbanes/PhotoView.git

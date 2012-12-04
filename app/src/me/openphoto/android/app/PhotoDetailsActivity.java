@@ -20,8 +20,8 @@ import me.openphoto.android.app.twitter.TwitterUtils;
 import me.openphoto.android.app.ui.adapter.PhotosEndlessAdapter;
 import me.openphoto.android.app.ui.adapter.PhotosEndlessAdapter.DetailsReturnSizes;
 import me.openphoto.android.app.ui.adapter.PhotosEndlessAdapter.ParametersHolder;
-import me.openphoto.android.app.ui.widget.PhotoViewHackyViewPager;
 import me.openphoto.android.app.ui.widget.HorizontalListView;
+import me.openphoto.android.app.ui.widget.PhotoViewHackyViewPager;
 import me.openphoto.android.app.ui.widget.YesNoDialogFragment;
 import me.openphoto.android.app.ui.widget.YesNoDialogFragment.YesNoButtonPressedHandler;
 import me.openphoto.android.app.util.CommonUtils;
@@ -341,14 +341,6 @@ public class PhotoDetailsActivity extends SActivity implements TwitterLoadingCon
             thumbnailsList.setAdapter(thumbnailsAdapter);
             mViewPager = (PhotoViewHackyViewPager) v.findViewById(R.id.photos);
             mViewPager.setAdapter(mAdapter);
-            // mViewPager.setGesturesEnabledHandler(new GesturesEnabledHandler()
-            // {
-            //
-            // @Override
-            // public boolean isEnabled() {
-            // return !mAdapter.isCurrentImageZoomed();
-            // }
-            // });
 
             if (position > 0) {
                 mViewPager.setCurrentItem(position);
@@ -680,13 +672,6 @@ public class PhotoDetailsActivity extends SActivity implements TwitterLoadingCon
                         adjustDetailsVisibility(!detailsVisible);
                     }
                 });
-                // imageView.setOnClickListener(new OnClickListener() {
-                //
-                // @Override
-                // public void onClick(View v) {
-                // CommonUtils.debug(TAG, "ImageView on click");
-                // }
-                // });
 
                 ((ViewPager) collection).addView(view, 0);
 
@@ -739,16 +724,6 @@ public class PhotoDetailsActivity extends SActivity implements TwitterLoadingCon
                 }
             }
 
-            boolean isCurrentImageZoomed()
-            {
-                if (mCurrentView != null)
-                {
-                    // GestureImageView giv = (GestureImageView)
-                    // mCurrentView.findViewById(R.id.image);
-                    // return giv.isZoomed();
-                }
-                return false;
-            }
 
             /**
              * Hack to refresh ViewPager when data set notification event is
