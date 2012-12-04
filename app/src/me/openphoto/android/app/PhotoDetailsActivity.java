@@ -20,9 +20,8 @@ import me.openphoto.android.app.twitter.TwitterUtils;
 import me.openphoto.android.app.ui.adapter.PhotosEndlessAdapter;
 import me.openphoto.android.app.ui.adapter.PhotosEndlessAdapter.DetailsReturnSizes;
 import me.openphoto.android.app.ui.adapter.PhotosEndlessAdapter.ParametersHolder;
+import me.openphoto.android.app.ui.widget.PhotoViewHackyViewPager;
 import me.openphoto.android.app.ui.widget.HorizontalListView;
-import me.openphoto.android.app.ui.widget.ViewPagerWithDisableSupport;
-import me.openphoto.android.app.ui.widget.ViewPagerWithDisableSupport.GesturesEnabledHandler;
 import me.openphoto.android.app.ui.widget.YesNoDialogFragment;
 import me.openphoto.android.app.ui.widget.YesNoDialogFragment.YesNoButtonPressedHandler;
 import me.openphoto.android.app.util.CommonUtils;
@@ -30,6 +29,8 @@ import me.openphoto.android.app.util.GuiUtils;
 import me.openphoto.android.app.util.LoadingControl;
 import me.openphoto.android.app.util.ProgressDialogLoadingControl;
 import me.openphoto.android.app.util.RunnableWithParameter;
+import uk.co.senab.photoview.PhotoView;
+import uk.co.senab.photoview.PhotoViewAttacher.OnPhotoTapListener;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -57,7 +58,6 @@ import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.view.Window;
 import com.facebook.android.R;
-import com.polites.android.GestureImageView;
 
 /**
  * The general photo viewing screen
@@ -202,7 +202,7 @@ public class PhotoDetailsActivity extends SActivity implements TwitterLoadingCon
             }
         };
 
-        private ViewPagerWithDisableSupport mViewPager;
+        private PhotoViewHackyViewPager mViewPager;
         private HorizontalListView thumbnailsList;
 
         private PhotoDetailPagerAdapter mAdapter;
@@ -339,15 +339,16 @@ public class PhotoDetailsActivity extends SActivity implements TwitterLoadingCon
             mAdapter = new PhotoDetailPagerAdapter(thumbnailsAdapter);
             thumbnailsList = (HorizontalListView) v.findViewById(R.id.thumbs);
             thumbnailsList.setAdapter(thumbnailsAdapter);
-            mViewPager = (ViewPagerWithDisableSupport) v.findViewById(R.id.photos);
+            mViewPager = (PhotoViewHackyViewPager) v.findViewById(R.id.photos);
             mViewPager.setAdapter(mAdapter);
-            mViewPager.setGesturesEnabledHandler(new GesturesEnabledHandler() {
-
-                @Override
-                public boolean isEnabled() {
-                    return !mAdapter.isCurrentImageZoomed();
-                }
-            });
+            // mViewPager.setGesturesEnabledHandler(new GesturesEnabledHandler()
+            // {
+            //
+            // @Override
+            // public boolean isEnabled() {
+            // return !mAdapter.isCurrentImageZoomed();
+            // }
+            // });
 
             if (position > 0) {
                 mViewPager.setCurrentItem(position);
@@ -622,7 +623,7 @@ public class PhotoDetailsActivity extends SActivity implements TwitterLoadingCon
 
                 final View view = mInflator.inflate(R.layout.item_photo_detail,
                         ((ViewPager) collection), false);
-                final ImageView imageView = (ImageView) view.findViewById(R.id.image);
+                final PhotoView imageView = (PhotoView) view.findViewById(R.id.image);
 
                 final LoadingControl loadingControl = new LoadingControl() {
                     private int mLoaders = 0;
@@ -672,14 +673,20 @@ public class PhotoDetailsActivity extends SActivity implements TwitterLoadingCon
 
                 loadingControl.stopLoading();
 
-                imageView.setOnClickListener(new OnClickListener() {
+                imageView.setOnPhotoTapListener(new OnPhotoTapListener() {
 
                     @Override
-                    public void onClick(View v) {
-                        CommonUtils.debug(TAG, "ImageView on click");
+                    public void onPhotoTap(View view, float x, float y) {
                         adjustDetailsVisibility(!detailsVisible);
                     }
                 });
+                // imageView.setOnClickListener(new OnClickListener() {
+                //
+                // @Override
+                // public void onClick(View v) {
+                // CommonUtils.debug(TAG, "ImageView on click");
+                // }
+                // });
 
                 ((ViewPager) collection).addView(view, 0);
 
@@ -736,9 +743,9 @@ public class PhotoDetailsActivity extends SActivity implements TwitterLoadingCon
             {
                 if (mCurrentView != null)
                 {
-                    GestureImageView giv = (GestureImageView)
-                            mCurrentView.findViewById(R.id.image);
-                    return giv.isZoomed();
+                    // GestureImageView giv = (GestureImageView)
+                    // mCurrentView.findViewById(R.id.image);
+                    // return giv.isZoomed();
                 }
                 return false;
             }
