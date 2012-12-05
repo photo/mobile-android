@@ -20,9 +20,9 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 
-import com.WazaBe.HoloEverywhere.LayoutInflater;
-import com.WazaBe.HoloEverywhere.app.Activity;
-import com.facebook.android.R;
+import org.holoeverywhere.LayoutInflater;
+import org.holoeverywhere.app.Activity;
+import me.openphoto.android.app.R;
 
 public class TagsFragment extends CommonFragment
 {

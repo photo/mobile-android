@@ -22,6 +22,10 @@ import me.openphoto.android.app.util.CommonUtils;
 import me.openphoto.android.app.util.GuiUtils;
 import me.openphoto.android.app.util.LoadingControl;
 import me.openphoto.android.app.util.ProgressDialogLoadingControl;
+
+import org.holoeverywhere.LayoutInflater;
+import org.holoeverywhere.app.Activity;
+
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
@@ -38,12 +42,9 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.WazaBe.HoloEverywhere.LayoutInflater;
-import com.WazaBe.HoloEverywhere.app.Activity;
 import com.actionbarsherlock.view.ContextMenu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
-import com.facebook.android.R;
 
 public class HomeFragment extends CommonFrargmentWithImageWorker implements Refreshable
 {
@@ -212,7 +213,7 @@ public class HomeFragment extends CommonFrargmentWithImageWorker implements Refr
             TwitterUtils.runAfterTwitterAuthentication(
                     new ProgressDialogLoadingControl(getActivity(), true, false,
                             getString(R.string.share_twitter_requesting_authentication)),
-                    getActivity(),
+                    getSupportActivity(),
                     new TwitterShareRunnable(activePhoto, currentInstanceAccessor));
         }
     }
@@ -221,7 +222,7 @@ public class HomeFragment extends CommonFrargmentWithImageWorker implements Refr
     {
         if (activePhoto != null)
         {
-            FacebookUtils.runAfterFacebookAuthentication(getActivity(),
+            FacebookUtils.runAfterFacebookAuthentication(getSupportActivity(),
                     new FacebookShareRunnable(
                             activePhoto, currentInstanceAccessor));
         }

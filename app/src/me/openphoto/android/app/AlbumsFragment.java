@@ -22,8 +22,8 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.WazaBe.HoloEverywhere.LayoutInflater;
-import com.WazaBe.HoloEverywhere.app.Activity;
+import org.holoeverywhere.LayoutInflater;
+import org.holoeverywhere.app.Activity;
 
 /**
  * The fragment which displays albums list

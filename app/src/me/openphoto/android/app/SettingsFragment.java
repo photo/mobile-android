@@ -1,15 +1,15 @@
 
 package me.openphoto.android.app;
 
-import android.os.Bundle;
+import org.holoeverywhere.preference.PreferenceCategory;
+import org.holoeverywhere.preference.PreferenceFragment;
 
-import com.WazaBe.HoloEverywhere.preference.PreferenceCategory;
-import com.WazaBe.HoloEverywhere.sherlock.SPreferenceFragment;
+import android.os.Bundle;
 
 /**
  * @author Eugene Popovich
  */
-public class SettingsFragment extends SPreferenceFragment
+public class SettingsFragment extends PreferenceFragment
 {
     private SettingsCommon settingsCommon;
 
@@ -21,7 +21,7 @@ public class SettingsFragment extends SPreferenceFragment
         getPreferenceManager().setSharedPreferencesMode(Preferences.PREFERENCES_MODE);
         addPreferencesFromResource(R.xml.settings);
 
-        settingsCommon = new SettingsCommon(getActivity());
+        settingsCommon = new SettingsCommon(getSupportActivity());
 
         settingsCommon
                 .setLoginCategory((PreferenceCategory) findPreference(getString(R.string.setting_account_category)));

@@ -15,6 +15,9 @@ import me.openphoto.android.app.util.LoadingControl;
 import me.openphoto.android.app.util.RunnableWithParameter;
 import me.openphoto.android.app.util.concurrent.AsyncTaskEx;
 
+import org.holoeverywhere.LayoutInflater;
+import org.holoeverywhere.app.Activity;
+import org.holoeverywhere.app.Dialog;
 import org.json.JSONObject;
 
 import android.content.Context;
@@ -26,11 +29,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.WazaBe.HoloEverywhere.LayoutInflater;
-import com.WazaBe.HoloEverywhere.app.Activity;
-import com.WazaBe.HoloEverywhere.app.Dialog;
 import com.facebook.android.Facebook;
-import com.facebook.android.R;
 
 /**
  * @author Eugene Popovich
@@ -132,7 +131,7 @@ public class FacebookFragment extends CommonDialogFragment
 
     private void performFacebookLogout()
     {
-        FacebookUtils.logoutRequest(getActivity());
+        FacebookUtils.logoutRequest(getSupportActivity());
         dismiss();
     }
 

@@ -1,9 +1,9 @@
 
 package me.openphoto.android.app;
 
-import android.os.Bundle;
+import org.holoeverywhere.preference.PreferenceActivity;
 
-import com.WazaBe.HoloEverywhere.sherlock.SPreferenceActivity;
+import android.os.Bundle;
 
 /**
  * The settings screen
@@ -12,7 +12,7 @@ import com.WazaBe.HoloEverywhere.sherlock.SPreferenceActivity;
  * @author Patrick Boos
  * @author Eugene Popovich
  */
-public class SettingsActivity extends SPreferenceActivity
+public class SettingsActivity extends PreferenceActivity
 {
     /**
      * Called when Settings Activity is first loaded

@@ -17,7 +17,7 @@ import me.openphoto.android.app.util.SimpleAsyncTaskEx;
 import org.apache.http.client.ClientProtocolException;
 import org.json.JSONException;
 
-import com.facebook.android.R;
+import me.openphoto.android.app.R;
 
 /**
  * Utils class for the photo object

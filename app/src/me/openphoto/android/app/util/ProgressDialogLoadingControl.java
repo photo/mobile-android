@@ -4,7 +4,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import android.content.Context;
 
-import com.WazaBe.HoloEverywhere.app.ProgressDialog;
+import org.holoeverywhere.app.ProgressDialog;
 
 /**
  * Simple loading control which shows progress dialog

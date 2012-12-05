@@ -3,6 +3,11 @@ package me.openphoto.android.app;
 
 import me.openphoto.android.app.oauth.OAuthUtils;
 import me.openphoto.android.app.util.LoadingControl;
+
+import org.holoeverywhere.LayoutInflater;
+import org.holoeverywhere.app.Activity;
+import org.holoeverywhere.app.ProgressDialog;
+
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -12,18 +17,13 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 
-import com.WazaBe.HoloEverywhere.LayoutInflater;
-import com.WazaBe.HoloEverywhere.app.ProgressDialog;
-import com.WazaBe.HoloEverywhere.sherlock.SActivity;
-import com.WazaBe.HoloEverywhere.sherlock.SFragment;
-
 /**
  * The activity that gets presented to the user in case the user is not logged
  * in to a server. - setup screen
  * 
  * @author Patrick Boos
  */
-public class SetupActivity extends SActivity implements
+public class SetupActivity extends Activity implements
         LoadingControl
 {
     public static final String TAG = SetupActivity.class.getSimpleName();
@@ -87,7 +87,7 @@ public class SetupActivity extends SActivity implements
         }
     }
 
-    public static class UiFragment extends SFragment implements
+    public static class UiFragment extends CommonFragment implements
             OnClickListener
     {
         @Override

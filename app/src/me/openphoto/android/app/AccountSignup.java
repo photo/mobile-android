@@ -9,21 +9,21 @@ import me.openphoto.android.app.util.GuiUtils;
 import me.openphoto.android.app.util.LoadingControl;
 import me.openphoto.android.app.util.LoginUtils;
 import me.openphoto.android.app.util.concurrent.AsyncTaskEx;
-import android.app.Activity;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
 
-import com.WazaBe.HoloEverywhere.app.ProgressDialog;
-import com.WazaBe.HoloEverywhere.sherlock.SActivity;
+import org.holoeverywhere.app.ProgressDialog;
+import org.holoeverywhere.app.Activity;
 
 /**
  * Class to create new accounts on OpenPhoto
  * 
  * @author Patrick Santana <patrick@openphoto.me>
  */
-public class AccountSignup extends SActivity
+public class AccountSignup extends Activity
         implements LoadingControl
 {
 

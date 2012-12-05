@@ -42,8 +42,8 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ListAdapter;
 
-import com.WazaBe.HoloEverywhere.widget.AdapterView;
-import com.WazaBe.HoloEverywhere.widget.Scroller;
+import org.holoeverywhere.widget.AdapterView;
+import org.holoeverywhere.widget.Scroller;
 
 public class HorizontalListView extends AdapterView<ListAdapter> {
 

@@ -1,10 +1,10 @@
 package me.openphoto.android.app.ui.widget;
 
+import org.holoeverywhere.app.DialogFragment;
+
 import android.os.Bundle;
 
-import com.WazaBe.HoloEverywhere.sherlock.SDialogFragment;
-
-public class ClosableOnRestoreDialogFragment extends SDialogFragment {
+public class ClosableOnRestoreDialogFragment extends DialogFragment {
     boolean isRestore = false;
 
     @Override

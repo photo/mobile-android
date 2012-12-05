@@ -7,6 +7,7 @@ import me.openphoto.android.app.net.IOpenPhotoApi;
 import me.openphoto.android.app.util.GuiUtils;
 import me.openphoto.android.app.util.LoadingControl;
 import me.openphoto.android.app.util.LoginUtils;
+import me.openphoto.android.app.util.concurrent.AsyncTaskEx;
 import oauth.signpost.OAuthConsumer;
 import oauth.signpost.OAuthProvider;
 import oauth.signpost.basic.DefaultOAuthConsumer;
@@ -14,7 +15,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
-import me.openphoto.android.app.util.concurrent.AsyncTaskEx;
 
 public class OAuthUtils
 {

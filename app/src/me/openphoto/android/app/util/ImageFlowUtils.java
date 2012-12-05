@@ -13,7 +13,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
-import com.WazaBe.HoloEverywhere.LayoutInflater;
+import org.holoeverywhere.LayoutInflater;
 
 /**
  * This is an util class which is used to build images flow layout based on

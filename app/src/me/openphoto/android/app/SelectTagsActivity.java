@@ -23,11 +23,11 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ListView;
 
-import com.WazaBe.HoloEverywhere.LayoutInflater;
-import com.WazaBe.HoloEverywhere.sherlock.SActivity;
-import com.facebook.android.R;
+import org.holoeverywhere.LayoutInflater;
+import org.holoeverywhere.app.Activity;
+import me.openphoto.android.app.R;
 
-public class SelectTagsActivity extends SActivity {
+public class SelectTagsActivity extends Activity {
 
     public static final String TAG = SelectTagsActivity.class.getSimpleName();
     public static final String SELECTED_TAGS = "SELECTED_TAGS";

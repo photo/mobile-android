@@ -29,6 +29,10 @@ import me.openphoto.android.app.util.GuiUtils;
 import me.openphoto.android.app.util.LoadingControl;
 import me.openphoto.android.app.util.ProgressDialogLoadingControl;
 import me.openphoto.android.app.util.RunnableWithParameter;
+
+import org.holoeverywhere.LayoutInflater;
+import org.holoeverywhere.app.Activity;
+
 import uk.co.senab.photoview.PhotoView;
 import uk.co.senab.photoview.PhotoViewAttacher.OnPhotoTapListener;
 import android.content.Context;
@@ -50,14 +54,11 @@ import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.WazaBe.HoloEverywhere.LayoutInflater;
-import com.WazaBe.HoloEverywhere.sherlock.SActivity;
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.view.Window;
-import com.facebook.android.R;
 
 /**
  * The general photo viewing screen
@@ -70,7 +71,7 @@ import com.facebook.android.R;
  *          03.10.2012 <br>
  *          - added initial support for album photos filter
  */
-public class PhotoDetailsActivity extends SActivity implements TwitterLoadingControlAccessor,
+public class PhotoDetailsActivity extends Activity implements TwitterLoadingControlAccessor,
         FacebookLoadingControlAccessor {
 
     public static final String EXTRA_PHOTO = "EXTRA_PHOTO";
@@ -246,7 +247,7 @@ public class PhotoDetailsActivity extends SActivity implements TwitterLoadingCon
             Photo photo = getActivePhoto();
             if (photo != null)
             {
-                FacebookUtils.runAfterFacebookAuthentication(getActivity(),
+                FacebookUtils.runAfterFacebookAuthentication(getSupportActivity(),
                         new ShareUtils.FacebookShareRunnable(
                                 photo, currentInstanceAccessor));
             }
@@ -257,9 +258,9 @@ public class PhotoDetailsActivity extends SActivity implements TwitterLoadingCon
             if (photo != null)
             {
                 TwitterUtils.runAfterTwitterAuthentication(
-                        new ProgressDialogLoadingControl(getActivity(), true, false,
+                        new ProgressDialogLoadingControl(getSupportActivity(), true, false,
                                 getString(R.string.share_twitter_requesting_authentication)),
-                        getActivity(),
+                        getSupportActivity(),
                         TwitterUtils.getSecondCallbackUrl(getActivity()),
                         new TwitterShareRunnable(photo, currentInstanceAccessor));
             }
@@ -388,7 +389,7 @@ public class PhotoDetailsActivity extends SActivity implements TwitterLoadingCon
 
         void photoSelected(final Photo photo)
         {
-            ActionBar actionBar = ((SActivity) getSupportActivity())
+            ActionBar actionBar = ((Activity) getSupportActivity())
                     .getSupportActionBar();
             SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
             String title = photo.getTitle();
@@ -534,7 +535,7 @@ public class PhotoDetailsActivity extends SActivity implements TwitterLoadingCon
                                     // DO NOTHING
                                 }
                             });
-            dialogFragment.replace(getSupportFragmentManager());
+            dialogFragment.show(getSupportActivity());
         }
 
         void adjustDetailsVisibility(final boolean visible)
@@ -562,7 +563,7 @@ public class PhotoDetailsActivity extends SActivity implements TwitterLoadingCon
                     detailsView.setVisibility(visible ? View.VISIBLE : View.GONE);
                 }
             }, animationDuration);
-            ActionBar actionBar = ((SActivity) getSupportActivity())
+            ActionBar actionBar = ((Activity) getSupportActivity())
                     .getSupportActionBar();
             if (visible)
             {

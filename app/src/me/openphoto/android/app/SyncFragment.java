@@ -14,8 +14,8 @@ import android.support.v4.app.FragmentTransaction;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.WazaBe.HoloEverywhere.LayoutInflater;
-import com.WazaBe.HoloEverywhere.app.Activity;
+import org.holoeverywhere.LayoutInflater;
+import org.holoeverywhere.app.Activity;
 
 public class SyncFragment extends CommonFragment implements NextStepFlow,
         PreviousStepFlow, Refreshable, UploadsClearedHandler, BackKeyControl

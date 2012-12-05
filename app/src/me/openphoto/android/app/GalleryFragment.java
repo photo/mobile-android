@@ -21,9 +21,9 @@ import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.ListView;
 
-import com.WazaBe.HoloEverywhere.LayoutInflater;
-import com.WazaBe.HoloEverywhere.app.Activity;
-import com.facebook.android.R;
+import org.holoeverywhere.LayoutInflater;
+import org.holoeverywhere.app.Activity;
+import me.openphoto.android.app.R;
 
 public class GalleryFragment extends CommonFrargmentWithImageWorker implements Refreshable
 {

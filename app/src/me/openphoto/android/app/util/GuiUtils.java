@@ -5,12 +5,14 @@ import java.util.HashMap;
 
 import me.openphoto.android.app.OpenPhotoApplication;
 import me.openphoto.android.app.R;
+
+import org.holoeverywhere.widget.Toast;
+
 import android.app.Activity;
 import android.content.Context;
 import android.os.Handler;
 import android.util.Log;
 
-import com.WazaBe.HoloEverywhere.widget.Toast;
 import com.bugsense.trace.BugSenseHandler;
 
 /**

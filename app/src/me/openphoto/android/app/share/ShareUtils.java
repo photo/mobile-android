@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 import me.openphoto.android.app.CommonFragment;
 import me.openphoto.android.app.FacebookFragment;
+import me.openphoto.android.app.R;
 import me.openphoto.android.app.TwitterFragment;
 import me.openphoto.android.app.model.Photo;
 import me.openphoto.android.app.util.GuiUtils;
@@ -12,8 +13,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.text.Html;
-
-import com.facebook.android.R;
 
 /**
  * Sharing functionality utils
@@ -72,8 +71,7 @@ public class ShareUtils {
             {
                 TwitterFragment twitterDialog = new TwitterFragment();
                 twitterDialog.setPhoto(photo);
-                twitterDialog.replace(fragmentInstanceAccessor.run().getActivity()
-                        .getSupportFragmentManager());
+                twitterDialog.show(fragmentInstanceAccessor.run().getSupportActivity());
             } catch (Exception ex)
             {
                 GuiUtils.error(TAG, null, ex);
@@ -105,8 +103,7 @@ public class ShareUtils {
             {
                 FacebookFragment facebookDialog = new FacebookFragment();
                 facebookDialog.setPhoto(photo);
-                facebookDialog.replace(fragmentInstanceAccessor.run().getActivity()
-                        .getSupportFragmentManager());
+                facebookDialog.show(fragmentInstanceAccessor.run().getSupportActivity());
             } catch (Exception ex)
             {
                 GuiUtils.error(TAG, null, ex);

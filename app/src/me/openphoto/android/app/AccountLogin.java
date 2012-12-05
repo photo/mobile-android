@@ -9,16 +9,16 @@ import me.openphoto.android.app.util.GuiUtils;
 import me.openphoto.android.app.util.LoadingControl;
 import me.openphoto.android.app.util.LoginUtils;
 import me.openphoto.android.app.util.concurrent.AsyncTaskEx;
-import android.app.Activity;
+
+import org.holoeverywhere.app.Activity;
+import org.holoeverywhere.app.ProgressDialog;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
 
-import com.WazaBe.HoloEverywhere.app.ProgressDialog;
-import com.WazaBe.HoloEverywhere.sherlock.SActivity;
-
-public class AccountLogin extends SActivity implements
+public class AccountLogin extends Activity implements
         LoadingControl
 {
     private static final String TAG = AccountLogin.class.getSimpleName();

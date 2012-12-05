@@ -8,9 +8,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
-import com.WazaBe.HoloEverywhere.sherlock.SActivity;
+import org.holoeverywhere.app.Activity;
 
-public class AccountActivity extends SActivity
+public class AccountActivity extends Activity
 {
 
     private static final String TAG = AccountActivity.class.getSimpleName();

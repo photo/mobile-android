@@ -10,15 +10,16 @@ import me.openphoto.android.app.provider.UploadsUtils;
 import me.openphoto.android.app.util.GuiUtils;
 import me.openphoto.android.app.util.ProgressDialogLoadingControl;
 import me.openphoto.android.app.util.SimpleAsyncTaskEx;
-import android.app.Activity;
-import android.content.DialogInterface;
 
-import com.WazaBe.HoloEverywhere.app.AlertDialog;
-import com.WazaBe.HoloEverywhere.preference.EditTextPreference;
-import com.WazaBe.HoloEverywhere.preference.Preference;
-import com.WazaBe.HoloEverywhere.preference.Preference.OnPreferenceChangeListener;
-import com.WazaBe.HoloEverywhere.preference.Preference.OnPreferenceClickListener;
-import com.WazaBe.HoloEverywhere.preference.PreferenceCategory;
+import org.holoeverywhere.app.Activity;
+import org.holoeverywhere.app.AlertDialog;
+import org.holoeverywhere.preference.EditTextPreference;
+import org.holoeverywhere.preference.Preference;
+import org.holoeverywhere.preference.Preference.OnPreferenceChangeListener;
+import org.holoeverywhere.preference.Preference.OnPreferenceClickListener;
+import org.holoeverywhere.preference.PreferenceCategory;
+
+import android.content.DialogInterface;
 
 public class SettingsCommon implements
         OnPreferenceClickListener
