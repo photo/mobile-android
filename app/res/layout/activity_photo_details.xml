@@ -4,7 +4,7 @@
     android:layout_height="match_parent"
     android:clickable="true">
 
-    <me.openphoto.android.app.ui.widget.ViewPagerWithDisableSupport
+    <me.openphoto.android.app.ui.widget.PhotoViewHackyViewPager
         android:id="@+id/photos"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />

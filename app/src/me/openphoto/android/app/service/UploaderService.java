@@ -4,7 +4,9 @@ package me.openphoto.android.app.service;
 import java.io.File;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import me.openphoto.android.app.FacebookFragment;
 import me.openphoto.android.app.MainActivity;
@@ -60,6 +62,7 @@ public class UploaderService extends Service {
     private static ArrayList<NewPhotoObserver> sNewPhotoObservers;
     private static ConnectivityChangeReceiver sReceiver;
     private static MediaMountedReceiver mediaMountedReceiver;
+    private static Set<String> alreadyObservingPaths;
 
     private volatile Looper mServiceLooper;
     private volatile ServiceHandler mServiceHandler;
@@ -495,25 +498,38 @@ public class UploaderService extends Service {
         if (sNewPhotoObservers == null)
         {
             sNewPhotoObservers = new ArrayList<NewPhotoObserver>();
+            alreadyObservingPaths = new HashSet<String>();
         }
-        if (!sNewPhotoObservers.isEmpty())
+        Set<String> externalMounts = Utils.getExternalMounts();
+        File externalStorage = Environment.getExternalStorageDirectory();
+        if (externalStorage != null)
         {
-            return;
+            externalMounts.add(externalStorage.getAbsolutePath());
         }
-        File dcim = new File(Environment.getExternalStorageDirectory(), "DCIM");
-        if (dcim.isDirectory()) {
-            for (String dir : dcim.list()) {
-                if (!dir.startsWith(".")) {
-                    dir = dcim.getAbsolutePath() + "/" + dir;
-                    NewPhotoObserver observer = new NewPhotoObserver(this, dir);
-                    sNewPhotoObservers.add(observer);
-                    observer.startWatching();
-                    CommonUtils.debug(TAG, "Started watching " + dir);
+        for (String path : externalMounts)
+        {
+            File dcim = new File(path, "DCIM");
+            if (dcim.isDirectory()) {
+                for (String dir : dcim.list()) {
+                    if (!dir.startsWith(".")) {
+                        dir = dcim.getAbsolutePath() + "/" + dir;
+                        if (alreadyObservingPaths.contains(dir))
+                        {
+                            CommonUtils.debug(TAG, "Directory " + dir
+                                    + " is already observing, skipping");
+                            continue;
+                        }
+                        alreadyObservingPaths.add(dir);
+                        NewPhotoObserver observer = new NewPhotoObserver(this, dir);
+                        sNewPhotoObservers.add(observer);
+                        observer.startWatching();
+                        CommonUtils.debug(TAG, "Started watching " + dir);
+                    }
                 }
+            } else
+            {
+                CommonUtils.debug(TAG, "Can't find camera storage folder in " + path);
             }
-        } else
-        {
-            CommonUtils.debug(TAG, "Can't find camera storage folder");
         }
     }
 
