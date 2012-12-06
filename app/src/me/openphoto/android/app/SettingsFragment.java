@@ -33,6 +33,8 @@ public class SettingsFragment extends PreferenceFragment
                 .setServerUrl(findPreference(getString(R.string.setting_account_server_key)));
         settingsCommon
                 .setSyncClearPreference(findPreference(getString(R.string.setting_sync_clear_key)));
+        settingsCommon
+                .setAutoUploadTagPreference(findPreference(getString(R.string.setting_autoupload_tag_key)));
     }
 
     @Override

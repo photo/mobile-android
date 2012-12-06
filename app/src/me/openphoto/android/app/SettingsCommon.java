@@ -31,6 +31,7 @@ public class SettingsCommon implements
     Preference mSyncClearPreference;
     PreferenceCategory loginCategory;
     Preference mServerUrl;
+    Preference autoUploadTagPreference;
 
     public SettingsCommon(Activity activity)
     {
@@ -134,6 +135,22 @@ public class SettingsCommon implements
         {
             loginCategory.removePreference(mFacebookLoginPreference);
         }
+    }
+
+    public void setAutoUploadTagPreference(
+            Preference autoUploadTagPreference)
+    {
+        this.autoUploadTagPreference = autoUploadTagPreference;
+        this.autoUploadTagPreference
+                .setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
+
+                    @Override
+                    public boolean onPreferenceChange(Preference preference, Object newValue) {
+                        SettingsCommon.this.autoUploadTagPreference.setSummary(newValue.toString());
+                        return true;
+                    }
+                });
+        autoUploadTagPreference.setSummary(Preferences.getAutoUploadTag(activity));
     }
 
     public PreferenceCategory getLoginCategory()
