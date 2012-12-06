@@ -34,7 +34,6 @@ import org.holoeverywhere.LayoutInflater;
 import org.holoeverywhere.app.Activity;
 
 import uk.co.senab.photoview.PhotoView;
-import uk.co.senab.photoview.PhotoViewAttacher.OnPhotoTapListener;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -666,10 +665,10 @@ public class PhotoDetailsActivity extends Activity implements TwitterLoadingCont
 
                 loadingControl.stopLoading();
 
-                imageView.setOnPhotoTapListener(new OnPhotoTapListener() {
+                imageView.setOnClickListener(new OnClickListener() {
 
                     @Override
-                    public void onPhotoTap(View view, float x, float y) {
+                    public void onClick(View v) {
                         adjustDetailsVisibility(!detailsVisible);
                     }
                 });
