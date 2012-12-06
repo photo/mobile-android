@@ -6,7 +6,14 @@ import me.openphoto.android.app.twitter.TwitterProvider;
 import me.openphoto.android.app.twitter.TwitterUtils;
 import me.openphoto.android.app.util.GuiUtils;
 import me.openphoto.android.app.util.LoadingControl;
+import me.openphoto.android.app.util.SimpleAsyncTaskEx;
 import me.openphoto.android.app.util.concurrent.AsyncTaskEx;
+
+import org.holoeverywhere.LayoutInflater;
+import org.holoeverywhere.app.Activity;
+import org.holoeverywhere.app.Dialog;
+import org.holoeverywhere.widget.ProgressBar;
+
 import twitter4j.StatusUpdate;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
@@ -18,10 +25,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-
-import org.holoeverywhere.LayoutInflater;
-import org.holoeverywhere.app.Activity;
-import org.holoeverywhere.app.Dialog;
 
 /**
  * @author Eugene Popovich
@@ -127,14 +130,28 @@ public class TwitterFragment extends CommonDialogFragment
     }
 
     private class ShowCurrentlyLoggedInUserTask extends
-            AsyncTaskEx<Void, Void, Boolean>
+            SimpleAsyncTaskEx
     {
         TextView loggedInAsText;
         String name;
         Context activity = getActivity();
 
-        ShowCurrentlyLoggedInUserTask(View view)
+        ShowCurrentlyLoggedInUserTask(final View view)
         {
+            super(new LoadingControl() {
+
+                ProgressBar progressBar = (ProgressBar) view.findViewById(R.id.progressBar);
+
+                @Override
+                public void stopLoading() {
+                    progressBar.setVisibility(View.GONE);
+                }
+
+                @Override
+                public void startLoading() {
+                    progressBar.setVisibility(View.VISIBLE);
+                }
+            });
             loggedInAsText = (TextView) view
                     .findViewById(R.id.loggedInAs);
         }
@@ -144,7 +161,6 @@ public class TwitterFragment extends CommonDialogFragment
         {
             super.onPreExecute();
             loggedInAsText.setText(null);
-            loadingControl.startLoading();
         }
 
         @Override
@@ -166,17 +182,11 @@ public class TwitterFragment extends CommonDialogFragment
         }
 
         @Override
-        protected void onPostExecute(Boolean result)
-        {
-            super.onPostExecute(result);
-            loadingControl.stopLoading();
-            if (result.booleanValue())
-            {
-                loggedInAsText.setText(String
-                        .format(
-                                activity.getString(R.string.share_twitter_logged_in_as),
-                                name));
-            }
+        protected void onSuccessPostExecute() {
+            loggedInAsText.setText(String
+                    .format(
+                            activity.getString(R.string.share_twitter_logged_in_as),
+                            name));
         }
     }
 

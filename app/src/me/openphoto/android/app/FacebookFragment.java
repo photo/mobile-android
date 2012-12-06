@@ -13,11 +13,13 @@ import me.openphoto.android.app.net.ReturnSizes;
 import me.openphoto.android.app.util.GuiUtils;
 import me.openphoto.android.app.util.LoadingControl;
 import me.openphoto.android.app.util.RunnableWithParameter;
+import me.openphoto.android.app.util.SimpleAsyncTaskEx;
 import me.openphoto.android.app.util.concurrent.AsyncTaskEx;
 
 import org.holoeverywhere.LayoutInflater;
 import org.holoeverywhere.app.Activity;
 import org.holoeverywhere.app.Dialog;
+import org.holoeverywhere.widget.ProgressBar;
 import org.json.JSONObject;
 
 import android.content.Context;
@@ -144,14 +146,28 @@ public class FacebookFragment extends CommonDialogFragment
     }
 
     private class ShowCurrentlyLoggedInUserTask extends
-            AsyncTaskEx<Void, Void, Boolean>
+            SimpleAsyncTaskEx
     {
         TextView loggedInAsText;
         String name;
         Context activity = getActivity();
 
-        ShowCurrentlyLoggedInUserTask(View view)
+        ShowCurrentlyLoggedInUserTask(final View view)
         {
+            super(new LoadingControl() {
+
+                ProgressBar progressBar = (ProgressBar) view.findViewById(R.id.progressBar);
+
+                @Override
+                public void stopLoading() {
+                    progressBar.setVisibility(View.GONE);
+                }
+
+                @Override
+                public void startLoading() {
+                    progressBar.setVisibility(View.VISIBLE);
+                }
+            });
             loggedInAsText = (TextView) view
                     .findViewById(R.id.loggedInAs);
         }
@@ -161,7 +177,6 @@ public class FacebookFragment extends CommonDialogFragment
         {
             super.onPreExecute();
             loggedInAsText.setText(null);
-            loadingControl.startLoading();
         }
 
         @Override
@@ -188,17 +203,11 @@ public class FacebookFragment extends CommonDialogFragment
         }
 
         @Override
-        protected void onPostExecute(Boolean result)
-        {
-            super.onPostExecute(result);
-            loadingControl.stopLoading();
-            if (result.booleanValue())
-            {
+        protected void onSuccessPostExecute() {
                 loggedInAsText.setText(String
                         .format(
                                 activity.getString(R.string.share_facebook_logged_in_as),
                                 name));
-            }
         }
     }
 
