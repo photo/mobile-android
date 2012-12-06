@@ -19,6 +19,11 @@ import me.openphoto.android.app.util.CommonUtils;
 import me.openphoto.android.app.util.GuiUtils;
 import me.openphoto.android.app.util.LoadingControl;
 import me.openphoto.android.app.util.concurrent.AsyncTaskEx;
+
+import org.holoeverywhere.LayoutInflater;
+import org.holoeverywhere.app.Activity;
+import org.holoeverywhere.widget.Switch;
+
 import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -39,9 +44,9 @@ import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.GridView;
 import android.widget.ImageView;
 
-import org.holoeverywhere.LayoutInflater;
-import org.holoeverywhere.app.Activity;
-import org.holoeverywhere.widget.Switch;
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuInflater;
+import com.actionbarsherlock.view.MenuItem;
 
 public class SyncImageSelectionFragment extends CommonFrargmentWithImageWorker implements
         Refreshable
@@ -66,6 +71,7 @@ public class SyncImageSelectionFragment extends CommonFrargmentWithImageWorker i
     public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
 
         mImageThumbSize = getResources().getDimensionPixelSize(
                 R.dimen.image_thumbnail_size);
@@ -88,6 +94,27 @@ public class SyncImageSelectionFragment extends CommonFrargmentWithImageWorker i
         }
         mAdapter = new CustomImageAdapter(getActivity(), (ImageResizer) mImageWorker,
                 selectionController);
+    }
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.sync_image_selection, menu);
+    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId())
+        {
+            case R.id.menu_select_all: {
+                selectAll();
+                return true;
+            }
+            case R.id.menu_select_none: {
+                selectNone();
+                return true;
+            }
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     @Override
@@ -243,6 +270,33 @@ public class SyncImageSelectionFragment extends CommonFrargmentWithImageWorker i
         if (isDataLoaded())
         {
             customImageWorkerAdapter.setFiltered(!isChecked);
+            mAdapter.notifyDataSetChanged();
+        }
+    }
+
+    protected void selectAll()
+    {
+        if (isDataLoaded())
+        {
+            for (int i = 0, size = customImageWorkerAdapter.getSize(); i < size; i++)
+            {
+                ImageData imageData = (ImageData) customImageWorkerAdapter.getItem(i);
+                if (imageData != null &&
+                        !selectionController.isSelected(imageData.id)
+                        && !customImageWorkerAdapter.isProcessedValue(imageData))
+                {
+                    selectionController.addToSelected(imageData.id);
+                }
+            }
+            mAdapter.notifyDataSetChanged();
+        }
+    }
+
+    protected void selectNone()
+    {
+        if (isDataLoaded())
+        {
+            selectionController.clearSelection();
             mAdapter.notifyDataSetChanged();
         }
     }

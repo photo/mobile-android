@@ -18,6 +18,9 @@ import me.openphoto.android.app.util.BackKeyControl;
 import me.openphoto.android.app.util.CommonUtils;
 import me.openphoto.android.app.util.GalleryOpenControl;
 import me.openphoto.android.app.util.LoadingControl;
+
+import org.holoeverywhere.app.Activity;
+
 import android.content.BroadcastReceiver;
 import android.content.Intent;
 import android.net.Uri;
@@ -27,7 +30,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.view.View;
 
-import org.holoeverywhere.app.Activity;
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.ActionBar.Tab;
 import com.actionbarsherlock.view.Menu;
@@ -54,7 +56,7 @@ public class MainActivity extends Activity
     private int mLoaders = 0;
 
     private List<BroadcastReceiver> receivers = new ArrayList<BroadcastReceiver>();
-
+    boolean instanceSaved = false;
     /**
      * Called when Main Activity is first loaded
      * 
@@ -64,6 +66,7 @@ public class MainActivity extends Activity
     public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
+        instanceSaved = false;
         requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
         mActionBar = getSupportActionBar();
         mActionBar.setDisplayUseLogoEnabled(true);
@@ -142,6 +145,7 @@ public class MainActivity extends Activity
     protected void onSaveInstanceState(Bundle outState)
     {
         super.onSaveInstanceState(outState);
+        instanceSaved = true;
         outState.putInt(ACTIVE_TAB, mActionBar.getSelectedNavigationIndex());
     }
 
@@ -161,7 +165,10 @@ public class MainActivity extends Activity
     protected void onResume()
     {
         super.onResume();
-        mActionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+        if (!instanceSaved)
+        {
+            mActionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+        }
         reinitMenu();
 
         if (!Preferences.isLoggedIn(this))
@@ -205,7 +212,14 @@ public class MainActivity extends Activity
 
     public void reinitMenu()
     {
-        invalidateOptionsMenu();
+        Handler handler = new Handler();
+        handler.post(new Runnable() {
+
+            @Override
+            public void run() {
+                invalidateOptionsMenu();
+            }
+        });
     }
 
     public void reinitMenu(Menu menu)
@@ -216,7 +230,6 @@ public class MainActivity extends Activity
         boolean refreshVisible = currentFragment != null
                 && currentFragment instanceof Refreshable
                 && mLoaders == 0;
-        menu.findItem(R.id.dummy_menu).setVisible(!refreshVisible);
         menu.findItem(R.id.menu_refresh).setVisible(refreshVisible);
     }
 

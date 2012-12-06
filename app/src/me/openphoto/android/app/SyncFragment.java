@@ -8,14 +8,15 @@ import me.openphoto.android.app.SyncUploadFragment.PreviousStepFlow;
 import me.openphoto.android.app.provider.UploadsUtils.UploadsClearedHandler;
 import me.openphoto.android.app.util.BackKeyControl;
 import me.openphoto.android.app.util.CommonUtils;
+
+import org.holoeverywhere.LayoutInflater;
+import org.holoeverywhere.app.Activity;
+
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.view.View;
 import android.view.ViewGroup;
-
-import org.holoeverywhere.LayoutInflater;
-import org.holoeverywhere.app.Activity;
 
 public class SyncFragment extends CommonFragment implements NextStepFlow,
         PreviousStepFlow, Refreshable, UploadsClearedHandler, BackKeyControl
@@ -99,9 +100,13 @@ public class SyncFragment extends CommonFragment implements NextStepFlow,
         View v = inflater.inflate(R.layout.fragment_sync_switch, container,
                 false);
         init(v);
-        // fix for the issue #216
-        instanceSaved = false;
         return v;
+    }
+    @Override
+    public void onResume() {
+        super.onResume();
+        // additional fix for the issue #216
+        instanceSaved = false;
     }
 
     @Override
