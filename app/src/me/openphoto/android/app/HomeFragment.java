@@ -1,4 +1,3 @@
-
 package me.openphoto.android.app;
 
 import java.util.Date;
@@ -477,7 +476,18 @@ public class HomeFragment extends CommonFrargmentWithImageWorker implements Refr
 
             }
         }
-
+        @Override
+        public LoadResponse loadItems(
+                int page)
+        {
+            if (CommonUtils.checkLoggedInAndOnline())
+            {
+                return super.loadItems(page);
+            } else
+            {
+                return new LoadResponse(null, false);
+            }
+        }
         @Override
         protected void onStartLoading()
         {
