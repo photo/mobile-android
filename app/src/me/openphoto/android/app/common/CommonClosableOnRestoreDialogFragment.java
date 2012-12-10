@@ -1,10 +1,8 @@
-package me.openphoto.android.app.ui.widget;
-
-import org.holoeverywhere.app.DialogFragment;
+package me.openphoto.android.app.common;
 
 import android.os.Bundle;
 
-public class ClosableOnRestoreDialogFragment extends DialogFragment {
+public class CommonClosableOnRestoreDialogFragment extends CommonDialogFragment {
     boolean isRestore = false;
 
     @Override
@@ -18,6 +16,7 @@ public class ClosableOnRestoreDialogFragment extends DialogFragment {
         super.onResume();
         if (isRestore)
         {
+            trackLifecycleEvent("dismiss on restore");
             dismiss();
         }
     }

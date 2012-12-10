@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.MalformedURLException;
 
+import me.openphoto.android.app.common.CommonStyledDialogFragment;
 import me.openphoto.android.app.facebook.FacebookProvider;
 import me.openphoto.android.app.facebook.FacebookUtils;
 import me.openphoto.android.app.model.Photo;
@@ -14,6 +15,7 @@ import me.openphoto.android.app.util.GuiUtils;
 import me.openphoto.android.app.util.LoadingControl;
 import me.openphoto.android.app.util.RunnableWithParameter;
 import me.openphoto.android.app.util.SimpleAsyncTaskEx;
+import me.openphoto.android.app.util.TrackerUtils;
 import me.openphoto.android.app.util.concurrent.AsyncTaskEx;
 
 import org.holoeverywhere.LayoutInflater;
@@ -36,7 +38,7 @@ import com.facebook.android.Facebook;
 /**
  * @author Eugene Popovich
  */
-public class FacebookFragment extends CommonDialogFragment
+public class FacebookFragment extends CommonStyledDialogFragment
 {
     public static final String TAG = FacebookFragment.class.getSimpleName();
     static final String PHOTO = "FacebookFragmentPhoto";
@@ -98,6 +100,7 @@ public class FacebookFragment extends CommonDialogFragment
                 @Override
                 public void onClick(View v)
                 {
+                    TrackerUtils.trackButtonClickEvent("logoutBtn", FacebookFragment.this);
                     performFacebookLogout();
                 }
 
@@ -108,6 +111,7 @@ public class FacebookFragment extends CommonDialogFragment
                 @Override
                 public void onClick(View v)
                 {
+                    TrackerUtils.trackButtonClickEvent("sendBtn", FacebookFragment.this);
                     postPhoto();
                 }
             });
@@ -289,6 +293,8 @@ public class FacebookFragment extends CommonDialogFragment
                 .getString(R.string.share_facebook_default_description));
         bparams.putString("picture", photo.getUrl(thumbSize.toString()));
         bparams.putString("link", photo.getUrl(Photo.URL));
+        TrackerUtils.trackSocial("facebook", "feed",
+                message + " | " + photo.getUrl(Photo.URL));
         facebook.request("feed", bparams, "POST");
     }
 

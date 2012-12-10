@@ -4,6 +4,7 @@ package me.openphoto.android.app;
 import java.io.File;
 import java.util.List;
 
+import me.openphoto.android.app.common.CommonFragment;
 import me.openphoto.android.app.facebook.FacebookUtils;
 import me.openphoto.android.app.net.UploadMetaData;
 import me.openphoto.android.app.provider.UploadsProviderAccessor;
@@ -12,6 +13,7 @@ import me.openphoto.android.app.twitter.TwitterUtils;
 import me.openphoto.android.app.util.GuiUtils;
 import me.openphoto.android.app.util.LoadingControl;
 import me.openphoto.android.app.util.ProgressDialogLoadingControl;
+import me.openphoto.android.app.util.TrackerUtils;
 import me.openphoto.android.app.util.concurrent.AsyncTaskEx;
 
 import org.holoeverywhere.LayoutInflater;
@@ -31,6 +33,7 @@ import android.widget.EditText;
 
 public class SyncUploadFragment extends CommonFragment
 {
+    static final String TAG = SyncUploadFragment.class.getSimpleName();
     PreviousStepFlow previousStepFlow;
     private LoadingControl loadingControl;
     EditText editTitle;
@@ -80,6 +83,7 @@ public class SyncUploadFragment extends CommonFragment
             @Override
             public void onClick(View v)
             {
+                TrackerUtils.trackButtonClickEvent("previousBtn", SyncUploadFragment.this);
                 if (previousStepFlow != null)
                 {
                     previousStepFlow.activatePreviousStep();
@@ -92,6 +96,7 @@ public class SyncUploadFragment extends CommonFragment
             @Override
             public void onClick(View v)
             {
+                TrackerUtils.trackButtonClickEvent("uploadBtn", SyncUploadFragment.this);
                 v.setEnabled(false);
                 uploadSelectedFiles(true, true);
             }

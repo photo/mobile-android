@@ -1,11 +1,13 @@
 
 package me.openphoto.android.app;
 
+import me.openphoto.android.app.common.CommonActivity;
+import me.openphoto.android.app.common.CommonFragment;
 import me.openphoto.android.app.oauth.OAuthUtils;
 import me.openphoto.android.app.util.LoadingControl;
+import me.openphoto.android.app.util.TrackerUtils;
 
 import org.holoeverywhere.LayoutInflater;
-import org.holoeverywhere.app.Activity;
 import org.holoeverywhere.app.ProgressDialog;
 
 import android.content.Intent;
@@ -23,7 +25,7 @@ import android.widget.EditText;
  * 
  * @author Patrick Boos
  */
-public class SetupActivity extends Activity implements
+public class SetupActivity extends CommonActivity implements
         LoadingControl
 {
     public static final String TAG = SetupActivity.class.getSimpleName();
@@ -42,7 +44,7 @@ public class SetupActivity extends Activity implements
         {
             getSupportFragmentManager().beginTransaction()
                     .add(android.R.id.content,
-                            new UiFragment()).commit();
+                            new SetupUiFragment()).commit();
         }
     }
 
@@ -87,7 +89,7 @@ public class SetupActivity extends Activity implements
         }
     }
 
-    public static class UiFragment extends CommonFragment implements
+    public static class SetupUiFragment extends CommonFragment implements
             OnClickListener
     {
         @Override
@@ -108,6 +110,7 @@ public class SetupActivity extends Activity implements
             switch (v.getId())
             {
                 case R.id.button_login:
+                    TrackerUtils.trackButtonClickEvent("button_login", SetupUiFragment.this);
                     String server = ((EditText) getView().findViewById(
                             R.id.edit_server))
                             .getText().toString();

@@ -3,13 +3,19 @@ package me.openphoto.android.app;
 
 import me.openphoto.android.app.bitmapfun.util.ImageCache;
 import me.openphoto.android.app.bitmapfun.util.ImageFetcher;
+import me.openphoto.android.app.common.CommonFrargmentWithImageWorker;
 import me.openphoto.android.app.model.Photo;
 import me.openphoto.android.app.net.ReturnSizes;
 import me.openphoto.android.app.ui.adapter.PhotosEndlessAdapter;
 import me.openphoto.android.app.util.CommonUtils;
 import me.openphoto.android.app.util.ImageFlowUtils;
 import me.openphoto.android.app.util.LoadingControl;
+import me.openphoto.android.app.util.TrackerUtils;
 import me.openphoto.android.app.util.Utils;
+
+import org.holoeverywhere.LayoutInflater;
+import org.holoeverywhere.app.Activity;
+
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -20,10 +26,6 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.ListView;
-
-import org.holoeverywhere.LayoutInflater;
-import org.holoeverywhere.app.Activity;
-import me.openphoto.android.app.R;
 
 public class GalleryFragment extends CommonFrargmentWithImageWorker implements Refreshable
 {
@@ -267,6 +269,7 @@ public class GalleryFragment extends CommonFrargmentWithImageWorker implements R
 
                         @Override
                         public void onClick(View v) {
+                            TrackerUtils.trackButtonClickEvent("image", GalleryFragment.this);
                             Intent intent = new Intent(getActivity(), PhotoDetailsActivity.class);
                             intent.putExtra(PhotoDetailsActivity.EXTRA_ADAPTER_PHOTOS,
                                     new PhotosEndlessAdapter.ParametersHolder(mAdapter, value));

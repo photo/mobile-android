@@ -7,7 +7,7 @@ import java.util.Stack;
 
 import me.openphoto.android.app.bitmapfun.util.ImageCache;
 import me.openphoto.android.app.bitmapfun.util.ImageFetcher;
-import me.openphoto.android.app.bitmapfun.util.ImageWorker;
+import me.openphoto.android.app.common.CommonFrargmentWithImageWorker;
 import me.openphoto.android.app.facebook.FacebookBaseDialogListener;
 import me.openphoto.android.app.facebook.FacebookUtils;
 import me.openphoto.android.app.model.Photo;
@@ -22,6 +22,7 @@ import me.openphoto.android.app.util.CommonUtils;
 import me.openphoto.android.app.util.GuiUtils;
 import me.openphoto.android.app.util.LoadingControl;
 import me.openphoto.android.app.util.ProgressDialogLoadingControl;
+import me.openphoto.android.app.util.TrackerUtils;
 
 import org.holoeverywhere.LayoutInflater;
 import org.holoeverywhere.app.Activity;
@@ -36,7 +37,6 @@ import android.view.ContextMenu.ContextMenuInfo;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.AbsListView.RecyclerListener;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -135,21 +135,6 @@ public class HomeFragment extends CommonFrargmentWithImageWorker implements Refr
         mAdapter = new NewestPhotosAdapter(getActivity());
         list = (ListView) view.findViewById(R.id.list_newest_photos);
         list.setAdapter(mAdapter);
-        list.setRecyclerListener(new RecyclerListener() {
-
-            @Override
-            public void onMovedToScrapHeap(View view) {
-                CommonUtils.debug(TAG, "Moved to scrap: " + view);
-                ImageView photoView =
-                        (ImageView) view.findViewById(R.id.newest_image);
-                Photo object = (Photo) photoView.getTag();
-                if (object != null)
-                {
-                    ImageWorker.cancelPotentialWork(object, photoView);
-                    // mImageWorker.recycleOldBitmap(object, photoView);
-                }
-            }
-        });
     }
 
     @Override
@@ -282,6 +267,7 @@ public class HomeFragment extends CommonFrargmentWithImageWorker implements Refr
 
                 @Override
                 public void onClick(View v) {
+                    TrackerUtils.trackButtonClickEvent("newest_image", HomeFragment.this);
                     Intent intent = new Intent(getActivity(), PhotoDetailsActivity.class);
                     intent.putExtra(PhotoDetailsActivity.EXTRA_ADAPTER_PHOTOS,
                             new PhotosEndlessAdapter.ParametersHolder(mAdapter, photo));
@@ -394,6 +380,8 @@ public class HomeFragment extends CommonFrargmentWithImageWorker implements Refr
                     @Override
                     public void onClick(View view)
                     {
+                        TrackerUtils.trackButtonClickEvent("button_location_share",
+                                HomeFragment.this);
                         Photo photo = (Photo) view.getTag();
                         Uri uri = Uri.parse("geo:" + photo.getLatitude() + ","
                                 + photo.getLongitude());
@@ -420,6 +408,7 @@ public class HomeFragment extends CommonFrargmentWithImageWorker implements Refr
                 @Override
                 public void onClick(View v)
                 {
+                    TrackerUtils.trackButtonClickEvent("share_button", HomeFragment.this);
                     activePhoto = photo;
                     if (photo.isPrivate())
                     {
@@ -476,6 +465,19 @@ public class HomeFragment extends CommonFrargmentWithImageWorker implements Refr
                 unusedTagButtons.add(tagBtn);
                 tagsView.removeViewAt(i);
 
+            }
+        }
+
+        @Override
+        public LoadResponse loadItems(
+                int page)
+        {
+            if (CommonUtils.checkLoggedInAndOnline())
+            {
+                return super.loadItems(page);
+            } else
+            {
+                return new LoadResponse(null, false);
             }
         }
 

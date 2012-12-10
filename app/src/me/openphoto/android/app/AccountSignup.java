@@ -1,6 +1,7 @@
 
 package me.openphoto.android.app;
 
+import me.openphoto.android.app.common.CommonActivity;
 import me.openphoto.android.app.net.account.AccountOpenPhotoResponse;
 import me.openphoto.android.app.net.account.FakeAccountOpenPhotoApi;
 import me.openphoto.android.app.net.account.IAccountOpenPhotoApi;
@@ -8,22 +9,23 @@ import me.openphoto.android.app.util.CommonUtils;
 import me.openphoto.android.app.util.GuiUtils;
 import me.openphoto.android.app.util.LoadingControl;
 import me.openphoto.android.app.util.LoginUtils;
+import me.openphoto.android.app.util.TrackerUtils;
 import me.openphoto.android.app.util.concurrent.AsyncTaskEx;
+
+import org.holoeverywhere.app.Activity;
+import org.holoeverywhere.app.ProgressDialog;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
 
-import org.holoeverywhere.app.ProgressDialog;
-import org.holoeverywhere.app.Activity;
-
 /**
  * Class to create new accounts on OpenPhoto
  * 
  * @author Patrick Santana <patrick@openphoto.me>
  */
-public class AccountSignup extends Activity
+public class AccountSignup extends CommonActivity
         implements LoadingControl
 {
 
@@ -40,6 +42,7 @@ public class AccountSignup extends Activity
     public void createAccountButtonAction(View view)
     {
         CommonUtils.debug(TAG, "Create an account");
+        TrackerUtils.trackButtonClickEvent("create_account_button", AccountSignup.this);
 
         EditText editText = (EditText) findViewById(R.id.edit_username);
         String username = editText.getText().toString();

@@ -1,12 +1,14 @@
 
 package me.openphoto.android.app;
 
+import me.openphoto.android.app.common.CommonStyledDialogFragment;
 import me.openphoto.android.app.model.Photo;
 import me.openphoto.android.app.twitter.TwitterProvider;
 import me.openphoto.android.app.twitter.TwitterUtils;
 import me.openphoto.android.app.util.GuiUtils;
 import me.openphoto.android.app.util.LoadingControl;
 import me.openphoto.android.app.util.SimpleAsyncTaskEx;
+import me.openphoto.android.app.util.TrackerUtils;
 import me.openphoto.android.app.util.concurrent.AsyncTaskEx;
 
 import org.holoeverywhere.LayoutInflater;
@@ -29,7 +31,7 @@ import android.widget.TextView;
 /**
  * @author Eugene Popovich
  */
-public class TwitterFragment extends CommonDialogFragment
+public class TwitterFragment extends CommonStyledDialogFragment
 {
     public static final String TAG = TwitterFragment.class.getSimpleName();
     static final String TWEET = "TwitterFragmentTweet";
@@ -89,6 +91,7 @@ public class TwitterFragment extends CommonDialogFragment
                 @Override
                 public void onClick(View v)
                 {
+                    TrackerUtils.trackButtonClickEvent("logoutBtn", TwitterFragment.this);
                     performTwitterLogout();
                 }
 
@@ -99,6 +102,7 @@ public class TwitterFragment extends CommonDialogFragment
                 @Override
                 public void onClick(View v)
                 {
+                    TrackerUtils.trackButtonClickEvent("sendBtn", TwitterFragment.this);
                     postTweet();
                 }
             });
@@ -251,6 +255,8 @@ public class TwitterFragment extends CommonDialogFragment
             throws TwitterException
     {
         StatusUpdate update = new StatusUpdate(message);
+        TrackerUtils.trackSocial("twitter", "status update",
+                message);
         twitter.updateStatus(update);
     }
 

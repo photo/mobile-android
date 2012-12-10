@@ -11,11 +11,31 @@ import android.util.Log;
 
 public class CommonUtils
 {
-    public static void debug(String TAG, String message)
+    public static void debug(String TAG, String message, Object... params)
     {
-        if (BuildConfig.DEBUG)
+        try
         {
-            Log.d(TAG, message);
+            if (BuildConfig.DEBUG)
+            {
+                Log.d(TAG, String.format(message, params));
+            }
+        } catch (Exception ex)
+        {
+            GuiUtils.noAlertError(TAG, ex);
+        }
+    }
+
+    public static void verbose(String TAG, String message, Object... params)
+    {
+        try
+        {
+            if (BuildConfig.DEBUG)
+            {
+                Log.v(TAG, String.format(message, params));
+            }
+        } catch (Exception ex)
+        {
+            GuiUtils.noAlertError(TAG, ex);
         }
     }
 

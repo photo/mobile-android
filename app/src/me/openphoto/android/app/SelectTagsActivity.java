@@ -6,11 +6,17 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import me.openphoto.android.app.common.CommonActivity;
+import me.openphoto.android.app.common.CommonFragment;
 import me.openphoto.android.app.model.Tag;
 import me.openphoto.android.app.model.utils.TagUtils;
 import me.openphoto.android.app.ui.adapter.MultiSelectTagsAdapter;
 import me.openphoto.android.app.util.LoadingControl;
+import me.openphoto.android.app.util.TrackerUtils;
 import me.openphoto.android.app.util.compare.ToStringComparator;
+
+import org.holoeverywhere.LayoutInflater;
+
 import android.content.Context;
 import android.content.Intent;
 import android.database.DataSetObserver;
@@ -23,11 +29,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ListView;
 
-import org.holoeverywhere.LayoutInflater;
-import org.holoeverywhere.app.Activity;
-import me.openphoto.android.app.R;
-
-public class SelectTagsActivity extends Activity {
+public class SelectTagsActivity extends CommonActivity {
 
     public static final String TAG = SelectTagsActivity.class.getSimpleName();
     public static final String SELECTED_TAGS = "SELECTED_TAGS";
@@ -38,12 +40,12 @@ public class SelectTagsActivity extends Activity {
         if (savedInstanceState == null)
         {
             getSupportFragmentManager().beginTransaction()
-                    .replace(android.R.id.content, new UiFragment())
+                    .replace(android.R.id.content, new SelectTagsUiFragment())
                     .commit();
         }
     }
 
-    public static class UiFragment extends CommonFragment
+    public static class SelectTagsUiFragment extends CommonFragment
             implements LoadingControl
     {
         private int mLoaders = 0;
@@ -79,6 +81,7 @@ public class SelectTagsActivity extends Activity {
 
                 @Override
                 public void onClick(View v) {
+                    TrackerUtils.trackButtonClickEvent("finishBtn", SelectTagsUiFragment.this);
                     finishedClicked(v);
                 }
             });
@@ -150,7 +153,7 @@ public class SelectTagsActivity extends Activity {
             };
 
             public TagsAdapter(Set<String> alreadySelectedTags) {
-                super(UiFragment.this);
+                super(SelectTagsUiFragment.this);
                 if (alreadySelectedTags != null)
                 {
                     checkedTags.addAll(alreadySelectedTags);

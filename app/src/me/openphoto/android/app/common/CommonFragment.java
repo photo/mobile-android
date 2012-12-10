@@ -1,10 +1,11 @@
 
-package me.openphoto.android.app;
+package me.openphoto.android.app.common;
 
 import java.io.Serializable;
 
 import me.openphoto.android.app.util.CommonUtils;
 import me.openphoto.android.app.util.RunnableWithResult;
+import me.openphoto.android.app.util.TrackerUtils;
 
 import org.holoeverywhere.LayoutInflater;
 import org.holoeverywhere.app.Activity;
@@ -25,30 +26,37 @@ import android.view.ViewGroup;
 public class CommonFragment extends Fragment
 {
     static final String TAG = CommonFragment.class.getSimpleName();
+    static final String CATEGORY = "Fragment Lifecycle";
+
+    void trackLifecycleEvent(String event)
+    {
+        CommonUtils.debug(TAG, event + ": " + getClass().getSimpleName());
+        TrackerUtils.trackEvent(CATEGORY, event, getClass().getSimpleName());
+    }
 
     public CommonFragment()
     {
-        CommonUtils.debug(TAG, "Constructor: " + getClass().getSimpleName());
+        trackLifecycleEvent("Constructor");
     }
     @Override
     public void onAttach(Activity activity)
     {
         super.onAttach(activity);
-        CommonUtils.debug(TAG, "onAttach: " + getClass().getSimpleName());
+        trackLifecycleEvent("onAttach");
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-        CommonUtils.debug(TAG, "onCreate: " + getClass().getSimpleName());
+        trackLifecycleEvent("onCreate");
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState)
     {
-        CommonUtils.debug(TAG, "onCreateView: " + getClass().getSimpleName());
+        trackLifecycleEvent("onCreateView");
         return super.onCreateView(inflater, container, savedInstanceState);
     }
 
@@ -56,76 +64,77 @@ public class CommonFragment extends Fragment
     public void onDetach()
     {
         super.onDetach();
-        CommonUtils.debug(TAG, "onDetach: " + getClass().getSimpleName());
+        trackLifecycleEvent("onDetach");
     }
 
     @Override
     public void onDestroy()
     {
         super.onDestroy();
-        CommonUtils.debug(TAG, "onDestroy: " + getClass().getSimpleName());
+        trackLifecycleEvent("onDestroy");
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState)
     {
         super.onActivityCreated(savedInstanceState);
-        CommonUtils.debug(TAG, "onActivityCreated: " + getClass().getSimpleName());
+        trackLifecycleEvent("onActivityCreated");
     }
 
     @Override
     public void onDestroyView()
     {
         super.onDestroyView();
-        CommonUtils.debug(TAG, "onDestroyView: " + getClass().getSimpleName());
+        trackLifecycleEvent("onDestroyView");
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState)
     {
         super.onSaveInstanceState(outState);
-        CommonUtils.debug(TAG, "onSaveInstanceState: " + getClass().getSimpleName());
+        trackLifecycleEvent("onSaveInstanceState");
     }
 
     @Override
     public void onResume()
     {
         super.onResume();
-        CommonUtils.debug(TAG, "onResume: " + getClass().getSimpleName());
+        trackLifecycleEvent("onResume");
     }
 
     @Override
     public void onPause()
     {
         super.onPause();
-        CommonUtils.debug(TAG, "onPause: " + getClass().getSimpleName());
+        trackLifecycleEvent("onPause");
     }
 
     @Override
     public void onViewCreated(View view)
     {
         super.onViewCreated(view);
-        CommonUtils.debug(TAG, "onViewCreated: " + getClass().getSimpleName());
+        trackLifecycleEvent("onViewCreated");
     }
 
     @Override
     public void onStart()
     {
         super.onStart();
-        CommonUtils.debug(TAG, "onStart: " + getClass().getSimpleName());
+        trackLifecycleEvent("onStart");
+        TrackerUtils.trackView(this);
     }
 
     @Override
     public void onStop()
     {
         super.onStop();
-        CommonUtils.debug(TAG, "onStop: " + getClass().getSimpleName());
+        trackLifecycleEvent("onStop");
     }
 
     @Override
     public void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        CommonUtils.debug(TAG, "onActivityResult: " + getClass().getSimpleName());
+        trackLifecycleEvent("onActivityResult");
         Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
 
@@ -139,7 +148,7 @@ public class CommonFragment extends Fragment
 
     public void onActivityResultDelayed(int requestCode, int resultCode, Intent data)
     {
-        CommonUtils.debug(TAG, "onActivityResultDelayed: " + getClass().getSimpleName());
+        trackLifecycleEvent("onActivityResultDelayed");
     }
 
     public static interface FragmentAccessor<T extends CommonFragment> extends

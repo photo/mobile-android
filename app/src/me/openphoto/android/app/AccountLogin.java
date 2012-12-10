@@ -1,6 +1,7 @@
 
 package me.openphoto.android.app;
 
+import me.openphoto.android.app.common.CommonActivity;
 import me.openphoto.android.app.net.account.AccountOpenPhotoResponse;
 import me.openphoto.android.app.net.account.FakeAccountOpenPhotoApi;
 import me.openphoto.android.app.net.account.IAccountOpenPhotoApi;
@@ -8,6 +9,7 @@ import me.openphoto.android.app.util.CommonUtils;
 import me.openphoto.android.app.util.GuiUtils;
 import me.openphoto.android.app.util.LoadingControl;
 import me.openphoto.android.app.util.LoginUtils;
+import me.openphoto.android.app.util.TrackerUtils;
 import me.openphoto.android.app.util.concurrent.AsyncTaskEx;
 
 import org.holoeverywhere.app.Activity;
@@ -18,7 +20,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
 
-public class AccountLogin extends Activity implements
+public class AccountLogin extends CommonActivity implements
         LoadingControl
 {
     private static final String TAG = AccountLogin.class.getSimpleName();
@@ -34,6 +36,7 @@ public class AccountLogin extends Activity implements
     public void loginButtonAction(View view)
     {
         CommonUtils.debug(TAG, "Login the user");
+        TrackerUtils.trackButtonClickEvent("login_button", AccountLogin.this);
 
         EditText editText = (EditText) findViewById(R.id.edit_email);
         String email = editText.getText().toString();

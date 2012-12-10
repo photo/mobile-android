@@ -3,6 +3,7 @@ package me.openphoto.android.app;
 
 import me.openphoto.android.app.bitmapfun.util.ImageCache;
 import me.openphoto.android.app.bitmapfun.util.ImageFetcher;
+import me.openphoto.android.app.common.CommonFrargmentWithImageWorker;
 import me.openphoto.android.app.model.Album;
 import me.openphoto.android.app.net.AlbumsResponse;
 import me.openphoto.android.app.net.IOpenPhotoApi;
@@ -12,6 +13,11 @@ import me.openphoto.android.app.util.CommonUtils;
 import me.openphoto.android.app.util.GalleryOpenControl;
 import me.openphoto.android.app.util.GuiUtils;
 import me.openphoto.android.app.util.LoadingControl;
+import me.openphoto.android.app.util.TrackerUtils;
+
+import org.holoeverywhere.LayoutInflater;
+import org.holoeverywhere.app.Activity;
+
 import android.content.Context;
 import android.os.Bundle;
 import android.view.View;
@@ -21,9 +27,6 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
-
-import org.holoeverywhere.LayoutInflater;
-import org.holoeverywhere.app.Activity;
 
 /**
  * The fragment which displays albums list
@@ -78,6 +81,7 @@ public class AlbumsFragment extends CommonFrargmentWithImageWorker implements
     public void onItemClick(AdapterView<?> adapterView, View view,
             int position, long id)
     {
+        TrackerUtils.trackButtonClickEvent("album_item", AlbumsFragment.this);
         Album album = (Album) mAdapter.getItem(position);
         galleryOpenControl.openGallery(null, album.getId());
     }

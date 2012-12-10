@@ -2,6 +2,7 @@
 package me.openphoto.android.app.ui.widget;
 
 import me.openphoto.android.app.R;
+import me.openphoto.android.app.common.CommonClosableOnRestoreDialogFragment;
 import android.content.DialogInterface;
 import android.os.Bundle;
 
@@ -13,7 +14,7 @@ import org.holoeverywhere.app.Dialog;
  * 
  * @author Eugene Popovich
  */
-public class YesNoDialogFragment extends ClosableOnRestoreDialogFragment
+public class YesNoDialogFragment extends CommonClosableOnRestoreDialogFragment
 {
     public static interface YesNoButtonPressedHandler
     {

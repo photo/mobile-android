@@ -1,8 +1,7 @@
 
 package me.openphoto.android.app;
 
-import org.holoeverywhere.preference.PreferenceActivity;
-
+import me.openphoto.android.app.common.CommonPreferenceActivity;
 import android.os.Bundle;
 
 /**
@@ -12,7 +11,7 @@ import android.os.Bundle;
  * @author Patrick Boos
  * @author Eugene Popovich
  */
-public class SettingsActivity extends PreferenceActivity
+public class SettingsActivity extends CommonPreferenceActivity
 {
     /**
      * Called when Settings Activity is first loaded

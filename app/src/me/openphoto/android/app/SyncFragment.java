@@ -5,6 +5,7 @@ import java.util.List;
 
 import me.openphoto.android.app.SyncImageSelectionFragment.NextStepFlow;
 import me.openphoto.android.app.SyncUploadFragment.PreviousStepFlow;
+import me.openphoto.android.app.common.CommonFragment;
 import me.openphoto.android.app.provider.UploadsUtils.UploadsClearedHandler;
 import me.openphoto.android.app.util.BackKeyControl;
 import me.openphoto.android.app.util.CommonUtils;
@@ -21,6 +22,7 @@ import android.view.ViewGroup;
 public class SyncFragment extends CommonFragment implements NextStepFlow,
         PreviousStepFlow, Refreshable, UploadsClearedHandler, BackKeyControl
 {
+    static final String TAG = SyncFragment.class.getSimpleName();
     static final String FIRST_STEP_TAG = "firstStepSync";
     static final String SECOND_STEP_TAG = "secondStepSync";
     static final String ACTIVE_STEP = "SyncFragmentActiveStep";

@@ -10,6 +10,7 @@ import me.openphoto.android.app.provider.UploadsUtils;
 import me.openphoto.android.app.util.GuiUtils;
 import me.openphoto.android.app.util.ProgressDialogLoadingControl;
 import me.openphoto.android.app.util.SimpleAsyncTaskEx;
+import me.openphoto.android.app.util.TrackerUtils;
 
 import org.holoeverywhere.app.Activity;
 import org.holoeverywhere.app.AlertDialog;
@@ -62,6 +63,8 @@ public class SettingsCommon implements
                                             DialogInterface dialog,
                                             int whichButton)
                                     {
+                                        TrackerUtils.trackButtonClickEvent("setting_logout",
+                                                activity);
                                         Preferences
                                                 .logout(activity);
                                         new ClearCachesTask().execute();
@@ -146,11 +149,44 @@ public class SettingsCommon implements
 
                     @Override
                     public boolean onPreferenceChange(Preference preference, Object newValue) {
+                        TrackerUtils.trackPreferenceChangeEvent("settings_auto_upload_tag",
+                                activity);
                         SettingsCommon.this.autoUploadTagPreference.setSummary(newValue.toString());
                         return true;
                     }
                 });
         autoUploadTagPreference.setSummary(Preferences.getAutoUploadTag(activity));
+    }
+
+    public void setWiFiOnlyUploadPreference(
+            Preference wiFiOnlyUploadPreference)
+    {
+        wiFiOnlyUploadPreference
+                .setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
+
+                    @Override
+                    public boolean onPreferenceChange(Preference preference, Object newValue) {
+                        TrackerUtils.trackPreferenceChangeEvent("settings_wifi_only_upload_on",
+                                newValue,
+                                activity);
+                        return true;
+                    }
+                });
+    }
+
+    public void setAutoUploadPreference(
+            Preference autoUploadPreference)
+    {
+        autoUploadPreference
+                .setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
+
+                    @Override
+                    public boolean onPreferenceChange(Preference preference, Object newValue) {
+                        TrackerUtils.trackPreferenceChangeEvent("settings_autoupload_on", newValue,
+                                activity);
+                        return true;
+                    }
+                });
     }
 
     public PreferenceCategory getLoginCategory()
@@ -215,6 +251,8 @@ public class SettingsCommon implements
                                                     DialogInterface dialog,
                                                     int whichButton)
                                             {
+                                                TrackerUtils.trackButtonClickEvent(
+                                                        "setting_sync_clear", activity);
                                                 UploadsUtils.clearUploads();
                                             }
                                         })

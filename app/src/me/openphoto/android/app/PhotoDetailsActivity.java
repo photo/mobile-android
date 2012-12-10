@@ -9,6 +9,8 @@ import me.openphoto.android.app.TwitterFragment.TwitterLoadingControlAccessor;
 import me.openphoto.android.app.bitmapfun.util.ImageCache;
 import me.openphoto.android.app.bitmapfun.util.ImageFetcher;
 import me.openphoto.android.app.bitmapfun.util.ImageWorker;
+import me.openphoto.android.app.common.CommonActivity;
+import me.openphoto.android.app.common.CommonFrargmentWithImageWorker;
 import me.openphoto.android.app.facebook.FacebookProvider;
 import me.openphoto.android.app.facebook.FacebookUtils;
 import me.openphoto.android.app.model.Photo;
@@ -29,11 +31,13 @@ import me.openphoto.android.app.util.GuiUtils;
 import me.openphoto.android.app.util.LoadingControl;
 import me.openphoto.android.app.util.ProgressDialogLoadingControl;
 import me.openphoto.android.app.util.RunnableWithParameter;
+import me.openphoto.android.app.util.TrackerUtils;
 
 import org.holoeverywhere.LayoutInflater;
 import org.holoeverywhere.app.Activity;
 
 import uk.co.senab.photoview.PhotoView;
+import uk.co.senab.photoview.PhotoViewAttacher.OnViewTapListener;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -70,7 +74,7 @@ import com.actionbarsherlock.view.Window;
  *          03.10.2012 <br>
  *          - added initial support for album photos filter
  */
-public class PhotoDetailsActivity extends Activity implements TwitterLoadingControlAccessor,
+public class PhotoDetailsActivity extends CommonActivity implements TwitterLoadingControlAccessor,
         FacebookLoadingControlAccessor {
 
     public static final String EXTRA_PHOTO = "EXTRA_PHOTO";
@@ -88,14 +92,14 @@ public class PhotoDetailsActivity extends Activity implements TwitterLoadingCont
         if (savedInstanceState == null)
         {
             getSupportFragmentManager().beginTransaction()
-                    .replace(android.R.id.content, new UiFragment())
+                    .replace(android.R.id.content, new PhotoDetailsUiFragment())
                     .commit();
         }
     }
 
-    UiFragment getContentFragment()
+    PhotoDetailsUiFragment getContentFragment()
     {
-        return (UiFragment) getSupportFragmentManager().findFragmentById(android.R.id.content);
+        return (PhotoDetailsUiFragment) getSupportFragmentManager().findFragmentById(android.R.id.content);
     }
 
     @Override
@@ -107,15 +111,17 @@ public class PhotoDetailsActivity extends Activity implements TwitterLoadingCont
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        UiFragment fragment = getContentFragment();
+        PhotoDetailsUiFragment fragment = getContentFragment();
         fragment.detailsVisible = true;
         boolean result = true;
         switch (item.getItemId())
         {
             case R.id.menu_delete:
+                TrackerUtils.trackOptionsMenuClickEvent("menu_delete", PhotoDetailsActivity.this);
                 fragment.deleteCurrentPhoto();
                 break;
             case R.id.menu_share:
+                TrackerUtils.trackOptionsMenuClickEvent("menu_share", PhotoDetailsActivity.this);
                 Photo photo = fragment.getActivePhoto();
                 boolean isPrivate = photo == null || photo.isPrivate();
                 item.getSubMenu().setGroupVisible(R.id.share_group, !isPrivate);
@@ -126,12 +132,15 @@ public class PhotoDetailsActivity extends Activity implements TwitterLoadingCont
                 }
                 break;
             case R.id.menu_share_email:
+                TrackerUtils.trackOptionsMenuClickEvent("menu_share_email", PhotoDetailsActivity.this);
                 fragment.shareActivePhotoViaEMail();
                 break;
             case R.id.menu_share_twitter:
+                TrackerUtils.trackOptionsMenuClickEvent("menu_share_twitter", PhotoDetailsActivity.this);
                 fragment.shareActivePhotoViaTwitter();
                 break;
             case R.id.menu_share_facebook:
+                TrackerUtils.trackOptionsMenuClickEvent("menu_share_facebook", PhotoDetailsActivity.this);
                 fragment.shareActivePhotoViaFacebook();
                 break;
             default:
@@ -188,16 +197,16 @@ public class PhotoDetailsActivity extends Activity implements TwitterLoadingCont
         }
     }
 
-    public static class UiFragment extends CommonFrargmentWithImageWorker
+    public static class PhotoDetailsUiFragment extends CommonFrargmentWithImageWorker
     {
         private static final String TAG = PhotoDetailsActivity.class.getSimpleName();
 
-        static UiFragment currentInstance;
-        static FragmentAccessor<UiFragment> currentInstanceAccessor = new FragmentAccessor<UiFragment>() {
+        static PhotoDetailsUiFragment currentInstance;
+        static FragmentAccessor<PhotoDetailsUiFragment> currentInstanceAccessor = new FragmentAccessor<PhotoDetailsUiFragment>() {
             private static final long serialVersionUID = 1L;
 
             @Override
-            public UiFragment run() {
+            public PhotoDetailsUiFragment run() {
                 return currentInstance;
             }
         };
@@ -665,13 +674,21 @@ public class PhotoDetailsActivity extends Activity implements TwitterLoadingCont
 
                 loadingControl.stopLoading();
 
-                imageView.setOnClickListener(new OnClickListener() {
+                imageView.setOnViewTapListener(new OnViewTapListener() {
 
                     @Override
-                    public void onClick(View v) {
+                    public void onViewTap(View view, float x, float y) {
+                        TrackerUtils.trackButtonClickEvent("image", PhotoDetailsUiFragment.this);
                         adjustDetailsVisibility(!detailsVisible);
                     }
                 });
+                // imageView.setOnClickListener(new OnClickListener() {
+                //
+                // @Override
+                // public void onClick(View v) {
+                // adjustDetailsVisibility(!detailsVisible);
+                // }
+                // });
 
                 ((ViewPager) collection).addView(view, 0);
 
@@ -767,6 +784,7 @@ public class PhotoDetailsActivity extends Activity implements TwitterLoadingCont
 
                     @Override
                     public void onClick(View v) {
+                        TrackerUtils.trackButtonClickEvent("thumb", PhotoDetailsUiFragment.this);
                         CommonUtils.debug(TAG, "Thumb clicked.");
                         detailsVisible = true;
                         int count = 0;

@@ -7,6 +7,7 @@ import java.util.List;
 import me.openphoto.android.app.FacebookFragment.FacebookLoadingControlAccessor;
 import me.openphoto.android.app.SyncFragment.SyncHandler;
 import me.openphoto.android.app.TwitterFragment.TwitterLoadingControlAccessor;
+import me.openphoto.android.app.common.CommonActivity;
 import me.openphoto.android.app.facebook.FacebookProvider;
 import me.openphoto.android.app.provider.UploadsUtils;
 import me.openphoto.android.app.provider.UploadsUtils.UploadsClearedHandler;
@@ -18,9 +19,7 @@ import me.openphoto.android.app.util.BackKeyControl;
 import me.openphoto.android.app.util.CommonUtils;
 import me.openphoto.android.app.util.GalleryOpenControl;
 import me.openphoto.android.app.util.LoadingControl;
-
-import org.holoeverywhere.app.Activity;
-
+import me.openphoto.android.app.util.TrackerUtils;
 import android.content.BroadcastReceiver;
 import android.content.Intent;
 import android.net.Uri;
@@ -37,7 +36,7 @@ import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.view.Window;
 
-public class MainActivity extends Activity
+public class MainActivity extends CommonActivity
         implements LoadingControl, GalleryOpenControl, SyncHandler,
         UploadsClearedHandler, PhotoUploadedHandler, TwitterLoadingControlAccessor,
         FacebookLoadingControlAccessor
@@ -254,14 +253,17 @@ public class MainActivity extends Activity
         switch (item.getItemId())
         {
             case R.id.menu_settings: {
+                TrackerUtils.trackOptionsMenuClickEvent("menu_settings", MainActivity.this);
                 Intent i = new Intent(this, SettingsActivity.class);
                 startActivity(i);
                 return true;
             }
             case R.id.menu_refresh:
+                TrackerUtils.trackOptionsMenuClickEvent("menu_refresh", MainActivity.this);
                 ((Refreshable) getCurrentFragment()).refresh();
                 return true;
             case R.id.menu_camera: {
+                TrackerUtils.trackOptionsMenuClickEvent("menu_camera", MainActivity.this);
                 Intent i = new Intent(this, UploadActivity.class);
                 startActivity(i);
                 return true;
@@ -361,6 +363,7 @@ public class MainActivity extends Activity
         public void onTabSelected(Tab tab, FragmentTransaction ft)
         {
             CommonUtils.debug(TAG, "onTabSelected");
+            TrackerUtils.trackTabSelectedEvent(mTag, MainActivity.this);
             if (mFragment == null)
             {
                 mFragment = Fragment.instantiate(MainActivity.this,
@@ -388,6 +391,7 @@ public class MainActivity extends Activity
         @Override
         public void onTabReselected(Tab tab, FragmentTransaction ft)
         {
+            TrackerUtils.trackTabReselectedEvent(mTag, MainActivity.this);
             CommonUtils.debug(TAG, "onTabReselected");
             if (runOnReselect != null)
             {

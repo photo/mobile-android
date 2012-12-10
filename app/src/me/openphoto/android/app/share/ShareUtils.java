@@ -2,10 +2,10 @@ package me.openphoto.android.app.share;
 
 import java.io.Serializable;
 
-import me.openphoto.android.app.CommonFragment;
 import me.openphoto.android.app.FacebookFragment;
 import me.openphoto.android.app.R;
 import me.openphoto.android.app.TwitterFragment;
+import me.openphoto.android.app.common.CommonFragment;
 import me.openphoto.android.app.model.Photo;
 import me.openphoto.android.app.util.GuiUtils;
 import me.openphoto.android.app.util.RunnableWithResult;

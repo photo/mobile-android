@@ -1,15 +1,16 @@
 
 package me.openphoto.android.app;
 
+import me.openphoto.android.app.common.CommonPreferenceFragment;
+
 import org.holoeverywhere.preference.PreferenceCategory;
-import org.holoeverywhere.preference.PreferenceFragment;
 
 import android.os.Bundle;
 
 /**
  * @author Eugene Popovich
  */
-public class SettingsFragment extends PreferenceFragment
+public class SettingsFragment extends CommonPreferenceFragment
 {
     private SettingsCommon settingsCommon;
 
@@ -35,6 +36,10 @@ public class SettingsFragment extends PreferenceFragment
                 .setSyncClearPreference(findPreference(getString(R.string.setting_sync_clear_key)));
         settingsCommon
                 .setAutoUploadTagPreference(findPreference(getString(R.string.setting_autoupload_tag_key)));
+        settingsCommon
+                .setAutoUploadPreference(findPreference(getString(R.string.setting_autoupload_on_key)));
+        settingsCommon
+                .setWiFiOnlyUploadPreference(findPreference(getString(R.string.setting_wifi_only_upload_on_key)));
     }
 
     @Override

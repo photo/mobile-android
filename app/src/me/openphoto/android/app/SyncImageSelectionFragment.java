@@ -12,12 +12,13 @@ import java.util.TreeSet;
 import me.openphoto.android.app.bitmapfun.util.ImageCache;
 import me.openphoto.android.app.bitmapfun.util.ImageFileSystemFetcher;
 import me.openphoto.android.app.bitmapfun.util.ImageResizer;
-import me.openphoto.android.app.bitmapfun.util.ImageWorker;
 import me.openphoto.android.app.bitmapfun.util.ImageWorker.ImageWorkerAdapter;
+import me.openphoto.android.app.common.CommonFrargmentWithImageWorker;
 import me.openphoto.android.app.provider.UploadsProviderAccessor;
 import me.openphoto.android.app.util.CommonUtils;
 import me.openphoto.android.app.util.GuiUtils;
 import me.openphoto.android.app.util.LoadingControl;
+import me.openphoto.android.app.util.TrackerUtils;
 import me.openphoto.android.app.util.concurrent.AsyncTaskEx;
 
 import org.holoeverywhere.LayoutInflater;
@@ -36,7 +37,6 @@ import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.view.ViewTreeObserver;
 import android.widget.AbsListView;
-import android.widget.AbsListView.RecyclerListener;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.CompoundButton;
@@ -105,10 +105,14 @@ public class SyncImageSelectionFragment extends CommonFrargmentWithImageWorker i
         switch (item.getItemId())
         {
             case R.id.menu_select_all: {
+                TrackerUtils
+                        .trackOptionsMenuClickEvent("menu_select_all", SyncImageSelectionFragment.this);
                 selectAll();
                 return true;
             }
             case R.id.menu_select_none: {
+                TrackerUtils.trackOptionsMenuClickEvent("menu_select_none",
+                        SyncImageSelectionFragment.this);
                 selectNone();
                 return true;
             }
@@ -190,33 +194,13 @@ public class SyncImageSelectionFragment extends CommonFrargmentWithImageWorker i
                         }
                     }
                 });
-        photosGrid.setRecyclerListener(new RecyclerListener() {
-
-            @Override
-            public void onMovedToScrapHeap(View view) {
-                CommonUtils.debug(TAG, "Moved to scrap: " + view);
-                cancelPotentialWorkForImageView(view);
-            }
-
-            public void cancelPotentialWorkForImageView(View view) {
-                ImageView photoView = (ImageView) view.findViewById(R.id.image);
-                if (photoView != null)
-                {
-                    ImageData object = (ImageData) photoView.getTag();
-                    if (object != null)
-                    {
-                        CommonUtils.debug(TAG, "Canceling potential work from the scrap view");
-                        ImageWorker.cancelPotentialWork(object, photoView);
-                    }
-                }
-            }
-        });
         Button nextStepBtn = (Button) v.findViewById(R.id.nextBtn);
         nextStepBtn.setOnClickListener(new OnClickListener()
         {
             @Override
             public void onClick(View v)
             {
+                TrackerUtils.trackButtonClickEvent("nextBtn", SyncImageSelectionFragment.this);
                 if (isDataLoaded())
                 {
                     if (selectionController.hasSelected())
@@ -567,6 +551,8 @@ public class SyncImageSelectionFragment extends CommonFrargmentWithImageWorker i
                     @Override
                     public void onClick(View v)
                     {
+                        TrackerUtils.trackButtonClickEvent("imageContainer",
+                                SyncImageSelectionFragment.this);
                         boolean selected = selectionController.isSelected(id);
                         if (selected)
                         {

@@ -45,7 +45,7 @@ public class Utils {
     public static boolean isOnline(
             Context context)
     {
-        boolean result = false;
+        boolean result = true;
         try
         {
             ConnectivityManager cm =

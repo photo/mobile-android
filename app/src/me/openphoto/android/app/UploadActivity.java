@@ -7,19 +7,21 @@ import java.io.Serializable;
 import java.util.Date;
 
 import me.openphoto.android.app.bitmapfun.util.ImageResizer;
+import me.openphoto.android.app.common.CommonClosableOnRestoreDialogFragment;
+import me.openphoto.android.app.common.CommonActivity;
+import me.openphoto.android.app.common.CommonFragment;
 import me.openphoto.android.app.feather.FeatherFragment;
 import me.openphoto.android.app.net.UploadMetaData;
 import me.openphoto.android.app.provider.PhotoUpload;
 import me.openphoto.android.app.provider.UploadsProviderAccessor;
 import me.openphoto.android.app.service.UploaderService;
-import me.openphoto.android.app.ui.widget.ClosableOnRestoreDialogFragment;
 import me.openphoto.android.app.util.CommonUtils;
 import me.openphoto.android.app.util.FileUtils;
 import me.openphoto.android.app.util.GuiUtils;
 import me.openphoto.android.app.util.ImageUtils;
+import me.openphoto.android.app.util.TrackerUtils;
 
 import org.holoeverywhere.LayoutInflater;
-import org.holoeverywhere.app.Activity;
 import org.holoeverywhere.app.AlertDialog;
 import org.holoeverywhere.app.Dialog;
 import org.holoeverywhere.app.Fragment;
@@ -44,7 +46,7 @@ import android.widget.ImageView;
  * 
  * @author Patrick Boos
  */
-public class UploadActivity extends Activity {
+public class UploadActivity extends CommonActivity {
     public static final String TAG = UploadActivity.class.getSimpleName();
 
     public static final String EXTRA_PENDING_UPLOAD_URI = "pending_upload_uri";
@@ -60,12 +62,12 @@ public class UploadActivity extends Activity {
         if (savedInstanceState == null)
         {
             getSupportFragmentManager().beginTransaction()
-                    .replace(android.R.id.content, new UiFragment())
+                    .replace(android.R.id.content, new UploadUiFragment())
                     .commit();
         }
     }
 
-    public static class UiFragment extends CommonFragment
+    public static class UploadUiFragment extends CommonFragment
             implements OnClickListener
     {
         static final String UPLOAD_IMAGE_FILE = "UploadActivityFile";
@@ -77,6 +79,7 @@ public class UploadActivity extends Activity {
         private Switch mPrivateToggle;
         FeatherFragment featherFragment;
         EditText tagsText;
+        private SelectImageDialogFragment imageSelectionFragment;
 
         @Override
         public void onCreate(Bundle savedInstanceState) {
@@ -193,7 +196,6 @@ public class UploadActivity extends Activity {
                 }
                 return;
             }
-
             switch (requestCode) {
                 case REQUEST_TAGS:
                     if (resultCode == RESULT_OK && data.getExtras() != null) {
@@ -222,6 +224,14 @@ public class UploadActivity extends Activity {
                     }
                 default:
                     break;
+            }
+            // this is necessary because onActivityResultDelayed is called
+            // after the onCreateView method so the dialog may appear there if
+            // view were recreated and here need to be closed
+            if (imageSelectionFragment != null && !imageSelectionFragment.isDetached())
+            {
+                imageSelectionFragment.dismissAllowingStateLoss();
+                imageSelectionFragment = null;
             }
         }
 
@@ -261,51 +271,54 @@ public class UploadActivity extends Activity {
 
         void showSelectionDialog()
         {
-            SelectImageDialogFragment imageSelectionFragment =
-                    SelectImageDialogFragment
-                            .newInstance(new SelectImageDialogFragment.SelectedActionHandler() {
+            if (imageSelectionFragment != null)
+            {
+                return;
+            }
+            imageSelectionFragment = SelectImageDialogFragment
+                    .newInstance(new SelectImageDialogFragment.SelectedActionHandler() {
 
-                                private static final long serialVersionUID = 1L;
+                        private static final long serialVersionUID = 1L;
 
-                                @Override
-                                public void cameraOptionSelected() {
-                                    try {
-                                        mUploadImageFile = getNextFileName("upload_");
-                                        // this is a hack for some
-                                        // devices taken from here
-                                        // http://thanksmister.com/2012/03/16/android_null_data_camera_intent/
-                                        ContentValues values = new ContentValues();
-                                        values.put(MediaStore.Images.Media.TITLE,
-                                                mUploadImageFile.getName());
-                                        values.put(MediaStore.Images.Media.DATA,
-                                                mUploadImageFile.getAbsolutePath());
+                        @Override
+                        public void cameraOptionSelected() {
+                            try {
+                                mUploadImageFile = getNextFileName("upload_");
+                                // this is a hack for some
+                                // devices taken from here
+                                // http://thanksmister.com/2012/03/16/android_null_data_camera_intent/
+                                ContentValues values = new ContentValues();
+                                values.put(MediaStore.Images.Media.TITLE,
+                                        mUploadImageFile.getName());
+                                values.put(MediaStore.Images.Media.DATA,
+                                        mUploadImageFile.getAbsolutePath());
 
-                                        Intent intent = new Intent(
-                                                MediaStore.ACTION_IMAGE_CAPTURE);
+                                Intent intent = new Intent(
+                                        MediaStore.ACTION_IMAGE_CAPTURE);
 
-                                        fileUri = getActivity()
-                                                .getContentResolver()
-                                                .insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-                                                        values);
-                                        intent.putExtra(MediaStore.EXTRA_OUTPUT, fileUri);
+                                fileUri = getActivity()
+                                        .getContentResolver()
+                                        .insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                                                values);
+                                intent.putExtra(MediaStore.EXTRA_OUTPUT, fileUri);
 
-                                        startActivityForResult(intent, REQUEST_CAMERA);
+                                startActivityForResult(intent, REQUEST_CAMERA);
 
-                                    } catch (IOException e) {
-                                        GuiUtils.error(
-                                                TAG,
-                                                R.string.errorCanNotFindExternalStorageForTakingPicture,
-                                                e);
-                                    }
-                                }
+                            } catch (IOException e) {
+                                GuiUtils.error(
+                                        TAG,
+                                        R.string.errorCanNotFindExternalStorageForTakingPicture,
+                                        e);
+                            }
+                        }
 
-                                @Override
-                                public void galleryOptionSelected() {
-                                    Intent intent = new Intent(Intent.ACTION_PICK);
-                                    intent.setType("image/*");
-                                    startActivityForResult(intent, REQUEST_GALLERY);
-                                }
-                            });
+                        @Override
+                        public void galleryOptionSelected() {
+                            Intent intent = new Intent(Intent.ACTION_PICK);
+                            intent.setType("image/*");
+                            startActivityForResult(intent, REQUEST_GALLERY);
+                        }
+                    });
             imageSelectionFragment.show(getSupportActivity());
         }
 
@@ -323,11 +336,13 @@ public class UploadActivity extends Activity {
         public void onClick(View v) {
             switch (v.getId()) {
                 case R.id.select_tags:
+                    TrackerUtils.trackButtonClickEvent("select_tags", getActivity());
                     Intent i = new Intent(getActivity(), SelectTagsActivity.class);
                     i.putExtra(SelectTagsActivity.SELECTED_TAGS, tagsText.getText().toString());
                     startActivityForResult(i, REQUEST_TAGS);
                     break;
                 case R.id.button_upload:
+                    TrackerUtils.trackButtonClickEvent("button_upload", getActivity());
                     if (mUploadImageFile != null) {
                         startUpload(mUploadImageFile);
                     } else
@@ -337,10 +352,13 @@ public class UploadActivity extends Activity {
                     }
                     break;
                 case R.id.button_edit:
+                    TrackerUtils.trackButtonClickEvent("button_edit", getActivity());
+
                     getFeatherFragment().startFeather(mUploadImageFile,
                             ACTION_REQUEST_FEATHER);
                     break;
                 case R.id.image_upload:
+                    TrackerUtils.trackButtonClickEvent("image_upload", getActivity());
                     if (mUploadImageFile != null)
                     {
                         Intent intent = new Intent();
@@ -386,7 +404,7 @@ public class UploadActivity extends Activity {
 
             @Override
             public File getNextFileName(String prefix) throws IOException {
-                return UiFragment.this.getNextFileName(prefix);
+                return UploadUiFragment.this.getNextFileName(prefix);
             }
 
             @Override
@@ -419,12 +437,12 @@ public class UploadActivity extends Activity {
 
             @Override
             public Fragment getCallingFragment() {
-                return UiFragment.this;
+                return UploadUiFragment.this;
             }
 
         }
 
-        public static class SelectImageDialogFragment extends ClosableOnRestoreDialogFragment
+        public static class SelectImageDialogFragment extends CommonClosableOnRestoreDialogFragment
         {
             public static interface SelectedActionHandler extends Serializable
             {
@@ -467,9 +485,13 @@ public class UploadActivity extends Activity {
                         }
                         switch (item) {
                             case 0:
+                                TrackerUtils.trackContextMenuClickEvent("menu_camera",
+                                        SelectImageDialogFragment.this);
                                 handler.cameraOptionSelected();
                                 return;
                             case 1:
+                                TrackerUtils.trackContextMenuClickEvent("menu_gallery",
+                                        SelectImageDialogFragment.this);
                                 handler.galleryOptionSelected();
                                 return;
                         }

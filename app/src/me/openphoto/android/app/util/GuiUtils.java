@@ -34,7 +34,9 @@ public class GuiUtils
     {
         mHandler = new Handler();
         mUiThread = Thread.currentThread();
+        TrackerUtils.setupTrackerUncaughtExceptionHandler();
     }
+
 
     public static final void runOnUiThread(Runnable action)
     {
@@ -144,6 +146,8 @@ public class GuiUtils
         }
         BugSenseHandler.sendExceptionMap(extraData, ex);
         BugSenseHandler.flush(OpenPhotoApplication.getContext());
+
+        TrackerUtils.trackThrowable(ex);
         Log.e(TAG, message, ex);
         if (alertMessage)
         {
