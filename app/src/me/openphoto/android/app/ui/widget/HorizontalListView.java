@@ -32,6 +32,10 @@ import java.util.LinkedList;
 import java.util.Queue;
 
 import me.openphoto.android.app.util.CommonUtils;
+
+import org.holoeverywhere.widget.AdapterView;
+import org.holoeverywhere.widget.Scroller;
+
 import android.content.Context;
 import android.database.DataSetObserver;
 import android.graphics.Rect;
@@ -41,9 +45,6 @@ import android.view.GestureDetector.OnGestureListener;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ListAdapter;
-
-import org.holoeverywhere.widget.AdapterView;
-import org.holoeverywhere.widget.Scroller;
 
 public class HorizontalListView extends AdapterView<ListAdapter> {
 
@@ -151,11 +152,9 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
     private void addAndMeasureChild(final View child, int viewPos) {
         LayoutParams params = child.getLayoutParams();
         if (params == null) {
-            CommonUtils.debug(TAG, "Layout params are null. Setting new one.");
             params = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
         } else
         {
-            CommonUtils.debug(TAG, "Layout params are not null.");
         }
 
         addViewInLayout(child, viewPos, params, true);
@@ -165,6 +164,7 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
 
     @Override
     protected synchronized void onLayout(boolean changed, int left, int top, int right, int bottom) {
+        CommonUtils.verbose(TAG, "onLayout");
         super.onLayout(changed, left, top, right, bottom);
 
         if (mAdapter == null) {
@@ -172,6 +172,7 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
         }
 
         if (mDataChanged) {
+            CommonUtils.verbose(TAG, "data changed");
             int oldCurrentX = mCurrentX;
             initView();
             removeAllViewsInLayout();
@@ -182,18 +183,23 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
         if (mScroller.computeScrollOffset()) {
             int scrollx = mScroller.getCurrX();
             mNextX = scrollx;
+            CommonUtils.verbose(TAG, "Computed scroll offset. Current x = %1$d", mNextX);
         }
 
         if (mNextX <= 0) {
+            CommonUtils.verbose(TAG, "mNextX <= 0: %1$d", mNextX);
             mNextX = 0;
             mScroller.forceFinished(true);
         }
         if (mNextX >= mMaxX) {
+            CommonUtils.verbose(TAG, "mNextX >= max: %1$d : %2$d", mNextX, mMaxX);
             mNextX = mMaxX;
             mScroller.forceFinished(true);
         }
 
+        CommonUtils.verbose(TAG, "mCurrentX = %1$d; ; mNextX = %2$d", mCurrentX, mNextX);
         int dx = mCurrentX - mNextX;
+        CommonUtils.verbose(TAG, "dx = %1$d", dx);
 
         removeNonVisibleItems(dx);
         fillList(dx);
@@ -202,6 +208,7 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
         mCurrentX = mNextX;
 
         if (!mScroller.isFinished()) {
+            CommonUtils.verbose(TAG, "Scroller is not finished");
             post(new Runnable() {
                 @Override
                 public void run() {
@@ -213,7 +220,8 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
     }
 
     private void fillList(final int dx) {
-        int edge = 0;
+        CommonUtils.verbose(TAG, "fillList: %1$d; getChildCount = %2$d", dx, getChildCount());
+        int edge = mDisplayOffset;
         View child = getChildAt(getChildCount() - 1);
         if (child != null) {
             edge = child.getRight();
@@ -230,14 +238,23 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
     }
 
     private void fillListRight(int rightEdge, final int dx) {
+        CommonUtils.verbose(TAG, "fillListRight: rightEdge = %1$d; dx = %2$d", rightEdge, dx);
         while (rightEdge + dx < getWidth() && mRightViewIndex < mAdapter.getCount()) {
 
             View child = mAdapter.getView(mRightViewIndex, mRemovedViewQueue.poll(), this);
             addAndMeasureChild(child, -1);
             rightEdge += child.getMeasuredWidth();
+            CommonUtils.verbose(TAG,
+                    "rightEdge = %1$d; childWidth = %2$d; rightViewIndex = %3$d"
+                            + "; count = %4$d; prognosed max width = %5$d",
+                     rightEdge, child.getMeasuredWidth(), mRightViewIndex,
+                     mAdapter.getCount(), child.getMeasuredWidth() * mAdapter.getCount() - getWidth());
 
             if (mRightViewIndex == mAdapter.getCount() - 1) {
                 mMaxX = mCurrentX + rightEdge - getWidth();
+                CommonUtils.verbose(TAG, "Setting maxX to %1$d", mMaxX);
+                CommonUtils.verbose(TAG, "mCurrentX = %1$d; rightEdge = %2$d; width = %3$d",
+                        mCurrentX, rightEdge, getWidth());
             }
 
             if (mMaxX < 0) {
@@ -259,6 +276,7 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
     }
 
     private void removeNonVisibleItems(final int dx) {
+        CommonUtils.verbose(TAG, "removeNonVisibleItems: %1$d", dx);
         View child = getChildAt(0);
         while (child != null && child.getRight() + dx <= 0) {
             mDisplayOffset += child.getMeasuredWidth();
@@ -276,9 +294,11 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
             mRightViewIndex--;
             child = getChildAt(getChildCount() - 1);
         }
+        CommonUtils.verbose(TAG, "mDisplayOffset = %1$d", mDisplayOffset);
     }
 
     private void positionItems(final int dx) {
+        CommonUtils.verbose(TAG, "positionItems: dx = %1$d", dx);
         if (getChildCount() > 0) {
             mDisplayOffset += dx;
             int left = mDisplayOffset;
@@ -292,6 +312,7 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
     }
 
     public synchronized void scrollTo(int x) {
+        CommonUtils.verbose(TAG, "Requested scroll from x = %1$d to x = %2$d", mNextX, x);
         mScroller.startScroll(mNextX, 0, x - mNextX, 0);
         requestLayout();
     }
