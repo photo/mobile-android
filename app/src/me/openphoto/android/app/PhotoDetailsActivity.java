@@ -35,6 +35,8 @@ import me.openphoto.android.app.util.TrackerUtils;
 
 import org.holoeverywhere.LayoutInflater;
 import org.holoeverywhere.app.Activity;
+import org.holoeverywhere.widget.AdapterView;
+import org.holoeverywhere.widget.AdapterView.OnItemClickListener;
 
 import uk.co.senab.photoview.PhotoView;
 import uk.co.senab.photoview.PhotoViewAttacher.OnViewTapListener;
@@ -49,7 +51,6 @@ import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.text.TextUtils;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.WindowManager.LayoutParams;
 import android.view.animation.Animation;
@@ -346,8 +347,7 @@ public class PhotoDetailsActivity extends CommonActivity implements TwitterLoadi
 
         public void initImageViewers(View v, int position) {
             mAdapter = new PhotoDetailPagerAdapter(thumbnailsAdapter);
-            thumbnailsList = (HorizontalListView) v.findViewById(R.id.thumbs);
-            thumbnailsList.setAdapter(thumbnailsAdapter);
+            initThumbnailsList(v);
             mViewPager = (PhotoViewHackyViewPager) v.findViewById(R.id.photos);
             mViewPager.setAdapter(mAdapter);
 
@@ -364,6 +364,21 @@ public class PhotoDetailsActivity extends CommonActivity implements TwitterLoadi
                     }
                 }
             }, 4000);
+        }
+
+        public void initThumbnailsList(View v) {
+            thumbnailsList = (HorizontalListView) v.findViewById(R.id.thumbs);
+            thumbnailsList.setAdapter(thumbnailsAdapter);
+            thumbnailsList.setOnItemClickListener(new OnItemClickListener() {
+
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    TrackerUtils.trackButtonClickEvent("thumb", PhotoDetailsUiFragment.this);
+                    CommonUtils.debug(TAG, "Thumb clicked.");
+                    detailsVisible = true;
+                    mViewPager.setCurrentItem(position);
+                }
+            });
         }
 
         @Override
@@ -780,25 +795,6 @@ public class PhotoDetailsActivity extends CommonActivity implements TwitterLoadi
                 }
 
                 final ImageView imageView = (ImageView) view.findViewById(R.id.image);
-                imageView.setOnClickListener(new OnClickListener() {
-
-                    @Override
-                    public void onClick(View v) {
-                        TrackerUtils.trackButtonClickEvent("thumb", PhotoDetailsUiFragment.this);
-                        CommonUtils.debug(TAG, "Thumb clicked.");
-                        detailsVisible = true;
-                        int count = 0;
-                        for (Photo p : mAdapter.mAdapter.getItems())
-                        {
-                            if (p.getId().equals(photo.getId()))
-                            {
-                                mViewPager.setCurrentItem(count);
-                                break;
-                            }
-                            count++;
-                        }
-                    }
-                });
                 View border = view.findViewById(R.id.background_container);
                 border.setTag(photo);
                 invalidateSelection(view);
