@@ -21,6 +21,7 @@ import me.openphoto.android.app.util.GalleryOpenControl;
 import me.openphoto.android.app.util.LoadingControl;
 import me.openphoto.android.app.util.TrackerUtils;
 import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -28,6 +29,7 @@ import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.ActionBar.Tab;
@@ -384,6 +386,13 @@ public class MainActivity extends CommonActivity
             if (mFragment != null)
             {
                 ft.detach(mFragment);
+                View target = mFragment.getView().findFocus();
+
+                if (target != null)
+                {
+                    InputMethodManager mgr = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                    mgr.hideSoftInputFromWindow(target.getWindowToken(), 0);
+                }
             }
 
         }
