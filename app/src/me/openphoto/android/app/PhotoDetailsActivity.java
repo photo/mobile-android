@@ -23,6 +23,7 @@ import me.openphoto.android.app.ui.adapter.PhotosEndlessAdapter;
 import me.openphoto.android.app.ui.adapter.PhotosEndlessAdapter.DetailsReturnSizes;
 import me.openphoto.android.app.ui.adapter.PhotosEndlessAdapter.ParametersHolder;
 import me.openphoto.android.app.ui.widget.HorizontalListView;
+import me.openphoto.android.app.ui.widget.HorizontalListView.OnDownListener;
 import me.openphoto.android.app.ui.widget.PhotoViewHackyViewPager;
 import me.openphoto.android.app.ui.widget.YesNoDialogFragment;
 import me.openphoto.android.app.ui.widget.YesNoDialogFragment.YesNoButtonPressedHandler;
@@ -50,6 +51,7 @@ import android.os.Parcelable;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.text.TextUtils;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager.LayoutParams;
@@ -377,6 +379,13 @@ public class PhotoDetailsActivity extends CommonActivity implements TwitterLoadi
                     CommonUtils.debug(TAG, "Thumb clicked.");
                     detailsVisible = true;
                     mViewPager.setCurrentItem(position);
+                }
+            });
+            thumbnailsList.setOnDownListener(new OnDownListener() {
+                @Override
+                public void onDown(MotionEvent e) {
+                    CommonUtils.debug(TAG, "Thumbnails List onDown");
+                    detailsVisible = true;
                 }
             });
         }

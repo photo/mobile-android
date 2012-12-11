@@ -64,6 +64,7 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
     private OnItemSelectedListener mOnItemSelected;
     private OnItemClickListener mOnItemClicked;
     private OnItemLongClickListener mOnItemLongClicked;
+    private OnDownListener mOnDownListener;
     private boolean mDataChanged = false;
     private Runnable mRunnable = new Runnable() {
         @Override
@@ -101,6 +102,10 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
     @Override
     public void setOnItemLongClickListener(AdapterView.OnItemLongClickListener listener) {
         mOnItemLongClicked = listener;
+    }
+
+    public void setOnDownListener(OnDownListener listener) {
+        mOnDownListener = listener;
     }
 
     private DataSetObserver mDataObserver = new DataSetObserver() {
@@ -164,6 +169,10 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
         }
 
         addViewInLayout(child, viewPos, params, true);
+        measureChild(child);
+    }
+
+    private void measureChild(final View child) {
         child.measure(MeasureSpec.makeMeasureSpec(getWidth(), MeasureSpec.AT_MOST),
                 MeasureSpec.makeMeasureSpec(getHeight(), MeasureSpec.AT_MOST));
     }
@@ -240,14 +249,16 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
     private void fillListRight(int rightEdge, final int dx) {
         CommonUtils.verbose(TAG, "fillListRight: rightEdge = %1$d; dx = %2$d", rightEdge, dx);
         int totalWidth = 0;
+        Queue<View> viewQueue = new LinkedList<View>();
         while (rightEdge + dx < getWidth() && mRightViewIndex < mAdapter.getCount()) {
             CommonUtils.verbose(TAG, "mRemovedViewQueue.size = %1$d", mRemovedViewQueue.size());
             View child = mAdapter.getView(mRightViewIndex, mRemovedViewQueue.poll(), this);
-            addAndMeasureChild(child, -1);
+            measureChild(child);
+            viewQueue.offer(child);
             int childWidth = child.getMeasuredWidth();
             rightEdge += childWidth;
             totalWidth += childWidth;
-            totalWidth = removeNonVisibleItemsFromLeft(totalWidth, getWidth());
+            totalWidth = removeNonVisibleItemsFromLeft(totalWidth, getWidth(), viewQueue);
             CommonUtils.verbose(TAG,
                     "rightEdge = %1$d; childWidth = %2$d; rightViewIndex = %3$d"
                             + "; count = %4$d; prognosed max width = %5$d",
@@ -266,22 +277,34 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
             }
             mRightViewIndex++;
         }
+        View child;
+        while ((child = viewQueue.poll()) != null)
+        {
+            addAndMeasureChild(child, -1);
+        }
 
     }
 
     private void fillListLeft(int leftEdge, final int dx) {
         CommonUtils.verbose(TAG, "fillListLeft: leftEdge = %1$d; dx = %2$d", leftEdge, dx);
         int totalWidth = 0;
+        Queue<View> viewQueue = new LinkedList<View>();
         while (leftEdge + dx > 0 && mLeftViewIndex >= 0) {
             CommonUtils.verbose(TAG, "mRemovedViewQueue.size = %1$d", mRemovedViewQueue.size());
             View child = mAdapter.getView(mLeftViewIndex, mRemovedViewQueue.poll(), this);
-            addAndMeasureChild(child, 0);
+            measureChild(child);
+            viewQueue.offer(child);
             int childWidth = child.getMeasuredWidth();
             leftEdge -= childWidth;
             totalWidth += childWidth;
-            totalWidth = removeNonVisibleItemsFromRight(totalWidth, getWidth());
+            totalWidth = removeNonVisibleItemsFromRight(totalWidth, getWidth(), viewQueue);
             mLeftViewIndex--;
             mDisplayOffset -= child.getMeasuredWidth();
+        }
+        View child;
+        while ((child = viewQueue.poll()) != null)
+        {
+            addAndMeasureChild(child, 0);
         }
     }
 
@@ -309,12 +332,13 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
 
     private int removeNonVisibleItemsFromLeft(
             int totalWidth,
-            int minRestWidth) {
+            int minRestWidth,
+            Queue<View> viewQueue) {
         CommonUtils.verbose(TAG,
                 "removeNonVisibleItemsFromLeft: totalWidth = %1$d, minRestWidth = %2$d",
                 totalWidth, minRestWidth);
         CommonUtils.verbose(TAG, "mLeftViewIndex = %1$d", mLeftViewIndex);
-        View child = getChildAt(0);
+        View child = viewQueue.peek();
         while (child != null) {
             int childWidth = child.getMeasuredWidth();
             CommonUtils
@@ -323,12 +347,12 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
             {
                 break;
             }
+            viewQueue.poll();
             mDisplayOffset += childWidth;
             totalWidth -= childWidth;
             mRemovedViewQueue.offer(child);
-            removeViewInLayout(child);
             mLeftViewIndex++;
-            child = getChildAt(0);
+            child = viewQueue.peek();
         }
         CommonUtils.verbose(TAG, "mDisplayOffset = %1$d; totalWidth = %2$d; mLeftViewIndex = %3$d",
                 mDisplayOffset,
@@ -338,13 +362,14 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
 
     private int removeNonVisibleItemsFromRight(
             int totalWidth,
-            int minRestWidth)
+            int minRestWidth,
+            Queue<View> viewQueue)
     {
         CommonUtils.verbose(TAG,
                 "removeNonVisibleItemsFromRight: totalWidth = %1$d, minRestWidth = %2$d",
                 totalWidth, minRestWidth);
         CommonUtils.verbose(TAG, "mRightViewIndex = %1$d", mRightViewIndex);
-        View child = getChildAt(getChildCount() - 1);
+        View child = viewQueue.peek();
         while (child != null) {
             int childWidth = child.getMeasuredWidth();
             CommonUtils
@@ -353,11 +378,11 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
             {
                 break;
             }
+            viewQueue.poll();
             totalWidth -= childWidth;
             mRemovedViewQueue.offer(child);
-            removeViewInLayout(child);
             mRightViewIndex--;
-            child = getChildAt(getChildCount() - 1);
+            child = viewQueue.peek();
         }
         CommonUtils.verbose(TAG, "totalWidth = %1$d; mRightViewIndex = %2$d",
                 totalWidth, mRightViewIndex);
@@ -407,6 +432,10 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
 
     protected boolean onDown(MotionEvent e) {
         mScroller.forceFinished(true);
+        if (mOnDownListener != null)
+        {
+            mOnDownListener.onDown(e);
+        }
         return true;
     }
 
@@ -486,4 +515,8 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
         }
     };
 
+    public static interface OnDownListener
+    {
+        void onDown(MotionEvent e);
+    }
 }
