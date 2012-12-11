@@ -17,7 +17,13 @@ public class CommonUtils
         {
             if (BuildConfig.DEBUG)
             {
-                Log.d(TAG, String.format(message, params));
+                if (params == null || params.length == 0)
+                {
+                    Log.d(TAG, message);
+                } else
+                {
+                    Log.d(TAG, String.format(message, params));
+                }
             }
         } catch (Exception ex)
         {
@@ -31,7 +37,13 @@ public class CommonUtils
         {
             if (BuildConfig.DEBUG)
             {
-                Log.v(TAG, String.format(message, params));
+                if (params == null || params.length == 0)
+                {
+                    Log.v(TAG, message);
+                } else
+                {
+                    Log.v(TAG, String.format(message, params));
+                }
             }
         } catch (Exception ex)
         {
