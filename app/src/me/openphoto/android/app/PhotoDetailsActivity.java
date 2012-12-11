@@ -591,8 +591,9 @@ public class PhotoDetailsActivity extends CommonActivity implements TwitterLoadi
                 @Override
                 public void run()
                 {
-                    thumbnailsList.setVisibility(visible ? View.VISIBLE : View.GONE);
-                    detailsView.setVisibility(visible ? View.VISIBLE : View.GONE);
+                    detailsVisible = visible;
+                    thumbnailsList.setVisibility(detailsVisible ? View.VISIBLE : View.GONE);
+                    detailsView.setVisibility(detailsVisible ? View.VISIBLE : View.GONE);
                 }
             }, animationDuration);
             ActionBar actionBar = ((Activity) getSupportActivity())
