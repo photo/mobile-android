@@ -152,6 +152,7 @@
     <string name="errorCouldNotInitFacebookFragment">Could not init facebook fragment</string>
     <string name="errorCouldNotRetrieveFacebookScreenName">Could not retrieve facebook user name</string>
     <string name="errorCouldNotSendFacebookPhoto">Could not post facebook message</string>
+    <string name="errorSpecifiedUrlIsInvalid">The specified URL is invalid</string>
 
     <!-- Preferences -->
     <string name="upload_preference_category">Camera upload</string>

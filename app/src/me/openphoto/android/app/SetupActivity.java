@@ -4,8 +4,10 @@ package me.openphoto.android.app;
 import me.openphoto.android.app.common.CommonActivity;
 import me.openphoto.android.app.common.CommonFragment;
 import me.openphoto.android.app.oauth.OAuthUtils;
+import me.openphoto.android.app.util.GuiUtils;
 import me.openphoto.android.app.util.ProgressDialogLoadingControl;
 import me.openphoto.android.app.util.TrackerUtils;
+import me.openphoto.android.app.util.regex.Patterns;
 
 import org.holoeverywhere.LayoutInflater;
 import org.holoeverywhere.app.ProgressDialog;
@@ -16,6 +18,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.webkit.URLUtil;
 import android.widget.Button;
 import android.widget.EditText;
 
@@ -94,9 +97,19 @@ public class SetupActivity extends CommonActivity
                     TrackerUtils.trackButtonClickEvent("button_login", SetupUiFragment.this);
                     String server = ((EditText) getView().findViewById(
                             R.id.edit_server))
-                            .getText().toString();
-                    Preferences.setServer(getActivity(), server);
-                    OAuthUtils.askOAuth(getActivity());
+                            .getText().toString().trim();
+                    if (!(URLUtil.isHttpUrl(server) || URLUtil.isHttpsUrl(server)))
+                    {
+                        server = "http://" + server;
+                    }
+                    if (!Patterns.WEB_URL.matcher(server).matches())
+                    {
+                        GuiUtils.alert(R.string.errorSpecifiedUrlIsInvalid);
+                    } else
+                    {
+                        Preferences.setServer(getActivity(), server);
+                        OAuthUtils.askOAuth(getActivity());
+                    }
                     break;
             }
 
