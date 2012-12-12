@@ -176,6 +176,30 @@ public class TrackerUtils {
         trackEvent("service_event", action, label);
     }
 
+    /**
+     * Track background event
+     * 
+     * @param action
+     * @param label
+     */
+    public static void trackBackgroundEvent(String action,
+            String label)
+    {
+        trackEvent("background_event", action, label);
+    }
+
+    /**
+     * Track background event
+     * 
+     * @param action
+     * @param eventHolder
+     */
+    public static void trackBackgroundEvent(String action,
+            Object eventHolder)
+    {
+        trackEvent("background_event", action, eventHolder.getClass().getSimpleName());
+    }
+
 
     /**
      * Track an event
@@ -198,7 +222,7 @@ public class TrackerUtils {
      */
     public static void trackDataLoadTiming(long inteval, String action, String holder)
     {
-        EasyTracker.getTracker().trackTiming("data_load", inteval, action, holder);
+        trackTiming("data_load", inteval, action, holder);
     }
 
     /**
@@ -208,7 +232,7 @@ public class TrackerUtils {
      */
     public static void trackDataProcessingTiming(long inteval, String action, String holder)
     {
-        EasyTracker.getTracker().trackTiming("data_processing", inteval, action, holder);
+        trackTiming("data_processing", inteval, action, holder);
     }
 
     /**

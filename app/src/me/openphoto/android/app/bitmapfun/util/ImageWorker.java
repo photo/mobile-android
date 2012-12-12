@@ -21,6 +21,8 @@ import java.lang.ref.WeakReference;
 import me.openphoto.android.app.BuildConfig;
 import me.openphoto.android.app.util.CommonUtils;
 import me.openphoto.android.app.util.LoadingControl;
+import me.openphoto.android.app.util.TrackerUtils;
+import me.openphoto.android.app.util.concurrent.AsyncTaskEx;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.Resources;
@@ -30,7 +32,6 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.TransitionDrawable;
-import me.openphoto.android.app.util.concurrent.AsyncTaskEx;
 import android.widget.ImageView;
 
 /**
@@ -95,6 +96,7 @@ public abstract class ImageWorker {
         }
 
         if (bitmap != null) {
+            TrackerUtils.trackBackgroundEvent("foundImageInRamCache", TAG);
             // Bitmap found in memory cache
             imageView.setImageBitmap(bitmap);
         } else if (cancelPotentialWork(data, imageView)) {

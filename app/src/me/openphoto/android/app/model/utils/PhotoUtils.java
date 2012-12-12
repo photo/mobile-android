@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import me.openphoto.android.app.OpenPhotoApplication;
 import me.openphoto.android.app.Preferences;
+import me.openphoto.android.app.R;
 import me.openphoto.android.app.model.Photo;
 import me.openphoto.android.app.net.OpenPhotoResponse;
 import me.openphoto.android.app.net.PhotoResponse;
@@ -13,11 +14,10 @@ import me.openphoto.android.app.util.GuiUtils;
 import me.openphoto.android.app.util.LoadingControl;
 import me.openphoto.android.app.util.RunnableWithParameter;
 import me.openphoto.android.app.util.SimpleAsyncTaskEx;
+import me.openphoto.android.app.util.TrackerUtils;
 
 import org.apache.http.client.ClientProtocolException;
 import org.json.JSONException;
-
-import me.openphoto.android.app.R;
 
 /**
  * Utils class for the photo object
@@ -98,10 +98,14 @@ public class PhotoUtils {
     public static Photo getThePhotoWithReturnSize(Photo photo, ReturnSizes photoSize)
             throws ClientProtocolException, IOException,
             JSONException {
+        TrackerUtils.trackBackgroundEvent("getThePhotoWithReturnSize", TAG);
+        long start = System.currentTimeMillis();
         PhotoResponse response = Preferences.getApi(OpenPhotoApplication.getContext())
                 .getPhoto(
                         photo.getId(), photoSize);
         photo = response.getPhoto();
+        TrackerUtils.trackDataLoadTiming(System.currentTimeMillis() - start,
+                "getThePhotoWithReturnSize", TAG);
         return photo;
     }
 

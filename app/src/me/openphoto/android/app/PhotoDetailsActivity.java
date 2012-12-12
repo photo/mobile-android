@@ -831,18 +831,6 @@ public class PhotoDetailsActivity extends CommonActivity implements TwitterLoadi
                 // loadingControl.stopLoading();
             }
 
-            @Override
-            public LoadResponse loadItems(
-                    int page)
-            {
-                if (CommonUtils.checkLoggedInAndOnline())
-                {
-                    return super.loadItems(page);
-                } else
-                {
-                    return new LoadResponse(null, false);
-                }
-            }
         }
     }
 }

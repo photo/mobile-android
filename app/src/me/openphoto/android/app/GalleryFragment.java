@@ -360,18 +360,6 @@ public class GalleryFragment extends CommonRefreshableFragmentWithImageWorker
             loadingControl.stopLoading();
         }
 
-        @Override
-        public LoadResponse loadItems(
-                int page)
-        {
-            if (CommonUtils.checkLoggedInAndOnline())
-            {
-                return super.loadItems(page);
-            } else
-            {
-                return new LoadResponse(null, false);
-            }
-        }
     }
 
     @Override

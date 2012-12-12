@@ -1,6 +1,8 @@
 
 package me.openphoto.android.app.util;
 
+import java.util.Locale;
+
 import me.openphoto.android.app.BuildConfig;
 import me.openphoto.android.app.OpenPhotoApplication;
 import me.openphoto.android.app.Preferences;
@@ -11,6 +13,7 @@ import android.util.Log;
 
 public class CommonUtils
 {
+    public static final String TAG = CommonUtils.class.getSimpleName();
     public static void debug(String TAG, String message, Object... params)
     {
         try
@@ -22,13 +25,24 @@ public class CommonUtils
                     Log.d(TAG, message);
                 } else
                 {
-                    Log.d(TAG, String.format(message, params));
+                    Log.d(TAG, format(message, params));
                 }
             }
         } catch (Exception ex)
         {
             GuiUtils.noAlertError(TAG, ex);
         }
+    }
+
+    public static String format(String message, Object... params) {
+        try
+        {
+            return String.format(Locale.ENGLISH, message, params);
+        } catch (Exception ex)
+        {
+            GuiUtils.noAlertError(TAG, ex);
+        }
+        return null;
     }
 
     public static void verbose(String TAG, String message, Object... params)
@@ -42,7 +56,7 @@ public class CommonUtils
                     Log.v(TAG, message);
                 } else
                 {
-                    Log.v(TAG, String.format(message, params));
+                    Log.v(TAG, format(message, params));
                 }
             }
         } catch (Exception ex)

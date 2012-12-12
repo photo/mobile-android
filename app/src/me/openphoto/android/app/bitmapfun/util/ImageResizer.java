@@ -19,6 +19,7 @@ package me.openphoto.android.app.bitmapfun.util;
 import me.openphoto.android.app.BuildConfig;
 import me.openphoto.android.app.util.CommonUtils;
 import me.openphoto.android.app.util.LoadingControl;
+import me.openphoto.android.app.util.TrackerUtils;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
@@ -161,7 +162,7 @@ public class ImageResizer extends ImageWorker {
      */
     public static synchronized Bitmap decodeSampledBitmapFromFile(String filename,
             int reqWidth, int reqHeight) {
-
+        long start = System.currentTimeMillis();
         // First decode with inJustDecodeBounds=true to check dimensions
         final BitmapFactory.Options options = calculateImageSize(filename);
 
@@ -170,7 +171,10 @@ public class ImageResizer extends ImageWorker {
 
         // Decode bitmap with inSampleSize set
         options.inJustDecodeBounds = false;
-        return BitmapFactory.decodeFile(filename, options);
+        Bitmap result = BitmapFactory.decodeFile(filename, options);
+        TrackerUtils.trackDataProcessingTiming(System.currentTimeMillis() - start,
+                "decodeSampledBitmapFromFile", TAG);
+        return result;
     }
 
     /**
