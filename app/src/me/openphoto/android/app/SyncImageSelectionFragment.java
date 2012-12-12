@@ -345,6 +345,7 @@ public class SyncImageSelectionFragment extends CommonFrargmentWithImageWorker i
         {
             return Collections.emptyList();
         }
+        long start = System.currentTimeMillis();
         List<String> result = new ArrayList<String>();
         for (int i = 0, size = customImageWorkerAdapter.getSize(); i < size; i++)
         {
@@ -354,6 +355,9 @@ public class SyncImageSelectionFragment extends CommonFrargmentWithImageWorker i
                 result.add(imageData.data);
             }
         }
+        TrackerUtils.trackDataProcessingTiming(System.currentTimeMillis() - start,
+                "getSelectedFileNames",
+                TAG);
         return result;
     }
 
@@ -784,6 +788,7 @@ public class SyncImageSelectionFragment extends CommonFrargmentWithImageWorker i
 
         public void loadGallery()
         {
+            long start = System.currentTimeMillis();
             String[] projection =
             {
                     MediaStore.Images.Media._ID,
@@ -816,6 +821,8 @@ public class SyncImageSelectionFragment extends CommonFrargmentWithImageWorker i
             {
                 all = new ArrayList<ImageData>();
             }
+            TrackerUtils.trackDataLoadTiming(System.currentTimeMillis() - start, "localGallery",
+                    TAG);
         }
 
         public void loadProcessedValues()
@@ -845,6 +852,7 @@ public class SyncImageSelectionFragment extends CommonFrargmentWithImageWorker i
         {
             if (filtered)
             {
+                long start = System.currentTimeMillis();
                 filteredIndexes = new ArrayList<Integer>();
 
                 for (int i = 0, size = all.size(); i < size; i++)
@@ -855,6 +863,8 @@ public class SyncImageSelectionFragment extends CommonFrargmentWithImageWorker i
                         filteredIndexes.add(i);
                     }
                 }
+                TrackerUtils.trackDataProcessingTiming(System.currentTimeMillis() - start,
+                        "imageFilter", TAG);
             } else
             {
                 filteredIndexes = null;

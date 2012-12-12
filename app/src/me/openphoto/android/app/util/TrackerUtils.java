@@ -192,6 +192,26 @@ public class TrackerUtils {
     }
 
     /**
+     * @param inteval
+     * @param action
+     * @param holder
+     */
+    public static void trackDataLoadTiming(long inteval, String action, String holder)
+    {
+        EasyTracker.getTracker().trackTiming("data_load", inteval, action, holder);
+    }
+
+    /**
+     * @param inteval
+     * @param action
+     * @param holder
+     */
+    public static void trackDataProcessingTiming(long inteval, String action, String holder)
+    {
+        EasyTracker.getTracker().trackTiming("data_processing", inteval, action, holder);
+    }
+
+    /**
      * Track timing
      * 
      * @param category
