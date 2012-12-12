@@ -1,6 +1,7 @@
 
 package me.openphoto.android.app;
 
+import me.openphoto.android.app.common.CommonActivity;
 import me.openphoto.android.app.net.account.AccountOpenPhotoResponse;
 import me.openphoto.android.app.net.account.FakeAccountOpenPhotoApi;
 import me.openphoto.android.app.net.account.IAccountOpenPhotoApi;
@@ -8,21 +9,20 @@ import me.openphoto.android.app.util.CommonUtils;
 import me.openphoto.android.app.util.GuiUtils;
 import me.openphoto.android.app.util.LoadingControl;
 import me.openphoto.android.app.util.LoginUtils;
+import me.openphoto.android.app.util.ProgressDialogLoadingControl;
+import me.openphoto.android.app.util.TrackerUtils;
 import me.openphoto.android.app.util.concurrent.AsyncTaskEx;
-import android.app.Activity;
+
+import org.holoeverywhere.app.Activity;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
 
-import com.WazaBe.HoloEverywhere.app.ProgressDialog;
-import com.WazaBe.HoloEverywhere.sherlock.SActivity;
-
-public class AccountLogin extends SActivity implements
-        LoadingControl
+public class AccountLogin extends CommonActivity
 {
     private static final String TAG = AccountLogin.class.getSimpleName();
-    ProgressDialog progress;
 
     @Override
     public void onCreate(Bundle savedInstanceState)
@@ -34,6 +34,7 @@ public class AccountLogin extends SActivity implements
     public void loginButtonAction(View view)
     {
         CommonUtils.debug(TAG, "Login the user");
+        TrackerUtils.trackButtonClickEvent("login_button", AccountLogin.this);
 
         EditText editText = (EditText) findViewById(R.id.edit_email);
         String email = editText.getText().toString();
@@ -59,29 +60,11 @@ public class AccountLogin extends SActivity implements
         // clean up login information
         Preferences.logout(this);
 
-        new LogInUserTask(new Credentials(email, password), this, this)
+        new LogInUserTask(new Credentials(email, password),
+                new ProgressDialogLoadingControl(this, true, false,
+                        getString(R.string.logging_in_message)), this)
                 .execute();
 
-    }
-
-    @Override
-    public void startLoading()
-    {
-        if (progress == null)
-        {
-            progress = ProgressDialog.show(this,
-                    getString(R.string.logging_in_message), null, true, false);
-        }
-    }
-
-    @Override
-    public void stopLoading()
-    {
-        if (progress != null && progress.isShowing())
-        {
-            progress.dismiss();
-            progress = null;
-        }
     }
 
     private class LogInUserTask extends

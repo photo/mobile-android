@@ -5,12 +5,14 @@ import java.util.HashMap;
 
 import me.openphoto.android.app.OpenPhotoApplication;
 import me.openphoto.android.app.R;
+
+import org.holoeverywhere.widget.Toast;
+
 import android.app.Activity;
 import android.content.Context;
 import android.os.Handler;
 import android.util.Log;
 
-import com.WazaBe.HoloEverywhere.widget.Toast;
 import com.bugsense.trace.BugSenseHandler;
 
 /**
@@ -32,7 +34,9 @@ public class GuiUtils
     {
         mHandler = new Handler();
         mUiThread = Thread.currentThread();
+        TrackerUtils.setupTrackerUncaughtExceptionHandler();
     }
+
 
     public static final void runOnUiThread(Runnable action)
     {
@@ -142,6 +146,8 @@ public class GuiUtils
         }
         BugSenseHandler.sendExceptionMap(extraData, ex);
         BugSenseHandler.flush(OpenPhotoApplication.getContext());
+
+        TrackerUtils.trackThrowable(ex);
         Log.e(TAG, message, ex);
         if (alertMessage)
         {

@@ -4,6 +4,7 @@ package me.openphoto.android.app;
 import java.io.File;
 import java.util.List;
 
+import me.openphoto.android.app.common.CommonFragment;
 import me.openphoto.android.app.facebook.FacebookUtils;
 import me.openphoto.android.app.net.UploadMetaData;
 import me.openphoto.android.app.provider.UploadsProviderAccessor;
@@ -12,7 +13,13 @@ import me.openphoto.android.app.twitter.TwitterUtils;
 import me.openphoto.android.app.util.GuiUtils;
 import me.openphoto.android.app.util.LoadingControl;
 import me.openphoto.android.app.util.ProgressDialogLoadingControl;
+import me.openphoto.android.app.util.TrackerUtils;
 import me.openphoto.android.app.util.concurrent.AsyncTaskEx;
+
+import org.holoeverywhere.LayoutInflater;
+import org.holoeverywhere.app.Activity;
+import org.holoeverywhere.widget.Switch;
+
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -24,13 +31,9 @@ import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
 
-import com.WazaBe.HoloEverywhere.LayoutInflater;
-import com.WazaBe.HoloEverywhere.app.Activity;
-import com.WazaBe.HoloEverywhere.widget.Switch;
-import com.facebook.android.R;
-
 public class SyncUploadFragment extends CommonFragment
 {
+    static final String TAG = SyncUploadFragment.class.getSimpleName();
     PreviousStepFlow previousStepFlow;
     private LoadingControl loadingControl;
     EditText editTitle;
@@ -80,6 +83,7 @@ public class SyncUploadFragment extends CommonFragment
             @Override
             public void onClick(View v)
             {
+                TrackerUtils.trackButtonClickEvent("previousBtn", SyncUploadFragment.this);
                 if (previousStepFlow != null)
                 {
                     previousStepFlow.activatePreviousStep();
@@ -92,6 +96,7 @@ public class SyncUploadFragment extends CommonFragment
             @Override
             public void onClick(View v)
             {
+                TrackerUtils.trackButtonClickEvent("uploadBtn", SyncUploadFragment.this);
                 v.setEnabled(false);
                 uploadSelectedFiles(true, true);
             }
@@ -142,7 +147,7 @@ public class SyncUploadFragment extends CommonFragment
             TwitterUtils.runAfterTwitterAuthentication(
                     new ProgressDialogLoadingControl(getActivity(), true, false,
                             getString(R.string.share_twitter_requesting_authentication)),
-                    getActivity(),
+                    getSupportActivity(),
                     runnable, runnable);
             return;
         }
@@ -157,7 +162,7 @@ public class SyncUploadFragment extends CommonFragment
                     instance.uploadSelectedFiles(checkTwitter, false);
                 }
             };
-            FacebookUtils.runAfterFacebookAuthentication(getActivity(),
+            FacebookUtils.runAfterFacebookAuthentication(getSupportActivity(),
                     runnable, runnable);
             return;
         }

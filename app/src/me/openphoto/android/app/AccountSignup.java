@@ -1,6 +1,7 @@
 
 package me.openphoto.android.app;
 
+import me.openphoto.android.app.common.CommonActivity;
 import me.openphoto.android.app.net.account.AccountOpenPhotoResponse;
 import me.openphoto.android.app.net.account.FakeAccountOpenPhotoApi;
 import me.openphoto.android.app.net.account.IAccountOpenPhotoApi;
@@ -8,23 +9,24 @@ import me.openphoto.android.app.util.CommonUtils;
 import me.openphoto.android.app.util.GuiUtils;
 import me.openphoto.android.app.util.LoadingControl;
 import me.openphoto.android.app.util.LoginUtils;
+import me.openphoto.android.app.util.ProgressDialogLoadingControl;
+import me.openphoto.android.app.util.TrackerUtils;
 import me.openphoto.android.app.util.concurrent.AsyncTaskEx;
-import android.app.Activity;
+
+import org.holoeverywhere.app.Activity;
+import org.holoeverywhere.app.ProgressDialog;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
-
-import com.WazaBe.HoloEverywhere.app.ProgressDialog;
-import com.WazaBe.HoloEverywhere.sherlock.SActivity;
 
 /**
  * Class to create new accounts on OpenPhoto
  * 
  * @author Patrick Santana <patrick@openphoto.me>
  */
-public class AccountSignup extends SActivity
-        implements LoadingControl
+public class AccountSignup extends CommonActivity
 {
 
     private static final String TAG = AccountSignup.class.getSimpleName();
@@ -40,6 +42,7 @@ public class AccountSignup extends SActivity
     public void createAccountButtonAction(View view)
     {
         CommonUtils.debug(TAG, "Create an account");
+        TrackerUtils.trackButtonClickEvent("create_account_button", AccountSignup.this);
 
         EditText editText = (EditText) findViewById(R.id.edit_username);
         String username = editText.getText().toString();
@@ -70,27 +73,9 @@ public class AccountSignup extends SActivity
         // clean up login information
         Preferences.logout(this);
 
-        new NewUserTask(username, email, password, this, this).execute();
-    }
-
-    @Override
-    public void startLoading()
-    {
-        if (progress == null)
-        {
-            progress = ProgressDialog.show(this,
-                    getString(R.string.signup_message), null, true, false);
-        }
-    }
-
-    @Override
-    public void stopLoading()
-    {
-        if (progress != null && progress.isShowing())
-        {
-            progress.dismiss();
-            progress = null;
-        }
+        new NewUserTask(username, email, password, new ProgressDialogLoadingControl(this, true,
+                false,
+                getString(R.string.signup_message)), this).execute();
     }
 
     private class NewUserTask extends

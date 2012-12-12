@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+	<item 
+	    android:id="@+id/menu_selection" 
+	    android:icon="@drawable/ic_menu_mark"
+		android:showAsAction="ifRoom"
+		android:menuCategory="container"
+        android:orderInCategory="15"
+        android:title="@string/menu_selection">
+		<menu>
+			<item android:id="@+id/menu_select_all" 
+			    android:title="@string/menu_select_all" />
+			<item android:id="@+id/menu_select_none" 
+			    android:title="@string/menu_select_none"
+			    android:icon="@drawable/ic_menu_close_clear_cancel" />
+		</menu>
+	</item>
+
+</menu>

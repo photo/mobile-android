@@ -1,28 +1,29 @@
 
 package me.openphoto.android.app;
 
+import me.openphoto.android.app.common.CommonFragment;
 import me.openphoto.android.app.model.Tag;
 import me.openphoto.android.app.ui.adapter.MultiSelectTagsAdapter;
 import me.openphoto.android.app.util.CommonUtils;
 import me.openphoto.android.app.util.GalleryOpenControl;
 import me.openphoto.android.app.util.LoadingControl;
+import me.openphoto.android.app.util.TrackerUtils;
+
+import org.holoeverywhere.LayoutInflater;
+import org.holoeverywhere.app.Activity;
+
 import android.content.Context;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
-
-import com.WazaBe.HoloEverywhere.LayoutInflater;
-import com.WazaBe.HoloEverywhere.app.Activity;
-import com.facebook.android.R;
 
 public class TagsFragment extends CommonFragment
 {
@@ -68,8 +69,6 @@ public class TagsFragment extends CommonFragment
 
                                 @Override
                                 public void run() {
-                                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                                    imm.hideSoftInputFromWindow(search.getWindowToken(), 0);
                                     galleryOpenControl.openGallery(search.getText()
                                             .toString().trim(), null);
                                 }
@@ -86,6 +85,7 @@ public class TagsFragment extends CommonFragment
 
             @Override
             public void onClick(View v) {
+                TrackerUtils.trackButtonClickEvent("filterBtn", TagsFragment.this);
                 galleryOpenControl.openGallery(mAdapter.getSelectedTags(), null);
             }
         });
@@ -141,6 +141,7 @@ public class TagsFragment extends CommonFragment
 
         @Override
         public void onClick(View v) {
+            TrackerUtils.trackButtonClickEvent("tag_click_view", TagsFragment.this);
             Tag tag = (Tag) v.getTag();
             galleryOpenControl.openGallery(tag.getTag(), null);
         }

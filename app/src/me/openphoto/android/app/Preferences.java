@@ -10,7 +10,7 @@ import oauth.signpost.commonshttp.CommonsHttpOAuthConsumer;
 import android.content.Context;
 import android.content.SharedPreferences;
 
-import com.WazaBe.HoloEverywhere.preference.PreferenceManager;
+import org.holoeverywhere.preference.PreferenceManager;
 
 public class Preferences {
     public final static int PREFERENCES_MODE = Context.MODE_MULTI_PROCESS;

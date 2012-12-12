@@ -20,7 +20,7 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 
-import com.facebook.android.R;
+import me.openphoto.android.app.R;
 
 /**
  * @author Eugene Popovich

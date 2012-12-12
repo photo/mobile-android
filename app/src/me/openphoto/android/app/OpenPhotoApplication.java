@@ -6,10 +6,10 @@ import me.openphoto.android.app.util.CommonUtils;
 import me.openphoto.android.app.util.GuiUtils;
 import android.content.Context;
 
-import com.WazaBe.HoloEverywhere.app.Application;
-import com.WazaBe.HoloEverywhere.app.Application.Config.PreferenceImpl;
+import org.holoeverywhere.app.Application;
+import org.holoeverywhere.app.Application.Config.PreferenceImpl;
 import com.bugsense.trace.BugSenseHandler;
-import com.facebook.android.R;
+import me.openphoto.android.app.R;
 
 /**
  * @author Eugene Popovich

@@ -26,13 +26,13 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 import me.openphoto.android.app.BuildConfig;
+import me.openphoto.android.app.util.CommonUtils;
+import me.openphoto.android.app.util.GuiUtils;
 import me.openphoto.android.app.util.LoadingControl;
+import me.openphoto.android.app.util.TrackerUtils;
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.util.Log;
-import android.widget.Toast;
 
 /**
  * A simple subclass of {@link ImageResizer} that fetches and resizes images
@@ -84,13 +84,7 @@ public class ImageFetcher extends ImageResizer {
      * @param context
      */
     private void checkConnection(Context context) {
-        final ConnectivityManager cm =
-                (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        final NetworkInfo networkInfo = cm.getActiveNetworkInfo();
-        if (networkInfo == null || !networkInfo.isConnectedOrConnecting()) {
-            Toast.makeText(context, "No network connection found.", Toast.LENGTH_LONG).show();
-            Log.e(TAG, "checkConnection - no connection found");
-        }
+        CommonUtils.checkOnline();
     }
 
     /**
@@ -151,6 +145,7 @@ public class ImageFetcher extends ImageResizer {
         final File cacheFile = new File(cache.createFilePath(urlString));
 
         if (cache.containsKey(urlString)) {
+            TrackerUtils.trackBackgroundEvent("httpCachHit", TAG);
             if (BuildConfig.DEBUG) {
                 Log.d(TAG, "downloadBitmap - found in http cache - " + urlString);
             }
@@ -166,6 +161,7 @@ public class ImageFetcher extends ImageResizer {
         BufferedOutputStream out = null;
 
         try {
+            long start = System.currentTimeMillis();
             final URL url = new URL(urlString);
             urlConnection = (HttpURLConnection) url.openConnection();
             final InputStream in =
@@ -176,11 +172,12 @@ public class ImageFetcher extends ImageResizer {
             while ((b = in.read()) != -1) {
                 out.write(b);
             }
-
+            TrackerUtils.trackDataLoadTiming(System.currentTimeMillis() - start, "downloadBitmap",
+                    TAG);
             return cacheFile;
 
         } catch (final IOException e) {
-            Log.e(TAG, "Error in downloadBitmap - " + e);
+            GuiUtils.noAlertError(TAG, "Error in downloadBitmap", e);
         } finally {
             if (urlConnection != null) {
                 urlConnection.disconnect();
@@ -189,7 +186,7 @@ public class ImageFetcher extends ImageResizer {
                 try {
                     out.close();
                 } catch (final IOException e) {
-                    Log.e(TAG, "Error in downloadBitmap - " + e);
+                    GuiUtils.noAlertError(TAG, "Error in downloadBitmap", e);
                 }
             }
         }

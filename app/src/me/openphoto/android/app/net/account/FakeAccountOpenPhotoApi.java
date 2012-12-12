@@ -60,7 +60,13 @@ public class FakeAccountOpenPhotoApi extends ApiBase implements
          * For a Fake error, this is the message:
          * {"message":"Invalid username or password.","code":403,"result":0}
          */
-
+        try {
+            // emulate network latency
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
         return new AccountOpenPhotoResponse(jsonObjFake);
     }
 }

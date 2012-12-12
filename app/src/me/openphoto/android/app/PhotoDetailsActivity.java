@@ -9,6 +9,8 @@ import me.openphoto.android.app.TwitterFragment.TwitterLoadingControlAccessor;
 import me.openphoto.android.app.bitmapfun.util.ImageCache;
 import me.openphoto.android.app.bitmapfun.util.ImageFetcher;
 import me.openphoto.android.app.bitmapfun.util.ImageWorker;
+import me.openphoto.android.app.common.CommonActivity;
+import me.openphoto.android.app.common.CommonFrargmentWithImageWorker;
 import me.openphoto.android.app.facebook.FacebookProvider;
 import me.openphoto.android.app.facebook.FacebookUtils;
 import me.openphoto.android.app.model.Photo;
@@ -21,16 +23,25 @@ import me.openphoto.android.app.ui.adapter.PhotosEndlessAdapter;
 import me.openphoto.android.app.ui.adapter.PhotosEndlessAdapter.DetailsReturnSizes;
 import me.openphoto.android.app.ui.adapter.PhotosEndlessAdapter.ParametersHolder;
 import me.openphoto.android.app.ui.widget.HorizontalListView;
+import me.openphoto.android.app.ui.widget.HorizontalListView.OnDownListener;
 import me.openphoto.android.app.ui.widget.PhotoViewHackyViewPager;
 import me.openphoto.android.app.ui.widget.YesNoDialogFragment;
 import me.openphoto.android.app.ui.widget.YesNoDialogFragment.YesNoButtonPressedHandler;
 import me.openphoto.android.app.util.CommonUtils;
 import me.openphoto.android.app.util.GuiUtils;
 import me.openphoto.android.app.util.LoadingControl;
+import me.openphoto.android.app.util.LoadingControlWithCounter;
 import me.openphoto.android.app.util.ProgressDialogLoadingControl;
 import me.openphoto.android.app.util.RunnableWithParameter;
+import me.openphoto.android.app.util.TrackerUtils;
+
+import org.holoeverywhere.LayoutInflater;
+import org.holoeverywhere.app.Activity;
+import org.holoeverywhere.widget.AdapterView;
+import org.holoeverywhere.widget.AdapterView.OnItemClickListener;
+
 import uk.co.senab.photoview.PhotoView;
-import uk.co.senab.photoview.PhotoViewAttacher.OnPhotoTapListener;
+import uk.co.senab.photoview.PhotoViewAttacher.OnViewTapListener;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -41,8 +52,8 @@ import android.os.Parcelable;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.text.TextUtils;
+import android.view.MotionEvent;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.WindowManager.LayoutParams;
 import android.view.animation.Animation;
@@ -50,14 +61,11 @@ import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.WazaBe.HoloEverywhere.LayoutInflater;
-import com.WazaBe.HoloEverywhere.sherlock.SActivity;
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.view.Window;
-import com.facebook.android.R;
 
 /**
  * The general photo viewing screen
@@ -70,7 +78,7 @@ import com.facebook.android.R;
  *          03.10.2012 <br>
  *          - added initial support for album photos filter
  */
-public class PhotoDetailsActivity extends SActivity implements TwitterLoadingControlAccessor,
+public class PhotoDetailsActivity extends CommonActivity implements TwitterLoadingControlAccessor,
         FacebookLoadingControlAccessor {
 
     public static final String EXTRA_PHOTO = "EXTRA_PHOTO";
@@ -88,14 +96,14 @@ public class PhotoDetailsActivity extends SActivity implements TwitterLoadingCon
         if (savedInstanceState == null)
         {
             getSupportFragmentManager().beginTransaction()
-                    .replace(android.R.id.content, new UiFragment())
+                    .replace(android.R.id.content, new PhotoDetailsUiFragment())
                     .commit();
         }
     }
 
-    UiFragment getContentFragment()
+    PhotoDetailsUiFragment getContentFragment()
     {
-        return (UiFragment) getSupportFragmentManager().findFragmentById(android.R.id.content);
+        return (PhotoDetailsUiFragment) getSupportFragmentManager().findFragmentById(android.R.id.content);
     }
 
     @Override
@@ -107,15 +115,17 @@ public class PhotoDetailsActivity extends SActivity implements TwitterLoadingCon
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        UiFragment fragment = getContentFragment();
+        PhotoDetailsUiFragment fragment = getContentFragment();
         fragment.detailsVisible = true;
         boolean result = true;
         switch (item.getItemId())
         {
             case R.id.menu_delete:
+                TrackerUtils.trackOptionsMenuClickEvent("menu_delete", PhotoDetailsActivity.this);
                 fragment.deleteCurrentPhoto();
                 break;
             case R.id.menu_share:
+                TrackerUtils.trackOptionsMenuClickEvent("menu_share", PhotoDetailsActivity.this);
                 Photo photo = fragment.getActivePhoto();
                 boolean isPrivate = photo == null || photo.isPrivate();
                 item.getSubMenu().setGroupVisible(R.id.share_group, !isPrivate);
@@ -126,12 +136,15 @@ public class PhotoDetailsActivity extends SActivity implements TwitterLoadingCon
                 }
                 break;
             case R.id.menu_share_email:
+                TrackerUtils.trackOptionsMenuClickEvent("menu_share_email", PhotoDetailsActivity.this);
                 fragment.shareActivePhotoViaEMail();
                 break;
             case R.id.menu_share_twitter:
+                TrackerUtils.trackOptionsMenuClickEvent("menu_share_twitter", PhotoDetailsActivity.this);
                 fragment.shareActivePhotoViaTwitter();
                 break;
             case R.id.menu_share_facebook:
+                TrackerUtils.trackOptionsMenuClickEvent("menu_share_facebook", PhotoDetailsActivity.this);
                 fragment.shareActivePhotoViaFacebook();
                 break;
             default:
@@ -188,16 +201,16 @@ public class PhotoDetailsActivity extends SActivity implements TwitterLoadingCon
         }
     }
 
-    public static class UiFragment extends CommonFrargmentWithImageWorker
+    public static class PhotoDetailsUiFragment extends CommonFrargmentWithImageWorker
     {
         private static final String TAG = PhotoDetailsActivity.class.getSimpleName();
 
-        static UiFragment currentInstance;
-        static FragmentAccessor<UiFragment> currentInstanceAccessor = new FragmentAccessor<UiFragment>() {
+        static PhotoDetailsUiFragment currentInstance;
+        static FragmentAccessor<PhotoDetailsUiFragment> currentInstanceAccessor = new FragmentAccessor<PhotoDetailsUiFragment>() {
             private static final long serialVersionUID = 1L;
 
             @Override
-            public UiFragment run() {
+            public PhotoDetailsUiFragment run() {
                 return currentInstance;
             }
         };
@@ -246,7 +259,7 @@ public class PhotoDetailsActivity extends SActivity implements TwitterLoadingCon
             Photo photo = getActivePhoto();
             if (photo != null)
             {
-                FacebookUtils.runAfterFacebookAuthentication(getActivity(),
+                FacebookUtils.runAfterFacebookAuthentication(getSupportActivity(),
                         new ShareUtils.FacebookShareRunnable(
                                 photo, currentInstanceAccessor));
             }
@@ -257,9 +270,9 @@ public class PhotoDetailsActivity extends SActivity implements TwitterLoadingCon
             if (photo != null)
             {
                 TwitterUtils.runAfterTwitterAuthentication(
-                        new ProgressDialogLoadingControl(getActivity(), true, false,
+                        new ProgressDialogLoadingControl(getSupportActivity(), true, false,
                                 getString(R.string.share_twitter_requesting_authentication)),
-                        getActivity(),
+                        getSupportActivity(),
                         TwitterUtils.getSecondCallbackUrl(getActivity()),
                         new TwitterShareRunnable(photo, currentInstanceAccessor));
             }
@@ -337,8 +350,7 @@ public class PhotoDetailsActivity extends SActivity implements TwitterLoadingCon
 
         public void initImageViewers(View v, int position) {
             mAdapter = new PhotoDetailPagerAdapter(thumbnailsAdapter);
-            thumbnailsList = (HorizontalListView) v.findViewById(R.id.thumbs);
-            thumbnailsList.setAdapter(thumbnailsAdapter);
+            initThumbnailsList(v);
             mViewPager = (PhotoViewHackyViewPager) v.findViewById(R.id.photos);
             mViewPager.setAdapter(mAdapter);
 
@@ -355,6 +367,28 @@ public class PhotoDetailsActivity extends SActivity implements TwitterLoadingCon
                     }
                 }
             }, 4000);
+        }
+
+        public void initThumbnailsList(View v) {
+            thumbnailsList = (HorizontalListView) v.findViewById(R.id.thumbs);
+            thumbnailsList.setAdapter(thumbnailsAdapter);
+            thumbnailsList.setOnItemClickListener(new OnItemClickListener() {
+
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    TrackerUtils.trackButtonClickEvent("thumb", PhotoDetailsUiFragment.this);
+                    CommonUtils.debug(TAG, "Thumb clicked.");
+                    detailsVisible = true;
+                    mViewPager.setCurrentItem(position);
+                }
+            });
+            thumbnailsList.setOnDownListener(new OnDownListener() {
+                @Override
+                public void onDown(MotionEvent e) {
+                    CommonUtils.debug(TAG, "Thumbnails List onDown");
+                    detailsVisible = true;
+                }
+            });
         }
 
         @Override
@@ -388,7 +422,7 @@ public class PhotoDetailsActivity extends SActivity implements TwitterLoadingCon
 
         void photoSelected(final Photo photo)
         {
-            ActionBar actionBar = ((SActivity) getSupportActivity())
+            ActionBar actionBar = ((Activity) getSupportActivity())
                     .getSupportActionBar();
             SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
             String title = photo.getTitle();
@@ -534,7 +568,7 @@ public class PhotoDetailsActivity extends SActivity implements TwitterLoadingCon
                                     // DO NOTHING
                                 }
                             });
-            dialogFragment.replace(getSupportFragmentManager());
+            dialogFragment.show(getSupportActivity());
         }
 
         void adjustDetailsVisibility(final boolean visible)
@@ -558,11 +592,12 @@ public class PhotoDetailsActivity extends SActivity implements TwitterLoadingCon
                 @Override
                 public void run()
                 {
-                    thumbnailsList.setVisibility(visible ? View.VISIBLE : View.GONE);
-                    detailsView.setVisibility(visible ? View.VISIBLE : View.GONE);
+                    detailsVisible = visible;
+                    thumbnailsList.setVisibility(detailsVisible ? View.VISIBLE : View.GONE);
+                    detailsView.setVisibility(detailsVisible ? View.VISIBLE : View.GONE);
                 }
             }, animationDuration);
-            ActionBar actionBar = ((SActivity) getSupportActivity())
+            ActionBar actionBar = ((Activity) getSupportActivity())
                     .getSupportActionBar();
             if (visible)
             {
@@ -617,34 +652,27 @@ public class PhotoDetailsActivity extends SActivity implements TwitterLoadingCon
                         ((ViewPager) collection), false);
                 final PhotoView imageView = (PhotoView) view.findViewById(R.id.image);
 
-                final LoadingControl loadingControl = new LoadingControl() {
-                    private int mLoaders = 0;
+                final LoadingControl loadingControl = new LoadingControlWithCounter() {
 
                     @Override
-                    public void stopLoading() {
-                        if (--mLoaders == 0)
+                    public void stopLoadingEx() {
+                        try
                         {
-                            try
-                            {
-                                view.findViewById(R.id.loading).setVisibility(View.GONE);
-                            } catch (Exception ex)
-                            {
-                                GuiUtils.noAlertError(TAG, null, ex);
-                            }
+                            view.findViewById(R.id.loading).setVisibility(View.GONE);
+                        } catch (Exception ex)
+                        {
+                            GuiUtils.noAlertError(TAG, null, ex);
                         }
                     }
 
                     @Override
-                    public void startLoading() {
-                        if (mLoaders++ == 0)
+                    public void startLoadingEx() {
+                        try
                         {
-                            try
-                            {
-                                view.findViewById(R.id.loading).setVisibility(View.VISIBLE);
-                            } catch (Exception ex)
-                            {
-                                GuiUtils.noAlertError(TAG, null, ex);
-                            }
+                            view.findViewById(R.id.loading).setVisibility(View.VISIBLE);
+                        } catch (Exception ex)
+                        {
+                            GuiUtils.noAlertError(TAG, null, ex);
                         }
                     }
                 };
@@ -665,13 +693,21 @@ public class PhotoDetailsActivity extends SActivity implements TwitterLoadingCon
 
                 loadingControl.stopLoading();
 
-                imageView.setOnPhotoTapListener(new OnPhotoTapListener() {
+                imageView.setOnViewTapListener(new OnViewTapListener() {
 
                     @Override
-                    public void onPhotoTap(View view, float x, float y) {
+                    public void onViewTap(View view, float x, float y) {
+                        TrackerUtils.trackButtonClickEvent("image", PhotoDetailsUiFragment.this);
                         adjustDetailsVisibility(!detailsVisible);
                     }
                 });
+                // imageView.setOnClickListener(new OnClickListener() {
+                //
+                // @Override
+                // public void onClick(View v) {
+                // adjustDetailsVisibility(!detailsVisible);
+                // }
+                // });
 
                 ((ViewPager) collection).addView(view, 0);
 
@@ -763,24 +799,6 @@ public class PhotoDetailsActivity extends SActivity implements TwitterLoadingCon
                 }
 
                 final ImageView imageView = (ImageView) view.findViewById(R.id.image);
-                imageView.setOnClickListener(new OnClickListener() {
-
-                    @Override
-                    public void onClick(View v) {
-                        CommonUtils.debug(TAG, "Thumb clicked.");
-                        detailsVisible = true;
-                        int count = 0;
-                        for (Photo p : mAdapter.mAdapter.getItems())
-                        {
-                            if (p.getId().equals(photo.getId()))
-                            {
-                                mViewPager.setCurrentItem(count);
-                                break;
-                            }
-                            count++;
-                        }
-                    }
-                });
                 View border = view.findViewById(R.id.background_container);
                 border.setTag(photo);
                 invalidateSelection(view);
@@ -813,18 +831,6 @@ public class PhotoDetailsActivity extends SActivity implements TwitterLoadingCon
                 // loadingControl.stopLoading();
             }
 
-            @Override
-            public LoadResponse loadItems(
-                    int page)
-            {
-                if (CommonUtils.checkLoggedInAndOnline())
-                {
-                    return super.loadItems(page);
-                } else
-                {
-                    return new LoadResponse(null, false);
-                }
-            }
         }
     }
 }

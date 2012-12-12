@@ -1,15 +1,16 @@
 
 package me.openphoto.android.app;
 
-import android.os.Bundle;
+import me.openphoto.android.app.common.CommonPreferenceFragment;
 
-import com.WazaBe.HoloEverywhere.preference.PreferenceCategory;
-import com.WazaBe.HoloEverywhere.sherlock.SPreferenceFragment;
+import org.holoeverywhere.preference.PreferenceCategory;
+
+import android.os.Bundle;
 
 /**
  * @author Eugene Popovich
  */
-public class SettingsFragment extends SPreferenceFragment
+public class SettingsFragment extends CommonPreferenceFragment
 {
     private SettingsCommon settingsCommon;
 
@@ -21,7 +22,7 @@ public class SettingsFragment extends SPreferenceFragment
         getPreferenceManager().setSharedPreferencesMode(Preferences.PREFERENCES_MODE);
         addPreferencesFromResource(R.xml.settings);
 
-        settingsCommon = new SettingsCommon(getActivity());
+        settingsCommon = new SettingsCommon(getSupportActivity());
 
         settingsCommon
                 .setLoginCategory((PreferenceCategory) findPreference(getString(R.string.setting_account_category)));
@@ -33,6 +34,12 @@ public class SettingsFragment extends SPreferenceFragment
                 .setServerUrl(findPreference(getString(R.string.setting_account_server_key)));
         settingsCommon
                 .setSyncClearPreference(findPreference(getString(R.string.setting_sync_clear_key)));
+        settingsCommon
+                .setAutoUploadTagPreference(findPreference(getString(R.string.setting_autoupload_tag_key)));
+        settingsCommon
+                .setAutoUploadPreference(findPreference(getString(R.string.setting_autoupload_on_key)));
+        settingsCommon
+                .setWiFiOnlyUploadPreference(findPreference(getString(R.string.setting_wifi_only_upload_on_key)));
     }
 
     @Override

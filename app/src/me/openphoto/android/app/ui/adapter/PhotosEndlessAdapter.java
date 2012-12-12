@@ -11,7 +11,9 @@ import me.openphoto.android.app.net.IOpenPhotoApi;
 import me.openphoto.android.app.net.Paging;
 import me.openphoto.android.app.net.PhotosResponse;
 import me.openphoto.android.app.net.ReturnSizes;
+import me.openphoto.android.app.util.CommonUtils;
 import me.openphoto.android.app.util.GuiUtils;
+import me.openphoto.android.app.util.TrackerUtils;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Parcel;
@@ -110,17 +112,31 @@ public abstract class PhotosEndlessAdapter extends EndlessAdapter<Photo>
     }
 
     @Override
-    public LoadResponse loadItems(int page)
+    public LoadResponse loadItems(
+            int page)
     {
-        return loadItemsGeneral(page, getPageSize());
+        if (CommonUtils.checkLoggedInAndOnline())
+        {
+            return loadItemsGeneral(page, getPageSize());
+        } else
+        {
+            return new LoadResponse(null, false);
+        }
     }
 
     public LoadResponse loadItemsGeneral(int page, int pageSize) {
         try
         {
+            TrackerUtils.trackBackgroundEvent(
+                    CommonUtils.format("loadPhotos: page = %1$d, pageSize = %2$d", page, pageSize),
+                    getClass().getSimpleName());
+            long start = System.currentTimeMillis();
             PhotosResponse response = mOpenPhotoApi.getPhotos(returnSizes,
                     mTagFilter, mAlbumFilter, sortBy, new Paging(page,
                             pageSize));
+            TrackerUtils.trackDataLoadTiming(System.currentTimeMillis() - start,
+                    CommonUtils.format("loadPhotos: page = %1$d, pageSize = %2$d", page, pageSize),
+                    getClass().getSimpleName());
             boolean hasNextPage = response.getCurrentPage() < response
                     .getTotalPages();
             return new LoadResponse(response.getPhotos(), hasNextPage);

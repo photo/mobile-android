@@ -3,10 +3,13 @@ package me.openphoto.android.app;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import me.openphoto.android.app.FacebookFragment.FacebookLoadingControlAccessor;
 import me.openphoto.android.app.SyncFragment.SyncHandler;
 import me.openphoto.android.app.TwitterFragment.TwitterLoadingControlAccessor;
+import me.openphoto.android.app.common.CommonActivity;
+import me.openphoto.android.app.common.Refreshable;
 import me.openphoto.android.app.facebook.FacebookProvider;
 import me.openphoto.android.app.provider.UploadsUtils;
 import me.openphoto.android.app.provider.UploadsUtils.UploadsClearedHandler;
@@ -18,7 +21,9 @@ import me.openphoto.android.app.util.BackKeyControl;
 import me.openphoto.android.app.util.CommonUtils;
 import me.openphoto.android.app.util.GalleryOpenControl;
 import me.openphoto.android.app.util.LoadingControl;
+import me.openphoto.android.app.util.TrackerUtils;
 import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -26,8 +31,8 @@ import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 
-import com.WazaBe.HoloEverywhere.sherlock.SActivity;
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.ActionBar.Tab;
 import com.actionbarsherlock.view.Menu;
@@ -35,7 +40,7 @@ import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.view.Window;
 
-public class MainActivity extends SActivity
+public class MainActivity extends CommonActivity
         implements LoadingControl, GalleryOpenControl, SyncHandler,
         UploadsClearedHandler, PhotoUploadedHandler, TwitterLoadingControlAccessor,
         FacebookLoadingControlAccessor
@@ -51,10 +56,10 @@ public class MainActivity extends SActivity
     public final static int AUTHORIZE_ACTIVITY_RESULT_CODE = 0;
 
     private ActionBar mActionBar;
-    private int mLoaders = 0;
+    private AtomicInteger loaders = new AtomicInteger(0);
 
     private List<BroadcastReceiver> receivers = new ArrayList<BroadcastReceiver>();
-
+    boolean instanceSaved = false;
     /**
      * Called when Main Activity is first loaded
      * 
@@ -64,6 +69,7 @@ public class MainActivity extends SActivity
     public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
+        instanceSaved = false;
         requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
         mActionBar = getSupportActionBar();
         mActionBar.setDisplayUseLogoEnabled(true);
@@ -142,6 +148,7 @@ public class MainActivity extends SActivity
     protected void onSaveInstanceState(Bundle outState)
     {
         super.onSaveInstanceState(outState);
+        instanceSaved = true;
         outState.putInt(ACTIVE_TAB, mActionBar.getSelectedNavigationIndex());
     }
 
@@ -161,7 +168,10 @@ public class MainActivity extends SActivity
     protected void onResume()
     {
         super.onResume();
-        mActionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+        if (!instanceSaved)
+        {
+            mActionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+        }
         reinitMenu();
 
         if (!Preferences.isLoggedIn(this))
@@ -205,19 +215,20 @@ public class MainActivity extends SActivity
 
     public void reinitMenu()
     {
-        invalidateOptionsMenu();
+        Handler handler = new Handler();
+        handler.post(new Runnable() {
+
+            @Override
+            public void run() {
+                invalidateOptionsMenu();
+            }
+        });
     }
 
     public void reinitMenu(Menu menu)
     {
         menu.findItem(R.id.menu_camera).setVisible(
                 Preferences.isLoggedIn(this));
-        Fragment currentFragment = getCurrentFragment();
-        boolean refreshVisible = currentFragment != null
-                && currentFragment instanceof Refreshable
-                && mLoaders == 0;
-        menu.findItem(R.id.dummy_menu).setVisible(!refreshVisible);
-        menu.findItem(R.id.menu_refresh).setVisible(refreshVisible);
     }
 
     @Override
@@ -241,14 +252,13 @@ public class MainActivity extends SActivity
         switch (item.getItemId())
         {
             case R.id.menu_settings: {
+                TrackerUtils.trackOptionsMenuClickEvent("menu_settings", MainActivity.this);
                 Intent i = new Intent(this, SettingsActivity.class);
                 startActivity(i);
                 return true;
             }
-            case R.id.menu_refresh:
-                ((Refreshable) getCurrentFragment()).refresh();
-                return true;
             case R.id.menu_camera: {
+                TrackerUtils.trackOptionsMenuClickEvent("menu_camera", MainActivity.this);
                 Intent i = new Intent(this, UploadActivity.class);
                 startActivity(i);
                 return true;
@@ -281,7 +291,7 @@ public class MainActivity extends SActivity
     @Override
     public void startLoading()
     {
-        if (mLoaders++ == 0)
+        if (loaders.getAndIncrement() == 0)
         {
             reinitMenu();
             showLoading(true);
@@ -291,11 +301,16 @@ public class MainActivity extends SActivity
     @Override
     public void stopLoading()
     {
-        if (--mLoaders == 0)
+        if (loaders.decrementAndGet() == 0)
         {
             showLoading(false);
             reinitMenu();
         }
+    }
+
+    @Override
+    public boolean isLoading() {
+        return loaders.get() > 0;
     }
 
     private void showLoading(boolean show)
@@ -348,6 +363,7 @@ public class MainActivity extends SActivity
         public void onTabSelected(Tab tab, FragmentTransaction ft)
         {
             CommonUtils.debug(TAG, "onTabSelected");
+            TrackerUtils.trackTabSelectedEvent(mTag, MainActivity.this);
             if (mFragment == null)
             {
                 mFragment = Fragment.instantiate(MainActivity.this,
@@ -368,6 +384,13 @@ public class MainActivity extends SActivity
             if (mFragment != null)
             {
                 ft.detach(mFragment);
+                View target = mFragment.getView().findFocus();
+
+                if (target != null)
+                {
+                    InputMethodManager mgr = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                    mgr.hideSoftInputFromWindow(target.getWindowToken(), 0);
+                }
             }
 
         }
@@ -375,6 +398,7 @@ public class MainActivity extends SActivity
         @Override
         public void onTabReselected(Tab tab, FragmentTransaction ft)
         {
+            TrackerUtils.trackTabReselectedEvent(mTag, MainActivity.this);
             CommonUtils.debug(TAG, "onTabReselected");
             if (runOnReselect != null)
             {

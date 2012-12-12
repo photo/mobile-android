@@ -34,12 +34,12 @@ import java.util.Map.Entry;
 import me.openphoto.android.app.BuildConfig;
 import me.openphoto.android.app.util.CommonUtils;
 import me.openphoto.android.app.util.GuiUtils;
+import me.openphoto.android.app.util.TrackerUtils;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
 import android.graphics.BitmapFactory;
 import android.os.Environment;
-import android.util.Log;
 
 /**
  * A simple disk LRU bitmap cache to illustrate how a disk cache would be used
@@ -165,9 +165,9 @@ public class DiskLruCache {
                         flushCache();
                     }
                 } catch (final FileNotFoundException e) {
-                    Log.e(TAG, "Error in put: " + e.getMessage());
+                    GuiUtils.noAlertError(TAG, "Error in put", e);
                 } catch (final IOException e) {
-                    Log.e(TAG, "Error in put: " + e.getMessage());
+                    GuiUtils.noAlertError(TAG, "Error in put", e);
                 }
             }
         }
@@ -221,6 +221,7 @@ public class DiskLruCache {
                 if (BuildConfig.DEBUG) {
                     CommonUtils.debug(TAG, "Disk cache hit");
                 }
+                TrackerUtils.trackBackgroundEvent("diskCacheHit", TAG);
                 return getBitmap(file);
             } else {
                 final String existingFile = createFilePath(mCacheDir, key);
@@ -229,6 +230,7 @@ public class DiskLruCache {
                     if (BuildConfig.DEBUG) {
                         CommonUtils.debug(TAG, "Disk cache hit (existing file)");
                     }
+                    TrackerUtils.trackBackgroundEvent("diskCacheHitExistingFile", TAG);
                     return getBitmap(existingFile);
                 }
             }
@@ -264,8 +266,7 @@ public class DiskLruCache {
             fs = new FileInputStream(file);
         } catch (FileNotFoundException e)
         {
-            // TODO do something intelligent
-            e.printStackTrace();
+            GuiUtils.noAlertError(TAG, e);
         }
 
         try
@@ -275,7 +276,7 @@ public class DiskLruCache {
                         bfOptions);
         } catch (IOException e)
         {
-            GuiUtils.error(TAG, null, e);
+            GuiUtils.error(TAG, e);
         } finally
         {
             if (fs != null)
@@ -285,7 +286,7 @@ public class DiskLruCache {
                     fs.close();
                 } catch (IOException e)
                 {
-                    e.printStackTrace();
+                    GuiUtils.noAlertError(TAG, e);
                 }
             }
         }
@@ -408,7 +409,7 @@ public class DiskLruCache {
             return cacheDir.getAbsolutePath() + File.separator +
                     CACHE_FILENAME_PREFIX + URLEncoder.encode(key.replace("*", ""), "UTF-8");
         } catch (final UnsupportedEncodingException e) {
-            Log.e(TAG, "createFilePath - " + e);
+            GuiUtils.noAlertError(TAG, "createFilePath", e);
         }
 
         return null;

@@ -1,5 +1,5 @@
 
-package me.openphoto.android.app;
+package me.openphoto.android.app.common;
 
 import java.util.ArrayList;
 import java.util.List;

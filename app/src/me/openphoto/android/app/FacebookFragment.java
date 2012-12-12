@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.MalformedURLException;
 
+import me.openphoto.android.app.common.CommonStyledDialogFragment;
 import me.openphoto.android.app.facebook.FacebookProvider;
 import me.openphoto.android.app.facebook.FacebookUtils;
 import me.openphoto.android.app.model.Photo;
@@ -12,9 +13,16 @@ import me.openphoto.android.app.model.utils.PhotoUtils;
 import me.openphoto.android.app.net.ReturnSizes;
 import me.openphoto.android.app.util.GuiUtils;
 import me.openphoto.android.app.util.LoadingControl;
+import me.openphoto.android.app.util.LoadingControlWithCounter;
 import me.openphoto.android.app.util.RunnableWithParameter;
+import me.openphoto.android.app.util.SimpleAsyncTaskEx;
+import me.openphoto.android.app.util.TrackerUtils;
 import me.openphoto.android.app.util.concurrent.AsyncTaskEx;
 
+import org.holoeverywhere.LayoutInflater;
+import org.holoeverywhere.app.Activity;
+import org.holoeverywhere.app.Dialog;
+import org.holoeverywhere.widget.ProgressBar;
 import org.json.JSONObject;
 
 import android.content.Context;
@@ -26,16 +34,12 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.WazaBe.HoloEverywhere.LayoutInflater;
-import com.WazaBe.HoloEverywhere.app.Activity;
-import com.WazaBe.HoloEverywhere.app.Dialog;
 import com.facebook.android.Facebook;
-import com.facebook.android.R;
 
 /**
  * @author Eugene Popovich
  */
-public class FacebookFragment extends CommonDialogFragment
+public class FacebookFragment extends CommonStyledDialogFragment
 {
     public static final String TAG = FacebookFragment.class.getSimpleName();
     static final String PHOTO = "FacebookFragmentPhoto";
@@ -97,6 +101,7 @@ public class FacebookFragment extends CommonDialogFragment
                 @Override
                 public void onClick(View v)
                 {
+                    TrackerUtils.trackButtonClickEvent("logoutBtn", FacebookFragment.this);
                     performFacebookLogout();
                 }
 
@@ -107,6 +112,7 @@ public class FacebookFragment extends CommonDialogFragment
                 @Override
                 public void onClick(View v)
                 {
+                    TrackerUtils.trackButtonClickEvent("sendBtn", FacebookFragment.this);
                     postPhoto();
                 }
             });
@@ -132,7 +138,7 @@ public class FacebookFragment extends CommonDialogFragment
 
     private void performFacebookLogout()
     {
-        FacebookUtils.logoutRequest(getActivity());
+        FacebookUtils.logoutRequest(getSupportActivity());
         dismiss();
     }
 
@@ -145,14 +151,28 @@ public class FacebookFragment extends CommonDialogFragment
     }
 
     private class ShowCurrentlyLoggedInUserTask extends
-            AsyncTaskEx<Void, Void, Boolean>
+            SimpleAsyncTaskEx
     {
         TextView loggedInAsText;
         String name;
         Context activity = getActivity();
 
-        ShowCurrentlyLoggedInUserTask(View view)
+        ShowCurrentlyLoggedInUserTask(final View view)
         {
+            super(new LoadingControlWithCounter() {
+
+                ProgressBar progressBar = (ProgressBar) view.findViewById(R.id.progressBar);
+
+                @Override
+                public void stopLoadingEx() {
+                    progressBar.setVisibility(View.GONE);
+                }
+
+                @Override
+                public void startLoadingEx() {
+                    progressBar.setVisibility(View.VISIBLE);
+                }
+            });
             loggedInAsText = (TextView) view
                     .findViewById(R.id.loggedInAs);
         }
@@ -162,7 +182,6 @@ public class FacebookFragment extends CommonDialogFragment
         {
             super.onPreExecute();
             loggedInAsText.setText(null);
-            loadingControl.startLoading();
         }
 
         @Override
@@ -189,17 +208,11 @@ public class FacebookFragment extends CommonDialogFragment
         }
 
         @Override
-        protected void onPostExecute(Boolean result)
-        {
-            super.onPostExecute(result);
-            loadingControl.stopLoading();
-            if (result.booleanValue())
-            {
+        protected void onSuccessPostExecute() {
                 loggedInAsText.setText(String
                         .format(
                                 activity.getString(R.string.share_facebook_logged_in_as),
                                 name));
-            }
         }
     }
 
@@ -281,6 +294,8 @@ public class FacebookFragment extends CommonDialogFragment
                 .getString(R.string.share_facebook_default_description));
         bparams.putString("picture", photo.getUrl(thumbSize.toString()));
         bparams.putString("link", photo.getUrl(Photo.URL));
+        TrackerUtils.trackSocial("facebook", "feed",
+                message + " | " + photo.getUrl(Photo.URL));
         facebook.request("feed", bparams, "POST");
     }
 

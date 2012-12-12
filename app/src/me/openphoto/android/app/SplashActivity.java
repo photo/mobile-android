@@ -1,9 +1,10 @@
 
 package me.openphoto.android.app;
 
+
+import me.openphoto.android.app.util.concurrent.AsyncTaskEx;
 import android.app.Activity;
 import android.content.Intent;
-import me.openphoto.android.app.util.concurrent.AsyncTaskEx;
 import android.os.Bundle;
 
 /**
