@@ -3,11 +3,13 @@ package me.openphoto.android.app;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import me.openphoto.android.app.FacebookFragment.FacebookLoadingControlAccessor;
 import me.openphoto.android.app.SyncFragment.SyncHandler;
 import me.openphoto.android.app.TwitterFragment.TwitterLoadingControlAccessor;
 import me.openphoto.android.app.common.CommonActivity;
+import me.openphoto.android.app.common.Refreshable;
 import me.openphoto.android.app.facebook.FacebookProvider;
 import me.openphoto.android.app.provider.UploadsUtils;
 import me.openphoto.android.app.provider.UploadsUtils.UploadsClearedHandler;
@@ -54,7 +56,7 @@ public class MainActivity extends CommonActivity
     public final static int AUTHORIZE_ACTIVITY_RESULT_CODE = 0;
 
     private ActionBar mActionBar;
-    private int mLoaders = 0;
+    private AtomicInteger loaders = new AtomicInteger(0);
 
     private List<BroadcastReceiver> receivers = new ArrayList<BroadcastReceiver>();
     boolean instanceSaved = false;
@@ -227,11 +229,6 @@ public class MainActivity extends CommonActivity
     {
         menu.findItem(R.id.menu_camera).setVisible(
                 Preferences.isLoggedIn(this));
-        Fragment currentFragment = getCurrentFragment();
-        boolean refreshVisible = currentFragment != null
-                && currentFragment instanceof Refreshable
-                && mLoaders == 0;
-        menu.findItem(R.id.menu_refresh).setVisible(refreshVisible);
     }
 
     @Override
@@ -260,10 +257,6 @@ public class MainActivity extends CommonActivity
                 startActivity(i);
                 return true;
             }
-            case R.id.menu_refresh:
-                TrackerUtils.trackOptionsMenuClickEvent("menu_refresh", MainActivity.this);
-                ((Refreshable) getCurrentFragment()).refresh();
-                return true;
             case R.id.menu_camera: {
                 TrackerUtils.trackOptionsMenuClickEvent("menu_camera", MainActivity.this);
                 Intent i = new Intent(this, UploadActivity.class);
@@ -298,7 +291,7 @@ public class MainActivity extends CommonActivity
     @Override
     public void startLoading()
     {
-        if (mLoaders++ == 0)
+        if (loaders.getAndIncrement() == 0)
         {
             reinitMenu();
             showLoading(true);
@@ -308,11 +301,16 @@ public class MainActivity extends CommonActivity
     @Override
     public void stopLoading()
     {
-        if (--mLoaders == 0)
+        if (loaders.decrementAndGet() == 0)
         {
             showLoading(false);
             reinitMenu();
         }
+    }
+
+    @Override
+    public boolean isLoading() {
+        return loaders.get() > 0;
     }
 
     private void showLoading(boolean show)

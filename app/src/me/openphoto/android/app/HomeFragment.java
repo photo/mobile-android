@@ -6,7 +6,7 @@ import java.util.Stack;
 
 import me.openphoto.android.app.bitmapfun.util.ImageCache;
 import me.openphoto.android.app.bitmapfun.util.ImageFetcher;
-import me.openphoto.android.app.common.CommonFrargmentWithImageWorker;
+import me.openphoto.android.app.common.CommonRefreshableFragmentWithImageWorker;
 import me.openphoto.android.app.facebook.FacebookBaseDialogListener;
 import me.openphoto.android.app.facebook.FacebookUtils;
 import me.openphoto.android.app.model.Photo;
@@ -45,7 +45,7 @@ import com.actionbarsherlock.view.ContextMenu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 
-public class HomeFragment extends CommonFrargmentWithImageWorker implements Refreshable
+public class HomeFragment extends CommonRefreshableFragmentWithImageWorker
 {
     public static final String TAG = HomeFragment.class.getSimpleName();
 
@@ -490,5 +490,10 @@ public class HomeFragment extends CommonFrargmentWithImageWorker implements Refr
         {
             loadingControl.stopLoading();
         }
+    }
+
+    @Override
+    protected boolean isRefreshMenuVisible() {
+        return !loadingControl.isLoading();
     }
 }

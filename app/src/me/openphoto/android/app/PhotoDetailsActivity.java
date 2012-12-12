@@ -30,6 +30,7 @@ import me.openphoto.android.app.ui.widget.YesNoDialogFragment.YesNoButtonPressed
 import me.openphoto.android.app.util.CommonUtils;
 import me.openphoto.android.app.util.GuiUtils;
 import me.openphoto.android.app.util.LoadingControl;
+import me.openphoto.android.app.util.LoadingControlWithCounter;
 import me.openphoto.android.app.util.ProgressDialogLoadingControl;
 import me.openphoto.android.app.util.RunnableWithParameter;
 import me.openphoto.android.app.util.TrackerUtils;
@@ -651,34 +652,27 @@ public class PhotoDetailsActivity extends CommonActivity implements TwitterLoadi
                         ((ViewPager) collection), false);
                 final PhotoView imageView = (PhotoView) view.findViewById(R.id.image);
 
-                final LoadingControl loadingControl = new LoadingControl() {
-                    private int mLoaders = 0;
+                final LoadingControl loadingControl = new LoadingControlWithCounter() {
 
                     @Override
-                    public void stopLoading() {
-                        if (--mLoaders == 0)
+                    public void stopLoadingEx() {
+                        try
                         {
-                            try
-                            {
-                                view.findViewById(R.id.loading).setVisibility(View.GONE);
-                            } catch (Exception ex)
-                            {
-                                GuiUtils.noAlertError(TAG, null, ex);
-                            }
+                            view.findViewById(R.id.loading).setVisibility(View.GONE);
+                        } catch (Exception ex)
+                        {
+                            GuiUtils.noAlertError(TAG, null, ex);
                         }
                     }
 
                     @Override
-                    public void startLoading() {
-                        if (mLoaders++ == 0)
+                    public void startLoadingEx() {
+                        try
                         {
-                            try
-                            {
-                                view.findViewById(R.id.loading).setVisibility(View.VISIBLE);
-                            } catch (Exception ex)
-                            {
-                                GuiUtils.noAlertError(TAG, null, ex);
-                            }
+                            view.findViewById(R.id.loading).setVisibility(View.VISIBLE);
+                        } catch (Exception ex)
+                        {
+                            GuiUtils.noAlertError(TAG, null, ex);
                         }
                     }
                 };

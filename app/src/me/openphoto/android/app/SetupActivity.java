@@ -4,7 +4,7 @@ package me.openphoto.android.app;
 import me.openphoto.android.app.common.CommonActivity;
 import me.openphoto.android.app.common.CommonFragment;
 import me.openphoto.android.app.oauth.OAuthUtils;
-import me.openphoto.android.app.util.LoadingControl;
+import me.openphoto.android.app.util.ProgressDialogLoadingControl;
 import me.openphoto.android.app.util.TrackerUtils;
 
 import org.holoeverywhere.LayoutInflater;
@@ -25,8 +25,7 @@ import android.widget.EditText;
  * 
  * @author Patrick Boos
  */
-public class SetupActivity extends CommonActivity implements
-        LoadingControl
+public class SetupActivity extends CommonActivity
 {
     public static final String TAG = SetupActivity.class.getSimpleName();
     ProgressDialog progress;
@@ -55,7 +54,9 @@ public class SetupActivity extends CommonActivity implements
         if (intent != null && intent.getData() != null)
         {
             Uri uri = intent.getData();
-            OAuthUtils.verifyOAuthResponse(this, this, uri, new Runnable()
+            OAuthUtils.verifyOAuthResponse(this, new ProgressDialogLoadingControl(this, true,
+                    false,
+                    getString(R.string.logging_in_message)), uri, new Runnable()
             {
 
                 @Override
@@ -66,26 +67,6 @@ public class SetupActivity extends CommonActivity implements
                     finish();
                 }
             });
-        }
-    }
-
-    @Override
-    public void startLoading()
-    {
-        if (progress == null)
-        {
-            progress = ProgressDialog.show(this,
-                    getString(R.string.logging_in_message), null, true, false);
-        }
-    }
-
-    @Override
-    public void stopLoading()
-    {
-        if (progress != null && progress.isShowing())
-        {
-            progress.dismiss();
-            progress = null;
         }
     }
 

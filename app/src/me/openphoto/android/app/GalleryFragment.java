@@ -3,7 +3,7 @@ package me.openphoto.android.app;
 
 import me.openphoto.android.app.bitmapfun.util.ImageCache;
 import me.openphoto.android.app.bitmapfun.util.ImageFetcher;
-import me.openphoto.android.app.common.CommonFrargmentWithImageWorker;
+import me.openphoto.android.app.common.CommonRefreshableFragmentWithImageWorker;
 import me.openphoto.android.app.model.Photo;
 import me.openphoto.android.app.net.ReturnSizes;
 import me.openphoto.android.app.ui.adapter.PhotosEndlessAdapter;
@@ -27,7 +27,7 @@ import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.ListView;
 
-public class GalleryFragment extends CommonFrargmentWithImageWorker implements Refreshable
+public class GalleryFragment extends CommonRefreshableFragmentWithImageWorker
 {
     public static final String TAG = GalleryFragment.class.getSimpleName();
 
@@ -372,5 +372,10 @@ public class GalleryFragment extends CommonFrargmentWithImageWorker implements R
                 return new LoadResponse(null, false);
             }
         }
+    }
+
+    @Override
+    protected boolean isRefreshMenuVisible() {
+        return !loadingControl.isLoading();
     }
 }

@@ -196,6 +196,11 @@ public class SelectTagsActivity extends CommonActivity {
             }
         }
 
+        @Override
+        public boolean isLoading() {
+            return mLoaders > 0;
+        }
+
         private void showLoading(boolean show)
         {
             if (getView() != null)

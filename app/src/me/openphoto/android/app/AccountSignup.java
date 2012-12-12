@@ -9,6 +9,7 @@ import me.openphoto.android.app.util.CommonUtils;
 import me.openphoto.android.app.util.GuiUtils;
 import me.openphoto.android.app.util.LoadingControl;
 import me.openphoto.android.app.util.LoginUtils;
+import me.openphoto.android.app.util.ProgressDialogLoadingControl;
 import me.openphoto.android.app.util.TrackerUtils;
 import me.openphoto.android.app.util.concurrent.AsyncTaskEx;
 
@@ -26,7 +27,6 @@ import android.widget.EditText;
  * @author Patrick Santana <patrick@openphoto.me>
  */
 public class AccountSignup extends CommonActivity
-        implements LoadingControl
 {
 
     private static final String TAG = AccountSignup.class.getSimpleName();
@@ -73,27 +73,9 @@ public class AccountSignup extends CommonActivity
         // clean up login information
         Preferences.logout(this);
 
-        new NewUserTask(username, email, password, this, this).execute();
-    }
-
-    @Override
-    public void startLoading()
-    {
-        if (progress == null)
-        {
-            progress = ProgressDialog.show(this,
-                    getString(R.string.signup_message), null, true, false);
-        }
-    }
-
-    @Override
-    public void stopLoading()
-    {
-        if (progress != null && progress.isShowing())
-        {
-            progress.dismiss();
-            progress = null;
-        }
+        new NewUserTask(username, email, password, new ProgressDialogLoadingControl(this, true,
+                false,
+                getString(R.string.signup_message)), this).execute();
     }
 
     private class NewUserTask extends

@@ -13,6 +13,7 @@ import me.openphoto.android.app.model.utils.PhotoUtils;
 import me.openphoto.android.app.net.ReturnSizes;
 import me.openphoto.android.app.util.GuiUtils;
 import me.openphoto.android.app.util.LoadingControl;
+import me.openphoto.android.app.util.LoadingControlWithCounter;
 import me.openphoto.android.app.util.RunnableWithParameter;
 import me.openphoto.android.app.util.SimpleAsyncTaskEx;
 import me.openphoto.android.app.util.TrackerUtils;
@@ -158,17 +159,17 @@ public class FacebookFragment extends CommonStyledDialogFragment
 
         ShowCurrentlyLoggedInUserTask(final View view)
         {
-            super(new LoadingControl() {
+            super(new LoadingControlWithCounter() {
 
                 ProgressBar progressBar = (ProgressBar) view.findViewById(R.id.progressBar);
 
                 @Override
-                public void stopLoading() {
+                public void stopLoadingEx() {
                     progressBar.setVisibility(View.GONE);
                 }
 
                 @Override
-                public void startLoading() {
+                public void startLoadingEx() {
                     progressBar.setVisibility(View.VISIBLE);
                 }
             });

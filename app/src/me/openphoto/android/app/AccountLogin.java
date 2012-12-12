@@ -9,22 +9,20 @@ import me.openphoto.android.app.util.CommonUtils;
 import me.openphoto.android.app.util.GuiUtils;
 import me.openphoto.android.app.util.LoadingControl;
 import me.openphoto.android.app.util.LoginUtils;
+import me.openphoto.android.app.util.ProgressDialogLoadingControl;
 import me.openphoto.android.app.util.TrackerUtils;
 import me.openphoto.android.app.util.concurrent.AsyncTaskEx;
 
 import org.holoeverywhere.app.Activity;
-import org.holoeverywhere.app.ProgressDialog;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
 
-public class AccountLogin extends CommonActivity implements
-        LoadingControl
+public class AccountLogin extends CommonActivity
 {
     private static final String TAG = AccountLogin.class.getSimpleName();
-    ProgressDialog progress;
 
     @Override
     public void onCreate(Bundle savedInstanceState)
@@ -62,29 +60,11 @@ public class AccountLogin extends CommonActivity implements
         // clean up login information
         Preferences.logout(this);
 
-        new LogInUserTask(new Credentials(email, password), this, this)
+        new LogInUserTask(new Credentials(email, password),
+                new ProgressDialogLoadingControl(this, true, false,
+                        getString(R.string.logging_in_message)), this)
                 .execute();
 
-    }
-
-    @Override
-    public void startLoading()
-    {
-        if (progress == null)
-        {
-            progress = ProgressDialog.show(this,
-                    getString(R.string.logging_in_message), null, true, false);
-        }
-    }
-
-    @Override
-    public void stopLoading()
-    {
-        if (progress != null && progress.isShowing())
-        {
-            progress.dismiss();
-            progress = null;
-        }
     }
 
     private class LogInUserTask extends

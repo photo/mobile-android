@@ -20,7 +20,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 public class SyncFragment extends CommonFragment implements NextStepFlow,
-        PreviousStepFlow, Refreshable, UploadsClearedHandler, BackKeyControl
+        PreviousStepFlow, UploadsClearedHandler, BackKeyControl
 {
     static final String TAG = SyncFragment.class.getSimpleName();
     static final String FIRST_STEP_TAG = "firstStepSync";
@@ -237,15 +237,6 @@ public class SyncFragment extends CommonFragment implements NextStepFlow,
         } else
         {
             selectFragment(secondStepFragment, true);
-        }
-    }
-
-    @Override
-    public void refresh()
-    {
-        if (activeFragment == firstStepFragment)
-        {
-            firstStepFragment.refresh();
         }
     }
 

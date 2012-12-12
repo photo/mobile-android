@@ -7,6 +7,7 @@ import me.openphoto.android.app.twitter.TwitterProvider;
 import me.openphoto.android.app.twitter.TwitterUtils;
 import me.openphoto.android.app.util.GuiUtils;
 import me.openphoto.android.app.util.LoadingControl;
+import me.openphoto.android.app.util.LoadingControlWithCounter;
 import me.openphoto.android.app.util.SimpleAsyncTaskEx;
 import me.openphoto.android.app.util.TrackerUtils;
 import me.openphoto.android.app.util.concurrent.AsyncTaskEx;
@@ -142,17 +143,17 @@ public class TwitterFragment extends CommonStyledDialogFragment
 
         ShowCurrentlyLoggedInUserTask(final View view)
         {
-            super(new LoadingControl() {
+            super(new LoadingControlWithCounter() {
 
                 ProgressBar progressBar = (ProgressBar) view.findViewById(R.id.progressBar);
 
                 @Override
-                public void stopLoading() {
+                public void stopLoadingEx() {
                     progressBar.setVisibility(View.GONE);
                 }
 
                 @Override
-                public void startLoading() {
+                public void startLoadingEx() {
                     progressBar.setVisibility(View.VISIBLE);
                 }
             });

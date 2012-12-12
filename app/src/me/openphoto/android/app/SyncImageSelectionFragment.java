@@ -13,7 +13,7 @@ import me.openphoto.android.app.bitmapfun.util.ImageCache;
 import me.openphoto.android.app.bitmapfun.util.ImageFileSystemFetcher;
 import me.openphoto.android.app.bitmapfun.util.ImageResizer;
 import me.openphoto.android.app.bitmapfun.util.ImageWorker.ImageWorkerAdapter;
-import me.openphoto.android.app.common.CommonFrargmentWithImageWorker;
+import me.openphoto.android.app.common.CommonRefreshableFragmentWithImageWorker;
 import me.openphoto.android.app.provider.UploadsProviderAccessor;
 import me.openphoto.android.app.util.CommonUtils;
 import me.openphoto.android.app.util.GuiUtils;
@@ -48,8 +48,7 @@ import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 
-public class SyncImageSelectionFragment extends CommonFrargmentWithImageWorker implements
-        Refreshable
+public class SyncImageSelectionFragment extends CommonRefreshableFragmentWithImageWorker
 {
     public static final String TAG = SyncImageSelectionFragment.class.getSimpleName();
     public static final String SELECTED_IMAGES = "SyncImageSelectionFragmentSelectedImages";
@@ -917,5 +916,10 @@ public class SyncImageSelectionFragment extends CommonFrargmentWithImageWorker i
             customImageWorkerAdapter.clearProcessedValues();
             mAdapter.notifyDataSetChanged();
         }
+    }
+
+    @Override
+    protected boolean isRefreshMenuVisible() {
+        return !loadingControl.isLoading();
     }
 }
