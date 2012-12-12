@@ -3,9 +3,16 @@
 	android:layout_width="match_parent" android:layout_height="match_parent"
 	android:orientation="vertical">
 	<EditText android:id="@+id/message" android:layout_width="match_parent"
-		android:layout_height="wrap_content" android:layout_weight="1"
-		android:ems="10" android:maxLength="140" android:scrollbars="vertical"
-		android:padding="5dip" android:gravity="top"
+		android:layout_height="wrap_content" 
+		android:layout_weight="1"
+		android:ems="10" 
+		android:maxLength="140" 
+		android:scrollbars="vertical"
+		android:padding="5dip" 
+		android:gravity="top"
+		android:inputType="textMultiLine"
+		android:lines="5"
+		android:minHeight="50dp"
 		android:text="test text asdf asdf asdf asdf asdf as asdf asd f">
 		<requestFocus />
 	</EditText>
@@ -14,11 +21,28 @@
 		android:text="@string/share_twitter_send_tweet" />
 	<LinearLayout android:layout_width="match_parent"
 		android:layout_height="wrap_content" android:orientation="horizontal"
-		android:padding="5dip">
-		<TextView android:id="@+id/loggedInAs" android:layout_width="wrap_content"
-			android:layout_height="wrap_content" android:text="Logged in As Text"
-			android:textAppearance="?android:attr/textAppearanceMedium"
-			android:layout_weight="1" />
+		android:padding="5dip"
+		android:gravity="center_vertical">
+		<RelativeLayout 
+		    android:layout_width="0dip" 
+		    android:layout_height="wrap_content" 
+		    android:layout_weight="1">
+			<TextView 
+			    android:id="@+id/loggedInAs" 
+			    android:layout_width="wrap_content" 
+			    android:layout_height="wrap_content"
+			    android:text="Logged in As Text" 
+			    android:textAppearance="?android:attr/textAppearanceMedium"
+			    android:layout_alignParentLeft="true"
+			    android:layout_centerVertical="true"
+			    />
+			<ProgressBar android:id="@+id/progressBar" 
+			    android:layout_width="wrap_content" 
+			    android:layout_height="wrap_content" 
+			    android:layout_centerVertical="true"
+			    android:layout_centerHorizontal="true" 
+			    android:visibility="gone"/>
+		</RelativeLayout>
 		<Button android:id="@+id/logoutBtn" android:layout_width="wrap_content"
 			android:layout_height="wrap_content" android:text="@string/share_twitter_logout" />
 	</LinearLayout>

@@ -30,6 +30,7 @@ import me.openphoto.android.app.util.CommonUtils;
 import me.openphoto.android.app.util.GuiUtils;
 import me.openphoto.android.app.util.ImageUtils;
 import me.openphoto.android.app.util.SHA1Utils;
+import me.openphoto.android.app.util.TrackerUtils;
 import me.openphoto.android.app.util.Utils;
 import twitter4j.Twitter;
 import android.app.Notification;
@@ -176,6 +177,7 @@ public class UploaderService extends Service {
                     photo = photos.getPhotos().get(0);
                 } else
                 {
+                    long start = System.currentTimeMillis();
                     final Notification notification = CommonUtils.isIceCreamSandwichOrHigher() ? null
                             : showUploadNotification(file);
                     final NotificationCompat.Builder builder = CommonUtils
@@ -210,6 +212,8 @@ public class UploaderService extends Service {
                     Log.i(TAG, "Upload to OpenPhoto completed for: "
                             + photoUpload.getPhotoUri());
                     photo = uploadResponse.getPhoto();
+                    TrackerUtils.trackDataLoadTiming(System.currentTimeMillis() - start,
+                            "photoUpload", TAG);
                 }
                 uploads.setUploaded(photoUpload.getId());
                 if (!photoUpload.isAutoUpload())
@@ -220,7 +224,11 @@ public class UploaderService extends Service {
                 shareIfRequested(photoUpload, photo, true);
                 if (!skipped)
                 {
+                    TrackerUtils.trackServiceEvent("photo_upload", TAG);
                     UploaderServiceUtils.sendPhotoUploadedBroadcast();
+                } else
+                {
+                    TrackerUtils.trackServiceEvent("photo_upload_skip", TAG);
                 }
             } catch (Exception e) {
                 if (!photoUpload.isAutoUpload()) {

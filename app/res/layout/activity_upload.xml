@@ -87,7 +87,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="20dp" />
 
-            <com.WazaBe.HoloEverywhere.widget.Switch
+            <org.holoeverywhere.widget.Switch
 				style="@style/YesNoSwitch" android:id="@+id/private_switch"
 				android:layout_width="match_parent" android:layout_height="wrap_content"
 				android:text="@string/upload_private" android:checked="true" />

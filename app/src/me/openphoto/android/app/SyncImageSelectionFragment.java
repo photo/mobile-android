@@ -12,13 +12,19 @@ import java.util.TreeSet;
 import me.openphoto.android.app.bitmapfun.util.ImageCache;
 import me.openphoto.android.app.bitmapfun.util.ImageFileSystemFetcher;
 import me.openphoto.android.app.bitmapfun.util.ImageResizer;
-import me.openphoto.android.app.bitmapfun.util.ImageWorker;
 import me.openphoto.android.app.bitmapfun.util.ImageWorker.ImageWorkerAdapter;
+import me.openphoto.android.app.common.CommonRefreshableFragmentWithImageWorker;
 import me.openphoto.android.app.provider.UploadsProviderAccessor;
 import me.openphoto.android.app.util.CommonUtils;
 import me.openphoto.android.app.util.GuiUtils;
 import me.openphoto.android.app.util.LoadingControl;
+import me.openphoto.android.app.util.TrackerUtils;
 import me.openphoto.android.app.util.concurrent.AsyncTaskEx;
+
+import org.holoeverywhere.LayoutInflater;
+import org.holoeverywhere.app.Activity;
+import org.holoeverywhere.widget.Switch;
+
 import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -31,7 +37,6 @@ import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.view.ViewTreeObserver;
 import android.widget.AbsListView;
-import android.widget.AbsListView.RecyclerListener;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.CompoundButton;
@@ -39,12 +44,11 @@ import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.GridView;
 import android.widget.ImageView;
 
-import com.WazaBe.HoloEverywhere.LayoutInflater;
-import com.WazaBe.HoloEverywhere.app.Activity;
-import com.WazaBe.HoloEverywhere.widget.Switch;
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuInflater;
+import com.actionbarsherlock.view.MenuItem;
 
-public class SyncImageSelectionFragment extends CommonFrargmentWithImageWorker implements
-        Refreshable
+public class SyncImageSelectionFragment extends CommonRefreshableFragmentWithImageWorker
 {
     public static final String TAG = SyncImageSelectionFragment.class.getSimpleName();
     public static final String SELECTED_IMAGES = "SyncImageSelectionFragmentSelectedImages";
@@ -66,6 +70,7 @@ public class SyncImageSelectionFragment extends CommonFrargmentWithImageWorker i
     public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
 
         mImageThumbSize = getResources().getDimensionPixelSize(
                 R.dimen.image_thumbnail_size);
@@ -88,6 +93,31 @@ public class SyncImageSelectionFragment extends CommonFrargmentWithImageWorker i
         }
         mAdapter = new CustomImageAdapter(getActivity(), (ImageResizer) mImageWorker,
                 selectionController);
+    }
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.sync_image_selection, menu);
+    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId())
+        {
+            case R.id.menu_select_all: {
+                TrackerUtils
+                        .trackOptionsMenuClickEvent("menu_select_all", SyncImageSelectionFragment.this);
+                selectAll();
+                return true;
+            }
+            case R.id.menu_select_none: {
+                TrackerUtils.trackOptionsMenuClickEvent("menu_select_none",
+                        SyncImageSelectionFragment.this);
+                selectNone();
+                return true;
+            }
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     @Override
@@ -163,33 +193,13 @@ public class SyncImageSelectionFragment extends CommonFrargmentWithImageWorker i
                         }
                     }
                 });
-        photosGrid.setRecyclerListener(new RecyclerListener() {
-
-            @Override
-            public void onMovedToScrapHeap(View view) {
-                CommonUtils.debug(TAG, "Moved to scrap: " + view);
-                cancelPotentialWorkForImageView(view);
-            }
-
-            public void cancelPotentialWorkForImageView(View view) {
-                ImageView photoView = (ImageView) view.findViewById(R.id.image);
-                if (photoView != null)
-                {
-                    ImageData object = (ImageData) photoView.getTag();
-                    if (object != null)
-                    {
-                        CommonUtils.debug(TAG, "Canceling potential work from the scrap view");
-                        ImageWorker.cancelPotentialWork(object, photoView);
-                    }
-                }
-            }
-        });
         Button nextStepBtn = (Button) v.findViewById(R.id.nextBtn);
         nextStepBtn.setOnClickListener(new OnClickListener()
         {
             @Override
             public void onClick(View v)
             {
+                TrackerUtils.trackButtonClickEvent("nextBtn", SyncImageSelectionFragment.this);
                 if (isDataLoaded())
                 {
                     if (selectionController.hasSelected())
@@ -243,6 +253,33 @@ public class SyncImageSelectionFragment extends CommonFrargmentWithImageWorker i
         if (isDataLoaded())
         {
             customImageWorkerAdapter.setFiltered(!isChecked);
+            mAdapter.notifyDataSetChanged();
+        }
+    }
+
+    protected void selectAll()
+    {
+        if (isDataLoaded())
+        {
+            for (int i = 0, size = customImageWorkerAdapter.getSize(); i < size; i++)
+            {
+                ImageData imageData = (ImageData) customImageWorkerAdapter.getItem(i);
+                if (imageData != null &&
+                        !selectionController.isSelected(imageData.id)
+                        && !customImageWorkerAdapter.isProcessedValue(imageData))
+                {
+                    selectionController.addToSelected(imageData.id);
+                }
+            }
+            mAdapter.notifyDataSetChanged();
+        }
+    }
+
+    protected void selectNone()
+    {
+        if (isDataLoaded())
+        {
+            selectionController.clearSelection();
             mAdapter.notifyDataSetChanged();
         }
     }
@@ -307,6 +344,7 @@ public class SyncImageSelectionFragment extends CommonFrargmentWithImageWorker i
         {
             return Collections.emptyList();
         }
+        long start = System.currentTimeMillis();
         List<String> result = new ArrayList<String>();
         for (int i = 0, size = customImageWorkerAdapter.getSize(); i < size; i++)
         {
@@ -316,6 +354,9 @@ public class SyncImageSelectionFragment extends CommonFrargmentWithImageWorker i
                 result.add(imageData.data);
             }
         }
+        TrackerUtils.trackDataProcessingTiming(System.currentTimeMillis() - start,
+                "getSelectedFileNames",
+                TAG);
         return result;
     }
 
@@ -513,6 +554,8 @@ public class SyncImageSelectionFragment extends CommonFrargmentWithImageWorker i
                     @Override
                     public void onClick(View v)
                     {
+                        TrackerUtils.trackButtonClickEvent("imageContainer",
+                                SyncImageSelectionFragment.this);
                         boolean selected = selectionController.isSelected(id);
                         if (selected)
                         {
@@ -744,6 +787,7 @@ public class SyncImageSelectionFragment extends CommonFrargmentWithImageWorker i
 
         public void loadGallery()
         {
+            long start = System.currentTimeMillis();
             String[] projection =
             {
                     MediaStore.Images.Media._ID,
@@ -776,6 +820,8 @@ public class SyncImageSelectionFragment extends CommonFrargmentWithImageWorker i
             {
                 all = new ArrayList<ImageData>();
             }
+            TrackerUtils.trackDataLoadTiming(System.currentTimeMillis() - start, "localGallery",
+                    TAG);
         }
 
         public void loadProcessedValues()
@@ -805,6 +851,7 @@ public class SyncImageSelectionFragment extends CommonFrargmentWithImageWorker i
         {
             if (filtered)
             {
+                long start = System.currentTimeMillis();
                 filteredIndexes = new ArrayList<Integer>();
 
                 for (int i = 0, size = all.size(); i < size; i++)
@@ -815,6 +862,8 @@ public class SyncImageSelectionFragment extends CommonFrargmentWithImageWorker i
                         filteredIndexes.add(i);
                     }
                 }
+                TrackerUtils.trackDataProcessingTiming(System.currentTimeMillis() - start,
+                        "imageFilter", TAG);
             } else
             {
                 filteredIndexes = null;
@@ -867,5 +916,10 @@ public class SyncImageSelectionFragment extends CommonFrargmentWithImageWorker i
             customImageWorkerAdapter.clearProcessedValues();
             mAdapter.notifyDataSetChanged();
         }
+    }
+
+    @Override
+    protected boolean isRefreshMenuVisible() {
+        return !loadingControl.isLoading();
     }
 }

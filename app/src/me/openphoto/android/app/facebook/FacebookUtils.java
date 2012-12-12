@@ -9,7 +9,9 @@ import me.openphoto.android.app.facebook.FacebookSessionEvents.LogoutListener;
 import me.openphoto.android.app.ui.widget.YesNoDialogFragment;
 import me.openphoto.android.app.ui.widget.YesNoDialogFragment.YesNoButtonPressedHandler;
 import me.openphoto.android.app.util.GuiUtils;
-import android.app.Activity;
+
+import org.holoeverywhere.app.Activity;
+
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
@@ -18,7 +20,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 
-import com.WazaBe.HoloEverywhere.sherlock.SActivity;
 import com.facebook.android.AsyncFacebookRunner;
 import com.facebook.android.DialogError;
 import com.facebook.android.Facebook;
@@ -197,8 +198,7 @@ public class FacebookUtils
                                     }
                                 }
                             });
-            dialogFragment.replace(((SActivity) activity)
-                    .getSupportFragmentManager());
+            dialogFragment.show(activity);
         }
     }
 

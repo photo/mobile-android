@@ -3,13 +3,19 @@ package me.openphoto.android.app;
 
 import me.openphoto.android.app.bitmapfun.util.ImageCache;
 import me.openphoto.android.app.bitmapfun.util.ImageFetcher;
+import me.openphoto.android.app.common.CommonRefreshableFragmentWithImageWorker;
 import me.openphoto.android.app.model.Photo;
 import me.openphoto.android.app.net.ReturnSizes;
 import me.openphoto.android.app.ui.adapter.PhotosEndlessAdapter;
 import me.openphoto.android.app.util.CommonUtils;
 import me.openphoto.android.app.util.ImageFlowUtils;
 import me.openphoto.android.app.util.LoadingControl;
+import me.openphoto.android.app.util.TrackerUtils;
 import me.openphoto.android.app.util.Utils;
+
+import org.holoeverywhere.LayoutInflater;
+import org.holoeverywhere.app.Activity;
+
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -21,11 +27,7 @@ import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.ListView;
 
-import com.WazaBe.HoloEverywhere.LayoutInflater;
-import com.WazaBe.HoloEverywhere.app.Activity;
-import com.facebook.android.R;
-
-public class GalleryFragment extends CommonFrargmentWithImageWorker implements Refreshable
+public class GalleryFragment extends CommonRefreshableFragmentWithImageWorker
 {
     public static final String TAG = GalleryFragment.class.getSimpleName();
 
@@ -267,6 +269,7 @@ public class GalleryFragment extends CommonFrargmentWithImageWorker implements R
 
                         @Override
                         public void onClick(View v) {
+                            TrackerUtils.trackButtonClickEvent("image", GalleryFragment.this);
                             Intent intent = new Intent(getActivity(), PhotoDetailsActivity.class);
                             intent.putExtra(PhotoDetailsActivity.EXTRA_ADAPTER_PHOTOS,
                                     new PhotosEndlessAdapter.ParametersHolder(mAdapter, value));
@@ -357,17 +360,10 @@ public class GalleryFragment extends CommonFrargmentWithImageWorker implements R
             loadingControl.stopLoading();
         }
 
-        @Override
-        public LoadResponse loadItems(
-                int page)
-        {
-            if (CommonUtils.checkLoggedInAndOnline())
-            {
-                return super.loadItems(page);
-            } else
-            {
-                return new LoadResponse(null, false);
-            }
-        }
+    }
+
+    @Override
+    protected boolean isRefreshMenuVisible() {
+        return !loadingControl.isLoading();
     }
 }

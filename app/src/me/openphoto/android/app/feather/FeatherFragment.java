@@ -30,8 +30,8 @@ import android.support.v4.app.FragmentManager;
 import android.util.DisplayMetrics;
 import android.widget.ImageView;
 
-import com.WazaBe.HoloEverywhere.app.Fragment;
-import com.WazaBe.HoloEverywhere.app.ProgressDialog;
+import org.holoeverywhere.app.Fragment;
+import org.holoeverywhere.app.ProgressDialog;
 import com.aviary.android.feather.Constants;
 import com.aviary.android.feather.FeatherActivity;
 import com.aviary.android.feather.library.media.ExifInterfaceWrapper;
@@ -44,7 +44,7 @@ import com.aviary.android.feather.library.utils.IOUtils;
 import com.aviary.android.feather.library.utils.ImageLoader.ImageSizes;
 import com.aviary.android.feather.library.utils.StringUtils;
 import com.aviary.android.feather.library.utils.SystemUtils;
-import com.facebook.android.R;
+import me.openphoto.android.app.R;
 
 /**
  * The feather editor support fragment. It is used as external util to open

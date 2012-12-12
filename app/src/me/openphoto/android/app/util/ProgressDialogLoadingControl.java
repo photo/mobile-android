@@ -2,9 +2,9 @@ package me.openphoto.android.app.util;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
-import android.content.Context;
+import org.holoeverywhere.app.ProgressDialog;
 
-import com.WazaBe.HoloEverywhere.app.ProgressDialog;
+import android.content.Context;
 
 /**
  * Simple loading control which shows progress dialog
@@ -65,6 +65,11 @@ public class ProgressDialogLoadingControl implements LoadingControl
         {
             dismissProgress();
         }
+    }
+
+    @Override
+    public boolean isLoading() {
+        return loaders.get() > 0;
     }
 
     public void showProgress() {

@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
 
-	<style name="Theme.OpenPhoto.Light" parent="Holo.Theme.Sherlock.Light">
+	<style name="Theme.OpenPhoto.Light" parent="Holo.Theme.Light">
 		<item name="android:windowBackground">@drawable/bg</item>
 		<item name="android:listViewStyle">@style/TransparentListView</item>
 		<item name="android:expandableListViewStyle">@style/TransparentExpandableListView</item>
 		<item name="actionBarStyle">@style/solid_ActionBar</item>
 	</style>
-	<style name="Theme.OpenPhoto.Dialog.Light" parent="Holo.Theme.Dialog.Light">
+	<style name="Theme.OpenPhoto.Dialog.Light" parent="Holo.Theme.Dialog.Alert.Light">
 	</style>
-	<style name="Theme.OpenPhoto.Fullscreen" parent="Holo.Theme.Sherlock.Light.NoActionBar.Fullscreen">
+	<style name="Theme.OpenPhoto.Fullscreen" parent="Holo.Theme.Light.NoActionBar.Fullscreen">
 	</style>
-	<style name="Theme.OpenPhoto.TransparentActionBar" parent="Holo.Theme.Sherlock.Light.Fullscreen">
+	<style name="Theme.OpenPhoto.TransparentActionBar" parent="Holo.Theme.Light.Fullscreen">
 	    <item name="actionBarStyle">@style/transparent_ActionBar</item>
 	    <item name="android:windowBackground">@drawable/bg</item>
 	</style>
-	<style name="Theme.OpenPhoto.Light.NoActionBar" parent="Holo.Theme.Sherlock.Light.NoActionBar">
+	<style name="Theme.OpenPhoto.Light.NoActionBar" parent="Holo.Theme.Light.NoActionBar">
 		<item name="android:windowBackground">@drawable/bg</item>
 	</style>
 	<style name="solid_ActionBar" parent="@style/Widget.Sherlock.Light.ActionBar.Solid">

@@ -5,12 +5,12 @@ import me.openphoto.android.app.OpenPhotoApplication;
 import me.openphoto.android.app.R;
 import me.openphoto.android.app.util.CommonUtils;
 import me.openphoto.android.app.util.GuiUtils;
+import me.openphoto.android.app.util.concurrent.AsyncTaskEx;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import me.openphoto.android.app.util.concurrent.AsyncTaskEx;
 
 public class UploadsUtils
 {

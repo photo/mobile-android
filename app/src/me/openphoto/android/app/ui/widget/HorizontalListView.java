@@ -32,6 +32,10 @@ import java.util.LinkedList;
 import java.util.Queue;
 
 import me.openphoto.android.app.util.CommonUtils;
+
+import org.holoeverywhere.widget.AdapterView;
+import org.holoeverywhere.widget.Scroller;
+
 import android.content.Context;
 import android.database.DataSetObserver;
 import android.graphics.Rect;
@@ -41,9 +45,6 @@ import android.view.GestureDetector.OnGestureListener;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ListAdapter;
-
-import com.WazaBe.HoloEverywhere.widget.AdapterView;
-import com.WazaBe.HoloEverywhere.widget.Scroller;
 
 public class HorizontalListView extends AdapterView<ListAdapter> {
 
@@ -63,7 +64,14 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
     private OnItemSelectedListener mOnItemSelected;
     private OnItemClickListener mOnItemClicked;
     private OnItemLongClickListener mOnItemLongClicked;
+    private OnDownListener mOnDownListener;
     private boolean mDataChanged = false;
+    private Runnable mRunnable = new Runnable() {
+        @Override
+        public void run() {
+            requestLayout();
+        }
+    };
 
     public HorizontalListView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -94,6 +102,10 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
     @Override
     public void setOnItemLongClickListener(AdapterView.OnItemLongClickListener listener) {
         mOnItemLongClicked = listener;
+    }
+
+    public void setOnDownListener(OnDownListener listener) {
+        mOnDownListener = listener;
     }
 
     private DataSetObserver mDataObserver = new DataSetObserver() {
@@ -151,20 +163,23 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
     private void addAndMeasureChild(final View child, int viewPos) {
         LayoutParams params = child.getLayoutParams();
         if (params == null) {
-            CommonUtils.debug(TAG, "Layout params are null. Setting new one.");
             params = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
         } else
         {
-            CommonUtils.debug(TAG, "Layout params are not null.");
         }
 
         addViewInLayout(child, viewPos, params, true);
+        measureChild(child);
+    }
+
+    private void measureChild(final View child) {
         child.measure(MeasureSpec.makeMeasureSpec(getWidth(), MeasureSpec.AT_MOST),
                 MeasureSpec.makeMeasureSpec(getHeight(), MeasureSpec.AT_MOST));
     }
 
     @Override
     protected synchronized void onLayout(boolean changed, int left, int top, int right, int bottom) {
+        CommonUtils.verbose(TAG, "onLayout");
         super.onLayout(changed, left, top, right, bottom);
 
         if (mAdapter == null) {
@@ -172,6 +187,7 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
         }
 
         if (mDataChanged) {
+            CommonUtils.verbose(TAG, "data changed");
             int oldCurrentX = mCurrentX;
             initView();
             removeAllViewsInLayout();
@@ -182,18 +198,23 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
         if (mScroller.computeScrollOffset()) {
             int scrollx = mScroller.getCurrX();
             mNextX = scrollx;
+            CommonUtils.verbose(TAG, "Computed scroll offset. Current x = %1$d", mNextX);
         }
 
         if (mNextX <= 0) {
+            CommonUtils.verbose(TAG, "mNextX <= 0: %1$d", mNextX);
             mNextX = 0;
             mScroller.forceFinished(true);
         }
         if (mNextX >= mMaxX) {
+            CommonUtils.verbose(TAG, "mNextX >= max: %1$d : %2$d", mNextX, mMaxX);
             mNextX = mMaxX;
             mScroller.forceFinished(true);
         }
 
+        CommonUtils.verbose(TAG, "mCurrentX = %1$d; ; mNextX = %2$d", mCurrentX, mNextX);
         int dx = mCurrentX - mNextX;
+        CommonUtils.verbose(TAG, "dx = %1$d", dx);
 
         removeNonVisibleItems(dx);
         fillList(dx);
@@ -202,18 +223,14 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
         mCurrentX = mNextX;
 
         if (!mScroller.isFinished()) {
-            post(new Runnable() {
-                @Override
-                public void run() {
-                    requestLayout();
-                }
-            });
-
+            CommonUtils.verbose(TAG, "Scroller is not finished");
+            post(mRunnable);
         }
     }
 
     private void fillList(final int dx) {
-        int edge = 0;
+        CommonUtils.verbose(TAG, "fillList: %1$d; getChildCount = %2$d", dx, getChildCount());
+        int edge = mDisplayOffset;
         View child = getChildAt(getChildCount() - 1);
         if (child != null) {
             edge = child.getRight();
@@ -230,14 +247,29 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
     }
 
     private void fillListRight(int rightEdge, final int dx) {
+        CommonUtils.verbose(TAG, "fillListRight: rightEdge = %1$d; dx = %2$d", rightEdge, dx);
+        int totalWidth = 0;
+        Queue<View> viewQueue = new LinkedList<View>();
         while (rightEdge + dx < getWidth() && mRightViewIndex < mAdapter.getCount()) {
-
+            CommonUtils.verbose(TAG, "mRemovedViewQueue.size = %1$d", mRemovedViewQueue.size());
             View child = mAdapter.getView(mRightViewIndex, mRemovedViewQueue.poll(), this);
-            addAndMeasureChild(child, -1);
-            rightEdge += child.getMeasuredWidth();
+            measureChild(child);
+            viewQueue.offer(child);
+            int childWidth = child.getMeasuredWidth();
+            rightEdge += childWidth;
+            totalWidth += childWidth;
+            totalWidth = removeNonVisibleItemsFromLeft(totalWidth, getWidth(), viewQueue);
+            CommonUtils.verbose(TAG,
+                    "rightEdge = %1$d; childWidth = %2$d; rightViewIndex = %3$d"
+                            + "; count = %4$d; prognosed max width = %5$d",
+                     rightEdge, child.getMeasuredWidth(), mRightViewIndex,
+                     mAdapter.getCount(), child.getMeasuredWidth() * mAdapter.getCount() - getWidth());
 
             if (mRightViewIndex == mAdapter.getCount() - 1) {
                 mMaxX = mCurrentX + rightEdge - getWidth();
+                CommonUtils.verbose(TAG, "Setting maxX to %1$d", mMaxX);
+                CommonUtils.verbose(TAG, "mCurrentX = %1$d; rightEdge = %2$d; width = %3$d",
+                        mCurrentX, rightEdge, getWidth());
             }
 
             if (mMaxX < 0) {
@@ -245,20 +277,39 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
             }
             mRightViewIndex++;
         }
+        View child;
+        while ((child = viewQueue.poll()) != null)
+        {
+            addAndMeasureChild(child, -1);
+        }
 
     }
 
     private void fillListLeft(int leftEdge, final int dx) {
+        CommonUtils.verbose(TAG, "fillListLeft: leftEdge = %1$d; dx = %2$d", leftEdge, dx);
+        int totalWidth = 0;
+        Queue<View> viewQueue = new LinkedList<View>();
         while (leftEdge + dx > 0 && mLeftViewIndex >= 0) {
+            CommonUtils.verbose(TAG, "mRemovedViewQueue.size = %1$d", mRemovedViewQueue.size());
             View child = mAdapter.getView(mLeftViewIndex, mRemovedViewQueue.poll(), this);
-            addAndMeasureChild(child, 0);
-            leftEdge -= child.getMeasuredWidth();
+            measureChild(child);
+            viewQueue.offer(child);
+            int childWidth = child.getMeasuredWidth();
+            leftEdge -= childWidth;
+            totalWidth += childWidth;
+            totalWidth = removeNonVisibleItemsFromRight(totalWidth, getWidth(), viewQueue);
             mLeftViewIndex--;
             mDisplayOffset -= child.getMeasuredWidth();
+        }
+        View child;
+        while ((child = viewQueue.poll()) != null)
+        {
+            addAndMeasureChild(child, 0);
         }
     }
 
     private void removeNonVisibleItems(final int dx) {
+        CommonUtils.verbose(TAG, "removeNonVisibleItems: %1$d", dx);
         View child = getChildAt(0);
         while (child != null && child.getRight() + dx <= 0) {
             mDisplayOffset += child.getMeasuredWidth();
@@ -276,9 +327,70 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
             mRightViewIndex--;
             child = getChildAt(getChildCount() - 1);
         }
+        CommonUtils.verbose(TAG, "mDisplayOffset = %1$d", mDisplayOffset);
+    }
+
+    private int removeNonVisibleItemsFromLeft(
+            int totalWidth,
+            int minRestWidth,
+            Queue<View> viewQueue) {
+        CommonUtils.verbose(TAG,
+                "removeNonVisibleItemsFromLeft: totalWidth = %1$d, minRestWidth = %2$d",
+                totalWidth, minRestWidth);
+        CommonUtils.verbose(TAG, "mLeftViewIndex = %1$d", mLeftViewIndex);
+        View child = viewQueue.peek();
+        while (child != null) {
+            int childWidth = child.getMeasuredWidth();
+            CommonUtils
+                    .verbose(TAG, "totalWidth = %1$d, childWidth = %2$d", totalWidth, childWidth);
+            if (totalWidth - childWidth < minRestWidth)
+            {
+                break;
+            }
+            viewQueue.poll();
+            mDisplayOffset += childWidth;
+            totalWidth -= childWidth;
+            mRemovedViewQueue.offer(child);
+            mLeftViewIndex++;
+            child = viewQueue.peek();
+        }
+        CommonUtils.verbose(TAG, "mDisplayOffset = %1$d; totalWidth = %2$d; mLeftViewIndex = %3$d",
+                mDisplayOffset,
+                totalWidth, mLeftViewIndex);
+        return totalWidth;
+    }
+
+    private int removeNonVisibleItemsFromRight(
+            int totalWidth,
+            int minRestWidth,
+            Queue<View> viewQueue)
+    {
+        CommonUtils.verbose(TAG,
+                "removeNonVisibleItemsFromRight: totalWidth = %1$d, minRestWidth = %2$d",
+                totalWidth, minRestWidth);
+        CommonUtils.verbose(TAG, "mRightViewIndex = %1$d", mRightViewIndex);
+        View child = viewQueue.peek();
+        while (child != null) {
+            int childWidth = child.getMeasuredWidth();
+            CommonUtils
+                    .verbose(TAG, "totalWidth = %1$d, childWidth = %2$d", totalWidth, childWidth);
+            if (totalWidth - childWidth < minRestWidth)
+            {
+                break;
+            }
+            viewQueue.poll();
+            totalWidth -= childWidth;
+            mRemovedViewQueue.offer(child);
+            mRightViewIndex--;
+            child = viewQueue.peek();
+        }
+        CommonUtils.verbose(TAG, "totalWidth = %1$d; mRightViewIndex = %2$d",
+                totalWidth, mRightViewIndex);
+        return totalWidth;
     }
 
     private void positionItems(final int dx) {
+        CommonUtils.verbose(TAG, "positionItems: dx = %1$d", dx);
         if (getChildCount() > 0) {
             mDisplayOffset += dx;
             int left = mDisplayOffset;
@@ -292,6 +404,7 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
     }
 
     public synchronized void scrollTo(int x) {
+        CommonUtils.verbose(TAG, "Requested scroll from x = %1$d to x = %2$d", mNextX, x);
         mScroller.startScroll(mNextX, 0, x - mNextX, 0);
         requestLayout();
     }
@@ -319,6 +432,10 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
 
     protected boolean onDown(MotionEvent e) {
         mScroller.forceFinished(true);
+        if (mOnDownListener != null)
+        {
+            mOnDownListener.onDown(e);
+        }
         return true;
     }
 
@@ -332,6 +449,7 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
         @Override
         public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX,
                 float velocityY) {
+            CommonUtils.verbose(TAG, "onFling");
             return HorizontalListView.this.onFling(e1, e2, velocityX, velocityY);
         }
 
@@ -339,6 +457,7 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
         public boolean onScroll(MotionEvent e1, MotionEvent e2,
                 float distanceX, float distanceY) {
 
+            CommonUtils.verbose(TAG, "onScroll: distanceX = %1$f", distanceX);
             synchronized (HorizontalListView.this) {
                 mNextX += (int) distanceX;
             }
@@ -396,4 +515,8 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
         }
     };
 
+    public static interface OnDownListener
+    {
+        void onDown(MotionEvent e);
+    }
 }

@@ -2,18 +2,19 @@
 package me.openphoto.android.app.ui.widget;
 
 import me.openphoto.android.app.R;
+import me.openphoto.android.app.common.CommonClosableOnRestoreDialogFragment;
 import android.content.DialogInterface;
 import android.os.Bundle;
 
-import com.WazaBe.HoloEverywhere.app.AlertDialog;
-import com.WazaBe.HoloEverywhere.app.Dialog;
+import org.holoeverywhere.app.AlertDialog;
+import org.holoeverywhere.app.Dialog;
 
 /**
  * Basic Yes/No dialog fragment
  * 
  * @author Eugene Popovich
  */
-public class YesNoDialogFragment extends ClosableOnRestoreDialogFragment
+public class YesNoDialogFragment extends CommonClosableOnRestoreDialogFragment
 {
     public static interface YesNoButtonPressedHandler
     {

@@ -1,10 +1,8 @@
-package me.openphoto.android.app.ui.widget;
+package me.openphoto.android.app.common;
 
 import android.os.Bundle;
 
-import com.WazaBe.HoloEverywhere.sherlock.SDialogFragment;
-
-public class ClosableOnRestoreDialogFragment extends SDialogFragment {
+public class CommonClosableOnRestoreDialogFragment extends CommonDialogFragment {
     boolean isRestore = false;
 
     @Override
@@ -18,6 +16,7 @@ public class ClosableOnRestoreDialogFragment extends SDialogFragment {
         super.onResume();
         if (isRestore)
         {
+            trackLifecycleEvent("dismiss on restore");
             dismiss();
         }
     }
