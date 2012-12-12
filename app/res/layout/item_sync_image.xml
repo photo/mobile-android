@@ -11,19 +11,30 @@
 		<ImageView android:id="@+id/image" android:layout_width="match_parent"
 			android:layout_height="match_parent" android:scaleType="centerCrop" 
 			/>
-		<View android:background="#6600ff00" android:visibility="invisible"
+		<RelativeLayout android:background="#66b3b3b3" android:visibility="invisible"
 			android:layout_width="match_parent" 
 			android:layout_height="match_parent"
-			android:id="@+id/selection_overlay" />
-		<RelativeLayout android:background="#330000ff"
+			android:id="@+id/selection_overlay" >
+			<ImageView 
+			    android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_alignParentRight="true"
+				android:layout_alignParentBottom="true"
+				android:src="@drawable/selected"
+				android:duplicateParentState="true"
+				android:paddingBottom="5dip"
+				android:paddingRight="5dip"
+				/>
+		</RelativeLayout>
+		<RelativeLayout
 			android:visibility="invisible" android:layout_width="match_parent"
 			android:layout_height="match_parent" android:id="@+id/uploaded_overlay">
-			<TextView android:layout_width="wrap_content"
+			<ImageView 
+			    android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
-				android:text="@string/sync_uploaded"
-				android:textAppearance="?android:attr/textAppearanceMedium" 
-				android:textColor="#ffffff"
-				android:layout_centerInParent="true"
+				android:layout_alignParentRight="true"
+				android:layout_alignParentBottom="true"
+				android:src="@drawable/synced"
 				/>
 		</RelativeLayout>
 	</RelativeLayout>
