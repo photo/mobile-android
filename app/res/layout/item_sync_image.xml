@@ -35,6 +35,8 @@
 				android:layout_alignParentRight="true"
 				android:layout_alignParentBottom="true"
 				android:src="@drawable/synced"
+				android:paddingBottom="5dip"
+				android:paddingRight="5dip"
 				/>
 		</RelativeLayout>
 	</RelativeLayout>
