@@ -1,6 +1,6 @@
 {
   "message":"Photo 8i uploaded successfully",
-  "code":202,
+  "code":201,
   "result":{
      "id":"8i",
      "tags":[

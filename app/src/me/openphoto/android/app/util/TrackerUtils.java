@@ -20,6 +20,10 @@ import com.google.analytics.tracking.android.GAServiceManager;
  */
 public class TrackerUtils {
     /**
+     * Used for tests
+     */
+    public static boolean SKIP_UNCAUGHT_SETUP = false;
+    /**
      * The exception parser used to track exceptions
      */
     static ExceptionParser parser = new ExceptionParser() {
@@ -41,6 +45,10 @@ public class TrackerUtils {
      * Setup uncaug exception handler
      */
     public static void setupTrackerUncaughtExceptionHandler() {
+        if (SKIP_UNCAUGHT_SETUP)
+        {
+            return;
+        }
         EasyTracker.getInstance().setContext(OpenPhotoApplication.getContext());
         ExceptionReporter myHandler = new ExceptionReporter(
                 EasyTracker.getTracker(), // Currently used Tracker.

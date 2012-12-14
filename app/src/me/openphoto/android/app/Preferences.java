@@ -3,14 +3,16 @@ package me.openphoto.android.app;
 
 import me.openphoto.android.app.net.IOpenPhotoApi;
 import me.openphoto.android.app.net.OpenPhotoApi;
+import me.openphoto.android.app.util.CommonUtils;
 import oauth.signpost.OAuthConsumer;
 import oauth.signpost.OAuthProvider;
 import oauth.signpost.basic.DefaultOAuthProvider;
 import oauth.signpost.commonshttp.CommonsHttpOAuthConsumer;
-import android.content.Context;
-import android.content.SharedPreferences;
 
 import org.holoeverywhere.preference.PreferenceManager;
+
+import android.content.Context;
+import android.content.SharedPreferences;
 
 public class Preferences {
     public final static int PREFERENCES_MODE = Context.MODE_MULTI_PROCESS;
@@ -18,7 +20,8 @@ public class Preferences {
 
     public static SharedPreferences getDefaultSharedPreferences(Context context)
     {
-        return PreferenceManager.wrap(OpenPhotoApplication.getContext(),
+        return PreferenceManager.wrap(OpenPhotoApplication.getContext() == null ? context
+                : OpenPhotoApplication.getContext(),
                 PREFERENCES_NAME,
                 PREFERENCES_MODE);
     }
@@ -91,7 +94,8 @@ public class Preferences {
 
     public static boolean isLoggedIn(Context context) {
         return getDefaultSharedPreferences(context)
-                .getBoolean(context.getString(R.string.setting_account_loggedin_key), false);
+                .getBoolean(context.getString(R.string.setting_account_loggedin_key), false)
+                || CommonUtils.TEST_CASE;
     }
 
     public static void logout(Context context) {
