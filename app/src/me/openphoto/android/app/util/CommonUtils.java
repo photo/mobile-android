@@ -13,6 +13,11 @@ import android.util.Log;
 
 public class CommonUtils
 {
+    /**
+     * This variable is used in the test project to skip some checks
+     */
+    public static boolean TEST_CASE = false;
+    
     public static final String TAG = CommonUtils.class.getSimpleName();
     public static void debug(String TAG, String message, Object... params)
     {
@@ -133,7 +138,7 @@ public class CommonUtils
      */
     public static boolean checkOnline()
     {
-        boolean result = Utils.isOnline(OpenPhotoApplication.getContext());
+        boolean result = Utils.isOnline(OpenPhotoApplication.getContext()) || TEST_CASE;
         if (!result)
         {
             GuiUtils.alert(R.string.noInternetAccess);

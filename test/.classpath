@@ -3,13 +3,18 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="gen"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/OpenPhoto-Android-App"/>
+	<classpathentry exported="true" kind="lib" path="libs/junit-4.8.2.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/objenesis-1.2.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/robotium-solo-2.5.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/bsh-2.0b4.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/cglib-nodep-2.2.2.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/easymock-3.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/javassist-3.17.1-GA.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/jcommander-1.27.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/powermock-easymock-1.5-full.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/snakeyaml-1.6.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/testng-6.8.jar"/>
 	<classpathentry kind="con" path="com.android.ide.eclipse.adt.ANDROID_FRAMEWORK"/>
-	<classpathentry kind="lib" path="libs/cglib-nodep-2.2.jar"/>
-	<classpathentry kind="lib" path="libs/easymock-3.0.jar"/>
-	<classpathentry kind="lib" path="libs/javassist-3.15.0-GA.jar"/>
-	<classpathentry kind="lib" path="libs/junit-4.8.2.jar"/>
-	<classpathentry kind="lib" path="libs/objenesis-1.2.jar"/>
-	<classpathentry kind="lib" path="libs/powermock-easymock-1.4.10-full.jar"/>
-	<classpathentry kind="lib" path="libs/robotium-solo-2.5.jar"/>
+	<classpathentry exported="true" kind="con" path="com.android.ide.eclipse.adt.LIBRARIES"/>
 	<classpathentry kind="output" path="bin/classes"/>
 </classpath>

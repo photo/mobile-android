@@ -2,6 +2,7 @@
 package me.openphoto.android.test;
 
 import me.openphoto.android.app.net.IOpenPhotoApi;
+import me.openphoto.android.app.util.CommonUtils;
 import me.openphoto.android.test.util.MockUtils;
 import android.app.Activity;
 import android.test.ActivityInstrumentationTestCase2;
@@ -19,6 +20,7 @@ public abstract class MockedInstrumentationTestCase<T extends Activity> extends
     protected void setUp() throws Exception {
         super.setUp();
         mApiMock = MockUtils.mockOpenPhotoApi();
+        CommonUtils.TEST_CASE = true;
     }
 
     @Override
