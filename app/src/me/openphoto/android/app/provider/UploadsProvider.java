@@ -179,12 +179,12 @@ public class UploadsProvider extends ContentProvider
         switch (uriMatcher.match(uri))
         {
             case UPLOADS:
-                CommonUtils.debug(TAG, "update delete");
+                CommonUtils.debug(TAG, "delete");
                 count = mDb.delete(PHOTOS_TABLE, where, whereArgs);
                 break;
             case UPLOAD_ID:
                 String segment = uri.getPathSegments().get(1);
-                CommonUtils.debug(TAG, "update delete id " + segment);
+                CommonUtils.debug(TAG, "delete id " + segment);
                 count = mDb.delete(PHOTOS_TABLE,
                         KEY_ID
                                 + "="

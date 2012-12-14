@@ -45,9 +45,11 @@ public class MainActivity extends CommonActivity
         UploadsClearedHandler, PhotoUploadedHandler, TwitterLoadingControlAccessor,
         FacebookLoadingControlAccessor
 {
-    private static final int HOME_INDEX = 0;
-    private static final int GALLERY_INDEX = 1;
-    private static final int SYNC_INDEX = 2;
+    public static final int HOME_INDEX = 0;
+    public static final int GALLERY_INDEX = 1;
+    public static final int SYNC_INDEX = 2;
+    public static final int ALBUMS_INDEX = 3;
+    public static final int TAGS_INDEX = 4;
     private static final String HOME_TAG = "home";
     private static final String GALLERY_TAG = "gallery";
     private static final String SYNC_TAG = "sync";

@@ -23,7 +23,7 @@ import android.util.DisplayMetrics;
 public abstract class PhotosEndlessAdapter extends EndlessAdapter<Photo>
 {
     public static final int DEFAULT_PAGE_SIZE = 30;
-    private static final String TAG = null;
+    private static final String TAG = PhotosEndlessAdapter.class.getSimpleName();
     private final IOpenPhotoApi mOpenPhotoApi;
     private final List<String> mTagFilter;
     private final String mAlbumFilter;

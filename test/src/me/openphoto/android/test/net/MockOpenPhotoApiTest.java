@@ -4,6 +4,7 @@ package me.openphoto.android.test.net;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 
+import me.openphoto.android.app.OpenPhotoApplication;
 import me.openphoto.android.app.net.IOpenPhotoApi;
 import me.openphoto.android.app.net.OpenPhotoApi;
 import me.openphoto.android.test.util.MockUtils;
@@ -19,27 +20,33 @@ import android.test.InstrumentationTestCase;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(IOpenPhotoApi.class)
-public class MockOpenPhotoApiTest extends InstrumentationTestCase {
+public class MockOpenPhotoApiTest extends InstrumentationTestCase
+{
 
     private IOpenPhotoApi mApiTested;
     private IOpenPhotoApi mApiMock;
 
     @Override
-    protected void setUp() throws Exception {
+    protected void setUp() throws Exception
+    {
         super.setUp();
         mApiMock = MockUtils.mockOpenPhotoApi();
-        mApiTested = OpenPhotoApi.createInstance(OpenPhotoApiConstants.OPENPHOTO_BASE_URI);
+        mApiTested = OpenPhotoApi.createInstance(OpenPhotoApplication.getContext());
     }
 
     @Override
-    protected void tearDown() throws Exception {
+    protected void tearDown() throws Exception
+    {
         MockUtils.unMockOpenPhotoApi();
         super.tearDown();
     }
 
     public void testMocking() throws SecurityException, NoSuchMethodException,
-            IllegalArgumentException, IllegalAccessException, InvocationTargetException,
-            ClientProtocolException, IllegalStateException, IOException, JSONException {
+            IllegalArgumentException, IllegalAccessException,
+            InvocationTargetException,
+            ClientProtocolException, IllegalStateException, IOException,
+            JSONException
+    {
 
         mApiMock.getPhotos();
         PowerMock.expectLastCall().andReturn(null).times(1);

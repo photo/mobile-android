@@ -1,19 +1,25 @@
 
 package me.openphoto.android.test;
 
+import me.openphoto.android.app.Preferences;
 import me.openphoto.android.app.R;
 import me.openphoto.android.app.SettingsActivity;
+import me.openphoto.android.app.SettingsFragment;
+
+import org.holoeverywhere.preference.CheckBoxPreference;
+import org.holoeverywhere.preference.EditTextPreference;
+import org.holoeverywhere.preference.Preference;
+import org.holoeverywhere.preference.PreferenceActivity;
+
 import android.content.SharedPreferences;
-import android.preference.CheckBoxPreference;
-import android.preference.EditTextPreference;
-import android.preference.Preference;
-import android.preference.PreferenceActivity;
-import android.preference.PreferenceManager;
 import android.test.ActivityInstrumentationTestCase2;
 
-public class SettingsActivityTest extends ActivityInstrumentationTestCase2<SettingsActivity> {
+public class SettingsActivityTest extends
+        ActivityInstrumentationTestCase2<SettingsActivity>
+{
 
     private SettingsActivity mActivity;
+    private SettingsFragment fragment;
     private SharedPreferences mPreferences;
 
     public SettingsActivityTest() {
@@ -27,11 +33,14 @@ public class SettingsActivityTest extends ActivityInstrumentationTestCase2<Setti
     protected void setUp() throws Exception {
         super.setUp();
 
-        mPreferences = PreferenceManager.getDefaultSharedPreferences(getInstrumentation()
-                .getTargetContext());
-        mPreferences.edit().clear().commit();
+        // mPreferences.edit().clear().commit();
 
         mActivity = this.getActivity();
+        mPreferences = Preferences
+                .getDefaultSharedPreferences(getInstrumentation()
+                        .getTargetContext());
+        fragment = (SettingsFragment) mActivity.getSupportFragmentManager()
+                .findFragmentById(android.R.id.content);
     }
 
     public void testPreconditions() {
@@ -45,24 +54,32 @@ public class SettingsActivityTest extends ActivityInstrumentationTestCase2<Setti
     public void testAutoUploadSetting() {
         CheckBoxPreference autouploadOnPreference = (CheckBoxPreference) getPreference(R.string.setting_autoupload_on_key);
         assertNotNull(autouploadOnPreference);
-        boolean isAutoUploadOnDefault = mActivity.getResources().getBoolean(
-                R.bool.setting_autoupload_on_default);
-        assertEquals(isAutoUploadOnDefault, autouploadOnPreference.isChecked());
+        boolean isAutoUploadOn = mPreferences.getBoolean(
+                mActivity.getString(R.string.setting_autoupload_on_key),
+                mActivity.getResources().getBoolean(
+                        R.bool.setting_autoupload_on_default));
+        assertEquals(isAutoUploadOn, autouploadOnPreference.isChecked());
 
         EditTextPreference autouploadTagPreference = (EditTextPreference) getPreference(R.string.setting_autoupload_tag_key);
-        assertEquals(isAutoUploadOnDefault, autouploadTagPreference.isEnabled());
+        assertEquals(isAutoUploadOn, autouploadTagPreference.isEnabled());
         assertNotNull(autouploadTagPreference);
-        assertEquals(mActivity.getString(R.string.setting_autoupload_tag_default).toString(),
+        String autoUploadTag = mPreferences.getString(
+                mActivity.getString(R.string.setting_autoupload_tag_key),
+                mActivity.getString(R.string.setting_autoupload_tag_default));
+        assertEquals(autoUploadTag,
                 autouploadTagPreference.getText());
     }
 
     public void testServerSetting() {
-        EditTextPreference serverPreference = (EditTextPreference) getPreference(R.string.setting_account_server_key);
-        assertEquals(mActivity.getString(R.string.setting_account_server_default).toString(),
-                serverPreference.getText());
+        Preference serverPreference = getPreference(R.string.setting_account_server_key);
+        String server = mPreferences.getString(
+                mActivity.getString(R.string.setting_account_server_key),
+                mActivity.getString(R.string.setting_account_server_default));
+        assertEquals(server,
+                serverPreference.getSummary());
     }
 
     private Preference getPreference(int resId) {
-        return mActivity.findPreference(mActivity.getString(resId));
+        return fragment.findPreference(mActivity.getString(resId));
     }
 }

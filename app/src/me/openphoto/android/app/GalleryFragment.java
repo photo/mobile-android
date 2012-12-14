@@ -218,7 +218,7 @@ public class GalleryFragment extends CommonRefreshableFragmentWithImageWorker
     /**
      * Extended adapter which uses photo groups as items instead of Photos
      */
-    private class GalleryAdapterExt extends
+    public class GalleryAdapterExt extends
             GalleryAdapter
     {
         ImageFlowUtils<Photo> imageFlowUtils;
@@ -280,7 +280,7 @@ public class GalleryFragment extends CommonRefreshableFragmentWithImageWorker
             };
         }
 
-        int getSuperCount()
+        public int getSuperCount()
         {
             return super.getCount();
         }
