@@ -28,9 +28,15 @@ public class UploadsUtils
             @Override
             public void onReceive(Context context, Intent intent)
             {
-                CommonUtils.debug(TAG,
-                        "Received uploads cleared broadcast message");
-                handler.uploadsCleared();
+                try
+                {
+                    CommonUtils.debug(TAG,
+                            "Received uploads cleared broadcast message");
+                    handler.uploadsCleared();
+                } catch (Exception ex)
+                {
+                    GuiUtils.error(TAG, ex);
+                }
             }
         };
         activity.registerReceiver(br, new IntentFilter(BROADCAST_ACTION));
