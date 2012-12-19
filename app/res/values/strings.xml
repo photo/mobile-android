@@ -143,7 +143,7 @@
     <string name="errorCouldNotLoadNextPhotosInList">Could not load next photos in list</string>
     <string name="errorCouldNotGetPhoto">Could not get photo</string>
     <string name="errorCouldNotDeletePhoto">Could not delete photo</string>
-    <string name="errorOccured">Error occured</string>
+    <string name="errorOccured">Error occurred</string>
     <string name="errorCouldNotLoadNextTagsInList">Could not load next tags in list</string>
     <string name="errorCouldNotInitTwitterFragment">Could not init twitter fragment</string>
     <string name="errorCouldNotRetrieveTwitterScreenName">Could not retrieve twitter screen name</string>
@@ -153,6 +153,7 @@
     <string name="errorCouldNotRetrieveFacebookScreenName">Could not retrieve facebook user name</string>
     <string name="errorCouldNotSendFacebookPhoto">Could not post facebook message</string>
     <string name="errorSpecifiedUrlIsInvalid">The specified URL is invalid</string>
+    <string name="errorCantFindPendingUploadInformation">Can\'t find pending upload information</string>
 
     <!-- Preferences -->
     <string name="upload_preference_category">Camera upload</string>
