@@ -167,9 +167,14 @@ public class ImageCache {
             mDiskCache = DiskLruCache.openCache(context, diskCacheDir,
                     cacheParams.diskCacheSize,
                     cacheParams.diskCacheMaxItemSize);
-            mDiskCache.setCompressParams(cacheParams.compressFormat, cacheParams.compressQuality);
-            if (cacheParams.clearDiskCacheOnStart) {
-                mDiskCache.clearCache();
+            // Issue #259 fix. Sometimes previous step returns null
+            if (mDiskCache != null)
+            {
+                mDiskCache.setCompressParams(cacheParams.compressFormat,
+                        cacheParams.compressQuality);
+                if (cacheParams.clearDiskCacheOnStart) {
+                    mDiskCache.clearCache();
+                }
             }
         }
 
