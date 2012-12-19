@@ -21,6 +21,7 @@ import java.io.File;
 import me.openphoto.android.app.BuildConfig;
 import me.openphoto.android.app.OpenPhotoApplication;
 import me.openphoto.android.app.util.CommonUtils;
+import me.openphoto.android.app.util.TrackerUtils;
 import android.app.ActivityManager;
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -175,6 +176,11 @@ public class ImageCache {
                 if (cacheParams.clearDiskCacheOnStart) {
                     mDiskCache.clearCache();
                 }
+            } else
+            {
+                CommonUtils.debug(TAG, "Couldn't create disk cache");
+                TrackerUtils.trackBackgroundEvent("unsuccessfullDiskCacheCreation",
+                        diskCacheDir.getAbsolutePath());
             }
         }
 

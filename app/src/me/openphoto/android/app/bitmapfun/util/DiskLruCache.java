@@ -237,7 +237,7 @@ public class DiskLruCache {
             return null;
         }
     }
-    
+
     /**
      * Out of Memory hack taken from here
      * http://stackoverflow.com/a/7116158/527759
@@ -251,12 +251,12 @@ public class DiskLruCache {
         BitmapFactory.Options bfOptions = new BitmapFactory.Options();
         bfOptions.inDither = false; // Disable Dithering mode
         bfOptions.inPurgeable = true; // Tell to gc that whether it needs
-                                        // free memory, the Bitmap can be
-                                        // cleared
+                                      // free memory, the Bitmap can be
+                                      // cleared
         bfOptions.inInputShareable = true; // Which kind of reference will
-                                            // be used to recover the Bitmap
-                                            // data after being clear, when
-                                            // it will be used in the future
+                                           // be used to recover the Bitmap
+                                           // data after being clear, when
+                                           // it will be used in the future
         bfOptions.inTempStorage = new byte[32 * 1024];
 
         File file = new File(path);
@@ -292,6 +292,7 @@ public class DiskLruCache {
         }
         return bm;
     }
+
     /**
      * Checks if a specific key exist in the cache.
      * 
@@ -358,9 +359,27 @@ public class DiskLruCache {
      * @param cacheDir The directory to remove the cache files from
      */
     private static void clearCache(File cacheDir) {
+        TrackerUtils.trackBackgroundEvent(
+                "clearCacheRequest",
+                CommonUtils.format("path: %1$s; exists: %2$b; canWrite: %3$b",
+                        cacheDir.getAbsolutePath(), cacheDir.exists(), cacheDir.canWrite()));
+        CommonUtils.debug(TAG, "Clear cache request: path: %1$s; exists: %2$b; canWrite: %3$b",
+                cacheDir.getAbsolutePath(), cacheDir.exists(), cacheDir.canWrite());
+        // Issue #264 additional checks
+        if (!cacheDir.exists() || !cacheDir.canWrite())
+        {
+            TrackerUtils.trackBackgroundEvent("clearCacheInterrupt", cacheDir.getAbsolutePath());
+            CommonUtils.debug(TAG,
+                    "Cache dir doesn't exists or can't write: " + cacheDir.getAbsolutePath());
+            return;
+        }
         final File[] files = cacheDir.listFiles(cacheFileFilter);
-        for (int i = 0; i < files.length; i++) {
-            files[i].delete();
+        // Issue #264 additional checks
+        if (files != null)
+        {
+            for (int i = 0; i < files.length; i++) {
+                files[i].delete();
+            }
         }
     }
 
