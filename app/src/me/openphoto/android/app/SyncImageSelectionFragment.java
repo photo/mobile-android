@@ -245,7 +245,7 @@ public class SyncImageSelectionFragment extends CommonRefreshableFragmentWithIma
         mImageWorker.setLoadingImage(R.drawable.empty_photo);
 
         mImageWorker.setImageCache(ImageCache.findOrCreateCache(getActivity(),
-                ImageCache.LOCAL_THUMBS_CACHE_DIR, false));
+                ImageCache.LOCAL_THUMBS_CACHE_DIR, 500, false));
     }
 
     protected void switchUploadState(boolean isChecked)
@@ -338,14 +338,14 @@ public class SyncImageSelectionFragment extends CommonRefreshableFragmentWithIma
         selectionController.clearSelection();
     }
 
-    public List<String> getSelectedFileNames()
+    public ArrayList<String> getSelectedFileNames()
     {
+        long start = System.currentTimeMillis();
+        ArrayList<String> result = new ArrayList<String>();
         if (customImageWorkerAdapter == null)
         {
-            return Collections.emptyList();
+            return result;
         }
-        long start = System.currentTimeMillis();
-        List<String> result = new ArrayList<String>();
         for (int i = 0, size = customImageWorkerAdapter.getSize(); i < size; i++)
         {
             ImageData imageData = (ImageData) customImageWorkerAdapter.getItem(i);

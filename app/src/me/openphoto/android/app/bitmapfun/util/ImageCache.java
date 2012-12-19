@@ -92,7 +92,8 @@ public class ImageCache {
      */
     public static ImageCache findOrCreateCache(
             final FragmentActivity activity, final String uniqueName) {
-        return findOrCreateCache(activity, uniqueName, DEFAULT_CLEAR_DISK_CACHE_ON_START);
+        return findOrCreateCache(activity, uniqueName, DEFAULT_DISK_CACHE_MAX_ITEM_SIZE,
+                DEFAULT_CLEAR_DISK_CACHE_ON_START);
     }
 
     /**
@@ -102,6 +103,8 @@ public class ImageCache {
      * 
      * @param activity The calling {@link FragmentActivity}
      * @param uniqueName A unique name to append to the cache directory
+     * @param diskCacheMaxItemSize max item size for the disk cache
+     * @param clearDiskCacheOnStart whether to clear disk cache on start
      * @return An existing retained ImageCache object or a new one if one did
      *         not exist.
      * @param clearDiskCacheOnStart whether to clear disk cache on start
@@ -109,6 +112,7 @@ public class ImageCache {
      */
     public static ImageCache findOrCreateCache(
             final FragmentActivity activity, final String uniqueName,
+            final int diskCacheMaxItemSize,
             boolean clearDiskCacheOnStart) {
         ImageCacheParams params = new ImageCacheParams(uniqueName);
         // Get memory class of this device, exceeding this amount will throw an
@@ -119,6 +123,7 @@ public class ImageCache {
         // Use 1/8th of the available memory for this memory cache.
         params.memCacheSize = 1024 * 1024 * memClass / 8;
         params.clearDiskCacheOnStart = clearDiskCacheOnStart;
+        params.diskCacheMaxItemSize = diskCacheMaxItemSize;
         CommonUtils.debug(TAG, "Calculated memory cache size: " + params.memCacheSize);
 
         return findOrCreateCache(activity, params);

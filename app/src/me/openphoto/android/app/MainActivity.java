@@ -21,6 +21,8 @@ import me.openphoto.android.app.util.BackKeyControl;
 import me.openphoto.android.app.util.CommonUtils;
 import me.openphoto.android.app.util.GalleryOpenControl;
 import me.openphoto.android.app.util.LoadingControl;
+import me.openphoto.android.app.util.SyncUtils;
+import me.openphoto.android.app.util.SyncUtils.SyncStartedHandler;
 import me.openphoto.android.app.util.TrackerUtils;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -43,7 +45,7 @@ import com.actionbarsherlock.view.Window;
 public class MainActivity extends CommonActivity
         implements LoadingControl, GalleryOpenControl, SyncHandler,
         UploadsClearedHandler, PhotoUploadedHandler, TwitterLoadingControlAccessor,
-        FacebookLoadingControlAccessor
+        FacebookLoadingControlAccessor, SyncStartedHandler
 {
     public static final int HOME_INDEX = 0;
     public static final int GALLERY_INDEX = 1;
@@ -62,6 +64,7 @@ public class MainActivity extends CommonActivity
 
     private List<BroadcastReceiver> receivers = new ArrayList<BroadcastReceiver>();
     boolean instanceSaved = false;
+    boolean actionbBarNavigationModeInitiated = false;
     /**
      * Called when Main Activity is first loaded
      * 
@@ -88,6 +91,8 @@ public class MainActivity extends CommonActivity
                 .getAndRegisterOnUploadClearedActionBroadcastReceiver(TAG,
                         this, this));
         receivers.add(UploaderServiceUtils.getAndRegisterOnPhotoUploadedActionBroadcastReceiver(
+                TAG, this, this));
+        receivers.add(SyncUtils.getAndRegisterOnSyncStartedActionBroadcastReceiver(
                 TAG, this, this));
     }
 
@@ -170,10 +175,12 @@ public class MainActivity extends CommonActivity
     protected void onResume()
     {
         super.onResume();
-        if (!instanceSaved)
+        if (!actionbBarNavigationModeInitiated)
         {
             mActionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+            actionbBarNavigationModeInitiated = true;
         }
+        instanceSaved = false;
         reinitMenu();
 
         if (!Preferences.isLoggedIn(this))
@@ -385,14 +392,17 @@ public class MainActivity extends CommonActivity
             CommonUtils.debug(TAG, "onTabUnselected");
             if (mFragment != null)
             {
-                ft.detach(mFragment);
-                View target = mFragment.getView().findFocus();
-
-                if (target != null)
+                if (mFragment.getView() != null)
                 {
-                    InputMethodManager mgr = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                    mgr.hideSoftInputFromWindow(target.getWindowToken(), 0);
+                    View target = mFragment.getView().findFocus();
+
+                    if (target != null)
+                    {
+                        InputMethodManager mgr = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                        mgr.hideSoftInputFromWindow(target.getWindowToken(), 0);
+                    }
                 }
+                ft.detach(mFragment);
             }
 
         }
@@ -412,9 +422,13 @@ public class MainActivity extends CommonActivity
     @Override
     public void syncStarted()
     {
+        CommonUtils.debug(TAG, "Sync started");
         if (mActionBar.getSelectedNavigationIndex() == SYNC_INDEX)
         {
-            mActionBar.selectTab(mActionBar.getTabAt(HOME_INDEX));
+            if (!instanceSaved)
+            {
+                mActionBar.selectTab(mActionBar.getTabAt(HOME_INDEX));
+            }
         }
     }
 
@@ -465,6 +479,17 @@ public class MainActivity extends CommonActivity
         if (proceed)
         {
             super.onBackPressed();
+        }
+    }
+
+    @Override
+    public void syncStarted(List<String> processedFileNames) {
+        CommonUtils.debug(TAG, "Sync started call");
+        SyncFragment syncFragment = (SyncFragment) getSupportFragmentManager().findFragmentByTag(
+                SYNC_TAG);
+        if (syncFragment != null)
+        {
+            syncFragment.syncStarted(processedFileNames);
         }
     }
 }
