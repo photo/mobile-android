@@ -16,8 +16,8 @@
 	<classpathentry kind="lib" path="libs/twitter4j-core-android-2.2.6.jar"/>
 	<classpathentry kind="lib" path="libs/twitter4j-media-support-android-2.2.6.jar"/>
 	<classpathentry kind="lib" path="libs/twitter4j-stream-android-2.2.6.jar"/>
+	<classpathentry kind="lib" path="libs/bugsense3.0.7.jar"/>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="gen"/>
-	<classpathentry kind="lib" path="libs/bugsense3.0.7.jar"/>
 	<classpathentry kind="output" path="bin/classes"/>
 </classpath>
