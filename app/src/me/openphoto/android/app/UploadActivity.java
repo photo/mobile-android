@@ -7,8 +7,8 @@ import java.io.Serializable;
 import java.util.Date;
 
 import me.openphoto.android.app.bitmapfun.util.ImageResizer;
-import me.openphoto.android.app.common.CommonClosableOnRestoreDialogFragment;
 import me.openphoto.android.app.common.CommonActivity;
+import me.openphoto.android.app.common.CommonClosableOnRestoreDialogFragment;
 import me.openphoto.android.app.common.CommonFragment;
 import me.openphoto.android.app.feather.FeatherFragment;
 import me.openphoto.android.app.net.UploadMetaData;
@@ -158,6 +158,12 @@ public class UploadActivity extends CommonActivity {
                     Uri uri = intent.getParcelableExtra(EXTRA_PENDING_UPLOAD_URI);
                     PhotoUpload pendingUpload = new UploadsProviderAccessor(getActivity())
                             .getPendingUpload(uri);
+                    if (pendingUpload == null)
+                    {
+                        GuiUtils.alert(R.string.errorCantFindPendingUploadInformation);
+                        getActivity().finish();
+                        return;
+                    }
                     new UploadsProviderAccessor(getActivity()).delete(pendingUpload.getId());
                     setSelectedImageUri(pendingUpload.getPhotoUri());
                     ((EditText) v.findViewById(R.id.edit_title)).setText(pendingUpload
