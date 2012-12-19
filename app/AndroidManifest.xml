@@ -3,12 +3,17 @@
     package="me.openphoto.android.app"
     android:installLocation="auto"
     android:versionCode="2"
-    android:versionName="20121212" >
+    android:versionName="20121217" >
 
     <uses-sdk
         android:minSdkVersion="7"
-        android:targetSdkVersion="16" />
-
+        android:targetSdkVersion="17" />
+	<supports-screens 
+	    android:anyDensity="true" 
+	    android:smallScreens="true" 
+	    android:normalScreens="true" 
+	    android:largeScreens="true" 
+		android:xlargeScreens="true"/>
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
