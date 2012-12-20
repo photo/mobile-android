@@ -329,4 +329,27 @@ public abstract class PhotosEndlessAdapter extends EndlessAdapter<Photo>
             in.readList(items, getClass().getClassLoader());
         }
     }
+
+    /**
+     * Should be called when processing photo removal event
+     * @param photo
+     */
+    public void photoDeleted(Photo photo)
+    {
+        int index = -1;
+        List<Photo> photos = getItems();
+        for (int i = 0, size = photos.size(); i < size; i++)
+        {
+            Photo photo2 = photos.get(i);
+            if (photo2.getId().equals(photo.getId()))
+            {
+                index = i;
+                break;
+            }
+        }
+        if (index != -1)
+        {
+            deleteItemAtAndLoadOneMoreItem(index);
+        }
+    }
 }

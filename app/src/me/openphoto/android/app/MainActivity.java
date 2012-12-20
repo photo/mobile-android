@@ -11,6 +11,9 @@ import me.openphoto.android.app.TwitterFragment.TwitterLoadingControlAccessor;
 import me.openphoto.android.app.common.CommonActivity;
 import me.openphoto.android.app.common.Refreshable;
 import me.openphoto.android.app.facebook.FacebookProvider;
+import me.openphoto.android.app.model.Photo;
+import me.openphoto.android.app.model.utils.PhotoUtils;
+import me.openphoto.android.app.model.utils.PhotoUtils.PhotoDeletedHandler;
 import me.openphoto.android.app.provider.UploadsUtils;
 import me.openphoto.android.app.provider.UploadsUtils.UploadsClearedHandler;
 import me.openphoto.android.app.service.UploaderService;
@@ -45,7 +48,8 @@ import com.actionbarsherlock.view.Window;
 public class MainActivity extends CommonActivity
         implements LoadingControl, GalleryOpenControl, SyncHandler,
         UploadsClearedHandler, PhotoUploadedHandler, TwitterLoadingControlAccessor,
-        FacebookLoadingControlAccessor, SyncStartedHandler
+        FacebookLoadingControlAccessor, SyncStartedHandler,
+        PhotoDeletedHandler
 {
     public static final int HOME_INDEX = 0;
     public static final int GALLERY_INDEX = 1;
@@ -93,6 +97,8 @@ public class MainActivity extends CommonActivity
         receivers.add(UploaderServiceUtils.getAndRegisterOnPhotoUploadedActionBroadcastReceiver(
                 TAG, this, this));
         receivers.add(SyncUtils.getAndRegisterOnSyncStartedActionBroadcastReceiver(
+                TAG, this, this));
+        receivers.add(PhotoUtils.getAndRegisterOnPhotoDeletedActionBroadcastReceiver(
                 TAG, this, this));
     }
 
@@ -491,6 +497,24 @@ public class MainActivity extends CommonActivity
         if (syncFragment != null)
         {
             syncFragment.syncStarted(processedFileNames);
+        }
+    }
+
+    @Override
+    public void photoDeleted(Photo photo)
+    {
+        HomeFragment homeFragment = (HomeFragment) getSupportFragmentManager().findFragmentByTag(
+                HOME_TAG);
+        if (homeFragment != null)
+        {
+            homeFragment.photoDeleted(photo);
+        }
+
+        GalleryFragment galleryFragment = (GalleryFragment) getSupportFragmentManager()
+                .findFragmentByTag(GALLERY_TAG);
+        if (galleryFragment != null)
+        {
+            galleryFragment.photoDeleted(photo);
         }
     }
 }

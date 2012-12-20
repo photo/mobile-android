@@ -19,6 +19,12 @@ import me.openphoto.android.app.util.TrackerUtils;
 import org.apache.http.client.ClientProtocolException;
 import org.json.JSONException;
 
+import android.app.Activity;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+
 /**
  * Utils class for the photo object
  * 
@@ -26,6 +32,8 @@ import org.json.JSONException;
  */
 public class PhotoUtils {
     public static final String TAG = PhotoUtils.class.getSimpleName();
+    public static String PHOTO_DELETED_ACTION = "me.openphoto.PHOTO_DELETED";
+    public static String PHOTO_DELETED = "PHOTO_DELETED";
 
     /**
      * Validate whether getUrl for the photo size is not null. Runs size
@@ -110,10 +118,9 @@ public class PhotoUtils {
     }
 
     public static void deletePhoto(Photo photo,
-            RunnableWithParameter<Boolean> runnable,
             LoadingControl loadingControl)
     {
-        new DeletePhotoTask(photo, runnable, loadingControl).execute();
+        new DeletePhotoTask(photo, loadingControl).execute();
     }
 
     private static class RetrieveThumbUrlTask extends SimpleAsyncTaskEx {
@@ -154,14 +161,11 @@ public class PhotoUtils {
 
     private static class DeletePhotoTask extends SimpleAsyncTaskEx {
         private Photo photo;
-        private RunnableWithParameter<Boolean> runnable;
 
         public DeletePhotoTask(Photo photo,
-                RunnableWithParameter<Boolean> runnable,
                 LoadingControl loadingControl) {
             super(loadingControl);
             this.photo = photo;
-            this.runnable = runnable;
         }
 
         @Override
@@ -179,12 +183,54 @@ public class PhotoUtils {
 
         @Override
         protected void onSuccessPostExecute() {
-            runnable.run(true);
-        }
-
-        @Override
-        protected void onFailedPostExecute() {
-            runnable.run(false);
+            sendPhotoDeletedBroadcast(photo);
         }
     }
+    
+    /**
+     * Get and register the broadcast receiver for the photo removed event
+     * @param TAG
+     * @param handler
+     * @param activity
+     * @return
+     */
+    public static BroadcastReceiver getAndRegisterOnPhotoDeletedActionBroadcastReceiver(
+            final String TAG,
+            final PhotoDeletedHandler handler,
+            final Activity activity)
+    {
+        BroadcastReceiver br = new BroadcastReceiver()
+        {
+
+            @Override
+            public void onReceive(Context context, Intent intent)
+            {
+                try
+                {
+                    CommonUtils.debug(TAG,
+                            "Received photo deleted broadcast message");
+                    Photo photo = intent.getParcelableExtra(PHOTO_DELETED);
+                    handler.photoDeleted(photo);
+                } catch (Exception ex)
+                {
+                    GuiUtils.error(TAG, ex);
+                }
+            }
+        };
+        activity.registerReceiver(br, new IntentFilter(PHOTO_DELETED_ACTION));
+        return br;
+    }
+
+    public static void sendPhotoDeletedBroadcast(Photo photo)
+    {
+        Intent intent = new Intent(PHOTO_DELETED_ACTION);
+        intent.putExtra(PHOTO_DELETED, photo);
+        OpenPhotoApplication.getContext().sendBroadcast(intent);
+    }
+
+    public static interface PhotoDeletedHandler
+    {
+        void photoDeleted(Photo photo);
+    }
+
 }

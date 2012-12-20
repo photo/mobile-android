@@ -10,6 +10,7 @@ import me.openphoto.android.app.common.CommonRefreshableFragmentWithImageWorker;
 import me.openphoto.android.app.facebook.FacebookBaseDialogListener;
 import me.openphoto.android.app.facebook.FacebookUtils;
 import me.openphoto.android.app.model.Photo;
+import me.openphoto.android.app.model.utils.PhotoUtils.PhotoDeletedHandler;
 import me.openphoto.android.app.net.OpenPhotoApi;
 import me.openphoto.android.app.net.ReturnSizes;
 import me.openphoto.android.app.share.ShareUtils;
@@ -46,6 +47,7 @@ import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 
 public class HomeFragment extends CommonRefreshableFragmentWithImageWorker
+        implements PhotoDeletedHandler
 {
     public static final String TAG = HomeFragment.class.getSimpleName();
 
@@ -213,6 +215,14 @@ public class HomeFragment extends CommonRefreshableFragmentWithImageWorker
         }
     }
 
+    @Override
+    public void photoDeleted(Photo photo)
+    {
+        if (mAdapter != null)
+        {
+            mAdapter.photoDeleted(photo);
+        }
+    }
     public static class UpdateStatusListener extends FacebookBaseDialogListener
     {
         public UpdateStatusListener(Context context)

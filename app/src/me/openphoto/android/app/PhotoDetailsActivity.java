@@ -3,6 +3,7 @@ package me.openphoto.android.app;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.List;
 
 import me.openphoto.android.app.FacebookFragment.FacebookLoadingControlAccessor;
 import me.openphoto.android.app.TwitterFragment.TwitterLoadingControlAccessor;
@@ -15,6 +16,7 @@ import me.openphoto.android.app.facebook.FacebookProvider;
 import me.openphoto.android.app.facebook.FacebookUtils;
 import me.openphoto.android.app.model.Photo;
 import me.openphoto.android.app.model.utils.PhotoUtils;
+import me.openphoto.android.app.model.utils.PhotoUtils.PhotoDeletedHandler;
 import me.openphoto.android.app.net.ReturnSizes;
 import me.openphoto.android.app.share.ShareUtils;
 import me.openphoto.android.app.share.ShareUtils.TwitterShareRunnable;
@@ -42,6 +44,7 @@ import org.holoeverywhere.widget.AdapterView.OnItemClickListener;
 
 import uk.co.senab.photoview.PhotoView;
 import uk.co.senab.photoview.PhotoViewAttacher.OnViewTapListener;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -79,13 +82,17 @@ import com.actionbarsherlock.view.Window;
  *          - added initial support for album photos filter
  */
 public class PhotoDetailsActivity extends CommonActivity implements TwitterLoadingControlAccessor,
-        FacebookLoadingControlAccessor {
+        FacebookLoadingControlAccessor, PhotoDeletedHandler {
+
+    private static final String TAG = PhotoDetailsActivity.class.getSimpleName();
 
     public static final String EXTRA_PHOTO = "EXTRA_PHOTO";
 
     public static final String EXTRA_ADAPTER_PHOTOS = "EXTRA_ADAPTER_PHOTOS";
 
     public final static int AUTHORIZE_ACTIVITY_REQUEST_CODE = 0;
+
+    private List<BroadcastReceiver> receivers = new ArrayList<BroadcastReceiver>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -99,8 +106,19 @@ public class PhotoDetailsActivity extends CommonActivity implements TwitterLoadi
                     .replace(android.R.id.content, new PhotoDetailsUiFragment())
                     .commit();
         }
+        receivers.add(PhotoUtils.getAndRegisterOnPhotoDeletedActionBroadcastReceiver(
+                TAG, this, this));
     }
 
+    @Override
+    protected void onDestroy()
+    {
+        super.onDestroy();
+        for (BroadcastReceiver br : receivers)
+        {
+            unregisterReceiver(br);
+        }
+    }
     PhotoDetailsUiFragment getContentFragment()
     {
         return (PhotoDetailsUiFragment) getSupportFragmentManager().findFragmentById(android.R.id.content);
@@ -201,10 +219,12 @@ public class PhotoDetailsActivity extends CommonActivity implements TwitterLoadi
         }
     }
 
+    @Override
+    public void photoDeleted(Photo photo) {
+        getContentFragment().photoDeleted(photo);
+    }
     public static class PhotoDetailsUiFragment extends CommonFrargmentWithImageWorker
     {
-        private static final String TAG = PhotoDetailsActivity.class.getSimpleName();
-
         static PhotoDetailsUiFragment currentInstance;
         static FragmentAccessor<PhotoDetailsUiFragment> currentInstanceAccessor = new FragmentAccessor<PhotoDetailsUiFragment>() {
             private static final long serialVersionUID = 1L;
@@ -535,31 +555,7 @@ public class PhotoDetailsActivity extends CommonActivity implements TwitterLoadi
                                             getString(R.string.deleting_photo_message)
                                             );
                                     PhotoUtils.deletePhoto(photo,
-                                            new RunnableWithParameter<Boolean>() {
-
-                                                @Override
-                                                public void run(Boolean parameter) {
-                                                    if (parameter.booleanValue())
-                                                    {
-                                                        if (thumbnailsAdapter.getCount() == 1)
-                                                        {
-                                                            getActivity().finish();
-                                                        } else
-                                                        {
-                                                            int index = thumbnailsAdapter
-                                                                    .itemIndex(photo);
-                                                            if (index != -1)
-                                                            {
-                                                                thumbnailsAdapter
-                                                                        .deleteItemAtAndLoadOneMoreItem(index);
-                                                            }
-                                                        }
-                                                    } else
-                                                    {
-                                                        // DO NOTHING
-                                                    }
-                                                }
-                                            }, loadingControl);
+                                            loadingControl);
                                 }
 
                                 @Override
@@ -570,6 +566,18 @@ public class PhotoDetailsActivity extends CommonActivity implements TwitterLoadi
                                 }
                             });
             dialogFragment.show(getSupportActivity());
+        }
+
+        void photoDeleted(Photo photo)
+        {
+            if (thumbnailsAdapter != null)
+            {
+                thumbnailsAdapter.photoDeleted(photo);
+                if (thumbnailsAdapter.getCount() == 0)
+                {
+                    getActivity().finish();
+                }
+            }
         }
 
         void adjustDetailsVisibility(final boolean visible)
@@ -834,4 +842,5 @@ public class PhotoDetailsActivity extends CommonActivity implements TwitterLoadi
 
         }
     }
+
 }

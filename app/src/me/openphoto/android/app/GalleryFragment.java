@@ -5,6 +5,7 @@ import me.openphoto.android.app.bitmapfun.util.ImageCache;
 import me.openphoto.android.app.bitmapfun.util.ImageFetcher;
 import me.openphoto.android.app.common.CommonRefreshableFragmentWithImageWorker;
 import me.openphoto.android.app.model.Photo;
+import me.openphoto.android.app.model.utils.PhotoUtils.PhotoDeletedHandler;
 import me.openphoto.android.app.net.ReturnSizes;
 import me.openphoto.android.app.ui.adapter.PhotosEndlessAdapter;
 import me.openphoto.android.app.util.CommonUtils;
@@ -28,6 +29,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 
 public class GalleryFragment extends CommonRefreshableFragmentWithImageWorker
+        implements PhotoDeletedHandler
 {
     public static final String TAG = GalleryFragment.class.getSimpleName();
 
@@ -192,6 +194,14 @@ public class GalleryFragment extends CommonRefreshableFragmentWithImageWorker
         mAdapter.forceStopLoadingIfNecessary();
     }
 
+    @Override
+    public void photoDeleted(Photo photo)
+    {
+        if (mAdapter != null)
+        {
+            mAdapter.photoDeleted(photo);
+        }
+    }
     /**
      * Process all the images preserving aspect ratio and using same height
      */
