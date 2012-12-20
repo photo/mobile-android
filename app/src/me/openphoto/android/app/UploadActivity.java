@@ -10,15 +10,19 @@ import me.openphoto.android.app.bitmapfun.util.ImageResizer;
 import me.openphoto.android.app.common.CommonActivity;
 import me.openphoto.android.app.common.CommonClosableOnRestoreDialogFragment;
 import me.openphoto.android.app.common.CommonFragment;
+import me.openphoto.android.app.facebook.FacebookProvider;
+import me.openphoto.android.app.facebook.FacebookUtils;
 import me.openphoto.android.app.feather.FeatherFragment;
 import me.openphoto.android.app.net.UploadMetaData;
 import me.openphoto.android.app.provider.PhotoUpload;
 import me.openphoto.android.app.provider.UploadsProviderAccessor;
 import me.openphoto.android.app.service.UploaderService;
+import me.openphoto.android.app.twitter.TwitterUtils;
 import me.openphoto.android.app.util.CommonUtils;
 import me.openphoto.android.app.util.FileUtils;
 import me.openphoto.android.app.util.GuiUtils;
 import me.openphoto.android.app.util.ImageUtils;
+import me.openphoto.android.app.util.ProgressDialogLoadingControl;
 import me.openphoto.android.app.util.TrackerUtils;
 
 import org.holoeverywhere.LayoutInflater;
@@ -38,6 +42,8 @@ import android.provider.MediaStore;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
 import android.widget.ImageView;
 
@@ -55,6 +61,7 @@ public class UploadActivity extends CommonActivity {
     private static final int REQUEST_CAMERA = 1;
     private static final int REQUEST_TAGS = 2;
     private static final int ACTION_REQUEST_FEATHER = 100;
+    public final static int AUTHORIZE_ACTIVITY_REQUEST_CODE = 10;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,6 +74,38 @@ public class UploadActivity extends CommonActivity {
         }
     }
 
+    @Override
+    protected void onNewIntent(Intent intent)
+    {
+        super.onNewIntent(intent);
+        if (intent != null && intent.getData() != null)
+        {
+            Uri uri = intent.getData();
+            TwitterUtils.verifyOAuthResponse(new ProgressDialogLoadingControl(this, true,
+                    false, getString(R.string.share_twitter_verifying_authentication)),
+                    this, uri,
+                    TwitterUtils.getUploadActivityCallbackUrl(this),
+                    null);
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode)
+        {
+        /*
+         * if this is the activity result from authorization flow, do a call
+         * back to authorizeCallback Source Tag: login_tag
+         */
+            case AUTHORIZE_ACTIVITY_REQUEST_CODE: {
+                FacebookProvider.getFacebook().authorizeCallback(requestCode,
+                        resultCode,
+                        data);
+                break;
+            }
+        }
+    }
     public static class UploadUiFragment extends CommonFragment
             implements OnClickListener
     {
@@ -76,15 +115,20 @@ public class UploadActivity extends CommonActivity {
         private File mUploadImageFile;
         private Uri fileUri;
 
-        private Switch mPrivateToggle;
+        Switch privateSwitch;
+        Switch twitterSwitch;
+        Switch facebookSwitch;
+
         FeatherFragment featherFragment;
         EditText tagsText;
         private SelectImageDialogFragment imageSelectionFragment;
 
+        static UploadUiFragment instance;
+
         @Override
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
-
+            instance = this;
             if (savedInstanceState != null)
             {
                 mUploadImageFile = CommonUtils.getSerializableFromBundleIfNotNull(
@@ -95,6 +139,12 @@ public class UploadActivity extends CommonActivity {
                     fileUri = Uri.parse(fileUriString);
                 }
             }
+        }
+
+        @Override
+        public void onDestroy() {
+            super.onDestroy();
+            instance = null;
         }
 
         FeatherFragment getFeatherFragment()
@@ -115,6 +165,12 @@ public class UploadActivity extends CommonActivity {
             View v = inflater.inflate(R.layout.activity_upload, container, false);
             getFeatherFragment().onCallingViewCreated();
             return v;
+        }
+
+        @Override
+        public void onResume() {
+            super.onResume();
+            FacebookUtils.extendAceessTokenIfNeeded(getActivity());
         }
 
         @Override
@@ -141,8 +197,18 @@ public class UploadActivity extends CommonActivity {
             v.findViewById(R.id.button_edit).setOnClickListener(this);
             tagsText = ((EditText) v.findViewById(R.id.edit_tags));
 
-            mPrivateToggle = (Switch) v.findViewById(R.id.private_switch);
-            mPrivateToggle.setChecked(true);
+            privateSwitch = (Switch) v.findViewById(R.id.private_switch);
+            twitterSwitch = (Switch) v.findViewById(R.id.twitter_switch);
+            facebookSwitch = (Switch) v.findViewById(R.id.facebook_switch);
+
+            privateSwitch.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    reinitShareSwitches(!isChecked);
+                }
+            });
+            reinitShareSwitches();
 
             Intent intent = getActivity().getIntent();
             boolean showOptions = true;
@@ -174,8 +240,9 @@ public class UploadActivity extends CommonActivity {
                             .getDescription());
                     ((EditText) v.findViewById(R.id.edit_tags))
                             .setText(pendingUpload.getMetaData().getTags());
-                    mPrivateToggle.setChecked(pendingUpload.getMetaData().isPrivate());
-
+                    privateSwitch.setChecked(pendingUpload.getMetaData().isPrivate());
+                    twitterSwitch.setChecked(pendingUpload.isShareOnTwitter());
+                    facebookSwitch.setChecked(pendingUpload.isShareOnFacebook());
                     showOptions = false;
                 }
             }
@@ -188,6 +255,17 @@ public class UploadActivity extends CommonActivity {
             {
                 showSelectionDialog();
             }
+        }
+
+        void reinitShareSwitches()
+        {
+            reinitShareSwitches(!privateSwitch.isChecked());
+        }
+
+        void reinitShareSwitches(boolean enabled)
+        {
+            twitterSwitch.setEnabled(enabled);
+            facebookSwitch.setEnabled(enabled);
         }
 
         @Override
@@ -228,6 +306,7 @@ public class UploadActivity extends CommonActivity {
                     {
                         getFeatherFragment().onFeatherActivitySuccessResult(data);
                     }
+                    break;
                 default:
                     break;
             }
@@ -350,7 +429,7 @@ public class UploadActivity extends CommonActivity {
                 case R.id.button_upload:
                     TrackerUtils.trackButtonClickEvent("button_upload", getActivity());
                     if (mUploadImageFile != null) {
-                        startUpload(mUploadImageFile);
+                        startUpload(mUploadImageFile, true, true);
                     } else
                     {
                         GuiUtils.alert(R.string.upload_pick_photo_first);
@@ -379,6 +458,49 @@ public class UploadActivity extends CommonActivity {
             }
         }
 
+        void startUpload(
+                final File uploadFile,
+                final boolean checkTwitter,
+                final boolean checkFacebook)
+        {
+            if (checkTwitter && twitterSwitch.isEnabled() && twitterSwitch.isChecked())
+            {
+                Runnable runnable = new Runnable()
+                {
+
+                    @Override
+                    public void run()
+                    {
+                        instance.startUpload(uploadFile, false, checkFacebook);
+                    }
+                };
+                TwitterUtils.runAfterTwitterAuthentication(
+                        new ProgressDialogLoadingControl(getActivity(), true, false,
+                                getString(R.string.share_twitter_requesting_authentication)),
+                        getSupportActivity(),
+                        TwitterUtils.getUploadActivityCallbackUrl(getActivity()),
+                        runnable, runnable);
+                return;
+            }
+            if (checkFacebook && facebookSwitch.isEnabled() && facebookSwitch.isChecked())
+            {
+                Runnable runnable = new Runnable()
+                {
+
+                    @Override
+                    public void run()
+                    {
+                        instance.startUpload(uploadFile, checkTwitter, false);
+                    }
+                };
+                FacebookUtils.runAfterFacebookAuthentication(getSupportActivity(),
+                        AUTHORIZE_ACTIVITY_REQUEST_CODE,
+                        runnable, runnable);
+                return;
+            }
+            startUpload(uploadFile);
+        }
+
         private void startUpload(File uploadFile) {
             UploadsProviderAccessor uploads = new UploadsProviderAccessor(getActivity());
             UploadMetaData metaData = new UploadMetaData();
@@ -390,10 +512,14 @@ public class UploadActivity extends CommonActivity {
                     .toString());
             metaData.setTags(((EditText) getView().findViewById(R.id.edit_tags)).getText()
                     .toString());
-            metaData.setPrivate(mPrivateToggle.isChecked());
+            metaData.setPrivate(privateSwitch.isChecked());
 
-            uploads.addPendingUpload(Uri.fromFile(uploadFile), metaData, false,
-                    false);
+            boolean shareOnFacebook = facebookSwitch.isChecked();
+            boolean shareOnTwitter = twitterSwitch.isChecked();
+
+            uploads.addPendingUpload(Uri.fromFile(uploadFile), metaData,
+                    shareOnTwitter, shareOnFacebook
+                    );
             getActivity().startService(new Intent(getActivity(), UploaderService.class));
             GuiUtils.info(R.string.uploading_in_background);
             getActivity().finish();

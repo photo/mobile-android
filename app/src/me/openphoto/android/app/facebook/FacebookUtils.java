@@ -1,7 +1,6 @@
 
 package me.openphoto.android.app.facebook;
 
-import me.openphoto.android.app.MainActivity;
 import me.openphoto.android.app.Preferences;
 import me.openphoto.android.app.R;
 import me.openphoto.android.app.facebook.FacebookSessionEvents.AuthListener;
@@ -153,14 +152,16 @@ public class FacebookUtils
 
     public static void runAfterFacebookAuthentication(
             final Activity activity,
+            final int activityCode,
             final Runnable runOnSuccessAuthentication)
     {
-        runAfterFacebookAuthentication(activity, runOnSuccessAuthentication,
+        runAfterFacebookAuthentication(activity, activityCode, runOnSuccessAuthentication,
                 null);
     }
 
     public static void runAfterFacebookAuthentication(
             final Activity activity,
+            final int activityCode,
             final Runnable runOnSuccessAuthentication,
             final Runnable runOnCancelAuthentication)
     {
@@ -185,7 +186,7 @@ public class FacebookUtils
                                     FacebookUtils
                                             .loginRequest(
                                                     activity,
-                                                    MainActivity.AUTHORIZE_ACTIVITY_RESULT_CODE);
+                                                    activityCode);
                                 }
 
                                 @Override

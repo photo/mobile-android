@@ -71,10 +71,19 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".UploadActivity" >
+            android:name=".UploadActivity" 
+            android:launchMode="singleTask">
             <intent-filter>
                 <action android:name="android.intent.action.SEND" />
                 <data android:mimeType="image/*" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data android:scheme="openphoto-t3" />
             </intent-filter>
         </activity>
         <activity android:name=".SettingsActivity" />

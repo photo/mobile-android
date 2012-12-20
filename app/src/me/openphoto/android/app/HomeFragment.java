@@ -207,6 +207,7 @@ public class HomeFragment extends CommonRefreshableFragmentWithImageWorker
         if (activePhoto != null)
         {
             FacebookUtils.runAfterFacebookAuthentication(getSupportActivity(),
+                    MainActivity.AUTHORIZE_ACTIVITY_REQUEST_CODE,
                     new FacebookShareRunnable(
                             activePhoto, currentInstanceAccessor));
         }

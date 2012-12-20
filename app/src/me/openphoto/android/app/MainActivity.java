@@ -57,7 +57,7 @@ public class MainActivity extends CommonActivity
     private static final String SYNC_TAG = "sync";
     public static final String TAG = MainActivity.class.getSimpleName();
     public static final String ACTIVE_TAB = "ActiveTab";
-    public final static int AUTHORIZE_ACTIVITY_RESULT_CODE = 0;
+    public final static int AUTHORIZE_ACTIVITY_REQUEST_CODE = 0;
 
     private ActionBar mActionBar;
     private AtomicInteger loaders = new AtomicInteger(0);
@@ -207,13 +207,14 @@ public class MainActivity extends CommonActivity
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data)
     {
+        super.onActivityResult(requestCode, resultCode, data);
         switch (requestCode)
         {
         /*
          * if this is the activity result from authorization flow, do a call
          * back to authorizeCallback Source Tag: login_tag
          */
-            case AUTHORIZE_ACTIVITY_RESULT_CODE: {
+            case AUTHORIZE_ACTIVITY_REQUEST_CODE: {
                 FacebookProvider.getFacebook().authorizeCallback(requestCode,
                         resultCode,
                         data);

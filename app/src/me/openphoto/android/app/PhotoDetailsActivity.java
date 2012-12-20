@@ -85,7 +85,7 @@ public class PhotoDetailsActivity extends CommonActivity implements TwitterLoadi
 
     public static final String EXTRA_ADAPTER_PHOTOS = "EXTRA_ADAPTER_PHOTOS";
 
-    public final static int AUTHORIZE_ACTIVITY_RESULT_CODE = 0;
+    public final static int AUTHORIZE_ACTIVITY_REQUEST_CODE = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -166,7 +166,7 @@ public class PhotoDetailsActivity extends CommonActivity implements TwitterLoadi
                                 false, getString(R.string.share_twitter_verifying_authentication)),
                         this,
                         uri,
-                        TwitterUtils.getSecondCallbackUrl(this),
+                        TwitterUtils.getPhotoDetailsCallbackUrl(this),
                         null);
             }
             getContentFragment().reinitFromIntent(intent);
@@ -192,7 +192,7 @@ public class PhotoDetailsActivity extends CommonActivity implements TwitterLoadi
          * if this is the activity result from authorization flow, do a call
          * back to authorizeCallback Source Tag: login_tag
          */
-            case AUTHORIZE_ACTIVITY_RESULT_CODE: {
+            case AUTHORIZE_ACTIVITY_REQUEST_CODE: {
                 FacebookProvider.getFacebook().authorizeCallback(requestCode,
                         resultCode,
                         data);
@@ -260,6 +260,7 @@ public class PhotoDetailsActivity extends CommonActivity implements TwitterLoadi
             if (photo != null)
             {
                 FacebookUtils.runAfterFacebookAuthentication(getSupportActivity(),
+                        AUTHORIZE_ACTIVITY_REQUEST_CODE,
                         new ShareUtils.FacebookShareRunnable(
                                 photo, currentInstanceAccessor));
             }
@@ -273,7 +274,7 @@ public class PhotoDetailsActivity extends CommonActivity implements TwitterLoadi
                         new ProgressDialogLoadingControl(getSupportActivity(), true, false,
                                 getString(R.string.share_twitter_requesting_authentication)),
                         getSupportActivity(),
-                        TwitterUtils.getSecondCallbackUrl(getActivity()),
+                        TwitterUtils.getPhotoDetailsCallbackUrl(getActivity()),
                         new TwitterShareRunnable(photo, currentInstanceAccessor));
             }
         }

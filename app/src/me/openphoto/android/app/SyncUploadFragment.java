@@ -164,6 +164,7 @@ public class SyncUploadFragment extends CommonFragment
                 }
             };
             FacebookUtils.runAfterFacebookAuthentication(getSupportActivity(),
+                    MainActivity.AUTHORIZE_ACTIVITY_REQUEST_CODE,
                     runnable, runnable);
             return;
         }
