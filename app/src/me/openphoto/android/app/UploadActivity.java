@@ -122,6 +122,11 @@ public class UploadActivity extends CommonActivity {
         FeatherFragment featherFragment;
         EditText tagsText;
         private SelectImageDialogFragment imageSelectionFragment;
+        /**
+         * This variable controls whether the dialog should be shown in the
+         * onResume action
+         */
+        private boolean showSelectionDialogOnResume = false;
 
         static UploadUiFragment instance;
 
@@ -171,6 +176,10 @@ public class UploadActivity extends CommonActivity {
         public void onResume() {
             super.onResume();
             FacebookUtils.extendAceessTokenIfNeeded(getActivity());
+            if (showSelectionDialogOnResume)
+            {
+                showSelectionDialog();
+            }
         }
 
         @Override
@@ -248,8 +257,7 @@ public class UploadActivity extends CommonActivity {
             }
             if (mUploadImageFile != null)
             {
-                setSelectedImageFile(mUploadImageFile);
-                showOptions = false;
+                showOptions = !setSelectedImageFile();
             }
             if (showOptions)
             {
@@ -269,10 +277,12 @@ public class UploadActivity extends CommonActivity {
         }
 
         @Override
-        public void onActivityResultDelayed(int requestCode, int resultCode, Intent data) {
-            super.onActivityResultDelayed(requestCode, resultCode, data);
+        public void onActivityResultUI(int requestCode, int resultCode, Intent data) {
+            super.onActivityResultUI(requestCode, resultCode, data);
             if (resultCode != RESULT_OK && (requestCode == REQUEST_GALLERY
                     || requestCode == REQUEST_CAMERA)) {
+                TrackerUtils.trackUiEvent("uploadNoImageSelectedResult",
+                        requestCode == REQUEST_GALLERY ? "gallery" : "camera");
                 showSelectionDialog();
                 if (requestCode == REQUEST_CAMERA)
                 {
@@ -295,8 +305,8 @@ public class UploadActivity extends CommonActivity {
                     break;
                 case REQUEST_CAMERA:
                     if (resultCode == RESULT_OK) {
-                        updateIngGalleryPictureSize();
-                        setSelectedImageFile(mUploadImageFile);
+                        updateingGalleryPictureSize();
+                        setSelectedImageFile();
                     } else {
                         mUploadImageFile = null;
                     }
@@ -310,6 +320,8 @@ public class UploadActivity extends CommonActivity {
                 default:
                     break;
             }
+            // discard delayed selection dialog showing if planned
+            showSelectionDialogOnResume = false;
             // this is necessary because onActivityResultDelayed is called
             // after the onCreateView method so the dialog may appear there if
             // view were recreated and here need to be closed
@@ -323,18 +335,22 @@ public class UploadActivity extends CommonActivity {
         void removeGalleryEntryForCurrentFile()
         {
             CommonUtils.debug(TAG, "Removing empty gallery entry: " + fileUri);
-            int rowsDeleted = getActivity().getContentResolver().delete(fileUri, null, null);
+            TrackerUtils.trackBackgroundEvent("removeGalleryEntryForCurrentFile", TAG);
+            // #271 fix, using another context instead of getActivity()
+            int rowsDeleted = OpenPhotoApplication.getContext().getContentResolver()
+                    .delete(fileUri, null, null);
 
             CommonUtils.debug(TAG, "Rows deleted:" + rowsDeleted);
         }
 
-        void updateIngGalleryPictureSize()
+        void updateingGalleryPictureSize()
         {
             int sdk = android.os.Build.VERSION.SDK_INT;
             if (sdk < android.os.Build.VERSION_CODES.HONEYCOMB)
             {
                 return;
             }
+            TrackerUtils.trackBackgroundEvent("updateingGalleryPictureSize", TAG);
 
             CommonUtils.debug(TAG, "Updating gallery entry: " + fileUri);
             BitmapFactory.Options options = ImageResizer.calculateImageSize(mUploadImageFile
@@ -342,7 +358,8 @@ public class UploadActivity extends CommonActivity {
             ContentValues values = new ContentValues();
             values.put(MediaStore.Images.Media.WIDTH, options.outWidth);
             values.put(MediaStore.Images.Media.HEIGHT, options.outHeight);
-            int rowsUpdated = getActivity().getContentResolver()
+            // #271 fix, using another context instead of getActivity()
+            int rowsUpdated = OpenPhotoApplication.getContext().getContentResolver()
                     .update(fileUri, values, null, null);
             CommonUtils.debug(TAG, "Rows updated:" + rowsUpdated);
         }
@@ -358,8 +375,20 @@ public class UploadActivity extends CommonActivity {
         {
             if (imageSelectionFragment != null)
             {
+                TrackerUtils.trackUiEvent("imageSelectionDialogCreation.skipped", TAG);
                 return;
             }
+            // if instance is saved we can't show dialog such as it will cause
+            // illegal state exception. Instead we plan showing in the onResume
+            // event if it will appear
+            if (isInstanceSaved())
+            {
+                TrackerUtils.trackUiEvent("imageSelectionDialogCreation.delayedToOnResume", TAG);
+                showSelectionDialogOnResume = true;
+                return;
+            }
+            TrackerUtils.trackUiEvent("imageSelectionDialogCreation.show", TAG);
+            showSelectionDialogOnResume = false;
             imageSelectionFragment = SelectImageDialogFragment
                     .newInstance(new SelectImageDialogFragment.SelectedActionHandler() {
 
@@ -403,18 +432,29 @@ public class UploadActivity extends CommonActivity {
                             intent.setType("image/*");
                             startActivityForResult(intent, REQUEST_GALLERY);
                         }
+
+                        @Override
+                        public void onDismiss() {
+                            imageSelectionFragment = null;
+                        }
                     });
             imageSelectionFragment.show(getSupportActivity());
         }
 
         private void setSelectedImageUri(Uri imageUri) {
             mUploadImageFile = new File(ImageUtils.getRealPathFromURI(getActivity(), imageUri));
-            setSelectedImageFile(mUploadImageFile);
+            setSelectedImageFile();
         }
 
-        private void setSelectedImageFile(File imageFile) {
+        private boolean setSelectedImageFile() {
+            if (!mUploadImageFile.exists())
+            {
+                mUploadImageFile = null;
+                return false;
+            }
             ImageView previewImage = (ImageView) getView().findViewById(R.id.image_upload);
             previewImage.setImageBitmap(ImageUtils.decodeFile(mUploadImageFile, 200));
+            return true;
         }
 
         @Override
@@ -581,6 +621,8 @@ public class UploadActivity extends CommonActivity {
                 void cameraOptionSelected();
 
                 void galleryOptionSelected();
+
+                void onDismiss();
             }
 
             private SelectedActionHandler handler;
@@ -597,6 +639,14 @@ public class UploadActivity extends CommonActivity {
             public void onCancel(DialogInterface dialog) {
                 super.onCancel(dialog);
                 getActivity().finish();
+            }
+            @Override
+            public void onDismiss(DialogInterface dialog) {
+                super.onDismiss(dialog);
+                if (handler != null)
+                {
+                    handler.onDismiss();
+                }
             }
 
             @Override

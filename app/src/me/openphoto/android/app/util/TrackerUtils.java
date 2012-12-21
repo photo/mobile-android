@@ -275,7 +275,7 @@ public class TrackerUtils {
     {
         EasyTracker.getInstance().setContext(OpenPhotoApplication.getContext());
         EasyTracker.getTracker().setExceptionParser(parser);
-        EasyTracker.getTracker().trackException(Thread.currentThread().getName(), t, true);
+        EasyTracker.getTracker().trackException(Thread.currentThread().getName(), t, false);
     }
 
     /**
