@@ -155,6 +155,7 @@
     <string name="errorCouldNotSendFacebookPhoto">Could not post facebook message</string>
     <string name="errorSpecifiedUrlIsInvalid">The specified URL is invalid</string>
     <string name="errorCantFindPendingUploadInformation">Can\'t find pending upload information</string>
+    <string name="errorCouldNotStoreDownloadablePhotoNotEnoughSpace">Couldn\'t store downloadable photo on disk. Not enough free space.</string>
 
     <!-- Preferences -->
     <string name="upload_preference_category">Camera upload</string>

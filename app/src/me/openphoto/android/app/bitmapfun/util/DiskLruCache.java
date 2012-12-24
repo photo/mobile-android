@@ -118,7 +118,16 @@ public class DiskLruCache {
         {
             return new DiskLruCache(cacheDir, maxByteSize, maxItemSize);
         }
-
+        CommonUtils.debug(TAG, "Couldn't open disk cache");
+        TrackerUtils
+                .trackBackgroundEvent(
+                        "unsuccessfullDiskCacheCreationForParameters",
+                        CommonUtils
+                                .format("path: %1$s;isDirectory: %2$b; canWrite: %3$b; usableSpace: %4$d; maxByteSize: %5$d",
+                                        cacheDir.getAbsolutePath(), cacheDir.canWrite(),
+                                        cacheDir.isDirectory(), Utils.getUsableSpace(cacheDir),
+                                        maxByteSize
+                                ));
         return null;
     }
 
@@ -403,6 +412,21 @@ public class DiskLruCache {
             if (cacheDir == null)
             {
                 cacheDir = context.getCacheDir();
+            } else
+            {
+                if (!cacheDir.exists())
+                {
+                    cacheDir.mkdir();
+                }
+                if (!cacheDir.canWrite())
+                {
+                    CommonUtils.debug(TAG,
+                            "External cache dir %1$s is not writable. Using default one",
+                            cacheDir.getAbsolutePath());
+                    TrackerUtils.trackBackgroundEvent("notWritableDiskCacheDirectory",
+                            cacheDir.getAbsolutePath());
+                    cacheDir = context.getCacheDir();
+                }
             }
         } else
         {
