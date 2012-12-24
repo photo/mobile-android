@@ -115,6 +115,13 @@ public abstract class EndlessAdapter<T> extends BaseAdapter {
         deleteItemAt(index);
         loadOneMoreItemForCurrentPageEnd();
     }
+
+    public void updateItemAt(int index, T object)
+    {
+        mItems.remove(index);
+        mItems.add(index, object);
+        notifyDataSetChanged();
+    }
     public int getPageSize() {
         return mPageSize;
     }

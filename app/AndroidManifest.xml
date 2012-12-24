@@ -3,26 +3,28 @@
     package="me.openphoto.android.app"
     android:installLocation="auto"
     android:versionCode="3"
-    android:versionName="20121220" >
+    android:versionName="20121224" >
 
     <uses-sdk
         android:minSdkVersion="7"
         android:targetSdkVersion="17" />
-	<supports-screens 
-	    android:anyDensity="true" 
-	    android:smallScreens="true" 
-	    android:normalScreens="true" 
-	    android:largeScreens="true" 
-		android:xlargeScreens="true"/>
+
+    <supports-screens
+        android:anyDensity="true"
+        android:largeScreens="true"
+        android:normalScreens="true"
+        android:smallScreens="true"
+        android:xlargeScreens="true" />
+
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
-    
+
     <application
+        android:name=".OpenPhotoApplication"
         android:icon="@drawable/icon"
         android:label="@string/app_name"
-        android:name=".OpenPhotoApplication"
         android:theme="@style/Theme.OpenPhoto.Light" >
         <activity android:name=".SplashActivity" />
         <activity
@@ -41,8 +43,7 @@
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTask"
-            android:logo="@drawable/actionbar_logo" 
-            >
+            android:logo="@drawable/actionbar_logo" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -59,8 +60,8 @@
         </activity>
         <activity
             android:name=".PhotoDetailsActivity"
-            android:theme="@style/Theme.OpenPhoto.TransparentActionBar" 
-            android:launchMode="singleTask">
+            android:launchMode="singleTask"
+            android:theme="@style/Theme.OpenPhoto.TransparentActionBar" >
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
 
@@ -71,10 +72,11 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".UploadActivity" 
-            android:launchMode="singleTask">
+            android:name=".UploadActivity"
+            android:launchMode="singleTask" >
             <intent-filter>
                 <action android:name="android.intent.action.SEND" />
+
                 <data android:mimeType="image/*" />
             </intent-filter>
             <intent-filter>
@@ -87,46 +89,42 @@
             </intent-filter>
         </activity>
         <activity android:name=".SettingsActivity" />
-
         <activity
             android:name=".AccountLogin"
-            android:theme="@style/Theme.OpenPhoto.Light.NoActionBar"
-            />
+            android:theme="@style/Theme.OpenPhoto.Light.NoActionBar" />
         <activity
             android:name=".AccountSignup"
-            android:theme="@style/Theme.OpenPhoto.Light.NoActionBar"
-             />
+            android:theme="@style/Theme.OpenPhoto.Light.NoActionBar" />
         <activity
             android:name=".AccountActivity"
-            android:theme="@style/Theme.OpenPhoto.Light.NoActionBar"
-             />
-                
+            android:theme="@style/Theme.OpenPhoto.Light.NoActionBar" />
         <activity
             android:name=".SelectTagsActivity"
             android:configChanges="orientation"
-            android:label="@string/title_activity_select_tags" >
+            android:label="@string/title_activity_select_tags"
+            android:theme="@style/Theme.OpenPhoto.DialogActivity.Light" >
         </activity>
+        <activity
+            android:name="com.aviary.android.feather.FeatherActivity"
+            android:configChanges="orientation|keyboardHidden"
+            android:hardwareAccelerated="true"
+            android:largeHeap="true"
+            android:screenOrientation="unspecified"
+            android:theme="@style/FeatherDefaultTheme" />
 
-		<activity
-		    android:name="com.aviary.android.feather.FeatherActivity"
-		    android:configChanges="orientation|keyboardHidden"
-		    android:screenOrientation="unspecified"
-		    android:hardwareAccelerated="true"
-		    android:largeHeap="true"
-		    android:theme="@style/FeatherDefaultTheme" />
+        <receiver
+            android:name="com.aviary.android.feather.receivers.FeatherSystemReceiver"
+            android:exported="true"
+            android:process=":feather_system_receiver" >
+            <intent-filter>
+                <action android:name="android.intent.action.PACKAGE_ADDED" />
+                <action android:name="android.intent.action.PACKAGE_REMOVED" />
+                <action android:name="android.intent.action.PACKAGE_REPLACED" />
 
-		<receiver
-		    android:name="com.aviary.android.feather.receivers.FeatherSystemReceiver"
-		    android:exported="true"
-		    android:process=":feather_system_receiver" >
-		        <intent-filter>
-		            <action android:name="android.intent.action.PACKAGE_ADDED" />
-		            <action android:name="android.intent.action.PACKAGE_REMOVED" />
-		            <action android:name="android.intent.action.PACKAGE_REPLACED" />
-		            <data android:scheme="package" />
-		        </intent-filter>
-		</receiver>
-		
+                <data android:scheme="package" />
+            </intent-filter>
+        </receiver>
+
         <!-- AutoUpload things -->
         <!-- Stuff for auto uploading photos -->
         <receiver android:name=".receiver.BootCompletedReceiver" >
@@ -141,13 +139,13 @@
         <provider
             android:name=".provider.UploadsProvider"
             android:authorities="me.openphoto.android.app" />
-            <!-- Required for the hi-res image processing -->
-	    <!-- authorities can have the value you prefer -->
-	    <provider 
-	        android:name="com.aviary.android.feather.library.providers.FeatherContentProvider"
-	        android:exported="false"
-	        android:authorities="me.openphoto.aviary.launcher.HiResProvider">
-	    </provider>
+        <!-- Required for the hi-res image processing -->
+        <!-- authorities can have the value you prefer -->
+        <provider
+            android:name="com.aviary.android.feather.library.providers.FeatherContentProvider"
+            android:authorities="me.openphoto.aviary.launcher.HiResProvider"
+            android:exported="false" >
+        </provider>
     </application>
 
 </manifest>

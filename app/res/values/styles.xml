@@ -1,70 +1,83 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
 
-	<style name="Theme.OpenPhoto.Light" parent="Holo.Theme.Light">
-		<item name="android:windowBackground">@drawable/bg</item>
-		<item name="android:listViewStyle">@style/TransparentListView</item>
-		<item name="android:expandableListViewStyle">@style/TransparentExpandableListView</item>
-		<item name="actionBarStyle">@style/solid_ActionBar</item>
-	</style>
-	<style name="Theme.OpenPhoto.Dialog.Light" parent="Holo.Theme.Dialog.Alert.Light">
-	</style>
-	<style name="Theme.OpenPhoto.Fullscreen" parent="Holo.Theme.Light.NoActionBar.Fullscreen">
-	</style>
-	<style name="Theme.OpenPhoto.TransparentActionBar" parent="Holo.Theme.Light.Fullscreen">
-	    <item name="actionBarStyle">@style/transparent_ActionBar</item>
-	    <item name="android:windowBackground">@drawable/bg</item>
-	</style>
-	<style name="Theme.OpenPhoto.Light.NoActionBar" parent="Holo.Theme.Light.NoActionBar">
-		<item name="android:windowBackground">@drawable/bg</item>
-	</style>
-	<style name="solid_ActionBar" parent="@style/Widget.Sherlock.Light.ActionBar.Solid">
-		<item name="background">@drawable/bg_actionbar</item>
-		<item name="backgroundStacked">@drawable/bg_tab</item>
-	</style>
-	<style name="transparent_ActionBar" parent="@style/Widget.Sherlock.Light.ActionBar">
-	    <item name="background">@drawable/ab_bg_black</item>
-	    <item name="titleTextStyle">@style/transparent_ActionBar_TitleTextStyle</item>
-	</style>
-	<style name="transparent_ActionBar_TitleTextStyle" parent="@style/TextAppearance.Sherlock.Widget.ActionBar.Title">
-    <item name="android:textColor">@color/ab_fg_white</item>
-  </style>
-	<style name="NotificationText" parent="android:TextAppearance.Small">
-		<item name="android:textColor">?android:attr/textColorPrimaryInverse</item>
-	</style>
+    <style name="Theme.OpenPhoto.Light" parent="Holo.Theme.Light">
+        <item name="android:windowBackground">@drawable/bg</item>
+        <item name="android:listViewStyle">@style/TransparentListView</item>
+        <item name="android:expandableListViewStyle">@style/TransparentExpandableListView</item>
+        <item name="actionBarStyle">@style/solid_ActionBar</item>
+    </style>
 
-	<style name="NotificationTitle" parent="android:TextAppearance.Medium">
-		<item name="android:textColor">?android:attr/textColorPrimaryInverse</item>
-		<item name="android:textStyle">bold</item>
-	</style>
+    <style name="Theme.OpenPhoto.DialogActivity.Light" parent="Holo.Theme.Dialog.Light"></style>
 
-	<style name="PhotoGridLayout">
-		<item name="android:drawSelectorOnTop">false</item>
-		<item name="android:listSelector">@null</item>
-	</style>
-	<style name="TextTitle">
-		<item name="android:textSize">18dp</item>
-		<item name="android:textStyle">bold</item>
-	</style>
-	<style name="YesNoSwitch" parent="Holo.Switch.Light">
-		<item name="textOn">@string/yes</item>
-		<item name="textOff">@string/no</item>
-	</style>
-	<style name="TransparentListView" parent="@android:style/Widget.ListView">
-		<item name="android:cacheColorHint">@android:color/transparent</item>
-	</style>
+    <style name="Theme.OpenPhoto.Dialog.Light" parent="Holo.Theme.Dialog.Alert.Light"></style>
 
-	<style name="TransparentExpandableListView" parent="@android:style/Widget.ExpandableListView">
-		<item name="android:cacheColorHint">@android:color/transparent</item>
-	</style>
+    <style name="Theme.OpenPhoto.Fullscreen" parent="Holo.Theme.Light.NoActionBar.Fullscreen">
+        <item name="android:windowBackground">@drawable/bg</item>
+    </style>
 
-	<style name="button_text">
-		<item name="android:textColor">#928a7e</item>
-		<item name="android:layout_width">fill_parent</item>
-		<item name="android:layout_height">wrap_content</item>
-		<item name="android:gravity">center_vertical</item>
-		<item name="android:layout_margin">4dp</item>
-		<item name="android:textSize">10dp</item>
-	</style>
+    <style name="Theme.OpenPhoto.TransparentActionBar" parent="Holo.Theme.Light.Fullscreen">
+        <item name="actionBarStyle">@style/transparent_ActionBar</item>
+        <item name="android:windowBackground">@drawable/bg</item>
+    </style>
+
+    <style name="Theme.OpenPhoto.Light.NoActionBar" parent="Holo.Theme.Light.NoActionBar">
+        <item name="android:windowBackground">@drawable/bg</item>
+    </style>
+
+    <style name="solid_ActionBar" parent="@style/Widget.Sherlock.Light.ActionBar.Solid">
+        <item name="background">@drawable/bg_actionbar</item>
+        <item name="backgroundStacked">@drawable/bg_tab</item>
+    </style>
+
+    <style name="transparent_ActionBar" parent="@style/Widget.Sherlock.Light.ActionBar">
+        <item name="background">@drawable/ab_bg_black</item>
+        <item name="titleTextStyle">@style/transparent_ActionBar_TitleTextStyle</item>
+    </style>
+
+    <style name="transparent_ActionBar_TitleTextStyle" parent="@style/TextAppearance.Sherlock.Widget.ActionBar.Title">
+        <item name="android:textColor">@color/ab_fg_white</item>
+    </style>
+
+    <style name="NotificationText" parent="android:TextAppearance.Small">
+        <item name="android:textColor">?android:attr/textColorPrimaryInverse</item>
+    </style>
+
+    <style name="NotificationTitle" parent="android:TextAppearance.Medium">
+        <item name="android:textColor">?android:attr/textColorPrimaryInverse</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="PhotoGridLayout">
+        <item name="android:drawSelectorOnTop">false</item>
+        <item name="android:listSelector">@null</item>
+    </style>
+
+    <style name="TextTitle">
+        <item name="android:textSize">18dp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="YesNoSwitch" parent="Holo.Switch.Light">
+        <item name="textOn">@string/yes</item>
+        <item name="textOff">@string/no</item>
+    </style>
+
+    <style name="TransparentListView" parent="@android:style/Widget.ListView">
+        <item name="android:cacheColorHint">@android:color/transparent</item>
+    </style>
+
+    <style name="TransparentExpandableListView" parent="@android:style/Widget.ExpandableListView">
+        <item name="android:cacheColorHint">@android:color/transparent</item>
+    </style>
+
+    <style name="button_text">
+        <item name="android:textColor">#928a7e</item>
+        <item name="android:layout_width">fill_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:layout_margin">4dp</item>
+        <item name="android:textSize">10dp</item>
+    </style>
 
 </resources>

@@ -10,8 +10,10 @@ import org.holoeverywhere.app.Dialog;
 import org.holoeverywhere.app.DialogFragment;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -151,5 +153,25 @@ public class CommonDialogFragment extends DialogFragment
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
         trackLifecycleEvent("onConfigurationChanged");
+    }
+
+    @Override
+    public void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        trackLifecycleEvent("onActivityResult");
+        Handler handler = new Handler();
+        handler.post(new Runnable() {
+
+            @Override
+            public void run() {
+                onActivityResultUI(requestCode, resultCode, data);
+            }
+
+        });
+    }
+
+    public void onActivityResultUI(int requestCode, int resultCode, Intent data)
+    {
+        trackLifecycleEvent("onActivityResultUI");
     }
 }

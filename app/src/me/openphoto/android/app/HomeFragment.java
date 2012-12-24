@@ -10,7 +10,9 @@ import me.openphoto.android.app.common.CommonRefreshableFragmentWithImageWorker;
 import me.openphoto.android.app.facebook.FacebookBaseDialogListener;
 import me.openphoto.android.app.facebook.FacebookUtils;
 import me.openphoto.android.app.model.Photo;
+import me.openphoto.android.app.model.utils.PhotoUtils;
 import me.openphoto.android.app.model.utils.PhotoUtils.PhotoDeletedHandler;
+import me.openphoto.android.app.model.utils.PhotoUtils.PhotoUpdatedHandler;
 import me.openphoto.android.app.net.OpenPhotoApi;
 import me.openphoto.android.app.net.ReturnSizes;
 import me.openphoto.android.app.share.ShareUtils;
@@ -22,6 +24,7 @@ import me.openphoto.android.app.util.CommonUtils;
 import me.openphoto.android.app.util.GuiUtils;
 import me.openphoto.android.app.util.LoadingControl;
 import me.openphoto.android.app.util.ProgressDialogLoadingControl;
+import me.openphoto.android.app.util.RunnableWithParameter;
 import me.openphoto.android.app.util.TrackerUtils;
 
 import org.holoeverywhere.LayoutInflater;
@@ -47,7 +50,7 @@ import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 
 public class HomeFragment extends CommonRefreshableFragmentWithImageWorker
-        implements PhotoDeletedHandler
+        implements PhotoDeletedHandler, PhotoUpdatedHandler
 {
     public static final String TAG = HomeFragment.class.getSimpleName();
 
@@ -223,6 +226,14 @@ public class HomeFragment extends CommonRefreshableFragmentWithImageWorker
             mAdapter.photoDeleted(photo);
         }
     }
+
+    @Override
+    public void photoUpdated(Photo photo) {
+        if (mAdapter != null)
+        {
+            mAdapter.photoUpdated(photo);
+        }
+    }
     public static class UpdateStatusListener extends FacebookBaseDialogListener
     {
         public UpdateStatusListener(Context context)
@@ -270,7 +281,7 @@ public class HomeFragment extends CommonRefreshableFragmentWithImageWorker
             }
 
             // load the image in another thread
-            ImageView photoView =
+            final ImageView photoView =
                     (ImageView) convertView.findViewById(R.id.newest_image);
             photoView.setTag(photo);
             photoView.setOnClickListener(new OnClickListener() {
@@ -284,8 +295,15 @@ public class HomeFragment extends CommonRefreshableFragmentWithImageWorker
                     startActivity(intent);
                 }
             });
-            mImageWorker
-                    .loadImage(photo.getUrl(photoSize.toString()), photoView);
+            PhotoUtils.validateUrlForSizeExistAsyncAndRun(photo, photoSize,
+                    new RunnableWithParameter<Photo>() {
+
+                        @Override
+                        public void run(Photo photo) {
+                            mImageWorker
+                                    .loadImage(photo.getUrl(photoSize.toString()), photoView);
+                        }
+                    }, loadingControl);
             // photoView.setTag(photo.getUrl("700x650xCR"));
             // Drawable dr =
             // iw.loadImage(this, photoView);

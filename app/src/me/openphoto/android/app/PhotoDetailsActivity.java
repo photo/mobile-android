@@ -17,6 +17,7 @@ import me.openphoto.android.app.facebook.FacebookUtils;
 import me.openphoto.android.app.model.Photo;
 import me.openphoto.android.app.model.utils.PhotoUtils;
 import me.openphoto.android.app.model.utils.PhotoUtils.PhotoDeletedHandler;
+import me.openphoto.android.app.model.utils.PhotoUtils.PhotoUpdatedHandler;
 import me.openphoto.android.app.net.ReturnSizes;
 import me.openphoto.android.app.share.ShareUtils;
 import me.openphoto.android.app.share.ShareUtils.TwitterShareRunnable;
@@ -82,7 +83,7 @@ import com.actionbarsherlock.view.Window;
  *          - added initial support for album photos filter
  */
 public class PhotoDetailsActivity extends CommonActivity implements TwitterLoadingControlAccessor,
-        FacebookLoadingControlAccessor, PhotoDeletedHandler {
+        FacebookLoadingControlAccessor, PhotoDeletedHandler, PhotoUpdatedHandler {
 
     private static final String TAG = PhotoDetailsActivity.class.getSimpleName();
 
@@ -108,6 +109,8 @@ public class PhotoDetailsActivity extends CommonActivity implements TwitterLoadi
         }
         receivers.add(PhotoUtils.getAndRegisterOnPhotoDeletedActionBroadcastReceiver(
                 TAG, this, this));
+        receivers.add(PhotoUtils.getAndRegisterOnPhotoUpdatedActionBroadcastReceiver(
+                TAG, this, this));
     }
 
     @Override
@@ -122,53 +125,6 @@ public class PhotoDetailsActivity extends CommonActivity implements TwitterLoadi
     PhotoDetailsUiFragment getContentFragment()
     {
         return (PhotoDetailsUiFragment) getSupportFragmentManager().findFragmentById(android.R.id.content);
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getSupportMenuInflater();
-        inflater.inflate(R.menu.photo_details, menu);
-        return super.onCreateOptionsMenu(menu);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        PhotoDetailsUiFragment fragment = getContentFragment();
-        fragment.detailsVisible = true;
-        boolean result = true;
-        switch (item.getItemId())
-        {
-            case R.id.menu_delete:
-                TrackerUtils.trackOptionsMenuClickEvent("menu_delete", PhotoDetailsActivity.this);
-                fragment.deleteCurrentPhoto();
-                break;
-            case R.id.menu_share:
-                TrackerUtils.trackOptionsMenuClickEvent("menu_share", PhotoDetailsActivity.this);
-                Photo photo = fragment.getActivePhoto();
-                boolean isPrivate = photo == null || photo.isPrivate();
-                item.getSubMenu().setGroupVisible(R.id.share_group, !isPrivate);
-                if (isPrivate)
-                {
-                    GuiUtils.alert(R.string.share_private_photo_forbidden);
-                    result = false;
-                }
-                break;
-            case R.id.menu_share_email:
-                TrackerUtils.trackOptionsMenuClickEvent("menu_share_email", PhotoDetailsActivity.this);
-                fragment.shareActivePhotoViaEMail();
-                break;
-            case R.id.menu_share_twitter:
-                TrackerUtils.trackOptionsMenuClickEvent("menu_share_twitter", PhotoDetailsActivity.this);
-                fragment.shareActivePhotoViaTwitter();
-                break;
-            case R.id.menu_share_facebook:
-                TrackerUtils.trackOptionsMenuClickEvent("menu_share_facebook", PhotoDetailsActivity.this);
-                fragment.shareActivePhotoViaFacebook();
-                break;
-            default:
-                result = super.onOptionsItemSelected(item);
-        }
-        return result;
     }
 
     @Override
@@ -204,6 +160,7 @@ public class PhotoDetailsActivity extends CommonActivity implements TwitterLoadi
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data)
     {
+        super.onActivityResult(requestCode, resultCode, data);
         switch (requestCode)
         {
         /*
@@ -222,6 +179,11 @@ public class PhotoDetailsActivity extends CommonActivity implements TwitterLoadi
     @Override
     public void photoDeleted(Photo photo) {
         getContentFragment().photoDeleted(photo);
+    }
+
+    @Override
+    public void photoUpdated(Photo photo) {
+        getContentFragment().photoUpdated(photo);
     }
     public static class PhotoDetailsUiFragment extends CommonFrargmentWithImageWorker
     {
@@ -259,6 +221,7 @@ public class PhotoDetailsActivity extends CommonActivity implements TwitterLoadi
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
             currentInstance = this;
+            setHasOptionsMenu(true);
             mImageThumbWithBorderSize = getResources().getDimensionPixelSize(
                     R.dimen.detail_thumbnail_with_border_size);
         }
@@ -275,6 +238,59 @@ public class PhotoDetailsActivity extends CommonActivity implements TwitterLoadi
             FacebookUtils.extendAceessTokenIfNeeded(getActivity());
         }
 
+        @Override
+        public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+            super.onCreateOptionsMenu(menu, inflater);
+            inflater.inflate(R.menu.photo_details, menu);
+        }
+
+        @Override
+        public boolean onOptionsItemSelected(MenuItem item) {
+            detailsVisible = true;
+            boolean result = true;
+            switch (item.getItemId())
+            {
+                case R.id.menu_delete:
+                    TrackerUtils.trackOptionsMenuClickEvent("menu_delete", getSupportActivity());
+                    deleteCurrentPhoto();
+                    break;
+                case R.id.menu_share:
+                    TrackerUtils.trackOptionsMenuClickEvent("menu_share", getSupportActivity());
+                    Photo photo = getActivePhoto();
+                    boolean isPrivate = photo == null || photo.isPrivate();
+                    item.getSubMenu().setGroupVisible(R.id.share_group, !isPrivate);
+                    if (isPrivate)
+                    {
+                        GuiUtils.alert(R.string.share_private_photo_forbidden);
+                        result = false;
+                    }
+                    break;
+                case R.id.menu_share_email:
+                    TrackerUtils.trackOptionsMenuClickEvent("menu_share_email",
+                            getSupportActivity());
+                    shareActivePhotoViaEMail();
+                    break;
+                case R.id.menu_share_twitter:
+                    TrackerUtils.trackOptionsMenuClickEvent("menu_share_twitter",
+                            getSupportActivity());
+                    shareActivePhotoViaTwitter();
+                    break;
+                case R.id.menu_share_facebook:
+                    TrackerUtils.trackOptionsMenuClickEvent("menu_share_facebook",
+                            getSupportActivity());
+                    shareActivePhotoViaFacebook();
+                    break;
+                case R.id.menu_edit:
+                    TrackerUtils.trackOptionsMenuClickEvent("menu_edit", getSupportActivity());
+                    PhotoDetailsEditFragment detailsFragment = new PhotoDetailsEditFragment();
+                    detailsFragment.setPhoto(getActivePhoto());
+                    detailsFragment.show(getSupportActivity());
+                    break;
+                default:
+                    result = super.onOptionsItemSelected(item);
+            }
+            return result;
+        }
         public void shareActivePhotoViaFacebook() {
             Photo photo = getActivePhoto();
             if (photo != null)
@@ -580,6 +596,14 @@ public class PhotoDetailsActivity extends CommonActivity implements TwitterLoadi
             }
         }
 
+        void photoUpdated(Photo photo)
+        {
+            if (thumbnailsAdapter != null)
+            {
+                thumbnailsAdapter.photoUpdated(photo);
+            }
+        }
+
         void adjustDetailsVisibility(final boolean visible)
         {
             detailsVisible = visible;
@@ -621,7 +645,6 @@ public class PhotoDetailsActivity extends CommonActivity implements TwitterLoadi
 
             private final LayoutInflater mInflator;
             private final ThumbnailsAdapter mAdapter;
-            private View mCurrentView;
             private Photo currentPhoto;
             private final DataSetObserver mObserver = new DataSetObserver() {
 
@@ -757,7 +780,6 @@ public class PhotoDetailsActivity extends CommonActivity implements TwitterLoadi
             @Override
             public void setPrimaryItem(ViewGroup container, int position, Object object) {
                 super.setPrimaryItem(container, position, object);
-                mCurrentView = (View) object;
                 if (position < mAdapter.getCount())
                 {
                     Photo photo = (Photo) mAdapter.getItem(position);

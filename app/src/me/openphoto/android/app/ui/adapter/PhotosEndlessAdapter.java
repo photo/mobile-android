@@ -329,13 +329,34 @@ public abstract class PhotosEndlessAdapter extends EndlessAdapter<Photo>
             in.readList(items, getClass().getClassLoader());
         }
     }
-
     /**
      * Should be called when processing photo removal event
      * @param photo
      */
     public void photoDeleted(Photo photo)
     {
+        int index = photoIndex(photo);
+        if (index != -1)
+        {
+            deleteItemAtAndLoadOneMoreItem(index);
+        }
+    }
+
+    /**
+     * Should be called when processing photo updated event
+     * 
+     * @param photo
+     */
+    public void photoUpdated(Photo photo)
+    {
+        int index = photoIndex(photo);
+        if (index != -1)
+        {
+            updateItemAt(index, photo);
+        }
+    }
+
+    public int photoIndex(Photo photo) {
         int index = -1;
         List<Photo> photos = getItems();
         for (int i = 0, size = photos.size(); i < size; i++)
@@ -347,9 +368,6 @@ public abstract class PhotosEndlessAdapter extends EndlessAdapter<Photo>
                 break;
             }
         }
-        if (index != -1)
-        {
-            deleteItemAtAndLoadOneMoreItem(index);
-        }
+        return index;
     }
 }

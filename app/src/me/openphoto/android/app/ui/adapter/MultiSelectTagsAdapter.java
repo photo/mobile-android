@@ -9,7 +9,9 @@ import java.util.Set;
 
 import me.openphoto.android.app.OpenPhotoApplication;
 import me.openphoto.android.app.Preferences;
+import me.openphoto.android.app.R;
 import me.openphoto.android.app.model.Tag;
+import me.openphoto.android.app.model.utils.TagUtils;
 import me.openphoto.android.app.net.IOpenPhotoApi;
 import me.openphoto.android.app.net.TagsResponse;
 import me.openphoto.android.app.util.CommonUtils;
@@ -19,8 +21,6 @@ import me.openphoto.android.app.util.compare.ToStringComparator;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
-
-import me.openphoto.android.app.R;
 
 /**
  * @author Eugene Popovich
@@ -113,13 +113,7 @@ public abstract class MultiSelectTagsAdapter extends EndlessAdapter<Tag>
         if (checkedTags.size() > 0) {
             List<String> sortedTags = new ArrayList<String>(checkedTags);
             Collections.sort(sortedTags, new ToStringComparator());
-            for (String tagText : sortedTags) {
-                if (buf.length() > 0)
-                {
-                    buf.append(",");
-                }
-                buf.append(tagText);
-            }
+            buf.append(TagUtils.getTagsString(sortedTags));
         }
         return buf.toString();
     }

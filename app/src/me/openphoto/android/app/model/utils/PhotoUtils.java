@@ -1,6 +1,7 @@
 package me.openphoto.android.app.model.utils;
 
 import java.io.IOException;
+import java.util.Collection;
 
 import me.openphoto.android.app.OpenPhotoApplication;
 import me.openphoto.android.app.Preferences;
@@ -34,6 +35,8 @@ public class PhotoUtils {
     public static final String TAG = PhotoUtils.class.getSimpleName();
     public static String PHOTO_DELETED_ACTION = "me.openphoto.PHOTO_DELETED";
     public static String PHOTO_DELETED = "PHOTO_DELETED";
+    public static String PHOTO_UPDATED_ACTION = "me.openphoto.PHOTO_UPDATED";
+    public static String PHOTO_UPDATED = "PHOTO_UPDATED";
 
     /**
      * Validate whether getUrl for the photo size is not null. Runs size
@@ -88,7 +91,8 @@ public class PhotoUtils {
         {
             CommonUtils.debug(TAG, "Url for the size " + size
                     + " doesn't exist. Running size retrieval method.");
-            photo = getThePhotoWithReturnSize(photo, photoSize);
+            Photo photo2 = getThePhotoWithReturnSize(photo, photoSize);
+            photo.putUrl(size, photo2.getUrl(size));
         }
         return photo;
     }
@@ -121,6 +125,26 @@ public class PhotoUtils {
             LoadingControl loadingControl)
     {
         new DeletePhotoTask(photo, loadingControl).execute();
+    }
+
+    public static void updatePhoto(
+            Photo photo, String title,
+            String description, Collection<String> tags,
+            boolean isPrivate,
+            LoadingControl loadingControl)
+    {
+        updatePhoto(photo, title, description, tags, isPrivate, null, loadingControl);
+    }
+
+    public static void updatePhoto(
+            Photo photo, String title,
+            String description, Collection<String> tags,
+            boolean isPrivate,
+            Runnable runOnSuccessAction,
+            LoadingControl loadingControl)
+    {
+        new UpdatePhotoTask(photo, title, description, tags, isPrivate, runOnSuccessAction,
+                loadingControl).execute();
     }
 
     private static class RetrieveThumbUrlTask extends SimpleAsyncTaskEx {
@@ -186,6 +210,58 @@ public class PhotoUtils {
             sendPhotoDeletedBroadcast(photo);
         }
     }
+
+    private static class UpdatePhotoTask extends SimpleAsyncTaskEx {
+        private Photo photo;
+        String title, description;
+        boolean isPrivate;
+        Collection<String> tags;
+        Runnable runOnSuccessAction;
+
+        public UpdatePhotoTask(
+                Photo photo, String title,
+                String description, Collection<String> tags,
+                boolean isPrivate,
+                Runnable runOnSuccessAction,
+                LoadingControl loadingControl) {
+            super(loadingControl);
+            this.photo = photo;
+            this.title = title;
+            this.description = description;
+            this.isPrivate = isPrivate;
+            this.tags = tags;
+            this.runOnSuccessAction = runOnSuccessAction;
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... params) {
+            try {
+                PhotoResponse response =
+                        Preferences.getApi(OpenPhotoApplication.getContext())
+                                .updatePhotoDetails(
+                                        photo.getId(),
+                                        title,
+                                        description,
+                                        tags,
+                                        isPrivate ? Photo.PERMISSION_PRIVATE
+                                                : Photo.PERMISSION_PUBLIC);
+                photo = response.getPhoto();
+                return response.isSuccess();
+            } catch (Exception e) {
+                GuiUtils.error(TAG, R.string.errorCouldNotUpdatePhoto, e);
+            }
+            return false;
+        }
+
+        @Override
+        protected void onSuccessPostExecute() {
+            sendPhotoUpdatedBroadcast(photo);
+            if (runOnSuccessAction != null)
+            {
+                runOnSuccessAction.run();
+            }
+        }
+    }
     
     /**
      * Get and register the broadcast receiver for the photo removed event
@@ -221,6 +297,11 @@ public class PhotoUtils {
         return br;
     }
 
+    /**
+     * Send the photo deleted broadcast
+     * 
+     * @param photo
+     */
     public static void sendPhotoDeletedBroadcast(Photo photo)
     {
         Intent intent = new Intent(PHOTO_DELETED_ACTION);
@@ -231,6 +312,58 @@ public class PhotoUtils {
     public static interface PhotoDeletedHandler
     {
         void photoDeleted(Photo photo);
+    }
+
+    /**
+     * Get and register the broadcast receiver for the photo updated event
+     * 
+     * @param TAG
+     * @param handler
+     * @param activity
+     * @return
+     */
+    public static BroadcastReceiver getAndRegisterOnPhotoUpdatedActionBroadcastReceiver(
+            final String TAG,
+            final PhotoUpdatedHandler handler,
+            final Activity activity)
+    {
+        BroadcastReceiver br = new BroadcastReceiver()
+        {
+
+            @Override
+            public void onReceive(Context context, Intent intent)
+            {
+                try
+                {
+                    CommonUtils.debug(TAG,
+                            "Received photo updated broadcast message");
+                    Photo photo = intent.getParcelableExtra(PHOTO_UPDATED);
+                    handler.photoUpdated(photo);
+                } catch (Exception ex)
+                {
+                    GuiUtils.error(TAG, ex);
+                }
+            }
+        };
+        activity.registerReceiver(br, new IntentFilter(PHOTO_UPDATED_ACTION));
+        return br;
+    }
+
+    /**
+     * Send the photo updated broadcast
+     * 
+     * @param photo
+     */
+    public static void sendPhotoUpdatedBroadcast(Photo photo)
+    {
+        Intent intent = new Intent(PHOTO_UPDATED_ACTION);
+        intent.putExtra(PHOTO_UPDATED, photo);
+        OpenPhotoApplication.getContext().sendBroadcast(intent);
+    }
+
+    public static interface PhotoUpdatedHandler
+    {
+        void photoUpdated(Photo photo);
     }
 
 }
