@@ -18,7 +18,6 @@ package me.openphoto.android.app.bitmapfun.util;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FilenameFilter;
@@ -248,9 +247,6 @@ public class DiskLruCache {
     }
 
     /**
-     * Out of Memory hack taken from here
-     * http://stackoverflow.com/a/7116158/527759
-     * 
      * @param path
      * @return
      */
@@ -268,37 +264,7 @@ public class DiskLruCache {
                                            // it will be used in the future
         bfOptions.inTempStorage = new byte[32 * 1024];
 
-        File file = new File(path);
-        FileInputStream fs = null;
-        try
-        {
-            fs = new FileInputStream(file);
-        } catch (FileNotFoundException e)
-        {
-            GuiUtils.noAlertError(TAG, e);
-        }
-
-        try
-        {
-            if (fs != null)
-                bm = BitmapFactory.decodeFileDescriptor(fs.getFD(), null,
-                        bfOptions);
-        } catch (IOException e)
-        {
-            GuiUtils.error(TAG, e);
-        } finally
-        {
-            if (fs != null)
-            {
-                try
-                {
-                    fs.close();
-                } catch (IOException e)
-                {
-                    GuiUtils.noAlertError(TAG, e);
-                }
-            }
-        }
+        bm = ImageResizer.decodeBitmap(path, bfOptions);
         return bm;
     }
 

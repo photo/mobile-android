@@ -16,8 +16,14 @@
 
 package me.openphoto.android.app.bitmapfun.util;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+
 import me.openphoto.android.app.BuildConfig;
 import me.openphoto.android.app.util.CommonUtils;
+import me.openphoto.android.app.util.GuiUtils;
 import me.openphoto.android.app.util.LoadingControl;
 import me.openphoto.android.app.util.TrackerUtils;
 import android.content.Context;
@@ -171,10 +177,54 @@ public class ImageResizer extends ImageWorker {
 
         // Decode bitmap with inSampleSize set
         options.inJustDecodeBounds = false;
-        Bitmap result = BitmapFactory.decodeFile(filename, options);
+        Bitmap result = decodeBitmap(filename, options);
         TrackerUtils.trackDataProcessingTiming(System.currentTimeMillis() - start,
                 "decodeSampledBitmapFromFile", TAG);
         return result;
+    }
+
+    /**
+     * Out of Memory hack taken from here
+     * http://stackoverflow.com/a/7116158/527759
+     * 
+     * @param path
+     * @param bfOptions
+     * @return
+     */
+    public static Bitmap decodeBitmap(String path, BitmapFactory.Options bfOptions) {
+        Bitmap bm = null;
+        File file = new File(path);
+        FileInputStream fs = null;
+        try
+        {
+            fs = new FileInputStream(file);
+        } catch (FileNotFoundException e)
+        {
+            GuiUtils.noAlertError(TAG, e);
+        }
+
+        try
+        {
+            if (fs != null)
+                bm = BitmapFactory.decodeFileDescriptor(fs.getFD(), null,
+                        bfOptions);
+        } catch (IOException e)
+        {
+            GuiUtils.error(TAG, e);
+        } finally
+        {
+            if (fs != null)
+            {
+                try
+                {
+                    fs.close();
+                } catch (IOException e)
+                {
+                    GuiUtils.noAlertError(TAG, e);
+                }
+            }
+        }
+        return bm;
     }
 
     /**
