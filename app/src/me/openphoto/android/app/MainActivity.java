@@ -130,7 +130,10 @@ public class MainActivity extends CommonActivity
                             public void run() {
                                 GalleryFragment gf = (GalleryFragment) getSupportFragmentManager()
                                         .findFragmentByTag(GALLERY_TAG);
-                                gf.cleanRefreshIfFiltered();
+                                if (gf != null)
+                                {
+                                    gf.cleanRefreshIfFiltered();
+                                }
                             }
                         }));
         addTab(View.NO_ID,
