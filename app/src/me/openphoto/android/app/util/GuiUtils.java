@@ -1,8 +1,6 @@
 
 package me.openphoto.android.app.util;
 
-import java.util.HashMap;
-
 import me.openphoto.android.app.OpenPhotoApplication;
 import me.openphoto.android.app.R;
 
@@ -12,8 +10,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.os.Handler;
 import android.util.Log;
-
-import com.bugsense.trace.BugSenseHandler;
 
 /**
  * Contains various gui utils methods
@@ -139,14 +135,6 @@ public class GuiUtils
     public static void processError(String TAG, String message, Exception ex,
             Context context, boolean alertMessage)
     {
-        HashMap<String, String> extraData = new HashMap<String, String>();
-        if (message != null)
-        {
-            extraData.put("message", message);
-        }
-        BugSenseHandler.sendExceptionMap(extraData, ex);
-        BugSenseHandler.flush(OpenPhotoApplication.getContext());
-
         TrackerUtils.trackThrowable(ex);
         Log.e(TAG, message, ex);
         if (alertMessage)
