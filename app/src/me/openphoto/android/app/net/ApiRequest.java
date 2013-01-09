@@ -14,6 +14,30 @@ import org.apache.http.message.BasicNameValuePair;
  * @author Patrick Boos
  */
 public class ApiRequest {
+    public enum ApiVersion
+    {
+        V1, V2("/v2");
+        private String prefix;
+
+        public String getPrefix()
+        {
+            return prefix;
+        }
+
+        public String correctPathWithPrefix(String path)
+        {
+            return prefix == null ? path : prefix + path;
+        }
+        ApiVersion()
+        {
+            this(null);
+        }
+
+        ApiVersion(String prefix)
+        {
+            this.prefix = prefix;
+        }
+    }
     public static final int GET = 1;
     public static final int POST = 2;
     public static final int PUT = 3;
@@ -24,6 +48,7 @@ public class ApiRequest {
     private final List<Parameter<?>> mParameters;
     private final List<NameValuePair> mHeaders;
     private boolean mIsMime;
+    private ApiVersion apiVersion;
 
     /**
      * Creates a basic ApiRequest
@@ -33,6 +58,19 @@ public class ApiRequest {
      * @param path Path of the url. Must start with '/'.
      */
     public ApiRequest(int requestMethod, String path) {
+        this(requestMethod, path, ApiVersion.V1);
+    }
+
+    /**
+     * Creates a basic ApiRequest
+     * 
+     * @param requestMethod Method of the HTTP request. Must be either GET,
+     *            POST, PUT or DELETE.
+     * @param path Path of the url. Must start with '/'.
+     * @param apiVersion the api version for this request. This may change the
+     *            path in the getPath method
+     */
+    public ApiRequest(int requestMethod, String path, ApiVersion apiVersion) {
         if (!path.startsWith("/")) {
             throw new IllegalArgumentException("Parameter 'path' must start with '/'.");
         }
@@ -41,6 +79,7 @@ public class ApiRequest {
             throw new IllegalArgumentException(
                     "Parameter 'requestMethod' must be either GET, POST, PUT or DELETE.");
         }
+        this.apiVersion = apiVersion;
         mMethod = requestMethod;
         mPath = path;
         mParameters = new ArrayList<Parameter<?>>();
@@ -49,10 +88,10 @@ public class ApiRequest {
     }
 
     /**
-     * @return Path of the request
+     * @return Path of the request suitable for the api version
      */
     public String getPath() {
-        return mPath;
+        return apiVersion.correctPathWithPrefix(mPath);
     }
 
     /**
