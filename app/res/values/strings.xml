@@ -15,12 +15,12 @@
     <string name="menu_share_email">E-Mail</string>
     <string name="menu_share_twitter">Twitter</string>
     <string name="menu_share_facebook">Facebook</string>
-    
+
     <!-- Selection Menu -->
     <string name="menu_select_all">Select All</string>
     <string name="menu_select_none">Select None</string>
     <string name="menu_selection">Selection</string>
-    
+
     <!-- Share -->
     <string name="share_private_photo_forbidden">You can\'t share private photos</string>
 
@@ -56,7 +56,7 @@
     <string name="share_facebook_no_wall_post_made">No wall post made</string>
     <string name="share_facebook_dialog_title">Facebook share</string>
     <string name="share_facebook_logged_in_as">Logged in as %1$s</string>
-    
+
     <!-- SetupActivity -->
     <string name="hint_server">username.openphoto.me</string>
     <string name="login">Login</string>
@@ -87,13 +87,13 @@
     <string name="upload_button">Upload!</string>
     <string name="upload_pick_photo_first">Please pick a photo first</string>
     <string name="upload_image_edit_button">Crop &amp; effects</string>
-    
+
     <!-- Tags -->
     <string name="tags_view_in_gallery">View tagged photos</string>
-    
+
     <!-- SelectTagsActivity -->
     <string name="title_activity_select_tags">Select Tags</string>
-    
+
     <!-- Sync screen -->
     <string name="sync_next_button">Next</string>
     <string name="sync_previous_button">Pick photos</string>
@@ -128,7 +128,7 @@
     <string name="areYouSureQuestion">Are you sure?</string>
     <string name="external_storage_na_message">sdcard is missing or currently not mounted. Cannot continue.</string>
     <string name="action_not_supported_on_os_version">This action is not supported on your device OS version.</string>
-    
+
     <!-- Errors -->
     <string name="errorWithAuthentication">Error with authentication</string>
     <string name="errorSimple">Error: %1$s</string>
@@ -143,7 +143,8 @@
     <string name="errorCouldNotLoadNextPhotosInList">Could not load next photos in list</string>
     <string name="errorCouldNotGetPhoto">Could not get photo</string>
     <string name="errorCouldNotDeletePhoto">Could not delete photo</string>
-    <string name="errorOccured">Error occured</string>
+    <string name="errorCouldNotUpdatePhoto">Could not update photo details</string>
+    <string name="errorOccured">Error occurred</string>
     <string name="errorCouldNotLoadNextTagsInList">Could not load next tags in list</string>
     <string name="errorCouldNotInitTwitterFragment">Could not init twitter fragment</string>
     <string name="errorCouldNotRetrieveTwitterScreenName">Could not retrieve twitter screen name</string>
@@ -153,6 +154,8 @@
     <string name="errorCouldNotRetrieveFacebookScreenName">Could not retrieve facebook user name</string>
     <string name="errorCouldNotSendFacebookPhoto">Could not post facebook message</string>
     <string name="errorSpecifiedUrlIsInvalid">The specified URL is invalid</string>
+    <string name="errorCantFindPendingUploadInformation">Can\'t find pending upload information</string>
+    <string name="errorCouldNotStoreDownloadablePhotoNotEnoughSpace">Couldn\'t store downloadable photo on disk. Not enough free space.</string>
 
     <!-- Preferences -->
     <string name="upload_preference_category">Camera upload</string>
@@ -162,11 +165,11 @@
     <string name="sync_clear">Clear sync information</string>
     <string name="sync_clear_comment">This doesn\'t touch your images. Only uploaded markers are removed.</string>
     <string name="sync_cleared_message">The sync information has been cleared</string>
-  	<string name="setting_account_facebook_loggedin_logout">Facebook Log out</string>
-  	<string name="setting_account_server_title">URL</string>
-  	<string name="setting_set_tag_dialog_title">Set tag for uploaded pictures</string>
-  	<string name="setting_set_tag_hint">Include these tags</string>
-  
+    <string name="setting_account_facebook_loggedin_logout">Facebook Log out</string>
+    <string name="setting_account_server_title">URL</string>
+    <string name="setting_set_tag_dialog_title">Set tag for uploaded pictures</string>
+    <string name="setting_set_tag_hint">Include these tags</string>
+
     <!-- Screens for Create/Login/Own domain: Account -->
     <string name="account_signup_button">Sign up with your email address</string>
     <string name="account_login_button">Login with your email address</string>
@@ -183,13 +186,12 @@
     <string name="hint_email">email</string>
     <string name="hint_password">password</string>
     <string name="hint_username">username</string>
-    
+
     <!-- missing fields names -->
     <string name="field_email">email</string>
     <string name="field_password">password</string>
     <string name="field_username">username</string>
-    
-    
+
     <!-- Feather -->
     <string name="feather_failed_to_retrieve_the_list_of_acitions">Failed to retrieve the list of actions!</string>
     <string name="feather_failed_to_retrieve_the_session_information">Failed to retrieve the session informations</string>
@@ -199,12 +201,18 @@
     <string name="feather_applying_action">Applying action %1$s from %2$s</string>
     <string name="feather_error_occurred">There was an error: %1$s</string>
     <string name="feather_failed_to_load_image">Failed to load image %1$s</string>
-    
+
     <!-- Photo details -->
     <string name="details_title_and_date_header">%1$s taken at %2$s</string>
     <string name="delete_photo_confirmation_question">Are you sure you want to delete this photo?</string>
+    <string name="menu_edit">Edit</string>
     <string name="menu_delete">Delete</string>
     <string name="menu_cancel">Cancel</string>
     <string name="deleting_photo_message">Deleting photo…</string>
+
+    <!-- Photo details edit -->
+    <string name="photo_edit_save_button">Save</string>
+    <string name="updating_photo_message">Updating photo…</string>
+    <string name="photo_edit_dialog_title">Edit this photo</string>
 
 </resources>

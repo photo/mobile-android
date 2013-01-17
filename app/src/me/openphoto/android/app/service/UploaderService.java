@@ -302,6 +302,7 @@ public class UploaderService extends Service {
                     !silent);
         }
     }
+
     /**
      * This is used for the devices with android version >= 4.x
      */
@@ -327,6 +328,7 @@ public class UploaderService extends Service {
                 .setContentIntent(contentIntent);
         return builder;
     }
+
     private Notification showUploadNotification(File file)
     {
         int icon = R.drawable.icon;
@@ -377,9 +379,10 @@ public class UploaderService extends Service {
         }
         mNotificationManager.notify(NOTIFICATION_UPLOAD_PROGRESS, notification);
     }
+
     /**
-     * This is used to update progress in the notification message for
-     * the platform version >= 4.x
+     * This is used to update progress in the notification message for the
+     * platform version >= 4.x
      */
     protected void updateUploadNotification(final NotificationCompat.Builder builder, int progress,
             int max) {
@@ -518,20 +521,24 @@ public class UploaderService extends Service {
         {
             File dcim = new File(path, "DCIM");
             if (dcim.isDirectory()) {
-                for (String dir : dcim.list()) {
-                    if (!dir.startsWith(".")) {
-                        dir = dcim.getAbsolutePath() + "/" + dir;
-                        if (alreadyObservingPaths.contains(dir))
-                        {
-                            CommonUtils.debug(TAG, "Directory " + dir
-                                    + " is already observing, skipping");
-                            continue;
+                String[] dirNames = dcim.list();
+                if (dirNames != null)
+                {
+                    for (String dir : dirNames) {
+                        if (!dir.startsWith(".")) {
+                            dir = dcim.getAbsolutePath() + "/" + dir;
+                            if (alreadyObservingPaths.contains(dir))
+                            {
+                                CommonUtils.debug(TAG, "Directory " + dir
+                                        + " is already observing, skipping");
+                                continue;
+                            }
+                            alreadyObservingPaths.add(dir);
+                            NewPhotoObserver observer = new NewPhotoObserver(this, dir);
+                            sNewPhotoObservers.add(observer);
+                            observer.startWatching();
+                            CommonUtils.debug(TAG, "Started watching " + dir);
                         }
-                        alreadyObservingPaths.add(dir);
-                        NewPhotoObserver observer = new NewPhotoObserver(this, dir);
-                        sNewPhotoObservers.add(observer);
-                        observer.startWatching();
-                        CommonUtils.debug(TAG, "Started watching " + dir);
                     }
                 }
             } else

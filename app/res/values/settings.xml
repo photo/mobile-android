@@ -1,56 +1,54 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-  <!--#########-->	
-  <!-- Account -->
-  <!--#########-->
-  <string name="setting_account_server_key">setting_server</string>
-  <string name="setting_account_server_default">https://openphoto.me</string>
-  
-  <string name="setting_account_title">Account</string>
-  
-  <string name="setting_account_facebook_loggedin_key">setting_facebook_loggedin</string>
-  <string name="setting_sync_clear_key">setting_sync_clear_key</string>
-  
-  <string name="setting_account_category">setting_account_category</string>
-  <string name="setting_account_loggedin_key">setting_loggedin</string>
-  <string name="setting_account_loggedin_logout">Log out</string>
-  <string name="setting_account_loggedin_login">Log in</string>
-  <string name="setting_account_loggedin_consumer_key">setting_loggedin</string>
-  <!-- OAuth store information -->
-  <string name="setting_oauth_consumer_key">setting_oauth_consumer_key</string>
-  <string name="setting_oauth_consumer_secret">setting_oauth_consumer_secret</string>
-  <string name="setting_oauth_token">setting_oauth_token</string>
-  <string name="setting_oauth_token_secret">setting_oauth_token_secret</string>
-  
-  <string name="setting_account_edit_account_title">Edit account</string>
-  <string name="setting_account_change_profile_picture_title">Change profile picture</string>
-  
-  <!-- AutoUpload -->
-  <string name="setting_autoupload_on_key">setting_autoupload_on</string>
-  <bool   name="setting_autoupload_on_default">false</bool>
-  
-  <!-- Upload -->
-  <string name="setting_wifi_only_upload_on_key">setting_wifi_only_upload_on</string>
-  <bool   name="setting_wifi_only_upload_on_default">false</bool>
 
-  <string name="setting_autoupload_tag_key">setting_autoupload_tag</string>
-  <string name="setting_autoupload_tag_default">autoupload</string>
-  
-  <!-- API Keys -->
-  <string name="facebook_app_id">486985971321265</string>
-  <string name="bugsense_api_key">16a061fa</string>
-  <string name="twitter_api_consumer_key">Z0EVWNVma30RFZH8nJphog</string>
-  <string name="twitter_api_consumer_secret">wt2PQuFHwai0ffPvAnlPsQc8W0DIUjeUyvnCOvbQb3E</string>
-  <string name="twitter_callback_url">openphoto-t://twitter-callback</string>
-  <string name="twitter_callback_url2">openphoto-t2://twitter-callback</string>
-  <string name="openphoto_oauth_callback_url">openphoto://callback</string>
-  <string name="feather_api_key">69696cd0e</string>
-  
-  
-  
-  <!--  Facebook preferences -->
-  <string-array name="share_facebook_permissions">
+    <!-- ######### -->
+    <!-- Account -->
+    <!-- ######### -->
+    <string name="setting_account_server_key">setting_server</string>
+    <string name="setting_account_server_default">https://openphoto.me</string>
+    <string name="setting_account_title">Account</string>
+    <string name="setting_account_facebook_loggedin_key">setting_facebook_loggedin</string>
+    <string name="setting_sync_clear_key">setting_sync_clear_key</string>
+    <string name="setting_account_category">setting_account_category</string>
+    <string name="setting_account_loggedin_key">setting_loggedin</string>
+    <string name="setting_account_loggedin_logout">Log out</string>
+    <string name="setting_account_loggedin_login">Log in</string>
+    <string name="setting_account_loggedin_consumer_key">setting_loggedin</string>
+    <!-- OAuth store information -->
+    <string name="setting_oauth_consumer_key">setting_oauth_consumer_key</string>
+    <string name="setting_oauth_consumer_secret">setting_oauth_consumer_secret</string>
+    <string name="setting_oauth_token">setting_oauth_token</string>
+    <string name="setting_oauth_token_secret">setting_oauth_token_secret</string>
+    <string name="setting_account_edit_account_title">Edit account</string>
+    <string name="setting_account_change_profile_picture_title">Change profile picture</string>
+
+    <!-- AutoUpload -->
+    <string name="setting_autoupload_on_key">setting_autoupload_on</string>
+
+    <bool name="setting_autoupload_on_default">false</bool>
+
+    <!-- Upload -->
+    <string name="setting_wifi_only_upload_on_key">setting_wifi_only_upload_on</string>
+
+    <bool name="setting_wifi_only_upload_on_default">false</bool>
+
+    <string name="setting_autoupload_tag_key">setting_autoupload_tag</string>
+    <string name="setting_autoupload_tag_default">autoupload</string>
+
+    <!-- API Keys -->
+    <string name="facebook_app_id">486985971321265</string>
+    <string name="twitter_api_consumer_key">Z0EVWNVma30RFZH8nJphog</string>
+    <string name="twitter_api_consumer_secret">wt2PQuFHwai0ffPvAnlPsQc8W0DIUjeUyvnCOvbQb3E</string>
+    <string name="twitter_callback_url">openphoto-t://twitter-callback</string>
+    <string name="twitter_callback_url_photodetails_activity">openphoto-t2://twitter-callback</string>
+    <string name="twitter_callback_url_upload_activity">openphoto-t3://twitter-callback</string>
+    <string name="openphoto_oauth_callback_url">openphoto://callback</string>
+    <string name="feather_api_key">69696cd0e</string>
+
+    <!-- Facebook preferences -->
+    <string-array name="share_facebook_permissions">
         <item>publish_stream</item>
         <item>photo_upload</item>
     </string-array>
+
 </resources>

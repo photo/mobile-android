@@ -55,8 +55,6 @@ public class AccountLogin extends CommonActivity
             return;
         }
 
-        CommonUtils.debug(TAG, "Email = [" + email + "] and pwd = [" + password + "]");
-
         // clean up login information
         Preferences.logout(this);
 

@@ -4,10 +4,14 @@ package me.openphoto.android.test.net;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Collection;
 
 import me.openphoto.android.app.OpenPhotoApplication;
+import me.openphoto.android.app.model.Photo;
 import me.openphoto.android.app.net.IOpenPhotoApi;
 import me.openphoto.android.app.net.OpenPhotoApi;
+import me.openphoto.android.app.net.PhotoResponse;
 import me.openphoto.android.app.net.PhotosResponse;
 import me.openphoto.android.app.net.TagsResponse;
 import me.openphoto.android.app.net.UploadMetaData;
@@ -103,6 +107,75 @@ public class OpenPhotoApiTest extends ApplicationTestCase<OpenPhotoApplication>
                 assertEquals("Nice picture of an android", resp.getPhoto()
                         .getDescription());
                 assertFalse(resp.getPhoto().isPrivate());
+            } finally
+            {
+                // remove uploaded photo
+                mApi.deletePhoto(resp.getPhoto().getId());
+            }
+        } catch (Exception e) {
+            fail("Exception should not happen: " + e.getClass().getSimpleName() + " - "
+                    + e.getMessage());
+        }
+        file.delete();
+    }
+
+    public void testPhotoUploadAndDetailsEdit() throws Exception
+    {
+        AssetManager assetMgr = getTestContext().getAssets();
+        InputStream imageStream = assetMgr.open("android.jpg");
+        File dir = new File(Environment.getExternalStorageDirectory().getAbsolutePath()
+                + "/data/me.openphoto.android");
+        if (!dir.exists()) {
+            assertTrue(dir.mkdirs());
+        }
+        File file = new File(dir, "test-android.jpg");
+        FileUtils.writeToFile(imageStream, file);
+
+        UploadMetaData settings = new UploadMetaData();
+        String title = "Android";
+        String description = "Nice picture of an android";
+        String tags = "test";
+        boolean priv = false;
+        settings.setTitle(title);
+        settings.setDescription(description);
+        settings.setTags(tags);
+        settings.setPrivate(priv);
+        try {
+            UploadResponse resp = mApi.uploadPhoto(file, settings, null);
+            assertTrue(resp.isSuccess());
+            assertNotNull(resp.getPhoto());
+            try
+            {
+                Photo photo = resp.getPhoto();
+                assertNotNull(photo);
+                assertTrue(photo.getTags().size() >= 1);
+                // assertEquals("test", resp.getPhoto().getTags().get(0));
+                assertEquals(title, photo.getTitle());
+                assertEquals(description, photo
+                        .getDescription());
+                assertFalse(photo.isPrivate());
+
+                title = "Android (Edited)";
+                description = "Nice picture of an android (Edited)";
+                tags = "edited";
+                Collection<String> tagsCollection = new ArrayList<String>();
+                tagsCollection.add("edited");
+
+                priv = true;
+
+                PhotoResponse photoResp = mApi.updatePhotoDetails(photo.getId(), title,
+                        description, tagsCollection, Photo.PERMISSION_PRIVATE);
+
+                photo = photoResp.getPhoto();
+                assertTrue(photoResp.isSuccess());
+                assertNotNull(photo);
+                assertTrue(photo.getTags().size() == 1);
+                assertEquals(tags, photo.getTags().get(0));
+                assertEquals(title, photo.getTitle());
+                assertEquals(description, photo
+                        .getDescription());
+                assertTrue(photo.isPrivate() == priv);
+
             } finally
             {
                 // remove uploaded photo

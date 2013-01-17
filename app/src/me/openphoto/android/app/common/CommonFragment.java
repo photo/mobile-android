@@ -27,6 +27,7 @@ public class CommonFragment extends Fragment
 {
     static final String TAG = CommonFragment.class.getSimpleName();
     static final String CATEGORY = "Fragment Lifecycle";
+    private boolean instanceSaved = false;
 
     void trackLifecycleEvent(String event)
     {
@@ -92,6 +93,7 @@ public class CommonFragment extends Fragment
     public void onSaveInstanceState(Bundle outState)
     {
         super.onSaveInstanceState(outState);
+        instanceSaved = true;
         trackLifecycleEvent("onSaveInstanceState");
     }
 
@@ -99,6 +101,7 @@ public class CommonFragment extends Fragment
     public void onResume()
     {
         super.onResume();
+        instanceSaved = false;
         trackLifecycleEvent("onResume");
     }
 
@@ -136,24 +139,29 @@ public class CommonFragment extends Fragment
         super.onActivityResult(requestCode, resultCode, data);
         trackLifecycleEvent("onActivityResult");
         Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
+        handler.post(new Runnable() {
 
             @Override
             public void run() {
-                onActivityResultDelayed(requestCode, resultCode, data);
+                onActivityResultUI(requestCode, resultCode, data);
             }
 
-        }, 100);
+        });
     }
 
-    public void onActivityResultDelayed(int requestCode, int resultCode, Intent data)
+    public void onActivityResultUI(int requestCode, int resultCode, Intent data)
     {
-        trackLifecycleEvent("onActivityResultDelayed");
+        trackLifecycleEvent("onActivityResultUI");
     }
 
     public static interface FragmentAccessor<T extends CommonFragment> extends
             RunnableWithResult<T>, Serializable
     {
 
+    }
+
+    public boolean isInstanceSaved()
+    {
+        return instanceSaved;
     }
 }

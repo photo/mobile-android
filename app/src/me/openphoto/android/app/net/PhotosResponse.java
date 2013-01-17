@@ -19,11 +19,14 @@ public class PhotosResponse extends PagedResponse {
 
         mPhotos = new ArrayList<Photo>();
 
-        JSONArray result = json.getJSONArray("result");
+        if (json.get("result") instanceof JSONArray)
+        {
+            JSONArray result = json.getJSONArray("result");
 
-        if (getTotalRows() > 0) {
-            for (int i = 0; i < result.length(); i++) {
-                mPhotos.add(Photo.fromJson(result.getJSONObject(i)));
+            if (getTotalRows() > 0) {
+                for (int i = 0; i < result.length(); i++) {
+                    mPhotos.add(Photo.fromJson(result.getJSONObject(i)));
+                }
             }
         }
     }

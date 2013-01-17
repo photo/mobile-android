@@ -36,14 +36,37 @@ public class TwitterUtils
 
     static Runnable runOnceOnSuccessAuthentication;
 
+    /**
+     * Get the default callback url string used in main activity
+     * 
+     * @param context
+     * @return
+     */
     public static String getDefaultCallbackUrl(Context context)
     {
         return context.getString(R.string.twitter_callback_url);
     }
 
-    public static String getSecondCallbackUrl(Context context)
+    /**
+     * Get the callback url string for the photo details activity
+     * 
+     * @param context
+     * @return
+     */
+    public static String getPhotoDetailsCallbackUrl(Context context)
     {
-        return context.getString(R.string.twitter_callback_url2);
+        return context.getString(R.string.twitter_callback_url_photodetails_activity);
+    }
+
+    /**
+     * Get the callback url string for the upload activity
+     * 
+     * @param context
+     * @return
+     */
+    public static String getUploadActivityCallbackUrl(Context context)
+    {
+        return context.getString(R.string.twitter_callback_url_upload_activity);
     }
 
     static String getConsumerKey(Context context)

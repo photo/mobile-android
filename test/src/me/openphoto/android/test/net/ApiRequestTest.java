@@ -11,11 +11,11 @@ public class ApiRequestTest extends TestCase {
     public void testBasicConstruction() {
         ApiRequest request = new ApiRequest(ApiRequest.GET, "/");
         assertEquals(ApiRequest.GET, request.getMethod());
-        assertEquals("/", request.getPath());
+        assertEquals(request.getApiVersion().correctPathWithPrefix("/"), request.getPath());
 
         request = new ApiRequest(ApiRequest.DELETE, "/photos");
         assertEquals(ApiRequest.DELETE, request.getMethod());
-        assertEquals("/photos", request.getPath());
+        assertEquals(request.getApiVersion().correctPathWithPrefix("/photos"), request.getPath());
     }
 
     public void testMustStartWithSlash() {

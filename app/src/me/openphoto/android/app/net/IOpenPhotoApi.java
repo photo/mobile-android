@@ -156,6 +156,28 @@ public interface IOpenPhotoApi {
             IOException, IllegalStateException, JSONException;
 
     /**
+     * Update a picture details.
+     * 
+     * @param photoId the id of the photo which should be updated
+     * @param title the new title. Ignored if null.
+     * @param description the new description. Ignored if null.
+     * @param tags the new tags. Ignored if null.
+     * @param permission permission information. Ignored if null.
+     * @return The response which contains info about the updated photo
+     * @throws IOException
+     * @throws ClientProtocolException
+     * @throws JSONException
+     * @throws IllegalStateException
+     */
+    PhotoResponse updatePhotoDetails(String photoId,
+            String title,
+            String description,
+            Collection<String> tags,
+            Integer permission)
+            throws ClientProtocolException,
+            IOException, IllegalStateException, JSONException;
+
+    /**
      * Return Newest Photos to be used in the Home Screen
      * 
      * @param paging paging for the newest hone screen

@@ -66,9 +66,6 @@ public class AccountSignup extends CommonActivity
         {
             return;
         }
-        CommonUtils.debug(TAG, "Email = [" + email + "], username = [" + username
-                + "] and pwd = [" + password
-                + "]");
 
         // clean up login information
         Preferences.logout(this);

@@ -5,9 +5,13 @@ import me.openphoto.android.app.bitmapfun.util.ImageCache;
 import me.openphoto.android.app.bitmapfun.util.ImageFetcher;
 import me.openphoto.android.app.common.CommonRefreshableFragmentWithImageWorker;
 import me.openphoto.android.app.model.Photo;
+import me.openphoto.android.app.model.utils.PhotoUtils;
+import me.openphoto.android.app.model.utils.PhotoUtils.PhotoDeletedHandler;
+import me.openphoto.android.app.model.utils.PhotoUtils.PhotoUpdatedHandler;
 import me.openphoto.android.app.net.ReturnSizes;
 import me.openphoto.android.app.ui.adapter.PhotosEndlessAdapter;
 import me.openphoto.android.app.util.CommonUtils;
+import me.openphoto.android.app.util.GuiUtils;
 import me.openphoto.android.app.util.ImageFlowUtils;
 import me.openphoto.android.app.util.LoadingControl;
 import me.openphoto.android.app.util.TrackerUtils;
@@ -28,6 +32,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 
 public class GalleryFragment extends CommonRefreshableFragmentWithImageWorker
+        implements PhotoDeletedHandler, PhotoUpdatedHandler
 {
     public static final String TAG = GalleryFragment.class.getSimpleName();
 
@@ -192,6 +197,22 @@ public class GalleryFragment extends CommonRefreshableFragmentWithImageWorker
         mAdapter.forceStopLoadingIfNecessary();
     }
 
+    @Override
+    public void photoDeleted(Photo photo)
+    {
+        if (mAdapter != null)
+        {
+            mAdapter.photoDeleted(photo);
+        }
+    }
+
+    @Override
+    public void photoUpdated(Photo photo) {
+        if (mAdapter != null)
+        {
+            mAdapter.photoUpdated(photo);
+        }
+    }
     /**
      * Process all the images preserving aspect ratio and using same height
      */
@@ -210,7 +231,16 @@ public class GalleryFragment extends CommonRefreshableFragmentWithImageWorker
                     / (float) imageData.getHeight();
             int height = mImageHeight;
             int width = (int) (height * ratio);
-            return super.processBitmap(imageData.getUrl(thumbSize.toString()), width, height);
+            Bitmap result = null;
+            try
+            {
+                imageData = PhotoUtils.validateUrlForSizeExistAndReturn(imageData, thumbSize);
+                result = super.processBitmap(imageData.getUrl(thumbSize.toString()), width, height);
+            } catch (Exception e)
+            {
+                GuiUtils.noAlertError(TAG, e);
+            }
+            return result;
         }
 
     }

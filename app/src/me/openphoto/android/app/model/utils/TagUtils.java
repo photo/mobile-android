@@ -2,7 +2,9 @@
 package me.openphoto.android.app.model.utils;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 
 import android.text.TextUtils;
@@ -27,6 +29,29 @@ public class TagUtils {
             result.addAll(Arrays.asList(tagsArray));
         }
         return result;
+    }
+
+    /**
+     * Get the tags string from the tags collection
+     * 
+     * @param tags
+     * @return
+     */
+    public static String getTagsString(Collection<String> tags)
+    {
+        if (tags != null && !tags.isEmpty())
+        {
+            Iterator<String> it = tags.iterator();
+            StringBuilder sb = new StringBuilder(it.next());
+            while (it.hasNext())
+            {
+                sb.append("," + it.next());
+            }
+            return sb.toString();
+        } else
+        {
+            return null;
+        }
     }
 
 }

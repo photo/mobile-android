@@ -7,18 +7,22 @@ import java.io.Serializable;
 import java.util.Date;
 
 import me.openphoto.android.app.bitmapfun.util.ImageResizer;
-import me.openphoto.android.app.common.CommonClosableOnRestoreDialogFragment;
 import me.openphoto.android.app.common.CommonActivity;
+import me.openphoto.android.app.common.CommonClosableOnRestoreDialogFragment;
 import me.openphoto.android.app.common.CommonFragment;
+import me.openphoto.android.app.facebook.FacebookProvider;
+import me.openphoto.android.app.facebook.FacebookUtils;
 import me.openphoto.android.app.feather.FeatherFragment;
 import me.openphoto.android.app.net.UploadMetaData;
 import me.openphoto.android.app.provider.PhotoUpload;
 import me.openphoto.android.app.provider.UploadsProviderAccessor;
 import me.openphoto.android.app.service.UploaderService;
+import me.openphoto.android.app.twitter.TwitterUtils;
 import me.openphoto.android.app.util.CommonUtils;
 import me.openphoto.android.app.util.FileUtils;
 import me.openphoto.android.app.util.GuiUtils;
 import me.openphoto.android.app.util.ImageUtils;
+import me.openphoto.android.app.util.ProgressDialogLoadingControl;
 import me.openphoto.android.app.util.TrackerUtils;
 
 import org.holoeverywhere.LayoutInflater;
@@ -38,6 +42,8 @@ import android.provider.MediaStore;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
 import android.widget.ImageView;
 
@@ -55,6 +61,7 @@ public class UploadActivity extends CommonActivity {
     private static final int REQUEST_CAMERA = 1;
     private static final int REQUEST_TAGS = 2;
     private static final int ACTION_REQUEST_FEATHER = 100;
+    public final static int AUTHORIZE_ACTIVITY_REQUEST_CODE = 10;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,6 +74,38 @@ public class UploadActivity extends CommonActivity {
         }
     }
 
+    @Override
+    protected void onNewIntent(Intent intent)
+    {
+        super.onNewIntent(intent);
+        if (intent != null && intent.getData() != null)
+        {
+            Uri uri = intent.getData();
+            TwitterUtils.verifyOAuthResponse(new ProgressDialogLoadingControl(this, true,
+                    false, getString(R.string.share_twitter_verifying_authentication)),
+                    this, uri,
+                    TwitterUtils.getUploadActivityCallbackUrl(this),
+                    null);
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode)
+        {
+        /*
+         * if this is the activity result from authorization flow, do a call
+         * back to authorizeCallback Source Tag: login_tag
+         */
+            case AUTHORIZE_ACTIVITY_REQUEST_CODE: {
+                FacebookProvider.getFacebook().authorizeCallback(requestCode,
+                        resultCode,
+                        data);
+                break;
+            }
+        }
+    }
     public static class UploadUiFragment extends CommonFragment
             implements OnClickListener
     {
@@ -76,15 +115,25 @@ public class UploadActivity extends CommonActivity {
         private File mUploadImageFile;
         private Uri fileUri;
 
-        private Switch mPrivateToggle;
+        Switch privateSwitch;
+        Switch twitterSwitch;
+        Switch facebookSwitch;
+
         FeatherFragment featherFragment;
         EditText tagsText;
         private SelectImageDialogFragment imageSelectionFragment;
+        /**
+         * This variable controls whether the dialog should be shown in the
+         * onResume action
+         */
+        private boolean showSelectionDialogOnResume = false;
+
+        static UploadUiFragment instance;
 
         @Override
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
-
+            instance = this;
             if (savedInstanceState != null)
             {
                 mUploadImageFile = CommonUtils.getSerializableFromBundleIfNotNull(
@@ -95,6 +144,12 @@ public class UploadActivity extends CommonActivity {
                     fileUri = Uri.parse(fileUriString);
                 }
             }
+        }
+
+        @Override
+        public void onDestroy() {
+            super.onDestroy();
+            instance = null;
         }
 
         FeatherFragment getFeatherFragment()
@@ -115,6 +170,16 @@ public class UploadActivity extends CommonActivity {
             View v = inflater.inflate(R.layout.activity_upload, container, false);
             getFeatherFragment().onCallingViewCreated();
             return v;
+        }
+
+        @Override
+        public void onResume() {
+            super.onResume();
+            FacebookUtils.extendAceessTokenIfNeeded(getActivity());
+            if (showSelectionDialogOnResume)
+            {
+                showSelectionDialog();
+            }
         }
 
         @Override
@@ -141,8 +206,18 @@ public class UploadActivity extends CommonActivity {
             v.findViewById(R.id.button_edit).setOnClickListener(this);
             tagsText = ((EditText) v.findViewById(R.id.edit_tags));
 
-            mPrivateToggle = (Switch) v.findViewById(R.id.private_switch);
-            mPrivateToggle.setChecked(true);
+            privateSwitch = (Switch) v.findViewById(R.id.private_switch);
+            twitterSwitch = (Switch) v.findViewById(R.id.twitter_switch);
+            facebookSwitch = (Switch) v.findViewById(R.id.facebook_switch);
+
+            privateSwitch.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    reinitShareSwitches(!isChecked);
+                }
+            });
+            reinitShareSwitches();
 
             Intent intent = getActivity().getIntent();
             boolean showOptions = true;
@@ -158,6 +233,12 @@ public class UploadActivity extends CommonActivity {
                     Uri uri = intent.getParcelableExtra(EXTRA_PENDING_UPLOAD_URI);
                     PhotoUpload pendingUpload = new UploadsProviderAccessor(getActivity())
                             .getPendingUpload(uri);
+                    if (pendingUpload == null)
+                    {
+                        GuiUtils.alert(R.string.errorCantFindPendingUploadInformation);
+                        getActivity().finish();
+                        return;
+                    }
                     new UploadsProviderAccessor(getActivity()).delete(pendingUpload.getId());
                     setSelectedImageUri(pendingUpload.getPhotoUri());
                     ((EditText) v.findViewById(R.id.edit_title)).setText(pendingUpload
@@ -168,15 +249,15 @@ public class UploadActivity extends CommonActivity {
                             .getDescription());
                     ((EditText) v.findViewById(R.id.edit_tags))
                             .setText(pendingUpload.getMetaData().getTags());
-                    mPrivateToggle.setChecked(pendingUpload.getMetaData().isPrivate());
-
+                    privateSwitch.setChecked(pendingUpload.getMetaData().isPrivate());
+                    twitterSwitch.setChecked(pendingUpload.isShareOnTwitter());
+                    facebookSwitch.setChecked(pendingUpload.isShareOnFacebook());
                     showOptions = false;
                 }
             }
             if (mUploadImageFile != null)
             {
-                setSelectedImageFile(mUploadImageFile);
-                showOptions = false;
+                showOptions = !setSelectedImageFile();
             }
             if (showOptions)
             {
@@ -184,11 +265,24 @@ public class UploadActivity extends CommonActivity {
             }
         }
 
+        void reinitShareSwitches()
+        {
+            reinitShareSwitches(!privateSwitch.isChecked());
+        }
+
+        void reinitShareSwitches(boolean enabled)
+        {
+            twitterSwitch.setEnabled(enabled);
+            facebookSwitch.setEnabled(enabled);
+        }
+
         @Override
-        public void onActivityResultDelayed(int requestCode, int resultCode, Intent data) {
-            super.onActivityResultDelayed(requestCode, resultCode, data);
+        public void onActivityResultUI(int requestCode, int resultCode, Intent data) {
+            super.onActivityResultUI(requestCode, resultCode, data);
             if (resultCode != RESULT_OK && (requestCode == REQUEST_GALLERY
                     || requestCode == REQUEST_CAMERA)) {
+                TrackerUtils.trackUiEvent("uploadNoImageSelectedResult",
+                        requestCode == REQUEST_GALLERY ? "gallery" : "camera");
                 showSelectionDialog();
                 if (requestCode == REQUEST_CAMERA)
                 {
@@ -211,8 +305,8 @@ public class UploadActivity extends CommonActivity {
                     break;
                 case REQUEST_CAMERA:
                     if (resultCode == RESULT_OK) {
-                        updateIngGalleryPictureSize();
-                        setSelectedImageFile(mUploadImageFile);
+                        updateingGalleryPictureSize();
+                        setSelectedImageFile();
                     } else {
                         mUploadImageFile = null;
                     }
@@ -222,9 +316,12 @@ public class UploadActivity extends CommonActivity {
                     {
                         getFeatherFragment().onFeatherActivitySuccessResult(data);
                     }
+                    break;
                 default:
                     break;
             }
+            // discard delayed selection dialog showing if planned
+            showSelectionDialogOnResume = false;
             // this is necessary because onActivityResultDelayed is called
             // after the onCreateView method so the dialog may appear there if
             // view were recreated and here need to be closed
@@ -238,18 +335,22 @@ public class UploadActivity extends CommonActivity {
         void removeGalleryEntryForCurrentFile()
         {
             CommonUtils.debug(TAG, "Removing empty gallery entry: " + fileUri);
-            int rowsDeleted = getActivity().getContentResolver().delete(fileUri, null, null);
+            TrackerUtils.trackBackgroundEvent("removeGalleryEntryForCurrentFile", TAG);
+            // #271 fix, using another context instead of getActivity()
+            int rowsDeleted = OpenPhotoApplication.getContext().getContentResolver()
+                    .delete(fileUri, null, null);
 
             CommonUtils.debug(TAG, "Rows deleted:" + rowsDeleted);
         }
 
-        void updateIngGalleryPictureSize()
+        void updateingGalleryPictureSize()
         {
             int sdk = android.os.Build.VERSION.SDK_INT;
             if (sdk < android.os.Build.VERSION_CODES.HONEYCOMB)
             {
                 return;
             }
+            TrackerUtils.trackBackgroundEvent("updateingGalleryPictureSize", TAG);
 
             CommonUtils.debug(TAG, "Updating gallery entry: " + fileUri);
             BitmapFactory.Options options = ImageResizer.calculateImageSize(mUploadImageFile
@@ -257,7 +358,8 @@ public class UploadActivity extends CommonActivity {
             ContentValues values = new ContentValues();
             values.put(MediaStore.Images.Media.WIDTH, options.outWidth);
             values.put(MediaStore.Images.Media.HEIGHT, options.outHeight);
-            int rowsUpdated = getActivity().getContentResolver()
+            // #271 fix, using another context instead of getActivity()
+            int rowsUpdated = OpenPhotoApplication.getContext().getContentResolver()
                     .update(fileUri, values, null, null);
             CommonUtils.debug(TAG, "Rows updated:" + rowsUpdated);
         }
@@ -273,8 +375,20 @@ public class UploadActivity extends CommonActivity {
         {
             if (imageSelectionFragment != null)
             {
+                TrackerUtils.trackUiEvent("imageSelectionDialogCreation.skipped", TAG);
                 return;
             }
+            // if instance is saved we can't show dialog such as it will cause
+            // illegal state exception. Instead we plan showing in the onResume
+            // event if it will appear
+            if (isInstanceSaved())
+            {
+                TrackerUtils.trackUiEvent("imageSelectionDialogCreation.delayedToOnResume", TAG);
+                showSelectionDialogOnResume = true;
+                return;
+            }
+            TrackerUtils.trackUiEvent("imageSelectionDialogCreation.show", TAG);
+            showSelectionDialogOnResume = false;
             imageSelectionFragment = SelectImageDialogFragment
                     .newInstance(new SelectImageDialogFragment.SelectedActionHandler() {
 
@@ -318,18 +432,29 @@ public class UploadActivity extends CommonActivity {
                             intent.setType("image/*");
                             startActivityForResult(intent, REQUEST_GALLERY);
                         }
+
+                        @Override
+                        public void onDismiss() {
+                            imageSelectionFragment = null;
+                        }
                     });
             imageSelectionFragment.show(getSupportActivity());
         }
 
         private void setSelectedImageUri(Uri imageUri) {
             mUploadImageFile = new File(ImageUtils.getRealPathFromURI(getActivity(), imageUri));
-            setSelectedImageFile(mUploadImageFile);
+            setSelectedImageFile();
         }
 
-        private void setSelectedImageFile(File imageFile) {
+        private boolean setSelectedImageFile() {
+            if (!mUploadImageFile.exists())
+            {
+                mUploadImageFile = null;
+                return false;
+            }
             ImageView previewImage = (ImageView) getView().findViewById(R.id.image_upload);
             previewImage.setImageBitmap(ImageUtils.decodeFile(mUploadImageFile, 200));
+            return true;
         }
 
         @Override
@@ -344,7 +469,7 @@ public class UploadActivity extends CommonActivity {
                 case R.id.button_upload:
                     TrackerUtils.trackButtonClickEvent("button_upload", getActivity());
                     if (mUploadImageFile != null) {
-                        startUpload(mUploadImageFile);
+                        startUpload(mUploadImageFile, true, true);
                     } else
                     {
                         GuiUtils.alert(R.string.upload_pick_photo_first);
@@ -373,6 +498,49 @@ public class UploadActivity extends CommonActivity {
             }
         }
 
+        void startUpload(
+                final File uploadFile,
+                final boolean checkTwitter,
+                final boolean checkFacebook)
+        {
+            if (checkTwitter && twitterSwitch.isEnabled() && twitterSwitch.isChecked())
+            {
+                Runnable runnable = new Runnable()
+                {
+
+                    @Override
+                    public void run()
+                    {
+                        instance.startUpload(uploadFile, false, checkFacebook);
+                    }
+                };
+                TwitterUtils.runAfterTwitterAuthentication(
+                        new ProgressDialogLoadingControl(getActivity(), true, false,
+                                getString(R.string.share_twitter_requesting_authentication)),
+                        getSupportActivity(),
+                        TwitterUtils.getUploadActivityCallbackUrl(getActivity()),
+                        runnable, runnable);
+                return;
+            }
+            if (checkFacebook && facebookSwitch.isEnabled() && facebookSwitch.isChecked())
+            {
+                Runnable runnable = new Runnable()
+                {
+
+                    @Override
+                    public void run()
+                    {
+                        instance.startUpload(uploadFile, checkTwitter, false);
+                    }
+                };
+                FacebookUtils.runAfterFacebookAuthentication(getSupportActivity(),
+                        AUTHORIZE_ACTIVITY_REQUEST_CODE,
+                        runnable, runnable);
+                return;
+            }
+            startUpload(uploadFile);
+        }
+
         private void startUpload(File uploadFile) {
             UploadsProviderAccessor uploads = new UploadsProviderAccessor(getActivity());
             UploadMetaData metaData = new UploadMetaData();
@@ -384,10 +552,14 @@ public class UploadActivity extends CommonActivity {
                     .toString());
             metaData.setTags(((EditText) getView().findViewById(R.id.edit_tags)).getText()
                     .toString());
-            metaData.setPrivate(mPrivateToggle.isChecked());
+            metaData.setPrivate(privateSwitch.isChecked());
 
-            uploads.addPendingUpload(Uri.fromFile(uploadFile), metaData, false,
-                    false);
+            boolean shareOnFacebook = facebookSwitch.isChecked();
+            boolean shareOnTwitter = twitterSwitch.isChecked();
+
+            uploads.addPendingUpload(Uri.fromFile(uploadFile), metaData,
+                    shareOnTwitter, shareOnFacebook
+                    );
             getActivity().startService(new Intent(getActivity(), UploaderService.class));
             GuiUtils.info(R.string.uploading_in_background);
             getActivity().finish();
@@ -449,6 +621,8 @@ public class UploadActivity extends CommonActivity {
                 void cameraOptionSelected();
 
                 void galleryOptionSelected();
+
+                void onDismiss();
             }
 
             private SelectedActionHandler handler;
@@ -465,6 +639,14 @@ public class UploadActivity extends CommonActivity {
             public void onCancel(DialogInterface dialog) {
                 super.onCancel(dialog);
                 getActivity().finish();
+            }
+            @Override
+            public void onDismiss(DialogInterface dialog) {
+                super.onDismiss(dialog);
+                if (handler != null)
+                {
+                    handler.onDismiss();
+                }
             }
 
             @Override

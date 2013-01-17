@@ -8,7 +8,6 @@ import java.util.Iterator;
 
 import me.openphoto.android.app.Preferences;
 import me.openphoto.android.app.net.HttpEntityWithProgress.ProgressListener;
-import me.openphoto.android.app.util.CommonUtils;
 
 import org.apache.http.client.ClientProtocolException;
 import org.json.JSONException;
@@ -252,7 +251,39 @@ public class OpenPhotoApi extends ApiBase implements IOpenPhotoApi {
                 + "/delete.json");
         ApiResponse response = execute(request);
         String content = response.getContentAsString();
-        CommonUtils.debug(TAG, content);
         return new OpenPhotoResponse(new JSONObject(content));
+    }
+
+    @Override
+    public PhotoResponse updatePhotoDetails(
+            String photoId, String title, String description,
+            Collection<String> tags, Integer permission) throws ClientProtocolException,
+            IOException, IllegalStateException, JSONException {
+        ApiRequest request = new ApiRequest(ApiRequest.POST, "/photo/" + photoId
+                + "/update.json");
+        if (title != null) {
+            request.addParameter("title", title);
+        }
+        if (description != null) {
+            request.addParameter("description", description);
+        }
+        if (tags != null && !tags.isEmpty())
+        {
+            Iterator<String> it = tags.iterator();
+            StringBuilder sb = new StringBuilder(it.next());
+            while (it.hasNext())
+            {
+                sb.append("," + it.next());
+            }
+            request.addParameter("tags", sb.toString());
+        }
+        if (permission != null)
+        {
+            request.addParameter("permission",
+                    Integer.toString(permission));
+        }
+        ApiResponse response = execute(request);
+        String content = response.getContentAsString();
+        return new PhotoResponse(new JSONObject(content));
     }
 }

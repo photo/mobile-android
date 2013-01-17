@@ -7,6 +7,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import me.openphoto.android.app.util.CommonUtils;
+import me.openphoto.android.app.util.TrackerUtils;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -20,6 +23,8 @@ import android.os.Parcelable;
  * @author Patrick Boos
  */
 public class Photo implements Parcelable {
+    public static final String TAG = Photo.class.getSimpleName();
+
     public static final String PERMISSION = "permission";
     public static final int PERMISSION_PUBLIC = 1;
     public static final int PERMISSION_PRIVATE = 0;
@@ -220,9 +225,12 @@ public class Photo implements Parcelable {
         out.writeStringList(mTags);
         out.writeInt(mPermission);
         out.writeLong(mDateTaken.getTime());
+        out.writeLong(mDateUploaded.getTime());
         out.writeInt(width);
         out.writeInt(height);
         out.writeString(mFilenameOriginal);
+        out.writeString(mLatitude);
+        out.writeString(mLongitude);
 
         List<String> urls = new ArrayList<String>(mUrls.size());
         for (Map.Entry<String, String> e : mUrls.entrySet()) {
@@ -252,15 +260,25 @@ public class Photo implements Parcelable {
         in.readStringList(mTags);
         mPermission = in.readInt();
         mDateTaken = new Date(in.readLong());
+        mDateUploaded = new Date(in.readLong());
         width = in.readInt();
         height = in.readInt();
         mFilenameOriginal = in.readString();
+        mLatitude = in.readString();
+        mLongitude = in.readString();
 
         List<String> urls = new ArrayList<String>();
         in.readStringList(urls);
         for (String url : urls) {
             String[] split = url.split(PARCELABLE_SEPERATOR);
-            mUrls.put(split[0], split[1]);
+            if(split.length == 2)
+            {
+                mUrls.put(split[0], split[1]);
+            } else
+            {
+                CommonUtils.debug(TAG, "invalid url parcelable string %1$s", url);
+                TrackerUtils.trackBackgroundEvent("invalidUrlParcelableString", url);
+            }
         }
     }
 

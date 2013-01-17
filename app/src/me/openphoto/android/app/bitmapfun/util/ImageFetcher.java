@@ -26,6 +26,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 import me.openphoto.android.app.BuildConfig;
+import me.openphoto.android.app.R;
 import me.openphoto.android.app.util.CommonUtils;
 import me.openphoto.android.app.util.GuiUtils;
 import me.openphoto.android.app.util.LoadingControl;
@@ -139,8 +140,31 @@ public class ImageFetcher extends ImageResizer {
     public static File downloadBitmap(Context context, String urlString) {
         final File cacheDir = DiskLruCache.getDiskCacheDir(context, HTTP_CACHE_DIR);
 
-        final DiskLruCache cache =
+        DiskLruCache cache =
                 DiskLruCache.openCache(context, cacheDir, HTTP_CACHE_SIZE);
+        // #273 additional checks
+        if (cache == null)
+        {
+            CommonUtils.debug(TAG, "Failed to open http cache %1$s", cacheDir.getAbsolutePath());
+            TrackerUtils.trackBackgroundEvent("httpCacheOpenFail", cacheDir.getAbsolutePath());
+            // cache open may fail if there are not enough free space.
+            // application will try to clear that cache dir and open cache again
+            DiskLruCache.clearCache(context, HTTP_CACHE_DIR);
+
+            // cache clear attempt finished. Let's try again to open cache
+            cache = DiskLruCache.openCache(context, cacheDir, HTTP_CACHE_SIZE);
+            if (cache == null)
+            {
+                CommonUtils.debug(TAG, "Failed to open http cache second time %1$s",
+                        cacheDir.getAbsolutePath());
+                // still unsuccessful. We can't download that bitmap. Let's warn
+                // user about this.
+                GuiUtils.alert(R.string.errorCouldNotStoreDownloadablePhotoNotEnoughSpace);
+                TrackerUtils.trackBackgroundEvent("httpCacheSecondOpenFail",
+                        cacheDir.getAbsolutePath());
+                return null;
+            }
+        }
 
         final File cacheFile = new File(cache.createFilePath(urlString));
 
