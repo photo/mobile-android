@@ -16,7 +16,7 @@ import org.apache.http.message.BasicNameValuePair;
 public class ApiRequest {
     public enum ApiVersion
     {
-        V1("/v1"), V2("/v2");
+        NO_VERSION, V1("/v1"), V2("/v2");
         private String prefix;
 
         public String getPrefix()
