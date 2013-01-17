@@ -3,6 +3,7 @@ package me.openphoto.android.app.service;
 
 import me.openphoto.android.app.OpenPhotoApplication;
 import me.openphoto.android.app.util.CommonUtils;
+import me.openphoto.android.app.util.GuiUtils;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -26,9 +27,15 @@ public class UploaderServiceUtils {
             @Override
             public void onReceive(Context context, Intent intent)
             {
-                CommonUtils.debug(TAG,
-                        "Received photo uploaded broadcast message");
-                handler.photoUploaded();
+                try
+                {
+                    CommonUtils.debug(TAG,
+                            "Received photo uploaded broadcast message");
+                    handler.photoUploaded();
+                } catch (Exception ex)
+                {
+                    GuiUtils.error(TAG, ex);
+                }
             }
         };
         activity.registerReceiver(br, new IntentFilter(PHOTO_UPLOADED_ACTION));

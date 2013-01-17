@@ -2,7 +2,7 @@
 package me.openphoto.android.app;
 
 import java.io.File;
-import java.util.List;
+import java.util.ArrayList;
 
 import me.openphoto.android.app.common.CommonFragment;
 import me.openphoto.android.app.facebook.FacebookUtils;
@@ -13,6 +13,7 @@ import me.openphoto.android.app.twitter.TwitterUtils;
 import me.openphoto.android.app.util.GuiUtils;
 import me.openphoto.android.app.util.LoadingControl;
 import me.openphoto.android.app.util.ProgressDialogLoadingControl;
+import me.openphoto.android.app.util.SyncUtils;
 import me.openphoto.android.app.util.TrackerUtils;
 import me.openphoto.android.app.util.concurrent.AsyncTaskEx;
 
@@ -183,16 +184,14 @@ public class SyncUploadFragment extends CommonFragment
     {
         void activatePreviousStep();
 
-        List<String> getSelectedFileNames();
-
-        void uploadStarted(List<String> processedFileNames);
+        ArrayList<String> getSelectedFileNames();
     }
 
     private class UploadInitTask extends
             AsyncTaskEx<Void, Void, Boolean>
     {
 
-        private List<String> selectedFiles;
+        private ArrayList<String> selectedFiles;
 
         @Override
         protected Boolean doInBackground(Void... params)
@@ -200,7 +199,7 @@ public class SyncUploadFragment extends CommonFragment
             try
             {
                 UploadsProviderAccessor uploads = new UploadsProviderAccessor(
-                        getActivity());
+                        OpenPhotoApplication.getContext());
                 UploadMetaData metaData = new UploadMetaData();
                 metaData.setTitle(editTitle
                         .getText().toString());
@@ -246,7 +245,7 @@ public class SyncUploadFragment extends CommonFragment
             if (result.booleanValue())
             {
                 GuiUtils.alert(R.string.uploading_in_background);
-                getPreviousStepFlow().uploadStarted(selectedFiles);
+                SyncUtils.sendSyncStartedBroadcast(selectedFiles);
             }
         }
 

@@ -1,6 +1,7 @@
 
 package me.openphoto.android.app;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import me.openphoto.android.app.SyncImageSelectionFragment.NextStepFlow;
@@ -241,13 +242,12 @@ public class SyncFragment extends CommonFragment implements NextStepFlow,
     }
 
     @Override
-    public List<String> getSelectedFileNames()
+    public ArrayList<String> getSelectedFileNames()
     {
         return firstStepFragment.getSelectedFileNames();
     }
 
-    @Override
-    public void uploadStarted(List<String> processedFileNames)
+    public void syncStarted(List<String> processedFileNames)
     {
         // detachActiveFragment();
         firstStepFragment.clear();
