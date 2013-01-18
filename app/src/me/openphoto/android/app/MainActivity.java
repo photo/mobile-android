@@ -28,6 +28,7 @@ import me.openphoto.android.app.util.LoadingControl;
 import me.openphoto.android.app.util.SyncUtils;
 import me.openphoto.android.app.util.SyncUtils.SyncStartedHandler;
 import me.openphoto.android.app.util.TrackerUtils;
+import me.openphoto.android.app.util.Utils;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -78,6 +79,13 @@ public class MainActivity extends CommonActivity
     @Override
     public void onCreate(Bundle savedInstanceState)
     {
+        // we need to use different theme for embed tabs because of where
+        // are no over way to use different tab text colors for embed and
+        // split states
+        if (Utils.isActionBarTabsEmbeded(OpenPhotoApplication.getContext()))
+        {
+            setTheme(R.style.Theme_OpenPhoto_Light_Stacked);
+        }
         super.onCreate(savedInstanceState);
         instanceSaved = false;
         requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);

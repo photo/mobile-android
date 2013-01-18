@@ -1,43 +1,86 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-	android:orientation="vertical" android:layout_width="match_parent"
-	android:layout_height="match_parent"
-	xmlns:app="http://schemas.android.com/apk/res/me.openphoto.android.app">
-	<LinearLayout android:focusable="true"
-		android:focusableInTouchMode="true" android:layout_width="0px"
-		android:layout_height="0px" />
-	<LinearLayout android:layout_width="match_parent"
-		android:layout_height="wrap_content">
-		<Button android:id="@+id/previousBtn" android:layout_width="wrap_content"
-			android:layout_height="wrap_content" android:text="@string/sync_previous_button" />
-	</LinearLayout>
-	<ScrollView android:layout_width="match_parent"
-		android:layout_height="0dip" android:layout_weight="1"
-		android:padding="@dimen/site_padding">
-		<LinearLayout android:layout_width="match_parent"
-			android:layout_height="wrap_content" android:orientation="vertical">
-			<EditText android:id="@+id/edit_title" android:layout_width="match_parent"
-				android:layout_height="wrap_content" android:ems="10"
-				android:hint="@string/upload_title_hint" android:inputType="textCapWords">
-			</EditText>
-			<EditText android:id="@+id/edit_tags" android:layout_width="match_parent"
-				android:layout_height="wrap_content" android:ems="10"
-				android:hint="@string/upload_tags" android:inputType="textMultiLine" />
+    xmlns:app="http://schemas.android.com/apk/res/me.openphoto.android.app"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
 
-			<org.holoeverywhere.widget.Switch
-				style="@style/YesNoSwitch" android:id="@+id/private_switch"
-				android:layout_width="match_parent" android:layout_height="wrap_content"
-				android:text="@string/upload_private" android:checked="true" />
-			<org.holoeverywhere.widget.Switch
-				style="@style/YesNoSwitch" android:id="@+id/twitter_switch"
-				android:layout_width="match_parent" android:layout_height="wrap_content"
-				android:text="@string/upload_share_twitter" android:checked="false" />
-			<org.holoeverywhere.widget.Switch
-				style="@style/YesNoSwitch" android:id="@+id/facebook_switch"
-				android:layout_width="match_parent" android:layout_height="wrap_content"
-				android:text="@string/upload_share_facebook" android:checked="false" />
-		</LinearLayout>
-	</ScrollView>
-	<Button android:id="@+id/uploadBtn" android:layout_width="match_parent"
-		android:layout_height="wrap_content" android:text="@string/upload_button" />
+    <LinearLayout
+        android:layout_width="0px"
+        android:layout_height="0px"
+        android:focusable="true"
+        android:focusableInTouchMode="true" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+        <Button
+            android:id="@+id/previousBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/sync_previous_button" />
+    </LinearLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dip"
+        android:layout_weight="1"
+        android:padding="@dimen/site_padding" >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+
+            <EditText
+                android:id="@+id/edit_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:hint="@string/upload_title_hint"
+                android:inputType="textCapWords" >
+            </EditText>
+
+            <EditText
+                android:id="@+id/edit_tags"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:hint="@string/upload_tags"
+                android:inputType="textMultiLine" />
+
+            <org.holoeverywhere.widget.Switch
+                android:id="@+id/private_switch"
+                style="@style/YesNoSwitch"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                android:text="@string/upload_private" />
+
+            <org.holoeverywhere.widget.Switch
+                android:id="@+id/twitter_switch"
+                style="@style/YesNoSwitch"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:checked="false"
+                android:text="@string/upload_share_twitter" />
+
+            <org.holoeverywhere.widget.Switch
+                android:id="@+id/facebook_switch"
+                style="@style/YesNoSwitch"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:checked="false"
+                android:text="@string/upload_share_facebook" />
+        </LinearLayout>
+    </ScrollView>
+
+    <Button
+        android:id="@+id/uploadBtn"
+        style="@style/Openphoto.YellowButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/upload_button" />
+
 </LinearLayout>

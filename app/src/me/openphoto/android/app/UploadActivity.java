@@ -656,7 +656,8 @@ public class UploadActivity extends CommonActivity {
                         getString(R.string.upload_gallery_option)
                 };
 
-                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(),
+                        R.style.Theme_OpenPhoto_Dialog_Light);
                 builder.setTitle(R.string.upload_title);
                 builder.setItems(items, new DialogInterface.OnClickListener() {
                     @Override
