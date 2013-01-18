@@ -18,7 +18,11 @@
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item android:drawable="@drawable/button_yellow" android:state_enabled="true" android:state_window_focused="false"/>
+    <item android:drawable="@drawable/button_yellow_disabled" android:state_enabled="false" android:state_window_focused="false"/>
     <item android:drawable="@drawable/button_yellow_pressed" android:state_pressed="true"/>
+    <item android:drawable="@drawable/button_yellow" android:state_enabled="true" android:state_focused="true"/>
     <item android:drawable="@drawable/button_yellow" android:state_enabled="true"/>
+    <item android:drawable="@drawable/button_yellow_disabled" android:state_focused="true"/>
+    <item android:drawable="@drawable/button_yellow_disabled"/>
 
 </selector>
