@@ -3,12 +3,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
 
-    <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:scaleType="centerCrop"
-        android:src="@drawable/setup_bg" />
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -24,25 +18,55 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:src="@drawable/setup_logo" />
+                android:src="@drawable/login_logo" />
         </FrameLayout>
 
-        <Button
-            android:id="@+id/account_signup_button"
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:onClick="accountSignupButtonAction"
-            android:text="@string/account_signup_button" />
+            android:layout_height="wrap_content" >
 
-        <Button
-            android:id="@+id/account_login_button"
+            <Button
+                android:id="@+id/account_signup_button"
+                style="@style/Openphoto.BeigeWithIconButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:onClick="accountSignupButtonAction"
+                android:text="@string/account_signup_button" />
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="16dp"
+                android:src="@drawable/sign_plus" />
+        </RelativeLayout>
+
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:onClick="accountLoginButtonAction"
-            android:text="@string/account_login_button" />
+            android:layout_height="wrap_content" >
+
+            <Button
+                android:id="@+id/account_login_button"
+                style="@style/Openphoto.BeigeWithIconButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:onClick="accountLoginButtonAction"
+                android:paddingLeft="-20dp"
+                android:text="@string/account_login_button" />
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="14dp"
+                android:src="@drawable/login_icon" />
+        </RelativeLayout>
 
         <Button
             android:id="@+id/account_own_server_button"
+            style="@style/Openphoto.BeigeButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:onClick="accountOwnServerButtonAction"

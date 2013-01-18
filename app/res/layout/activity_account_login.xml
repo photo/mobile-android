@@ -3,12 +3,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
 
-    <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:scaleType="centerCrop"
-        android:src="@drawable/setup_bg" />
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -24,7 +18,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:src="@drawable/setup_logo" />
+                android:src="@drawable/login_logo" />
         </FrameLayout>
 
         <LinearLayout
@@ -49,10 +43,11 @@
 
             <Button
                 android:id="@+id/button_login"
+                style="@style/Openphoto.YellowButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/login" 
-                            android:onClick="loginButtonAction" />
+                android:onClick="loginButtonAction"
+                android:text="@string/login" />
         </LinearLayout>
     </LinearLayout>
 

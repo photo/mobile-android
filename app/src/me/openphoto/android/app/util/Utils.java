@@ -26,6 +26,8 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
+import com.actionbarsherlock.internal.ResourcesCompat;
+
 /**
  * Class containing some static utility methods.
  * 
@@ -96,6 +98,18 @@ public class Utils {
     public static boolean isTablet(Context context)
     {
         return context.getResources().getBoolean(R.bool.isTablet);
+    }
+
+    /**
+     * Whether actionbar tabs embedded or in split state
+     * 
+     * @param context
+     * @return
+     */
+    public static boolean isActionBarTabsEmbeded(Context context)
+    {
+        return ResourcesCompat.getResources_getBoolean(context,
+                R.bool.abs__action_bar_embed_tabs);
     }
 
     /**
