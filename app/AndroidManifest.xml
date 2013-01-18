@@ -30,7 +30,7 @@
         <activity
             android:name=".SetupActivity"
             android:launchMode="singleTask"
-            android:theme="@style/Theme.OpenPhoto.Light.NoActionBar" >
+            android:theme="@style/Theme.OpenPhoto.Login" >
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
 
@@ -91,13 +91,13 @@
         <activity android:name=".SettingsActivity" />
         <activity
             android:name=".AccountLogin"
-            android:theme="@style/Theme.OpenPhoto.Light.NoActionBar" />
+            android:theme="@style/Theme.OpenPhoto.Login" />
         <activity
             android:name=".AccountSignup"
-            android:theme="@style/Theme.OpenPhoto.Light.NoActionBar" />
+            android:theme="@style/Theme.OpenPhoto.Login" />
         <activity
             android:name=".AccountActivity"
-            android:theme="@style/Theme.OpenPhoto.Light.NoActionBar" />
+            android:theme="@style/Theme.OpenPhoto.Login" />
         <activity
             android:name=".SelectTagsActivity"
             android:configChanges="orientation"

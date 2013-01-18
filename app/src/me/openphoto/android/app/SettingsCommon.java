@@ -50,7 +50,7 @@ public class SettingsCommon implements
             {
 
                 // confirm if user wants to log out
-                new AlertDialog.Builder(activity)
+                new AlertDialog.Builder(activity, R.style.Theme_OpenPhoto_Dialog_Light)
                         .setTitle(R.string.logOut)
                         .setMessage(R.string.areYouSureQuestion)
                         .setIcon(android.R.drawable.ic_dialog_alert)
@@ -238,7 +238,7 @@ public class SettingsCommon implements
                     public boolean onPreferenceClick(Preference preference)
                     {
                         // confirm if user wants to clear sync information
-                        new AlertDialog.Builder(activity)
+                        new AlertDialog.Builder(activity, R.style.Theme_OpenPhoto_Dialog_Light)
                                 .setTitle(R.string.sync_clear)
                                 .setMessage(R.string.areYouSureQuestion)
                                 .setIcon(android.R.drawable.ic_dialog_alert)

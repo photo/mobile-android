@@ -3,11 +3,12 @@ package me.openphoto.android.app.ui.widget;
 
 import me.openphoto.android.app.R;
 import me.openphoto.android.app.common.CommonClosableOnRestoreDialogFragment;
-import android.content.DialogInterface;
-import android.os.Bundle;
 
 import org.holoeverywhere.app.AlertDialog;
 import org.holoeverywhere.app.Dialog;
+
+import android.content.DialogInterface;
+import android.os.Bundle;
 
 /**
  * Basic Yes/No dialog fragment
@@ -60,7 +61,8 @@ public class YesNoDialogFragment extends CommonClosableOnRestoreDialogFragment
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState)
     {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity())
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(),
+                R.style.Theme_OpenPhoto_Dialog_Light)
                 .setCancelable(cancelable)
                 .setPositiveButton(R.string.yes,
                         new DialogInterface.OnClickListener()

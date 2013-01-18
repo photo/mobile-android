@@ -1,16 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <style name="Theme.OpenPhoto.Light" parent="Holo.Theme.Light">
+    <style name="Theme.OpenPhoto.Light" parent="Holo.Theme.Light.DarkActionBar">
         <item name="android:windowBackground">@drawable/bg</item>
         <item name="android:listViewStyle">@style/TransparentListView</item>
         <item name="android:expandableListViewStyle">@style/TransparentExpandableListView</item>
         <item name="actionBarStyle">@style/solid_ActionBar</item>
+        <item name="actionBarTabTextStyle">@style/ActionBar_TabTextStyle</item>
+        <item name="android:buttonStyle">@style/Openphoto.BeigeButton</item>
+        <item name="actionBarTabStyle">@style/trovebox_ActionBarTabStyle</item>
+        <item name="actionBarItemBackground">@drawable/selectable_background_trovebox</item>
+        <item name="actionDropDownStyle">@style/trovebox_DropDownNav</item>
+        <item name="popupMenuStyle">@style/trovebox_PopupMenu</item>
+        <item name="dropDownListViewStyle">@style/trovebox_DropDownListView</item>
+        <item name="actionBarWidgetTheme">@style/Theme.example.widget</item>
     </style>
 
-    <style name="Theme.OpenPhoto.DialogActivity.Light" parent="Holo.Theme.Dialog.Light"></style>
+    <style name="Theme.OpenPhoto.Light.Stacked" parent="Theme.OpenPhoto.Light">
+        <item name="actionBarTabTextStyle">@style/ActionBar_TabTextStyleStacked</item>
+    </style>
 
-    <style name="Theme.OpenPhoto.Dialog.Light" parent="Holo.Theme.Dialog.Alert.Light"></style>
+    <style name="Theme.OpenPhoto.DialogActivity.Light" parent="Holo.Theme.Dialog.Light">
+        <item name="android:buttonStyle">@style/Openphoto.BeigeButton</item>
+    </style>
+
+    <style name="Theme.OpenPhoto.Dialog.Light" parent="Holo.Theme.Dialog.Alert.Light">
+        <item name="android:buttonStyle">@style/Openphoto.BeigeButton</item>
+    </style>
 
     <style name="Theme.OpenPhoto.Fullscreen" parent="Holo.Theme.Light.NoActionBar.Fullscreen">
         <item name="android:windowBackground">@drawable/bg</item>
@@ -21,13 +37,14 @@
         <item name="android:windowBackground">@drawable/bg</item>
     </style>
 
-    <style name="Theme.OpenPhoto.Light.NoActionBar" parent="Holo.Theme.Light.NoActionBar">
-        <item name="android:windowBackground">@drawable/bg</item>
+    <style name="Theme.OpenPhoto.Login" parent="Holo.Theme.NoActionBar">
+        <item name="android:windowBackground">@drawable/bg_login</item>
     </style>
 
-    <style name="solid_ActionBar" parent="@style/Widget.Sherlock.Light.ActionBar.Solid">
+    <style name="solid_ActionBar" parent="@style/Widget.Sherlock.Light.ActionBar.Solid.Inverse">
         <item name="background">@drawable/bg_actionbar</item>
         <item name="backgroundStacked">@drawable/bg_tab</item>
+        <item name="titleTextStyle">@style/ActionBar_TitleTextStyle</item>
     </style>
 
     <style name="transparent_ActionBar" parent="@style/Widget.Sherlock.Light.ActionBar">
@@ -36,6 +53,18 @@
     </style>
 
     <style name="transparent_ActionBar_TitleTextStyle" parent="@style/TextAppearance.Sherlock.Widget.ActionBar.Title">
+        <item name="android:textColor">@color/ab_fg_white</item>
+    </style>
+
+    <style name="ActionBar_TitleTextStyle" parent="@style/TextAppearance.Sherlock.Widget.ActionBar.Title">
+        <item name="android:textColor">@color/ab_fg_white</item>
+    </style>
+
+    <style name="ActionBar_TabTextStyle" parent="@style/Widget.Sherlock.Light.ActionBar.TabText">
+        <item name="android:textColor">@color/ab_fg_black</item>
+    </style>
+
+    <style name="ActionBar_TabTextStyleStacked" parent="@style/Widget.Sherlock.Light.ActionBar.TabText">
         <item name="android:textColor">@color/ab_fg_white</item>
     </style>
 
@@ -78,6 +107,48 @@
         <item name="android:gravity">center_vertical</item>
         <item name="android:layout_margin">4dp</item>
         <item name="android:textSize">10dp</item>
+    </style>
+
+    <style name="Openphoto.YellowButton" parent="Holo.Button">
+        <item name="android:background">@drawable/btn_bg_yellow</item>
+        <item name="android:textColor">@color/ab_fg_black</item>
+    </style>
+
+    <style name="Openphoto.BeigeButton" parent="Holo.Button">
+        <item name="android:background">@drawable/btn_bg_beige</item>
+        <item name="android:textColor">@color/ab_fg_black</item>
+    </style>
+
+    <style name="Openphoto.BeigeWithIconButton" parent="Holo.Button">
+        <item name="android:background">@drawable/btn_bg_beige_with_icon</item>
+        <item name="android:textColor">@color/ab_fg_black</item>
+    </style>
+
+    <style name="trovebox_ActionBarTabStyle" parent="@style/Widget.Sherlock.ActionBar.TabView">
+        <item name="background">@drawable/tab_indicator_ab_trovebox</item>
+        <item name="android:background">@drawable/tab_indicator_ab_trovebox</item>
+    </style>
+
+    <style name="trovebox_DropDownNav" parent="@style/Widget.Sherlock.Spinner.DropDown.ActionBar">
+        <item name="background">@drawable/spinner_background_ab_trovebox</item>
+        <item name="android:background">@drawable/spinner_background_ab_trovebox</item>
+        <item name="android:popupBackground">@drawable/menu_dropdown_panel_trovebox</item>
+        <item name="android:dropDownSelector">@drawable/selectable_background_trovebox</item>
+    </style>
+
+    <style name="trovebox_PopupMenu" parent="@style/Widget.Sherlock.ListPopupWindow">
+        <item name="android:popupBackground">@drawable/menu_dropdown_panel_trovebox</item>
+    </style>
+
+    <style name="trovebox_DropDownListView" parent="@style/Widget.Sherlock.ListView.DropDown">
+        <item name="android:listSelector">@drawable/selectable_background_trovebox</item>
+    </style>
+    <!-- this style is only referenced in a Light.DarkActionBar based theme -->
+    <style name="Theme.example.widget" parent="@style/Theme.Sherlock">
+        <item name="popupMenuStyle">@style/trovebox_PopupMenu</item>
+        <item name="dropDownListViewStyle">@style/trovebox_DropDownListView</item>
+        <item name="android:popupMenuStyle">@style/trovebox_PopupMenu</item>
+        <item name="android:dropDownListViewStyle">@style/trovebox_DropDownListView</item>
     </style>
 
 </resources>

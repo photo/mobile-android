@@ -1,28 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-	android:layout_width="match_parent" android:layout_height="wrap_content"
-	android:gravity="center_vertical" android:orientation="horizontal"
-	android:paddingBottom="@dimen/site_padding_half" android:paddingLeft="@dimen/site_padding"
-	android:paddingRight="@dimen/site_padding" android:paddingTop="@dimen/site_padding_half">
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:paddingBottom="@dimen/site_padding_half"
+    android:paddingLeft="@dimen/site_padding"
+    android:paddingRight="@dimen/site_padding"
+    android:paddingTop="@dimen/site_padding_half" >
 
-	<ImageView android:id="@+id/cover" android:layout_width="wrap_content"
-		android:layout_height="wrap_content" android:src="@drawable/icon"
-		android:layout_marginRight="5dip" android:background="@drawable/shadow_border"
-		android:paddingTop="1dp" 
-		android:paddingLeft="1dp" 
-		android:paddingRight="2dp" 
-		android:paddingBottom="2dp" 
-		android:adjustViewBounds="true"
-		android:scaleType="centerCrop" />
-	<TextView android:id="@+id/text_name" android:layout_width="wrap_content"
-		android:layout_height="wrap_content" android:textAppearance="?android:attr/textAppearanceMedium"
-		android:layout_weight="1" android:layout_marginRight="5dip"
-		android:text="very very very very very very very very very very very very long name" />
-	<TextView android:id="@+id/text_count" android:layout_width="wrap_content"
-		android:layout_height="wrap_content" android:layout_marginRight="5dp"
-		android:text="5" android:textAppearance="?android:attr/textAppearanceMedium" />
+    <ImageView
+        android:id="@+id/cover"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="5dip"
+        android:adjustViewBounds="true"
+        android:background="@drawable/shadow_border"
+        android:paddingBottom="2dp"
+        android:paddingLeft="1dp"
+        android:paddingRight="2dp"
+        android:paddingTop="1dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/icon" />
 
-	<ImageView android:layout_width="wrap_content"
-		android:layout_height="wrap_content" android:src="@drawable/ic_right" />
+    <TextView
+        android:id="@+id/text_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="5dip"
+        android:layout_weight="1"
+        android:text="very very very very very very very very very very very very long name"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    <TextView
+        android:id="@+id/text_count"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="5dp"
+        android:text="5"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/button_right" />
 
 </LinearLayout>
