@@ -31,7 +31,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:onClick="accountSignupButtonAction"
-                android:text="@string/account_signup_button" />
+                android:text="@string/account_signup_button"
+                android:textSize="16sp" />
 
             <ImageView
                 android:layout_width="wrap_content"
@@ -52,8 +53,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:onClick="accountLoginButtonAction"
-                android:paddingLeft="-20dp"
-                android:text="@string/account_login_button" />
+                android:text="@string/account_login_button"
+                android:textSize="16sp" />
 
             <ImageView
                 android:layout_width="wrap_content"
