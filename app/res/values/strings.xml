@@ -171,8 +171,8 @@
     <string name="setting_set_tag_hint">Include these tags</string>
 
     <!-- Screens for Create/Login/Own domain: Account -->
-    <string name="account_signup_button">Sign up with your email address</string>
-    <string name="account_login_button">Login with your email address</string>
+    <string name="account_signup_button">Sign up with your email</string>
+    <string name="account_login_button">Login with your email</string>
     <string name="account_own_server_button">Have your own server</string>
     <string name="account_facebook">Connect using Facebook login</string>
     <string name="account_create_button">Create Account</string>
