@@ -1,3 +1,4 @@
+
 package me.openphoto.android.app;
 
 import java.util.Date;
@@ -79,6 +80,7 @@ public class HomeFragment extends CommonRefreshableFragmentWithImageWorker
         super.onCreate(savedInstanceState);
         currentInstance = this;
     }
+
     @Override
     public void onDestroy() {
         currentInstance = null;
@@ -128,6 +130,7 @@ public class HomeFragment extends CommonRefreshableFragmentWithImageWorker
                 ImageCache.LARGE_IMAGES_CACHE_DIR));
         mImageWorker.setImageFadeIn(false);
     }
+
     @Override
     public void refresh()
     {
@@ -234,6 +237,7 @@ public class HomeFragment extends CommonRefreshableFragmentWithImageWorker
             mAdapter.photoUpdated(photo);
         }
     }
+
     public static class UpdateStatusListener extends FacebookBaseDialogListener
     {
         public UpdateStatusListener(Context context)
@@ -506,6 +510,32 @@ public class HomeFragment extends CommonRefreshableFragmentWithImageWorker
         protected void onStoppedLoading()
         {
             loadingControl.stopLoading();
+        }
+
+        @Override
+        public LoadResponse loadItems(int page) {
+            LoadResponse result = super.loadItems(page);
+            showUploadPhotosImage(result.items != null && result.items.isEmpty()
+                    && getItems().isEmpty());
+            return result;
+        }
+
+        void showUploadPhotosImage(final boolean show)
+        {
+            GuiUtils.runOnUiThread(
+                    new Runnable() {
+
+                        @Override
+                        public void run() {
+                            View view = HomeFragment.this.getView();
+                            if (view != null)
+                            {
+                                view.findViewById(R.id.upload_new_images).setVisibility(
+                                        show ? View.VISIBLE : View.GONE);
+                            }
+
+                        }
+                    });
         }
     }
 

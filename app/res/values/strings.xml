@@ -58,7 +58,7 @@
     <string name="share_facebook_logged_in_as">Logged in as %1$s</string>
 
     <!-- SetupActivity -->
-    <string name="hint_server">username.openphoto.me</string>
+    <string name="hint_server">username.trovebox.com</string>
     <string name="login">Login</string>
     <string name="get_openphoto_account">Get an openphoto account</string>
     <string name="logging_in_message">Please wait. Logging you in…</string>
