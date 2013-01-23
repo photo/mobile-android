@@ -5,7 +5,7 @@
     <!-- Account -->
     <!-- ######### -->
     <string name="setting_account_server_key">setting_server</string>
-    <string name="setting_account_server_default">https://openphoto.me</string>
+    <string name="setting_account_server_default">https://trovebox.com</string>
     <string name="setting_account_title">Account</string>
     <string name="setting_account_facebook_loggedin_key">setting_facebook_loggedin</string>
     <string name="setting_sync_clear_key">setting_sync_clear_key</string>
