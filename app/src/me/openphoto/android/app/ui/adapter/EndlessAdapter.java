@@ -174,7 +174,7 @@ public abstract class EndlessAdapter<T> extends BaseAdapter {
     }
 
     protected class LoadResponse {
-        List<T> items;
+        public List<T> items;
         boolean hasNext;
 
         public LoadResponse(List<T> items, boolean hasNext) {
