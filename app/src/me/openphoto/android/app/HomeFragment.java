@@ -21,6 +21,7 @@ import me.openphoto.android.app.share.ShareUtils.FacebookShareRunnable;
 import me.openphoto.android.app.share.ShareUtils.TwitterShareRunnable;
 import me.openphoto.android.app.twitter.TwitterUtils;
 import me.openphoto.android.app.ui.adapter.PhotosEndlessAdapter;
+import me.openphoto.android.app.ui.widget.AspectRatioImageView;
 import me.openphoto.android.app.util.CommonUtils;
 import me.openphoto.android.app.util.GuiUtils;
 import me.openphoto.android.app.util.LoadingControl;
@@ -64,7 +65,10 @@ public class HomeFragment extends CommonRefreshableFragmentWithImageWorker
     private ReturnSizes photoSize;
     private ReturnSizes returnSizes;
 
+    float aspectRatio = 14f / 13f;
+
     static HomeFragment currentInstance;
+
     static FragmentAccessor<HomeFragment> currentInstanceAccessor = new FragmentAccessor<HomeFragment>() {
         private static final long serialVersionUID = 1L;
 
@@ -117,7 +121,6 @@ public class HomeFragment extends CommonRefreshableFragmentWithImageWorker
         final int height = displaymetrics.heightPixels;
         final int width = displaymetrics.widthPixels;
         final int longest = height > width ? height : width;
-        float aspectRatio = 14f / 13f;
 
         photoSize = new ReturnSizes(longest, (int) (longest / aspectRatio), true);
 
@@ -126,6 +129,7 @@ public class HomeFragment extends CommonRefreshableFragmentWithImageWorker
         // The ImageWorker takes care of loading images into our ImageView
         // children asynchronously
         mImageWorker = new ImageFetcher(getActivity(), loadingControl, longest);
+        mImageWorker.setLoadingImage(R.drawable.empty_photo);
         mImageWorker.setImageCache(ImageCache.findOrCreateCache(getActivity(),
                 ImageCache.LARGE_IMAGES_CACHE_DIR));
         mImageWorker.setImageFadeIn(false);
@@ -285,8 +289,9 @@ public class HomeFragment extends CommonRefreshableFragmentWithImageWorker
             }
 
             // load the image in another thread
-            final ImageView photoView =
-                    (ImageView) convertView.findViewById(R.id.newest_image);
+            final AspectRatioImageView photoView =
+                    (AspectRatioImageView) convertView.findViewById(R.id.newest_image);
+            photoView.setAspectRatio(aspectRatio);
             photoView.setTag(photo);
             photoView.setOnClickListener(new OnClickListener() {
 

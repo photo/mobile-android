@@ -11,6 +11,7 @@ import android.widget.ImageView;
  */
 public class AspectRatioImageView extends ImageView
 {
+    Float aspectRatio;
 
     public AspectRatioImageView(Context context)
     {
@@ -31,20 +32,36 @@ public class AspectRatioImageView extends ImageView
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec)
     {
-        Drawable drawable = getDrawable();
-        if (drawable != null)
+        if (aspectRatio != null && aspectRatio > 0)
         {
             int width = MeasureSpec.getSize(widthMeasureSpec);
-            int diw = drawable.getIntrinsicWidth();
-            if (diw > 0)
+            int height = (int) (width / aspectRatio);
+            setMeasuredDimension(width, height);
+        } else
+        {
+            Drawable drawable = getDrawable();
+            if (drawable != null)
             {
-                int height = width * drawable.getIntrinsicHeight() / diw;
-                setMeasuredDimension(width, height);
+                int width = MeasureSpec.getSize(widthMeasureSpec);
+                int diw = drawable.getIntrinsicWidth();
+                if (diw > 0)
+                {
+                    int height = width * drawable.getIntrinsicHeight() / diw;
+                    setMeasuredDimension(width, height);
+                }
+                else
+                    super.onMeasure(widthMeasureSpec, heightMeasureSpec);
             }
             else
                 super.onMeasure(widthMeasureSpec, heightMeasureSpec);
         }
-        else
-            super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+    }
+
+    public Float getAspectRatio() {
+        return aspectRatio;
+    }
+
+    public void setAspectRatio(Float aspectRatio) {
+        this.aspectRatio = aspectRatio;
     }
 }
