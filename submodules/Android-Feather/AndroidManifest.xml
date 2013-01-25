@@ -18,9 +18,7 @@
     -->
 
     <application
-        android:debuggable="true"
         android:hardwareAccelerated="true"
-        android:icon="@drawable/feather_icon"
         android:label="Aviary" >
 
         <!-- this is the main activity -->

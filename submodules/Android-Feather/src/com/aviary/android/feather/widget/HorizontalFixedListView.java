@@ -1,29 +1,3 @@
-/*
- * HorizontalListView.java v1.5
- *
- * 
- * The MIT License
- * Copyright (c) 2011 Paul Soucy (paul@dev-smart.com)
- * 
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- * 
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- * 
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
- *
- */
 
 package com.aviary.android.feather.widget;
 
@@ -54,6 +28,7 @@ import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.view.ViewParent;
+import android.view.ViewTreeObserver.OnScrollChangedListener;
 import android.widget.AdapterView;
 import android.widget.ListAdapter;
 import com.aviary.android.feather.R;
@@ -66,12 +41,8 @@ import com.aviary.android.feather.library.utils.ReflectionUtils.ReflectionExcept
 import com.aviary.android.feather.widget.IFlingRunnable.FlingRunnableView;
 import com.aviary.android.feather.widget.wp.EdgeGlow;
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class HorizontialFixedListView.
- */
-public class HorizontalFixedListView extends AdapterView<ListAdapter> implements OnGestureListener, FlingRunnableView {
-
+public class HorizontalFixedListView extends HorizontalListView implements OnGestureListener, FlingRunnableView {
+	
 	/** The Constant LOG_TAG. */
 	protected static final String LOG_TAG = "hv";
 
@@ -114,6 +85,8 @@ public class HorizontalFixedListView extends AdapterView<ListAdapter> implements
 	protected EdgeGlow mEdgeGlowLeft, mEdgeGlowRight;
 
 	private int mOverScrollMode = OVER_SCROLL_NEVER;
+	
+	private ScrollNotifier mScrollNotifier;
 
 	static Logger logger = LoggerFactory.getLogger( "HorizontalFixedList", LoggerType.ConsoleLoggerType );
 
@@ -142,9 +115,14 @@ public class HorizontalFixedListView extends AdapterView<ListAdapter> implements
 	}
 
 	private OnItemDragListener mItemDragListener;
+	private OnScrollChangedListener mScrollListener;
 
 	public void setOnItemDragListener( OnItemDragListener listener ) {
 		mItemDragListener = listener;
+	}
+	
+	public void setOnScrollListener( OnScrollChangedListener listener ){
+		mScrollListener = listener;
 	}
 
 	public OnItemDragListener getOnItemDragListener() {
@@ -342,8 +320,6 @@ public class HorizontalFixedListView extends AdapterView<ListAdapter> implements
 	private DataSetObserverExtended mDataObserverExtended = new DataSetObserverExtended() {
 
 		public void onAdded() {
-			logger.log( "DataSet::onAdded" );
-
 			synchronized ( HorizontalFixedListView.this ) {
 				mItemCount = mAdapter.getCount();
 			}
@@ -353,18 +329,15 @@ public class HorizontalFixedListView extends AdapterView<ListAdapter> implements
 		};
 
 		public void onRemoved() {
-			logger.log( "DataSet::onRemoved" );
 			this.onChanged();
 		};
 
 		public void onChanged() {
-			logger.log( "DataSet::onChanged" );
 			mItemCount = mAdapter.getCount();
 			reset();
 		};
 
 		public void onInvalidated() {
-			logger.log( "DataSet::onInvalidated" );
 			this.onChanged();
 		};
 	};
@@ -374,7 +347,6 @@ public class HorizontalFixedListView extends AdapterView<ListAdapter> implements
 
 		@Override
 		public void onChanged() {
-			logger.log( "DataSet::onChanged" );
 			synchronized ( HorizontalFixedListView.this ) {
 				mItemCount = mAdapter.getCount();
 			}
@@ -384,7 +356,6 @@ public class HorizontalFixedListView extends AdapterView<ListAdapter> implements
 
 		@Override
 		public void onInvalidated() {
-			logger.log( "DataSet::onInvalidated" );
 			mItemCount = mAdapter.getCount();
 			invalidate();
 			reset();
@@ -480,6 +451,7 @@ public class HorizontalFixedListView extends AdapterView<ListAdapter> implements
 	protected void onDetachedFromWindow() {
 		super.onDetachedFromWindow();
 		Log.d( LOG_TAG, "onDetachedFromWindow" );
+		removeCallbacks( mScrollNotifier );
 		emptyRecycler();
 	}
 
@@ -635,15 +607,18 @@ public class HorizontalFixedListView extends AdapterView<ListAdapter> implements
 		return getChildAt( position - ( mLeftViewIndex + 1 ) );
 	}
 	
+	@Override
 	public int getScreenPositionForView( View view ) {
 		View listItem = view;
 		try {
 			View v;
-			while ( !( v = (View) listItem.getParent() ).equals( this ) ) {
+			while ( !this.equals( ( v = (View) listItem.getParent() ) ) ) {
 				listItem = v;
 			}
 		} catch ( ClassCastException e ) {
 			// We made it up to the window without find this list view
+			return INVALID_POSITION;
+		} catch( NullPointerException e ) {
 			return INVALID_POSITION;
 		}
 
@@ -732,14 +707,10 @@ public class HorizontalFixedListView extends AdapterView<ListAdapter> implements
 				mMinX = 0;
 				firstChild = false;
 
-				//Log.d( LOG_TAG, "min: " + mMinX + ", max: " + mMaxX );
-				//Log.d( LOG_TAG, "left: " + mLeftEdge + ", right: " + mRightEdge );
-
 				if ( mMaxX == 0 ) {
 					if ( mInverted ) rightEdge += getWidth() - ( mItemCount * mChildWidth );
 					mLeftEdge = 0;
 					mRightEdge = getWidth();
-					// Log.d( "hv", "new right: " + rightEdge );
 				}
 			}
 
@@ -869,6 +840,28 @@ public class HorizontalFixedListView extends AdapterView<ListAdapter> implements
 		return false;
 	}
 	
+	private void fireOnScrollChanged() {
+		if( mScrollListener != null ) {
+			mScrollListener.onScrollChanged();
+		}
+	}
+	
+	private void postScrollNotifier() {
+		if( mScrollListener != null ) {
+			if( mScrollNotifier == null ) {
+				mScrollNotifier = new ScrollNotifier();
+			}
+			post( mScrollNotifier );
+		}
+	}
+	
+	private class ScrollNotifier implements Runnable {
+		@Override
+		public void run() {
+			fireOnScrollChanged();
+		}
+	}
+	
 	public void setIsDragging( boolean value ) {
 		logger.info( "setIsDragging: " + value );
 		mIsDragging = value;
@@ -945,7 +938,7 @@ public class HorizontalFixedListView extends AdapterView<ListAdapter> implements
 
 	@Override
 	public boolean onInterceptTouchEvent( MotionEvent ev ) {
-
+		
 		if( mIsDragging ) return false;
 		
 		final int action = ev.getAction();
@@ -956,9 +949,9 @@ public class HorizontalFixedListView extends AdapterView<ListAdapter> implements
 		 * motion.
 		 */
 		if ( action == MotionEvent.ACTION_MOVE ) {
-			if( mIsBeingDragged )
+			if( mIsBeingDragged ) {
 				return true;
-			
+			}
 		}
 
 		switch ( action & MotionEvent.ACTION_MASK ) {
@@ -993,6 +986,7 @@ public class HorizontalFixedListView extends AdapterView<ListAdapter> implements
 					if ( parent != null ) {
 						parent.requestDisallowInterceptTouchEvent( true );
 					}
+					postScrollNotifier();
 				}
 				break;
 			}
@@ -1052,7 +1046,7 @@ public class HorizontalFixedListView extends AdapterView<ListAdapter> implements
 				onSecondaryPointerUp( ev );
 				break;
 		}
-
+		
 		return mIsBeingDragged;
 	}
 
@@ -1112,6 +1106,9 @@ public class HorizontalFixedListView extends AdapterView<ListAdapter> implements
 					} else {
 						deltaX += mTouchSlop;
 					}
+					
+					postScrollNotifier();
+					
 				}
 				
 				
@@ -1479,7 +1476,6 @@ public class HorizontalFixedListView extends AdapterView<ListAdapter> implements
 
 		@Override
 		public boolean onSingleTapConfirmed( MotionEvent e ) {
-			logger.error( "onSingleTapConfirmed" );
 			return true;
 		}
 		

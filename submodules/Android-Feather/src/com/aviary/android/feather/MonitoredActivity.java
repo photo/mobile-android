@@ -1,5 +1,7 @@
 package com.aviary.android.feather;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import android.app.Activity;
 import android.os.Bundle;
@@ -13,6 +15,8 @@ public class MonitoredActivity extends Activity {
 
 	/** The m listeners. */
 	private final ArrayList<LifeCycleListener> mListeners = new ArrayList<LifeCycleListener>();
+	
+	protected String mApiKey;
 
 	/**
 	 * The listener interface for receiving lifeCycle events. The class that is interested in processing a lifeCycle event implements
@@ -79,63 +83,21 @@ public class MonitoredActivity extends Activity {
 	 */
 	public static class LifeCycleAdapter implements LifeCycleListener {
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see
-		 * com.aviary.android.feather.MonitoredActivity.LifeCycleListener#onActivityCreated(com.aviary.android.feather.MonitoredActivity
-		 * )
-		 */
 		@Override
 		public void onActivityCreated( MonitoredActivity activity ) {}
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see
-		 * com.aviary.android.feather.MonitoredActivity.LifeCycleListener#onActivityDestroyed(com.aviary.android.feather.MonitoredActivity
-		 * )
-		 */
 		@Override
 		public void onActivityDestroyed( MonitoredActivity activity ) {}
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see
-		 * com.aviary.android.feather.MonitoredActivity.LifeCycleListener#onActivityPaused(com.aviary.android.feather.MonitoredActivity
-		 * )
-		 */
 		@Override
 		public void onActivityPaused( MonitoredActivity activity ) {}
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see
-		 * com.aviary.android.feather.MonitoredActivity.LifeCycleListener#onActivityResumed(com.aviary.android.feather.MonitoredActivity
-		 * )
-		 */
 		@Override
 		public void onActivityResumed( MonitoredActivity activity ) {}
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see
-		 * com.aviary.android.feather.MonitoredActivity.LifeCycleListener#onActivityStarted(com.aviary.android.feather.MonitoredActivity
-		 * )
-		 */
 		@Override
 		public void onActivityStarted( MonitoredActivity activity ) {}
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see
-		 * com.aviary.android.feather.MonitoredActivity.LifeCycleListener#onActivityStopped(com.aviary.android.feather.MonitoredActivity
-		 * )
-		 */
 		@Override
 		public void onActivityStopped( MonitoredActivity activity ) {}
 	}
@@ -172,9 +134,44 @@ public class MonitoredActivity extends Activity {
 		for ( LifeCycleListener listener : mListeners ) {
 			listener.onActivityCreated( this );
 		}
-		Tracker.create( this, getApplicationContext().getPackageName(), "d2703c903", FeatherActivity.SDK_VERSION );
+		
+		Tracker.create( this, getApplicationContext().getPackageName(), getApiKey(), FeatherActivity.SDK_VERSION );
 		Tracker.open();
 		Tracker.upload();
+	}
+	
+	/**
+	 * Return the Application specific API-KEY
+	 * @return
+	 */
+	public String getApiKey() {
+		if( null == mApiKey ) {
+			try {
+				mApiKey = readApiKey();
+			} catch ( IOException e ) {
+				e.printStackTrace();
+				
+				// right now it's only a warning and we will use a
+				// default api key.
+				mApiKey = "MXI5mzSf6Ei6gEQ5eTAOPg";
+			}
+		}
+		return mApiKey;
+	}
+	
+	/**
+	 * Read the API-KEY from the assets/aviary-credentials.txt file
+	 * @param context
+	 * @return
+	 * @throws IOException
+	 */
+	private String readApiKey() throws IOException {
+		InputStream stream = getAssets().open( "aviary-credentials.txt" );
+		int size = stream.available();
+		byte[] buffer = new byte[size];
+		stream.read( buffer );
+		stream.close();
+		return new String( buffer );
 	}
 
 	/*

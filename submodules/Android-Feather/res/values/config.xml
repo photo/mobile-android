@@ -195,8 +195,9 @@
     <string name="feather_meme_default_font">meme/Impact.ttf</string>
 
     <!-- STICKERS PANEL -->
+    <integer name="feather_featured_count">3</integer>
     <integer name="feather_sticker_highlight_ellipse">10</integer>
-    
+    <integer name="feather_sticker_selection_animation_duration">150</integer>
     
     <integer name="feather_sticker_highlight_minsize">100</integer>
     <integer name="feather_sticker_highlight_padding">16</integer>
@@ -207,6 +208,20 @@
     <integer name="feather_cannister_in_animation_duration">300</integer>
     <integer name="feather_effect_selection_animation_duration">80</integer>
     <string name="feather_effect_pack_font">fonts/Roboto-Light.ttf</string>
+    
+    <!-- delay after the iap popup will leave the screen -->
+    <integer name="feather_iap_hide_delay_millis">3000</integer>
+    <integer name="feather_iap_show_delay_millis">800</integer>
+    <integer name="feather_iap_show_duration_millis">100</integer>
+    <integer name="feather_iap_hide_duration_millis">300</integer>
+    <integer name="feather_iap_dialog_height_weight">70</integer>
+    
+    <!-- IAP Dialog Workspace cols and rows -->
+    <integer name="feather_iap_dialog_cols">5</integer>
+    <integer name="feather_iap_dialog_rows">3</integer>
+    
+    <integer name="feather_iap_dialog_cols_effects">3</integer>
+    <integer name="feather_iap_dialog_rows_effects">2</integer>    
 
     <!-- MISC -->
     

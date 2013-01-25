@@ -6,6 +6,12 @@
 	<dimen name="feather_text_size_medium">14sp</dimen>
 	<dimen name="feather_text_size_large">20sp</dimen>
 	
+    <!-- divider -->
+    <dimen name="feather_sticker_pack_divider_padding">5dip</dimen>
+    
+    <!-- padding for the main image container -->
+    <dimen name="feather_main_image_padding">5dip</dimen>
+	
     <!-- Workspace, used for the main tools and sticker packs -->
     <!-- workspace height -->
     <dimen name="feather_workspace_height">85.0dip</dimen>	
@@ -32,35 +38,26 @@
     <dimen name="feather_options_panel_height">100dp</dimen>
     <dimen name="feather_options_panel_height_with_shadow">105dp</dimen>
     <dimen name="feather_options_panel_height_shadow">5dp</dimen>
-    <dimen name="feather_borders_panel_height">160dp</dimen>
     
     <dimen name="feather_default_panel_checkbox_width">56dp</dimen>
     <dimen name="feather_default_panel_checkbox_padding_bottom">8dp</dimen>
-    
-    <dimen name="feather_borders_panel_top_bg_height">45dip</dimen>
     
     <!-- Text drawable minimum size in the Text Panel-->
     <dimen name="feather_text_drawable_min_size">22sp</dimen>
     <!-- Text default size, when placed on the screen -->
     <dimen name="feather_text_default_size">26sp</dimen>
     
-    <!-- default width of the border thumbnail cell -->
-    <dimen name="feather_border_cell_width">50dip</dimen>
-    
-
     <!-- 
     EFFECTS PANEL
     -->
 
     <!-- when item is selected the thumb will be raised by n pixels -->
-    <dimen name="feather_effects_thumb_selection_height">7dip</dimen>
-    <dimen name="feather_effects_panel_height">160dip</dimen>
     <dimen name="feather_effects_panel_top_bg_height">67dip</dimen>
     
     <!-- thumb rounded border radius -->
-    <dimen name="feather_effects_panel_thumb_rounded_border">6dip</dimen>
+    <dimen name="feather_effects_panel_thumb_rounded_border">4dip</dimen>
     <!-- thumb padding -->
-    <dimen name="feather_effects_panel_thumb_padding">3dip</dimen>
+    <dimen name="feather_effects_panel_thumb_padding">2dip</dimen>
     <!-- thumb shadow offset -->
     <dimen name="feather_effects_panel_thumb_shadow_offset">1dip</dimen>
     <!-- thumb shadow radius -->
@@ -68,15 +65,41 @@
     
     <dimen name="feather_effects_panel_thumb_stroke_size">3px</dimen>
     
-    <!-- default width of the effect thumbnail cell -->
-    <dimen name="feather_effects_cell_width">70dip</dimen>
+    <dimen name="feather_effects_external_thumb_padding">8dip</dimen>
+    
+    <!-- horizontal gap between items -->
+    <dimen name="feather_effects_panel_items_gap">2dip</dimen>
+    
+    <dimen name="feather_crop_arrow_margin_top">14dip</dimen>
     
     <!-- get more layout -->
-    <dimen name="feather_effects_getmore_image_margin_left">8dip</dimen>
-    <dimen name="feather_effects_getmore_image_margin_right">12dip</dimen>
-    <dimen name="feather_effects_getmore_image_margin_top">8dip</dimen>
+    <dimen name="feather_effects_getmore_padding_left">7dip</dimen>
+    <dimen name="feather_effects_getmore_image_margin_left">3dip</dimen>
+    <dimen name="feather_effects_getmore_image_margin_right">4dip</dimen>
+    <dimen name="feather_effects_getmore_image_margin_top">2dip</dimen>
     <dimen name="feather_effects_getmore_text_margin_right">2dip</dimen>
     <dimen name="feather_effects_getmore_bubble_margin_right">10dip</dimen>
-    <dimen name="feather_effects_getmore_bubble_text_padding_bottom">3dip</dimen>
+    <dimen name="feather_effects_getmore_bubble_margin_top">2dip</dimen>
+    
+	<!-- STICKERS -->
+	<dimen name="feather_stickers_loader_height">80dip</dimen>
+	<dimen name="feather_stickers_bottom_overlay_height">20dip</dimen>
+    <dimen name="feather_stickers_getmore_text_margin_top">2dip</dimen>
+    <dimen name="feather_stickers_getmore_text_margin_right">4dip</dimen>
+    <dimen name="feather_stickers_getmore_text_margin_bottom">4dip</dimen>
+    <dimen name="feather_stickers_getmore_padding_right">5dip</dimen>
+    <dimen name="feather_stickers_getmore_padding_left">5dip</dimen>
+    <dimen name="feather_stickers_getmore_image_margin_left">4dip</dimen>
+    <dimen name="feather_stickers_getmore_image_margin_right">5dip</dimen>
+    <dimen name="feather_stickers_getmore_image_margin_top">4dip</dimen>
+    <dimen name="feather_stickers_getmore_bubble_margin_right">11dip</dimen>
+    <dimen name="feather_stickers_getmore_bubble_margin_right_inverted">9dip</dimen>
+    <dimen name="feather_stickers_getmore_bubble_margin_top">4dip</dimen>   
+    
+    <!-- horizontal gap between items -->
+    <dimen name="feather_stickers_panel_items_gap">3dip</dimen>
+    
+    <!-- iap notification popup -->
+    <dimen name="feather_effects_iap_notification_text_size">20dip</dimen>
     	
 </resources>

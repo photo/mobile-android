@@ -82,6 +82,7 @@ public class MemePanel extends AbstractContentPanel implements OnEditorActionLis
 	 * 
 	 * @see com.aviary.android.feather.effects.AbstractEffectPanel#onCreate(android.graphics.Bitmap)
 	 */
+	@SuppressWarnings("deprecation")
 	@Override
 	public void onCreate( Bitmap bitmap ) {
 		super.onCreate( bitmap );
@@ -223,7 +224,6 @@ public class MemePanel extends AbstractContentPanel implements OnEditorActionLis
 	 */
 	@Override
 	protected void onGenerateResult() {
-
 		MemeFilter filter = (MemeFilter) FilterLoaderFactory.get( Filters.MEME );
 
 		flattenText( topHv, filter );
@@ -554,7 +554,6 @@ public class MemePanel extends AbstractContentPanel implements OnEditorActionLis
 			editBottomButton.setText( value );
 			clearButtonBottom.setVisibility( value != null && value.length() > 0 ? View.VISIBLE : View.INVISIBLE );
 		}
-
 	}
 
 	/**
@@ -695,7 +694,10 @@ public class MemePanel extends AbstractContentPanel implements OnEditorActionLis
 			}
 			editText.clearFocus();
 		}
-		mOptionView.requestFocus();
+		
+		// this will send the focus to the bottom panel
+		// but also creating a bad visual effect
+		//mOptionView.requestFocus();
 	}
 
 	/**

@@ -25,7 +25,13 @@
         <item name="toolbarHeight">@dimen/feather_toolbar_height</item>
         <item name="workspaceHeight">@dimen/feather_workspace_height</item>
         <item name="workspaceIndicator">@drawable/feather_workspace_indicator</item>
-        <item name="imageSelection">@drawable/feather_default_glow</item>
+        <item name="workspaceIAPIndicator">@drawable/feather_iap_workspace_indicator</item>
+        
+        <!-- crop button arrow margin top -->
+        <item name="cropButtonMarginTop">@dimen/feather_crop_arrow_margin_top</item>
+        
+        <!-- main image padding -->
+        <item name="mainImagePadding">@dimen/feather_main_image_padding</item>
 
         <!-- option panel height (without shadow) -->
         <item name="optionPanelHeight">@dimen/feather_options_panel_height</item>
@@ -44,6 +50,23 @@
 
         <!-- alternate background for option panel -->
         <item name="optionPanelBackground2">@drawable/feather_options_panel_background2</item>
+        
+        <!-- stickers pack vertical line padding left/right -->
+        <item name="stickerPackDividerPadding">@dimen/feather_sticker_pack_divider_padding</item>
+        <item name="stickerPackDividerEmptyDrawable">@drawable/feather_effects_thumbs_divider_empty</item>
+        
+        <item name="stickerPanelBottomOverlayHeight">@dimen/feather_stickers_bottom_overlay_height</item>
+        
+        <!-- stickers panel. main loader height -->
+        <item name="stickerPanelLoaderHeight">@dimen/feather_stickers_loader_height</item>
+        
+        <!-- dialog vertical weight -->
+        <item name="iapDialogHeightWeight">@integer/feather_iap_dialog_height_weight</item>
+        <item name="iapDialogWidthWeight">@integer/feather_iap_dialog_width_weight</item>
+        <item name="iapDialogTopWeight">@integer/feather_iap_dialog_marginTop</item>
+        
+        <!-- IAP grid background color -->
+        <item name="iapDialogGridBackgroundColor">#FFd4dbe2</item>
 
         <!--
 		<item name="fontFamilyLight">fonts/Roboto-Light.ttf</item>
@@ -147,6 +170,7 @@
         <item name="verticalPadding">@dimen/feather_workspace_cell_vertical_padding</item>
         <item name="cells">4</item>
         <item name="rows">@integer/feather_config_portraitRows</item>
+        <item name="layout_direction">vertical</item>
     </style>
 
     <style name="FeatherTool">
@@ -224,9 +248,32 @@
         <item name="android:paddingRight">0dp</item>
         <item name="android:paddingBottom">0dp</item>
     </style>
+    
+    <style name="FeatherProgressBar20">
+        <item name="android:indeterminateDrawable">@drawable/feather_progress_20</item>
+        <item name="android:minWidth">20dip</item>
+        <item name="android:maxWidth">20dip</item>
+        <item name="android:minHeight">20dip</item>
+        <item name="android:maxHeight">20dip</item>
+    </style>    
+    
+    <style name="FeatherProgressBar48">
+        <item name="android:indeterminateDrawable">@drawable/feather_progress_48</item>
+        <item name="android:minWidth">48dip</item>
+        <item name="android:maxWidth">48dip</item>
+        <item name="android:minHeight">48dip</item>
+        <item name="android:maxHeight">48dip</item>
+    </style>    
+    
+    <style name="FeatherProgressBar76">
+        <item name="android:indeterminateDrawable">@drawable/feather_progress_76</item>
+        <item name="android:minWidth">76dip</item>
+        <item name="android:maxWidth">76dip</item>
+        <item name="android:minHeight">76dip</item>
+        <item name="android:maxHeight">76dip</item>
+    </style>
 
     <style name="FeatherOptionPanel.EffectThumbLayout">
-        <item name="selectedHeight">@dimen/feather_effects_thumb_selection_height</item>
         <item name="selectionAnimationDuration">@integer/feather_effect_selection_animation_duration</item>
         <item name="android:paddingLeft">0dip</item>
         <item name="android:paddingRight">0dip</item>
@@ -234,74 +281,85 @@
 
     <style name="FeatherOptionPanel.EffectThumb">
         <item name="android:paddingTop">0dp</item>
-        <item name="android:paddingLeft">4dp</item>
-        <item name="android:paddingRight">4dp</item>
-        <item name="android:paddingBottom">2dp</item>
+        <item name="android:paddingLeft">2dp</item>
+        <item name="android:paddingRight">2dp</item>
+        <item name="android:paddingBottom">0dp</item>
         <item name="android:layout_marginBottom">0dip</item>
         <item name="shadowDrawable">@null</item>
         <item name="shadowOffsetX">7</item>
         <item name="shadowOffsetY">7</item>
     </style>
 
-<!-- 	GET MORE -->
+	<!-- GET MORE -->
     <style name="FeatherOptionPanel.EffectThumbGetMore"></style>
 
     <style name="FeatherOptionPanel.EffectThumbGetMore.MainLayout">
         <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">@dimen/feather_effects_panel_top_bg_height</item>
+        <item name="android:layout_height">match_parent</item>
         <item name="android:background">@drawable/feather_getmore_layout_bg</item>
         <item name="android:gravity">bottom|center_horizontal</item>
+        <item name="android:layout_marginRight">@dimen/feather_stickers_getmore_padding_right</item>
     </style>
-
+    
+    <!-- getmore button image -->
     <style name="FeatherOptionPanel.EffectThumbGetMore.MainImage">
-        <item name="android:layout_marginLeft">@dimen/feather_effects_getmore_image_margin_left</item>
-        <item name="android:layout_marginRight">@dimen/feather_effects_getmore_image_margin_right</item>
-        <item name="android:layout_marginTop">@dimen/feather_effects_getmore_image_margin_top</item>
+        <item name="android:layout_marginLeft">@dimen/feather_stickers_getmore_image_margin_left</item>
+        <item name="android:layout_marginRight">@dimen/feather_stickers_getmore_image_margin_right</item>
+        <item name="android:layout_marginTop">@dimen/feather_stickers_getmore_image_margin_top</item>     
         <item name="android:background">@drawable/feather_getmore_image_bg</item>
         <item name="android:scaleType">centerInside</item>
         <item name="android:src">@drawable/feather_more_button_selector</item>
     </style>
-
+    
     <style name="FeatherOptionPanel.EffectThumbGetMore.MainText" parent="FeatherOptionPanel.ThumbText">
         <item name="android:layout_marginRight">@dimen/feather_effects_getmore_text_margin_right</item>
+        <item name="android:layout_marginTop">@dimen/feather_stickers_getmore_text_margin_top</item>
+        <item name="android:layout_marginBottom">@dimen/feather_stickers_getmore_text_margin_bottom</item>        
     </style>
-
+    
     <style name="FeatherOptionPanel.EffectThumbGetMore.RibbonLayout">
-        <item name="android:background">@drawable/feather_ribbon_bg</item>
         <item name="android:layout_marginRight">@dimen/feather_effects_getmore_bubble_margin_right</item>
+        <item name="android:layout_marginTop">@dimen/feather_effects_getmore_bubble_margin_top</item>
     </style>
 
     <style name="FeatherOptionPanel.EffectThumbGetMore.MainLayout.Inverted">
         <item name="android:background">@drawable/feather_getmore_layout_bg_inverted</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:layout_marginLeft">@dimen/feather_stickers_getmore_padding_left</item>
+        <item name="android:layout_marginRight">0dip</item>                
     </style>
 
     <style name="FeatherOptionPanel.EffectThumbGetMore.MainImage.Inverted">
-        <item name="android:layout_marginLeft">@dimen/feather_effects_getmore_image_margin_right</item>
-        <item name="android:layout_marginRight">@dimen/feather_effects_getmore_image_margin_left</item>
-        <item name="android:layout_marginTop">@dimen/feather_effects_getmore_image_margin_top</item>
         <item name="android:background">@drawable/feather_getmore_image_bg</item>
+        <item name="android:layout_marginLeft">@dimen/feather_stickers_getmore_image_margin_right</item>
+        <item name="android:layout_marginRight">@dimen/feather_stickers_getmore_image_margin_left</item>
+        <item name="android:layout_marginTop">@dimen/feather_stickers_getmore_image_margin_top</item>        
     </style>
-
+    
     <style name="FeatherOptionPanel.EffectThumbGetMore.MainText.Inverted">
         <item name="android:layout_marginRight">0dip</item>
         <item name="android:layout_marginLeft">@dimen/feather_effects_getmore_text_margin_right</item>
+        <item name="android:layout_marginTop">@dimen/feather_stickers_getmore_text_margin_top</item>
+        <item name="android:layout_marginBottom">@dimen/feather_stickers_getmore_text_margin_bottom</item>        
     </style>
-
+    
     <style name="FeatherOptionPanel.EffectThumbGetMore.RibbonText" parent="FeatherOptionPanel.ThumbText">
         <item name="android:textSize">?attr/textSizeMedium</item>
-        <item name="android:paddingBottom">@dimen/feather_effects_getmore_bubble_text_padding_bottom</item>
+        <item name="android:textColor">#ff3eabfe</item>
         <item name="android:paddingTop">0dip</item>
+        <item name="font">?attr/fontFamilyMedium</item>
+        <item name="android:layout_marginRight">@dimen/feather_stickers_getmore_bubble_margin_right</item>
+        <item name="android:layout_marginTop">@dimen/feather_stickers_getmore_bubble_margin_top</item>        
     </style>
-
+    
     <style name="FeatherOptionPanel.EffectThumbGetMore.RibbonLayout.Inverted">
         <item name="android:layout_marginLeft">@dimen/feather_effects_getmore_bubble_margin_right</item>
         <item name="android:layout_marginRight">0dip</item>
     </style>
-
-    <style name="FeatherOptionPanel.EffectThumbGetMore.RibbonText.Inverted"></style>
-
-    <style name="FeatherOptionPanel.BorderTopBackground">
-        <item name="android:layout_height">@dimen/feather_borders_panel_top_bg_height</item>
+    
+    <style name="FeatherOptionPanel.EffectThumbGetMore.RibbonText.Inverted">
+        <item name="android:layout_marginRight">@dimen/feather_stickers_getmore_bubble_margin_right_inverted</item>
+        <item name="android:layout_marginTop">@dimen/feather_stickers_getmore_bubble_margin_top</item>        
     </style>
 
     <style name="FeatherOptionPanel.Background">
@@ -338,17 +396,6 @@
         <item name="android:background">@drawable/feather_toolbar_background</item>
     </style>
 
-    <style name="FeatherOptionPanelImageButton">
-        <item name="android:paddingBottom">16dp</item>
-        <item name="android:paddingTop">16dp</item>
-        <item name="android:paddingLeft">12dp</item>
-        <item name="android:paddingRight">12dp</item>
-        <item name="android:focusable">true</item>
-        <item name="android:clickable">true</item>
-        <item name="android:layout_margin">0dp</item>
-        <item name="android:background">@drawable/feather_default_button_background</item>
-    </style>
-
     <style name="FeatherOptionPanelImageButtons">
         <item name="android:paddingBottom">8dp</item>
         <item name="android:paddingTop">8dp</item>
@@ -375,17 +422,6 @@
         <item name="android:background">@drawable/feather_center_button_background</item>
         <item name="android:paddingLeft">16dp</item>
         <item name="android:paddingRight">16dp</item>
-    </style>
-
-    <style name="FeatherOptionPanelButton" parent="@style/FeatherOptionPanelImageButton">
-        <item name="android:gravity">center_vertical|center_horizontal</item>
-        <item name="android:shadowDx">0.0</item>
-        <item name="android:shadowDy">2.0</item>
-        <item name="android:shadowRadius">2.0</item>
-        <item name="android:shadowColor">@android:color/black</item>
-        <item name="font">?attr/fontFamilyLight</item>
-        <item name="android:textAppearance">?attr/textAppearanceSmall</item>
-        <item name="android:textColor">@color/feather_option_panel_text_selector</item>
     </style>
 
     <style name="FeatherOptionPanelMemeButton">
@@ -444,18 +480,7 @@
         <item name="bigTicks">5</item>
     </style>
 
-    <!-- stickers -->
-    <style name="FeatherStickersWorkspace">
-        <item name="defaultScreen">0</item>
-        <item name="overscroll">2</item>
-        <item name="android:paddingBottom">5.0dip</item>
-    </style>
-
-    <style name="FeatherStickersIndicator">
-        <item name="indicatorId">@drawable/feather_workspace_indicator</item>
-    </style>
-
-    <style name="FeatherStickerPack">
+    <style name="FeatherFilterPack">
         <item name="android:drawablePadding">5dip</item>
         <item name="android:paddingTop">0dip</item>
         <item name="android:paddingLeft">5dip</item>
@@ -471,9 +496,6 @@
         <item name="android:shadowRadius">?attr/shadowRadiusMedium</item>
         <item name="android:shadowColor">?attr/shadowColorPrimaryInverse</item>
         <item name="android:textAppearance">?attr/textAppearanceThumbSmall</item>
-    </style>
-
-    <style name="FeatherFilterPack" parent="FeatherStickerPack">
     </style>
 
     <style name="FeatherRadioButtonGroup">
@@ -505,6 +527,97 @@
         <item name="buttonIcon">@drawable/feather_icon_balance_enhance</item>
         <item name="buttonText">@string/balance_enhance_label</item>
     </style>
+    
+    
+    <!-- IAP Dialog -->
+    
+    <style name="FeatherIAPDialog"></style>
+    
+    <style name="FeatherIAPDialog.Main">
+        <item name="android:layoutAnimation">@anim/feather_iap_layout_animation</item>
+        <item name="android:background">#bf000000</item>
+    </style>
+    
+    <style name="FeatherIAPDialog.Title">
+        <item name="android:layout_marginRight">10dip</item>
+        <item name="android:ellipsize">end</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:textAppearance">@style/TextAppearance.IAPTitle</item>
+        <item name="font">?attr/fontFamilyBold</item>
+    </style>
+    
+    <style name="FeatherIAPDialog.SubTitle">
+        <item name="android:textAppearance">@style/TextAppearance.IAPSubTitle</item>
+        <item name="android:maxLines">1</item>
+        <item name="font">?attr/fontFamilyLight</item>
+    </style>
+    
+    <style name="FeatherIAPDialog.Description">
+        <item name="android:layout_marginTop">5dip</item>
+        <item name="android:textAppearance">@style/TextAppearance.IAPDescription</item>
+        <item name="font">?attr/fontFamilyLight</item>
+        <item name="android:maxLines">3</item>
+        <item name="android:ellipsize">end</item>
+    </style>
+    
+    <style name="FeatherIAPDialog.Button">
+        <item name="android:layout_marginLeft">10dip</item>
+        <item name="android:background">@drawable/feather_iap_button_background</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:minWidth">50dip</item>
+        <item name="android:paddingBottom">8dip</item>
+        <item name="android:paddingTop">6dip</item>
+        <item name="android:paddingLeft">6dip</item>
+        <item name="android:paddingRight">6dip</item>
+        <item name="android:shadowColor">?attr/shadowColorPrimaryInverse</item>
+        <item name="android:shadowDx">?attr/shadowDxSmall</item>
+        <item name="android:shadowDy">?attr/shadowDySmall</item>
+        <item name="android:shadowRadius">?attr/shadowRadiusSmall</item>
+        <item name="android:textAppearance">@style/TextAppearance.IAPButton</item>
+        <item name="android:textColor">@android:color/white</item>
+    </style>
+    
+	<style name="FeatherIAPDialog.Workspace">
+        <item name="defaultScreen">0</item>
+        <item name="overscroll">2</item>
+        <item name="android:paddingBottom">0.0dip</item>
+        <item name="android:paddingLeft">0.0dip</item>
+        <item name="android:paddingRight">0.0dip</item>
+        <item name="android:paddingTop">0.0dip</item>
+    </style>
+    
+    <style name="FeatherIAPCellLayoutStickers">
+        <item name="startPadding">0sp</item>
+        <item name="endPadding">0sp</item>
+        <item name="topPadding">0sp</item>
+        <item name="bottomPadding">0sp</item>
+        <item name="horizontalPadding">1sp</item>
+        <item name="verticalPadding">1sp</item>
+        <item name="cells">5</item>
+        <item name="rows">3</item>
+        <item name="layout_direction">horizontal</item>
+        <item name="android:background">?attr/iapDialogGridBackgroundColor</item>
+    </style>
+    
+    <style name="FeatherIAPCellLayoutEffects">
+        <item name="startPadding">5dip</item>
+        <item name="endPadding">5dip</item>
+        <item name="topPadding">5dip</item>
+        <item name="bottomPadding">5dip</item>
+        <item name="horizontalPadding">2dip</item>
+        <item name="verticalPadding">2dip</item>
+        <item name="cells">5</item>
+        <item name="rows">3</item>
+        <item name="layout_direction">horizontal</item>
+    </style>    
+    
+    <style name="FeatherIAPDialog.WorkspaceIndicator">
+        <item name="indicatorId">?attr/workspaceIAPIndicator</item>
+        <item name="android:layout_marginTop">5dip</item>
+    </style>    
+    
+    
+    <!-- Text appearances -->
 
     <style name="TextAppearance">
         <item name="android:textColor">?android:attr/textColorPrimary</item>
@@ -538,6 +651,30 @@
         <item name="android:textStyle">normal</item>
         <item name="android:textSize">?attr/textSizeSmall</item>
     </style>
+    
+    <style name="TextAppearance.IAPTitle">
+        <item name="android:textColor">?android:attr/textColorPrimary</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:textSize">?attr/textSizeLarge</item>
+    </style>
+    
+    <style name="TextAppearance.IAPSubTitle">
+        <item name="android:textColor">?android:attr/textColorPrimary</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:textSize">?attr/textSizeSmall</item>
+    </style>
+    
+    <style name="TextAppearance.IAPDescription">
+        <item name="android:textColor">?android:attr/textColorPrimary</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:textSize">?attr/textSizeSmall</item>
+    </style>    
+    
+    <style name="TextAppearance.IAPButton">
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:textSize">?attr/textSizeMedium</item>
+    </style>       
 
     <style name="Animations" />
 

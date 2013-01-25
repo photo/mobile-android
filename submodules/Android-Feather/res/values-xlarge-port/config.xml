@@ -1,6 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <integer name="toolCount">8</integer>
-    <integer name="featherfilterPacksCount">8</integer>
-    <integer name="featherStickerPacksCount">7</integer>
+    
+    <integer name="feather_iap_dialog_cols">5</integer>
+    <integer name="feather_iap_dialog_rows">3</integer>
+    
+    <integer name="feather_iap_dialog_cols_effects">3</integer>
+    <integer name="feather_iap_dialog_rows_effects">2</integer>    
+    
+    <integer name="feather_iap_dialog_height_weight">40</integer>
+	<integer name="feather_iap_dialog_width_weight">55</integer>
+	<integer name="feather_iap_dialog_marginTop">6</integer>    
 </resources>

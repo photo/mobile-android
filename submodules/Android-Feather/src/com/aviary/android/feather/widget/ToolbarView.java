@@ -287,6 +287,10 @@ public class ToolbarView extends ViewFlipper implements ViewFactory {
 	public void setApplyEnabled( boolean value ) {
 		mApplyButton.setEnabled( value );
 	}
+	
+	public void setApplyVisibility( boolean visible ) {
+		mApplyButton.setVisibility( visible ? View.VISIBLE : View.GONE );
+	}
 
 	/*
 	 * (non-Javadoc)
@@ -380,17 +384,6 @@ public class ToolbarView extends ViewFlipper implements ViewFactory {
 		setChildrenDrawnWithCacheEnabled( false );
 	}
 
-	/**
-	 * Sets the apply enabled.
-	 * 
-	 * @param applyEnabled
-	 *           the apply enabled
-	 * @param cancelEnabled
-	 *           the cancel enabled
-	 */
-	public void setApplyEnabled( boolean applyEnabled, boolean cancelEnabled ) {
-		mApplyButton.setEnabled( applyEnabled );
-	}
 
 	/** The m in animation listener. */
 	AnimationListener mInAnimationListener = new AnimationListener() {
