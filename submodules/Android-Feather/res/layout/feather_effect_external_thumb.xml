@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Layout for the single external sticker pack -->
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    style="@style/FeatherOptionPanel.EffectThumbLayout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:clickable="false"
+    android:focusable="true"
+    android:orientation="vertical"
+    app:selectionAnimationDuration="@integer/feather_sticker_selection_animation_duration" >
+
+    <ImageView
+        android:id="@+id/image"
+        style="@style/FeatherOptionPanel.EffectThumb"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/text"
+        android:layout_centerHorizontal="true"
+        android:clickable="true"
+        android:paddingBottom="0dip"
+        android:paddingLeft="@dimen/feather_effects_external_thumb_padding"
+        android:paddingRight="@dimen/feather_effects_external_thumb_padding"
+        android:paddingTop="@dimen/feather_effects_external_thumb_padding"
+        android:scaleType="fitXY"
+        android:src="@drawable/feather_effects_pack_background"
+        android:visibility="visible" />
+
+    <!-- pack label -->
+
+    <com.aviary.android.feather.widget.TextViewCustomFont
+        android:id="@+id/text"
+        style="@style/FeatherOptionPanel.ThumbText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:clickable="true"
+        android:text="@android:string/ok" />
+
+    <ImageView
+        android:id="@+id/imageView1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignRight="@+id/image"
+        android:layout_alignTop="@+id/image"
+        android:src="@drawable/feather_pack_download_icon" />
+
+</RelativeLayout>

@@ -12,9 +12,10 @@ class Fling9Runnable extends IFlingRunnable {
 
 	public Fling9Runnable( FlingRunnableView parent, int animationDuration ) {
 		super( parent, animationDuration );
-		mScroller = new OverScroller( ( (View) parent ).getContext(), new DecelerateInterpolator() );
+		mScroller = new OverScroller( ( (View) parent ).getContext(), new DecelerateInterpolator(1.0f) );
 	}
 
+	@TargetApi(14)
 	@Override
 	public float getCurrVelocity() {
 		return mScroller.getCurrVelocity();
@@ -51,6 +52,6 @@ class Fling9Runnable extends IFlingRunnable {
 
 	@Override
 	protected void forceFinished( boolean finished ) {
-		mScroller.forceFinished( finished );
+		mScroller.abortAnimation();
 	}
 }

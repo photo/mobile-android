@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.aviary.android.feather.widget.IapDialog xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main_iap_dialog"
+    style="@style/FeatherIAPDialog.Main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:clickable="true"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
+    android:orientation="vertical"
+    android:weightSum="100"
+    tools:context=".FeatherActivity" >
+
+    <requestFocus />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dip"
+        android:layout_weight="?attr/iapDialogHeightWeight"
+        android:baselineAligned="false"
+        android:orientation="vertical" >
+
+        <!-- head -->
+
+        <LinearLayout
+            android:id="@+id/head"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/white"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:padding="10dip" >
+
+            <ImageView
+                android:id="@+id/icon"
+                android:adjustViewBounds="true"
+                android:layout_width="50dip"
+                android:layout_height="50dip"
+                android:scaleType="fitCenter"
+                 />
+
+            <LinearLayout
+                android:layout_width="0dip"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dip"
+                android:layout_weight="1"
+                android:orientation="vertical" >
+
+                <LinearLayout
+                    android:id="@+id/title_container"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical" >
+
+                    <com.aviary.android.feather.widget.TextViewCustomFont
+                        android:id="@+id/title"
+                        style="@style/FeatherIAPDialog.Title"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:ellipsize="end" />
+
+                    <com.aviary.android.feather.widget.TextViewCustomFont
+                        android:id="@+id/subtitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0"
+                        style="@style/FeatherIAPDialog.SubTitle" />
+                </LinearLayout>
+
+                <com.aviary.android.feather.widget.TextViewCustomFont
+                    android:id="@+id/description"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    style="@style/FeatherIAPDialog.Description" />
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/FeatherIAPDialog.Button"
+                android:text="@string/feather_download" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/workspace_container"
+            android:layout_width="match_parent"
+            android:layout_height="0dip"
+            android:layout_weight="1"
+            android:orientation="vertical" >
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dip"
+                android:layout_weight="1"
+                android:background="@android:color/white" >
+
+                <com.aviary.android.feather.widget.wp.Workspace
+                    android:id="@+id/workspace"
+                    style="@style/FeatherIAPDialog.Workspace"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true" />
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="3dip"
+                    android:scaleType="fitXY"
+                    android:src="@drawable/feather_iap_shadow_top" />
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="3dip"
+                    android:layout_alignParentBottom="true"
+                    android:scaleType="fitXY"
+                    android:src="@drawable/feather_iap_shadow_bottom" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="0"
+                android:background="@drawable/feather_iap_grid_background" >
+
+                <com.aviary.android.feather.widget.wp.WorkspaceIndicator
+                    android:id="@+id/workspace_indicator"
+                    style="@style/FeatherIAPDialog.WorkspaceIndicator"
+                    android:layout_width="match_parent"
+                    android:layout_height="12dip"
+                    android:layout_centerInParent="true"
+                    android:gravity="center" />
+            </RelativeLayout>
+        </LinearLayout>
+    </LinearLayout>
+
+</com.aviary.android.feather.widget.IapDialog>

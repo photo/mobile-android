@@ -79,11 +79,6 @@ public class DownloadImageAsyncTask extends AsyncTask<Context, Void, Bitmap> {
 		mListener = listener;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see android.os.AsyncTask#onPreExecute()
-	 */
 	@Override
 	protected void onPreExecute() {
 		super.onPreExecute();
@@ -92,11 +87,6 @@ public class DownloadImageAsyncTask extends AsyncTask<Context, Void, Bitmap> {
 		mImageSize = new ImageLoader.ImageSizes();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see android.os.AsyncTask#doInBackground(Params[])
-	 */
 	@Override
 	protected Bitmap doInBackground( Context... params ) {
 		Context context = params[0];
@@ -112,11 +102,6 @@ public class DownloadImageAsyncTask extends AsyncTask<Context, Void, Bitmap> {
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see android.os.AsyncTask#onPostExecute(java.lang.Object)
-	 */
 	@Override
 	protected void onPostExecute( Bitmap result ) {
 		super.onPostExecute( result );

@@ -7,7 +7,6 @@ import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.Log;
-import com.aviary.android.feather.library.log.LoggerFactory;
 import com.aviary.android.feather.library.utils.SystemUtils;
 
 // TODO: Auto-generated Javadoc
@@ -44,7 +43,6 @@ public class Constants {
 	 *           the activity
 	 */
 	public static void init( Activity activity ) {
-		LoggerFactory.log( "ANDROID_SDK: " + ANDROID_SDK );
 		initContext( activity );
 		initIntent( activity.getIntent() );
 	}
@@ -63,7 +61,6 @@ public class Constants {
 			} else {
 
 				int mhz = SystemUtils.getCpuMhz();
-				LoggerFactory.log( "CPU MHZ: " + mhz );
 
 				if ( mhz > 0 ) {
 					value = mhz >= MHZ_CPU_FAST;
@@ -84,6 +81,14 @@ public class Constants {
 	 */
 	public static boolean getExternalPacksEnabled() {
 		return getValueFromIntent( EXTRA_EFFECTS_ENABLE_EXTERNAL_PACKS, true );
+	}
+	
+	/**
+	 * External Stickers are enabled
+	 * @return
+	 */
+	public static boolean getExternalStickersEnabled() {
+		return getValueFromIntent( EXTRA_STICKERS_ENABLE_EXTERNAL_PACKS, true );
 	}
 
 	/**
@@ -134,7 +139,8 @@ public class Constants {
 		if ( intent != null ) {
 			Bundle extras = intent.getExtras();
 			if ( extras != null ) {
-				mOriginalBundle = (Bundle) extras.clone();
+				// mOriginalBundle = (Bundle) extras.clone();
+				mOriginalBundle = (Bundle) extras;
 			}
 			mOriginalIntent = new Intent( intent );
 		}
@@ -238,9 +244,6 @@ public class Constants {
 	/** The SCREEN height. */
 	public static int SCREEN_HEIGHT = -1;
 
-	/** The Constant API_KEY. */
-	public static final String API_KEY = "API_KEY";
-
 	/** Result bitmap will be returned inline within the result Intent. */
 	public static final String EXTRA_RETURN_DATA = "return-data";
 
@@ -289,6 +292,13 @@ public class Constants {
 	 * the external filters.
 	 */
 	public static final String EXTRA_EFFECTS_ENABLE_EXTERNAL_PACKS = "effect-enable-external-pack";
+	
+	/**
+	 * By default feather offers to the final user the possibility to install external frames from the android market. If you want
+	 * to disable this feature you can pass this extra boolean to the launching intent as "false". The default behavior is to enable
+	 * the external frames.
+	 */	
+	public static final String EXTRA_FRAMES_ENABLE_EXTERNAL_PACKS = "frames-enable-external-pack";
 
 	/**
 	 * By default feather offers to the final user the possibility to install external stickers from the android market. If you want
@@ -315,11 +325,6 @@ public class Constants {
 	 * session id string must be unique and must be 64 chars length
 	 */
 	public static final String EXTRA_OUTPUT_HIRES_SESSION_ID = "output-hires-session-id";
-
-	/**
-	 * By default some our effects come with extra borders. If you want to disable those borders pass this extra as a boolan 'false'
-	 */
-	public static final String EXTRA_EFFECTS_BORDERS_ENABLED = "effect-enable-borders";
 
 	public static final String EXTRA_APP_ID = "app-id";
 

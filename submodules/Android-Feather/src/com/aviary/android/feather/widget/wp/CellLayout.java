@@ -36,6 +36,12 @@ import com.aviary.android.feather.library.log.LoggerFactory.LoggerType;
  */
 public class CellLayout extends ViewGroup {
 
+	private static final int DIRECTION_VERTICAL = 0;
+	private static final int DIRECTION_HORIZONTAL = 1;
+
+	/** items disposition */
+	private int mLayoutDirection;
+
 	/** The m cell width. */
 	private int mCellWidth;
 
@@ -128,22 +134,18 @@ public class CellLayout extends ViewGroup {
 		TypedArray a = context.obtainStyledAttributes( attrs, R.styleable.CellLayout, defStyle, 0 );
 
 		mCellPaddingH = a.getDimensionPixelSize( R.styleable.CellLayout_horizontalPadding, 0 );
-		mCellPaddingV = a.getDimensionPixelSize( R.styleable.CellLayout_horizontalPadding, 0 );
+		mCellPaddingV = a.getDimensionPixelSize( R.styleable.CellLayout_verticalPadding, 0 );
 
 		mStartPadding = a.getDimensionPixelSize( R.styleable.CellLayout_startPadding, 0 );
 		mEndPadding = a.getDimensionPixelSize( R.styleable.CellLayout_endPadding, 0 );
 		mTopPadding = a.getDimensionPixelSize( R.styleable.CellLayout_topPadding, 0 );
 		mBottomPadding = a.getDimensionPixelSize( R.styleable.CellLayout_bottomPadding, 0 );
-
-		// logger.log( "padding", mStartPadding, mEndPadding, mTopPadding, mBottomPadding );
+		mLayoutDirection = a.getInteger( R.styleable.CellLayout_layout_direction, 0 );
 
 		mAxisCells = a.getInt( R.styleable.CellLayout_cells, 4 );
 		mAxisRows = a.getInt( R.styleable.CellLayout_rows, 1 );
 
 		a.recycle();
-
-		//setAlwaysDrawnWithCacheEnabled( false );
-
 		resetCells();
 	}
 
@@ -151,7 +153,11 @@ public class CellLayout extends ViewGroup {
 	 * Reset cells.
 	 */
 	private void resetCells() {
-		mOccupied = new boolean[mAxisCells][mAxisRows];
+		if ( mLayoutDirection == DIRECTION_VERTICAL ) {
+			mOccupied = new boolean[mAxisCells][mAxisRows];
+		} else {
+			mOccupied = new boolean[mAxisRows][mAxisCells];
+		}
 	}
 
 	/**
@@ -188,7 +194,7 @@ public class CellLayout extends ViewGroup {
 	@Override
 	public void removeAllViews() {
 		super.removeAllViews();
-		mOccupied = new boolean[mAxisCells][mAxisRows];
+		resetCells();
 	}
 
 	/*
@@ -234,11 +240,12 @@ public class CellLayout extends ViewGroup {
 	@Override
 	public void addView( View child, int index, ViewGroup.LayoutParams params ) {
 		final LayoutParams cellParams = (LayoutParams) params;
-		// logger.info( "addView: (cellX=" + cellParams.cellX + ", cellY=" + cellParams.cellY + ", spanH=" + cellParams.cellHSpan +
-		// ", spanV=" + cellParams.cellVSpan + ")" );
 		cellParams.regenerateId = true;
 
-		mOccupied[cellParams.cellX][cellParams.cellY] = true;
+		if ( mLayoutDirection == DIRECTION_VERTICAL )
+			mOccupied[cellParams.cellX][cellParams.cellY] = true;
+		else
+			mOccupied[cellParams.cellY][cellParams.cellX] = true;
 
 		super.addView( child, index, params );
 	}
@@ -269,16 +276,34 @@ public class CellLayout extends ViewGroup {
 			return null;
 		}
 
-		for ( int x = 0; x < mOccupied.length; x++ ) {
-			for ( int y = 0; y < mOccupied[x].length; y++ ) {
-				if ( findVacantCell( x, y, spanH, spanV ) ) {
-					CellInfo info = new CellInfo();
-					info.cellX = x;
-					info.cellY = y;
-					info.spanH = spanH;
-					info.spanV = spanV;
-					info.screen = mCellInfo.screen;
-					return info;
+		if ( mLayoutDirection == DIRECTION_VERTICAL ) {
+			
+			for ( int x = 0; x < mOccupied.length; x++ ) {
+				for ( int y = 0; y < mOccupied[x].length; y++ ) {
+					if ( findVacantCell( x, y, spanH, spanV ) ) {
+						CellInfo info = new CellInfo();
+						info.cellX = x;
+						info.cellY = y;
+						info.spanH = spanH;
+						info.spanV = spanV;
+						info.screen = mCellInfo.screen;
+						return info;
+					}
+				}
+			}
+		} else {
+
+			for ( int y = 0; y < mOccupied.length; y++ ) {
+				for ( int x = 0; x < mOccupied[y].length; x++ ) {
+					if ( findVacantCell( y, x, spanH, spanV ) ) {
+						CellInfo info = new CellInfo();
+						info.cellX = x;
+						info.cellY = y;
+						info.spanH = spanH;
+						info.spanV = spanV;
+						info.screen = mCellInfo.screen;
+						return info;
+					}
 				}
 			}
 		}
@@ -535,8 +560,6 @@ public class CellLayout extends ViewGroup {
 
 		int count = getChildCount();
 
-		// logger.log( "childCount: " + count );
-
 		for ( int i = 0; i < count; i++ ) {
 			View child = getChildAt( i );
 			LayoutParams lp = (LayoutParams) child.getLayoutParams();
@@ -553,7 +576,9 @@ public class CellLayout extends ViewGroup {
 			child.measure( childWidthMeasureSpec, childheightMeasureSpec );
 		}
 		setMeasuredDimension( width, height );
-		// logger.log( "size: ", width, height );
+
+		logger.log( "size: ", width, height );
+		logger.log( "cell size: ", mCellWidth, mCellHeight );
 	}
 
 	/*
@@ -650,146 +675,17 @@ public class CellLayout extends ViewGroup {
 		dragRect.set( x, y, x + width, y + height );
 	}
 
-	/**
-	 * Find the first vacant cell, if there is one.
-	 * 
-	 * @param vacant
-	 *           Holds the x and y coordinate of the vacant cell
-	 * @param spanX
-	 *           Horizontal cell span.
-	 * @param spanY
-	 *           Vertical cell span.
-	 * 
-	 * @return True if a vacant cell was found
-	 */
-	public boolean getVacantCell( int[] vacant, int spanX, int spanY ) {
-		final int xCount = mAxisCells;
-		final int yCount = mAxisRows;
-		final boolean[][] occupied = mOccupied;
-		findOccupiedCells( xCount, yCount, occupied, null );
-		return findVacantCell( vacant, spanX, spanY, xCount, yCount, occupied );
-	}
 
-	/**
-	 * Find vacant cell.
-	 * 
-	 * @param vacant
-	 *           the vacant
-	 * @param spanX
-	 *           the span x
-	 * @param spanY
-	 *           the span y
-	 * @param xCount
-	 *           the x count
-	 * @param yCount
-	 *           the y count
-	 * @param occupied
-	 *           the occupied
-	 * @return true, if successful
-	 */
-	static boolean findVacantCell( int[] vacant, int spanX, int spanY, int xCount, int yCount, boolean[][] occupied ) {
-
-		for ( int x = 0; x < xCount; x++ ) {
-			for ( int y = 0; y < yCount; y++ ) {
-				boolean available = !occupied[x][y];
-				out:
-				for ( int i = x; i < x + spanX - 1 && x < xCount; i++ ) {
-					for ( int j = y; j < y + spanY - 1 && y < yCount; j++ ) {
-						available = available && !occupied[i][j];
-						if ( !available ) break out;
-					}
-				}
-
-				if ( available ) {
-					vacant[0] = x;
-					vacant[1] = y;
-					return true;
-				}
-			}
-		}
-
-		return false;
-	}
-
-	/**
-	 * Gets the occupied cells.
-	 * 
-	 * @return the occupied cells
-	 */
-	boolean[] getOccupiedCells() {
-		final int xCount = mAxisCells;
-		final int yCount = mAxisRows;
-		final boolean[][] occupied = mOccupied;
-		findOccupiedCells( xCount, yCount, occupied, null );
-		final boolean[] flat = new boolean[xCount * yCount];
-		for ( int y = 0; y < yCount; y++ ) {
-			for ( int x = 0; x < xCount; x++ ) {
-				flat[y * xCount + x] = occupied[x][y];
-			}
-		}
-		return flat;
-	}
-
-	/**
-	 * Find occupied cells.
-	 * 
-	 * @param xCount
-	 *           the x count
-	 * @param yCount
-	 *           the y count
-	 * @param occupied
-	 *           the occupied
-	 * @param ignoreView
-	 *           the ignore view
-	 */
-	private void findOccupiedCells( int xCount, int yCount, boolean[][] occupied, View ignoreView ) {
-		for ( int x = 0; x < xCount; x++ ) {
-			for ( int y = 0; y < yCount; y++ ) {
-				occupied[x][y] = false;
-			}
-		}
-
-		int count = getChildCount();
-		for ( int i = 0; i < count; i++ ) {
-			View child = getChildAt( i );
-			if ( child.equals( ignoreView ) ) {
-				continue;
-			}
-			LayoutParams lp = (LayoutParams) child.getLayoutParams();
-
-			for ( int x = lp.cellX; x < lp.cellX + lp.cellHSpan && x < xCount; x++ ) {
-				for ( int y = lp.cellY; y < lp.cellY + lp.cellVSpan && y < yCount; y++ ) {
-					occupied[x][y] = true;
-				}
-			}
-		}
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see android.view.ViewGroup#generateLayoutParams(android.util.AttributeSet)
-	 */
 	@Override
 	public ViewGroup.LayoutParams generateLayoutParams( AttributeSet attrs ) {
 		return new CellLayout.LayoutParams( getContext(), attrs );
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see android.view.ViewGroup#checkLayoutParams(android.view.ViewGroup.LayoutParams)
-	 */
 	@Override
 	protected boolean checkLayoutParams( ViewGroup.LayoutParams p ) {
 		return p instanceof CellLayout.LayoutParams;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see android.view.ViewGroup#generateLayoutParams(android.view.ViewGroup.LayoutParams)
-	 */
 	@Override
 	protected ViewGroup.LayoutParams generateLayoutParams( ViewGroup.LayoutParams p ) {
 		return new CellLayout.LayoutParams( p );

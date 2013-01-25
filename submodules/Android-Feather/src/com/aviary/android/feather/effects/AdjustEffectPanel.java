@@ -4,6 +4,7 @@ import org.json.JSONException;
 import android.annotation.SuppressLint;
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -201,6 +202,7 @@ public class AdjustEffectPanel extends AbstractContentPanel implements OnClickLi
 	 * 
 	 * @see com.aviary.android.feather.effects.AbstractEffectPanel#onGenerateResult()
 	 */
+	@SuppressLint("NewApi")
 	@Override
 	protected void onGenerateResult() {
 		final int rotation = (int) mView.getRotation();
@@ -208,10 +210,15 @@ public class AdjustEffectPanel extends AbstractContentPanel implements OnClickLi
 		final boolean horizontal = mView.getHorizontalFlip();
 		final boolean vertical = mView.getVerticalFlip();
 		final double growthFactor = ( 1 / mView.getGrowthFactor() );
+		
+		mLogger.log( "rotation: " + rotation );
+		mLogger.log( "rotationFromStraigthen: " + rotationFromStraighten );
+		mLogger.log( "flip: " + horizontal + ", " + vertical );
+		mLogger.log( "growFactor: " + growthFactor );
 
 		AdjustFilter filter = (AdjustFilter) mFilter;
-		filter.setFixedRotation( rotation );
 		filter.setFlip( horizontal, vertical );
+		filter.setFixedRotation( rotation );
 		filter.setStraighten( rotationFromStraighten, growthFactor, growthFactor );
 
 		Bitmap output;

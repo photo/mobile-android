@@ -4,46 +4,45 @@
     <integer name="is_sticker">1</integer>
     <integer name="is_filter">1</integer>
     <integer name="is_tool">1</integer>
-    <integer name="is_border">1</integer>
+    <integer name="is_border">0</integer>
 
     <!-- list of available native filters -->
     <!-- each filter must have an equivalent "feather_plugin_filter_xxx_thumb" drawable -->
     <!-- and a "feather_plugin_filter_xxx_name" string label -->
     <string-array name="filters_list">
-        <item>undefined</item>
-        <item>singe</item>
-        <item>vivid</item>
-        <item>sancarmen</item>
-        <item>purple</item>
-        <item>thresh</item>
-        <item>aqua</item>
-        <item>andy</item>
-        <item>edgewood</item>
-        <item>joecool</item>
-        <item>bw</item>
-        <item>sepia</item>
-        <item>softfocus</item>
+        <item>original</item>
+        <item>default5</item>
+        <item>default10</item>
+        <item>default2</item>
+        <item>default9</item>
+        <item>default11</item>
+        <item>default1</item>
+        <item>default8</item>
+        <item>default7</item>
+        <item>default3</item>
+        <item>default13</item>
+        <item>default6</item>
+        <item>default12</item>
     </string-array>
+    
+    <string name="feather_plugin_filter_undefined_name">Original</string>
+    <string name="feather_plugin_filter_default1_name">Dean</string>
+    <string name="feather_plugin_filter_default2_name">Haas</string>
+    <string name="feather_plugin_filter_default3_name">Boardwalk</string>
+    <string name="feather_plugin_filter_default5_name">Clyde</string>
+    <string name="feather_plugin_filter_default6_name">Metropolis</string>
+    <string name="feather_plugin_filter_default7_name">Marie</string>
+    <string name="feather_plugin_filter_default8_name">Keylime</string>
+    <string name="feather_plugin_filter_default9_name">Zona</string>
+    <string name="feather_plugin_filter_default10_name">Avenue</string>
+    <string name="feather_plugin_filter_default11_name">Lucky</string>
+    <string name="feather_plugin_filter_default12_name">Cruz</string>
+    <string name="feather_plugin_filter_default13_name">Sage</string>
     
     <!-- list of available borders -->
     <!-- each border must have an equivalent "feather_plugin_border_xxx_thumb" drawable -->
     <!-- and a "feather_plugin_border_xxx_name" string label -->    
-    <string-array name="borders_list">
-        <item>original</item>
-        <item>justround</item>
-        <item>smooth</item>
-        <item>lines</item>
-        <item>instant</item>
-        <item>charcoal</item>
-        <item>fade</item>
-        <item>shadow</item>
-        <item>round</item>
-        <item>vignette</item>
-        <item>rect</item>
-        <item>torn</item>
-        <item>torn3</item>
-        <item>bulge</item>
-        <item>halftone</item>
-    </string-array>
+    <string-array name="borders_list" />
+    <integer name="border_version">1</integer>
     
 </resources>

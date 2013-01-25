@@ -3,12 +3,10 @@ package com.aviary.android.feather.widget;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import com.aviary.android.feather.R;
-import com.aviary.android.feather.library.log.LoggerFactory;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -94,8 +92,6 @@ public class ImageButtonRadioGroup extends LinearLayout {
 	@Override
 	protected synchronized void onLayout( boolean changed, int l, int t, int r, int b ) {
 		super.onLayout( changed, l, t, r, b );
-
-		Log.i( LoggerFactory.LOG_TAG, "onLayout: " + changed );
 
 		if ( changed ) {
 			for ( int i = 0; i < getChildCount(); i++ ) {

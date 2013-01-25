@@ -70,13 +70,12 @@ public class EffectLoaderService extends EffectContextService {
 				break;
 
 			case EFFECTS:
-				panel = new NativeEffectsPanel( context );
-				//panel = new EffectsPanel( context, FeatherIntent.PluginType.TYPE_FILTER );
+				panel = new EffectsPanel( context );
 				break;
 
-			//case BORDERS:
-			//	panel = new EffectsPanel( context, FeatherIntent.PluginType.TYPE_BORDER );
-			//	break;
+			case BORDERS:
+				panel = new BordersPanel( context );
+				break;
 
 			case CROP:
 				panel = new CropPanel( context );
@@ -125,13 +124,12 @@ public class EffectLoaderService extends EffectContextService {
 		mAllEntries = new EffectEntry[] {
 			new EffectEntry( FilterLoaderFactory.Filters.ENHANCE, R.drawable.feather_tool_icon_enhance, R.string.enhance ),
 			new EffectEntry( FilterLoaderFactory.Filters.EFFECTS, R.drawable.feather_tool_icon_effects, R.string.effects ),
-			/*new EffectEntry( FilterLoaderFactory.Filters.BORDERS, R.drawable.feather_tool_icon_borders, R.string.feather_borders ),*/
+			new EffectEntry( FilterLoaderFactory.Filters.BORDERS, R.drawable.feather_tool_icon_borders, R.string.feather_borders ),
 			new EffectEntry( FilterLoaderFactory.Filters.STICKERS, R.drawable.feather_tool_icon_stickers, R.string.stickers ),
 			new EffectEntry( FilterLoaderFactory.Filters.ADJUST, R.drawable.feather_tool_icon_adjust, R.string.adjust ),
 			new EffectEntry( FilterLoaderFactory.Filters.CROP, R.drawable.feather_tool_icon_crop, R.string.crop ),
 			new EffectEntry( FilterLoaderFactory.Filters.BRIGHTNESS, R.drawable.feather_tool_icon_brightness, R.string.brightness ),
-			new EffectEntry( FilterLoaderFactory.Filters.COLORTEMP, R.drawable.feather_tool_icon_temperature,
-					R.string.feather_tool_temperature ),
+			new EffectEntry( FilterLoaderFactory.Filters.COLORTEMP, R.drawable.feather_tool_icon_temperature, R.string.feather_tool_temperature ),
 			new EffectEntry( FilterLoaderFactory.Filters.CONTRAST, R.drawable.feather_tool_icon_contrast, R.string.contrast ),
 			new EffectEntry( FilterLoaderFactory.Filters.SATURATION, R.drawable.feather_tool_icon_saturation, R.string.saturation ),
 			new EffectEntry( FilterLoaderFactory.Filters.SHARPNESS, R.drawable.feather_tool_icon_sharpen, R.string.sharpen ),

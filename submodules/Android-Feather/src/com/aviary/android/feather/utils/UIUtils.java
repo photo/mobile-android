@@ -6,7 +6,7 @@ import android.graphics.Bitmap.Config;
 import android.graphics.Canvas;
 import android.graphics.PorterDuff.Mode;
 import android.graphics.PorterDuffColorFilter;
-import android.graphics.Typeface;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.util.DisplayMetrics;
 import android.view.Gravity;
@@ -16,7 +16,6 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 import com.aviary.android.feather.R;
 import com.aviary.android.feather.graphics.AnimatedRotateDrawable;
-import com.aviary.android.feather.library.graphics.drawable.FastBitmapDrawable;
 import com.aviary.android.feather.widget.IToast;
 import com.aviary.android.feather.widget.wp.CellLayout;
 
@@ -99,6 +98,8 @@ public class UIUtils {
 		toast.setView( layout );
 		toast.show();
 	}
+	
+	static PorterDuffColorFilter mWhiteMultiplyFilter = new PorterDuffColorFilter( 0xFFFFFFFF, Mode.MULTIPLY );
 
 	/**
 	 * Draw folder icon.
@@ -111,7 +112,7 @@ public class UIUtils {
 	 *           the icon_new
 	 * @return the drawable
 	 */
-	public static Drawable drawFolderIcon( Drawable folder, Drawable icon, Drawable icon_new ) {
+	public static Drawable drawFolderIcon( Drawable folder, Drawable icon, float ratio ) {
 
 		final int w = folder.getIntrinsicWidth();
 		final int h = folder.getIntrinsicHeight();
@@ -121,23 +122,41 @@ public class UIUtils {
 		Canvas canvas = new Canvas( bitmap );
 		folder.draw( canvas );
 
-		float icon_w = (float) w / 1.5f;
-		float icon_h = (float) h / 1.5f;
+		float icon_w = (float) w / ratio;
+		float icon_h = (float) h / ratio;
 		float icon_left = ( w - icon_w ) / 2;
 		float icon_top = ( h - icon_h ) / 2;
 
 		icon.setBounds( (int) icon_left, (int) icon_top, (int) ( icon_left + icon_w ), (int) ( icon_top + icon_h ) );
-		icon.setColorFilter( new PorterDuffColorFilter( 0xFFFFFFFF, Mode.MULTIPLY ) );
+		icon.setColorFilter( mWhiteMultiplyFilter );
 		icon.setFilterBitmap( true );
 		icon.draw( canvas );
 
-		if ( icon_new != null ) {
-			icon_new.setBounds( 0, 0, (int) ( w / 2.5 ), (int) ( h / 2.5 ) );
-			icon_new.draw( canvas );
-		}
-
-		return new FastBitmapDrawable( bitmap );
+		return new BitmapDrawable( bitmap );
 	}
+	
+	public static Bitmap drawFolderBitmap( Drawable folder, Drawable icon, float ratio ) {
+
+		final int w = folder.getIntrinsicWidth();
+		final int h = folder.getIntrinsicHeight();
+		folder.setBounds( 0, 0, w, h );
+
+		Bitmap bitmap = Bitmap.createBitmap( w, h, Config.ARGB_8888 );
+		Canvas canvas = new Canvas( bitmap );
+		folder.draw( canvas );
+
+		float icon_w = (float) w / ratio;
+		float icon_h = (float) h / ratio;
+		float icon_left = ( w - icon_w ) / 2;
+		float icon_top = ( h - icon_h ) / 2;
+
+		icon.setBounds( (int) icon_left, (int) icon_top, (int) ( icon_left + icon_w ), (int) ( icon_top + icon_h ) );
+		icon.setColorFilter( mWhiteMultiplyFilter );
+		icon.setFilterBitmap( true );
+		icon.draw( canvas );
+
+		return bitmap;
+	}	
 
 	/**
 	 * Try to calculate the optimal number of columns for the current screen.

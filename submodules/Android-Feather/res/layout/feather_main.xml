@@ -33,10 +33,10 @@
                 android:persistentDrawingCache="none" >
 
                 <RelativeLayout
+                    android:padding="?attr/mainImagePadding"
                     android:id="@+id/image_container"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1" >
+                    android:layout_height="match_parent">
 
                     <RelativeLayout
                         android:id="@+id/drawing_view_container"
@@ -59,7 +59,10 @@
 
                 <!-- info screen -->
 
+				<!-- 
                 <include layout="@layout/feather_infoscreen" />
+				-->
+				<RelativeLayout android:layout_width="match_parent" android:layout_height="match_parent" android:id="@+id/infocreeen_container" />
             </ViewAnimator>
 
             <LinearLayout
@@ -68,17 +71,31 @@
                 android:layout_height="?attr/optionPanelHeight" />
         </LinearLayout>
 
+        <include
+            android:id="@+id/bottombar_view_flipper"
+            android:layout_alignParentBottom="true"
+            layout="@layout/feather_bottombar" />
+        
+        <!-- popup container dialog -->
+        <RelativeLayout 
+            android:visibility="invisible"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/toolbar"
+            android:id="@+id/feather_dialogs_container">
+        </RelativeLayout>
+        
+        <!-- toolbar shadow -->
         <ImageView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/toolbar"
             android:scaleType="fitXY"
-            android:src="@drawable/feather_shadow_down" />
-
-        <include
-            android:id="@+id/bottombar_view_flipper"
-            android:layout_alignParentBottom="true"
-            layout="@layout/feather_bottombar" />
+            android:id="@+id/feather_toolbar_shadow"
+            android:src="@drawable/feather_shadow_down" />        
+        
+        <SurfaceView android:layout_width="0dp" android:layout_height="0dp" android:visibility="invisible" />
+        
     </RelativeLayout>
 
 </com.aviary.android.feather.library.services.drag.DragLayer>
