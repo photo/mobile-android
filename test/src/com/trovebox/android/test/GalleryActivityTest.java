@@ -6,21 +6,22 @@ import java.util.Collection;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
-import com.trovebox.android.test.R;
-
 import org.apache.http.client.ClientProtocolException;
 import org.easymock.EasyMock;
+import org.holoeverywhere.widget.ListAdapterWrapper;
 import org.json.JSONException;
 import org.junit.Assert;
 import org.powermock.api.easymock.PowerMock;
 
+import android.widget.ListAdapter;
 import android.widget.ListView;
 
 import com.actionbarsherlock.app.ActionBar;
 import com.jayway.android.robotium.solo.Solo;
-import com.trovebox.android.app.MainActivity;
 import com.trovebox.android.app.GalleryFragment.GalleryAdapterExt;
+import com.trovebox.android.app.MainActivity;
 import com.trovebox.android.app.net.Paging;
+import com.trovebox.android.app.net.PhotoResponse;
 import com.trovebox.android.app.net.PhotosResponse;
 import com.trovebox.android.app.net.ReturnSizes;
 import com.trovebox.android.app.util.CommonUtils;
@@ -53,6 +54,17 @@ public class GalleryActivityTest extends
                         new PhotosResponse(JSONUtils.getJson(
                                 getInstrumentation().getContext(),
                                 R.raw.json_photos_get))).times(2);
+        getApiMock().getPhoto(
+                (String) EasyMock.anyObject(),
+                (ReturnSizes) EasyMock.anyObject()
+                );
+        PowerMock
+                .expectLastCall()
+                .andReturn(
+                        new PhotoResponse(JSONUtils.getJson(
+                                getInstrumentation().getContext(),
+                                R.raw.json_photo_get)))
+                .anyTimes();
         PowerMock.replayAll();
         getActivity().runOnUiThread(new Runnable()
         {
@@ -74,11 +86,14 @@ public class GalleryActivityTest extends
         Assert.assertTrue(solo.getCurrentListViews().size() == 1);
         ListView listView = solo.getCurrentListViews().get(0);
         Assert.assertNotNull(listView.getAdapter());
-        Assert.assertTrue(listView.getAdapter() instanceof GalleryAdapterExt);
-        GalleryAdapterExt adapter = (GalleryAdapterExt) listView.getAdapter();
+        ListAdapter adapter = listView.getAdapter();
+        Assert.assertTrue(adapter instanceof ListAdapterWrapper);
+        adapter = ((ListAdapterWrapper) adapter).getWrappedAdapter();
+        Assert.assertTrue(adapter instanceof GalleryAdapterExt);
+        GalleryAdapterExt gadapter = (GalleryAdapterExt) adapter;
         CommonUtils.debug(GalleryActivityTest.class.getSimpleName(),
                 "start compare");
-        assertEquals(2, adapter.getSuperCount());
+        assertEquals(2, gadapter.getSuperCount());
 
         // check if the mock calls were called correctly
         PowerMock.verifyAll();

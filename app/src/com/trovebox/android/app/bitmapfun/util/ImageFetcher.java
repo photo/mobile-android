@@ -25,16 +25,16 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.util.Log;
+
 import com.trovebox.android.app.BuildConfig;
 import com.trovebox.android.app.R;
 import com.trovebox.android.app.util.CommonUtils;
 import com.trovebox.android.app.util.GuiUtils;
 import com.trovebox.android.app.util.LoadingControl;
 import com.trovebox.android.app.util.TrackerUtils;
-
-import android.content.Context;
-import android.graphics.Bitmap;
-import android.util.Log;
 
 /**
  * A simple subclass of {@link ImageResizer} that fetches and resizes images
@@ -141,6 +141,10 @@ public class ImageFetcher extends ImageResizer {
     public static File downloadBitmap(Context context, String urlString) {
         final File cacheDir = DiskLruCache.getDiskCacheDir(context, HTTP_CACHE_DIR);
 
+        if (CommonUtils.TEST_CASE && urlString == null)
+        {
+            return null;
+        }
         DiskLruCache cache =
                 DiskLruCache.openCache(context, cacheDir, HTTP_CACHE_SIZE);
         // #273 additional checks

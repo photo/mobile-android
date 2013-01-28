@@ -13,7 +13,7 @@
 
     <instrumentation
         android:name="android.test.InstrumentationTestRunner"
-        android:targetPackage="me.trovebox.android.app" />
+        android:targetPackage="com.trovebox.android.app" />
 
     <application
         android:icon="@drawable/icon"
