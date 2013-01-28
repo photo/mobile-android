@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main_stickers_layout"
+    style="@style/FeatherOptionPanel"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    tools:context=".effects.StickersPanel2" >
+
+    <ImageView
+        android:id="@+id/shadow_up"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/optionPanelShadowHeight"
+        android:layout_above="@+id/background"
+        android:scaleType="fitXY"
+        android:src="@drawable/feather_shadow_up" />
+
+    <LinearLayout
+        android:id="@+id/background"
+        style="@style/FeatherOptionPanel.Background2"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/optionPanelHeight"
+        android:layout_alignParentBottom="true" />
+
+    <ViewFlipper
+        android:id="@+id/flipper"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/optionPanelHeight"
+        android:layout_above="@+id/bottom_background_overlay"
+        android:autoStart="false"
+        android:inAnimation="@android:anim/fade_in"
+        android:outAnimation="@android:anim/fade_out"
+        android:paddingTop="1dip" >
+
+        <include
+            android:layout_width="match_parent"
+            android:layout_height="?attr/stickerPanelLoaderHeight"
+            android:layout_gravity="bottom"
+            layout="@layout/feather_include_small_loader" />
+
+        <com.aviary.android.feather.widget.HorizontalVariableListView
+            android:id="@+id/list_packs"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical" />
+
+        <com.aviary.android.feather.widget.HorizontalVariableListView
+            android:id="@+id/list_stickers"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical" />
+    </ViewFlipper>
+
+    <RelativeLayout
+        android:id="@+id/bottom_background_overlay"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/stickerPanelBottomOverlayHeight"
+        android:layout_alignParentBottom="true"
+        android:background="@drawable/feather_stickers_panel_bottom_overlay" />
+
+</RelativeLayout>

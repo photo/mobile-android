@@ -17,14 +17,13 @@
 	<string name="auto_enhance_label">Automàtic</string>
 	<string name="red_eye">Ulls vermells</string>
 	<string name="keep_editing">Continuar editant</string>
-	<string name="feather_plugin_filter_undefined_name">Original</string>
 	<string name="save">Fet</string>
 	<string name="tool">Eina</string>
 	<string name="contrast">Contrast</string>
 	<string name="feather_update">Actualitzar</string>
 	<string name="meme">Meme</string>
 	<string name="draw">Dibuix</string>
-	<string name="feather_borders">Fronteres</string>
+	<string name="feather_borders">Marc</string>
 	<string name="rotate">Girar</string>
 	<string name="filter_name">Lliure</string>
 	<string name="feather_close">Tancar</string>
@@ -33,5 +32,4 @@
 	<string name="brightness">Lluentor</string>
 	<string name="edit_top_text">Editar text superior</string>
 	<string name="infoscreen_text">Aviary és un SDK gratuït disponible per iOS i Android que et permet afegir capacitats d\'edició de fotos i efectes a la teva aplicació amb només dues línies de codi.</string>
-	<string name="feather_plugin_filter_purple_name">Indiglow</string>
 </resources>

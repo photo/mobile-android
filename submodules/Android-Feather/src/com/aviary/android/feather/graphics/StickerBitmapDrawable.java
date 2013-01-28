@@ -52,6 +52,22 @@ public class StickerBitmapDrawable extends Drawable implements IBitmapDrawable {
 		mShadowPaint.setColorFilter( blackColorFilter );
 	}
 
+	private float mLeft = 0;
+	private float mTop = 0;
+
+	@Override
+	protected void onBoundsChange( Rect bounds ) {
+		super.onBoundsChange( bounds );
+
+		mLeft = Math.abs( bounds.width() - srcRect.width() ) / 2;
+		mTop = Math.abs( bounds.height() - srcRect.height() ) / 2;
+
+		dstRect.set( srcRect );
+		dstRect.inset( -mInset / 2, -mInset / 2 );
+		dstRect.offset( (int) ( mLeft ), (int) ( mTop ) );
+
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -60,19 +76,30 @@ public class StickerBitmapDrawable extends Drawable implements IBitmapDrawable {
 	@Override
 	public void draw( Canvas canvas ) {
 
-		dstRect.set( srcRect );
-		dstRect.inset( -mInset / 2, -mInset / 2 );
-		dstRect.offset( mInset / 2 + 1, mInset / 2 + 1 );
+		if ( android.os.Build.VERSION.SDK_INT > 10 ) {
 
-		canvas.drawBitmap( mBitmap, srcRect, dstRect, mShadowPaint );
+			dstRect.offset( 1, 1 );
+			canvas.drawBitmap( mBitmap, srcRect, dstRect, mShadowPaint );
 
-		mPaint.setColorFilter( whiteColorFilter );
-		dstRect.offset( -1, -1 );
-		canvas.drawBitmap( mBitmap, srcRect, dstRect, mPaint );
+			mPaint.setColorFilter( whiteColorFilter );
+			dstRect.offset( -1, -1 );
+			canvas.drawBitmap( mBitmap, srcRect, dstRect, mPaint );
 
-		mPaint.setColorFilter( null );
-		canvas.drawBitmap( mBitmap, mInset / 2, mInset / 2, mPaint );
+			mPaint.setColorFilter( null );
+			canvas.drawBitmap( mBitmap, mLeft, mTop, mPaint );
 
+			/*
+			 * dstRect.set( srcRect ); dstRect.inset( -mInset / 2, -mInset / 2 ); dstRect.offset( mInset / 2 + 1, mInset / 2 + 1 );
+			 * canvas.drawBitmap( mBitmap, srcRect, dstRect, mShadowPaint );
+			 * 
+			 * mPaint.setColorFilter( whiteColorFilter ); dstRect.offset( -1, -1 ); canvas.drawBitmap( mBitmap, srcRect, dstRect,
+			 * mPaint );
+			 * 
+			 * mPaint.setColorFilter( null ); canvas.drawBitmap( mBitmap, mInset / 2, mInset / 2, mPaint );
+			 */
+		} else {
+			canvas.drawBitmap( mBitmap, mInset / 2, mInset / 2, mPaint );
+		}
 	}
 
 	/*

@@ -4,10 +4,9 @@
     style="@style/FeatherOptionPanel.EffectThumbLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:clickable="true"
     android:focusable="true"
     android:gravity="center_horizontal|bottom"
-    
+    android:clickable="false"
     android:orientation="vertical" >
 
     <ImageView
@@ -16,10 +15,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:paddingBottom="2dip"
-        android:paddingLeft="0dip"
-        android:paddingRight="0dip"
-        android:paddingTop="0dip"
+        android:paddingBottom="0dip"
+        android:paddingLeft="8dip"
+        android:paddingRight="8dip"
+        android:paddingTop="2dip"
         android:visibility="invisible"
         android:src="@drawable/feather_effect_thumb_selected_image" />
     
@@ -30,10 +29,13 @@
         android:layout_height="wrap_content"
         android:layout_above="@+id/text"
         android:visibility="invisible"
-        android:layout_centerHorizontal="true" />    
+        android:clickable="true"
+        android:scaleType="fitXY"
+        android:layout_centerHorizontal="true" />
 
     <com.aviary.android.feather.widget.TextViewCustomFont
         android:id="@+id/text"
+        android:clickable="true"
         style="@style/FeatherOptionPanel.ThumbText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

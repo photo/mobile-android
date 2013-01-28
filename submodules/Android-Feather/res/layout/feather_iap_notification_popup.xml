@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- IAP notification popup -->
+<com.aviary.android.feather.widget.IapNotificationLayout 
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/iap_popup"
+    android:visibility="invisible"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_alignParentBottom="true"
+    android:orientation="vertical"
+    android:clickable="false"
+    android:focusable="false"
+    android:focusableInTouchMode="false"
+    app:showDelay="@integer/feather_iap_show_delay_millis"
+    app:hideDelay="@integer/feather_iap_hide_delay_millis"
+    app:showDuration="@integer/feather_iap_show_duration_millis"
+    app:hideDuration="@integer/feather_iap_hide_duration_millis"
+     >
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:background="@drawable/feather_effects_popup_top"
+        android:gravity="center"
+        android:paddingBottom="10dip"
+        android:paddingLeft="16dip"
+        android:paddingRight="16dip"
+        android:paddingTop="16dip" >
+
+        <ImageView
+            android:id="@+id/iap_image"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/feather_frames_popup_icon" />
+
+        <com.aviary.android.feather.widget.TextViewCustomFont
+            android:id="@+id/iap_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            font="?attr/fontFamilyMedium"
+            android:paddingLeft="10dip"
+            android:shadowColor="?attr/shadowColorPrimaryInverse"
+            android:shadowDx="?attr/shadowDxMedium"
+            android:shadowDy="?attr/shadowDxMedium"
+            android:shadowRadius="?attr/shadowRadiusMedium"
+            android:text="2"
+            android:textColor="#FFbfd0e1"
+            android:textSize="@dimen/feather_effects_iap_notification_text_size" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/feather_effects_popup_bottom" >
+    </LinearLayout>
+
+</com.aviary.android.feather.widget.IapNotificationLayout>

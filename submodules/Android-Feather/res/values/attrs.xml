@@ -22,14 +22,30 @@
         <attr name="textSizeLarge" format="reference|dimension"></attr>
         <attr name="workspaceHeight" format="reference|dimension"></attr>
         <attr name="workspaceIndicator" format="reference"></attr>
-        <attr name="imageSelection" format="reference|color"></attr>
+        <attr name="workspaceIAPIndicator" format="reference"></attr>
+        
         <attr name="optionPanelHeight" format="dimension"></attr>
         <attr name="optionPanelShadowHeight" format="dimension"></attr>
         <attr name="optionPanelHeightWithShadow" format="dimension"></attr>
+        
         <attr name="optionPanelButtonCheckboxWidth" format="dimension"></attr>
         <attr name="optionPanelBackground" format="reference|color"></attr>
         <attr name="optionPanelBackground2" format="reference"></attr>
         <attr name="textAppearanceThumbSmall" format="reference"></attr>
+        
+        <attr name="stickerPackDividerPadding" format="dimension"></attr>
+        <attr name="stickerPackDividerEmptyDrawable" format="reference|color"></attr>
+        
+        <attr name="stickerPanelBottomOverlayHeight" format="dimension"></attr>
+        <attr name="stickerPanelLoaderHeight" format="dimension"></attr>
+
+        <attr name="iapDialogHeightWeight" format="integer"></attr>
+        <attr name="iapDialogWidthWeight" format="integer"></attr>
+        <attr name="iapDialogTopWeight" format="integer"></attr>
+        <attr name="iapDialogGridBackgroundColor" format="reference|color"></attr>
+        
+        <attr name="mainImagePadding" format="dimension"></attr>
+        <attr name="cropButtonMarginTop" format="dimension"></attr>
         
     </declare-styleable>
     
@@ -41,6 +57,13 @@
     <declare-styleable name="Wheel">
         <attr format="integer" name="ticks" />
         <attr format="integer" name="numRotations" />
+    </declare-styleable>
+    
+    <declare-styleable name="IapNotification">
+        <attr format="integer" name="showDelay" />
+        <attr format="integer" name="hideDelay" />
+        <attr format="integer" name="showDuration" />
+        <attr format="integer" name="hideDuration" />
     </declare-styleable>
     
     <declare-styleable name="WheelRadio">
@@ -72,7 +95,6 @@
     </declare-styleable>
         
     <declare-styleable name="EffectThumbLayout">
-        <attr format="dimension" name="selectedHeight" />
         <attr format="integer" name="selectionAnimationDuration" />
     </declare-styleable>
     
@@ -102,9 +124,15 @@
         <attr name="verticalPadding" format="dimension" />
         <attr name="cells" format="integer" />
         <attr name="rows" format="integer" />
+        <attr name="layout_direction" />
     </declare-styleable>
     
     <!-- <attr format="reference" name="imageButtonRadioButtonStyle" /> -->
+    
+    <attr name="layout_direction">
+        <enum name="vertical" value="0" />
+        <enum name="horizontal" value="1" />
+    </attr>
     
     <attr name="orientation">
         <enum name="horizontal" value="0" />

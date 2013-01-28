@@ -1,6 +1,7 @@
 package com.aviary.android.feather.effects;
 
 import java.util.HashMap;
+import android.annotation.SuppressLint;
 import android.content.DialogInterface.OnClickListener;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
@@ -24,10 +25,8 @@ import com.aviary.android.feather.library.services.EffectContext;
  * 
  * @author alessandro
  */
+@SuppressLint("HandlerLeak")
 public abstract class AbstractEffectPanel {
-
-	/** The main listener handler. */
-	Handler mListenerHandler;
 
 	static final int PREVIEW_BITMAP_CHANGED = 1;
 	static final int PREVIEW_FILTER_CHANGED = 2;
@@ -36,6 +35,11 @@ public abstract class AbstractEffectPanel {
 	static final int PROGRESS_END = 5;
 	static final int PROGRESS_MODAL_START = 6;
 	static final int PROGRESS_MODAL_END = 7;
+	
+	static final int SET_TOOLBAR_TITLE = 8;
+	static final int RESTORE_TOOLBAR_TITLE = 9;
+	static final int HIDE_TOOLBAR_APPLY_BUTTON = 10;
+	static final int SHOW_TOOLBAR_APPLY_BUTTON = 11;
 
 	/**
 	 * If the current panel implements {@link #AbstractEffectPanel.ContentPanel} this listener is used by the FilterManager to hide the main
@@ -241,6 +245,79 @@ public abstract class AbstractEffectPanel {
 	protected OnErrorListener mErrorListener;
 	private EffectContext mFilterContext;
 	protected Logger mLogger;
+	
+	/** The main listener handler. */
+	final Handler mListenerHandler = new Handler() {
+
+		@Override
+		public void handleMessage( Message msg ) {
+			super.handleMessage( msg );
+
+			switch ( msg.what ) {
+				case PREVIEW_FILTER_CHANGED:
+					if ( mListener != null && isActive() ) {
+						mListener.onPreviewChange( (ColorFilter) msg.obj );
+					}
+					break;
+
+				case PREVIEW_BITMAP_CHANGED:
+					if ( mListener != null && isActive() ) {
+						mListener.onPreviewChange( (Bitmap) msg.obj );
+					}
+					break;
+
+				case PROGRESS_START:
+					if ( mProgressListener != null && isCreated() ) {
+						mProgressListener.onProgressStart();
+					}
+					break;
+
+				case PROGRESS_END:
+					if ( mProgressListener != null && isCreated() ) {
+						mProgressListener.onProgressEnd();
+					}
+					break;
+
+				case PROGRESS_MODAL_START:
+					if ( mProgressListener != null && isCreated() ) {
+						mProgressListener.onProgressModalStart();
+					}
+					break;
+
+				case PROGRESS_MODAL_END:
+					if ( mProgressListener != null && isCreated() ) {
+						mProgressListener.onProgressModalEnd();
+					}
+					break;
+					
+				case SET_TOOLBAR_TITLE:
+					if( isActive() )
+						getContext().setToolbarTitle( (CharSequence) msg.obj );
+					break;
+					
+				case RESTORE_TOOLBAR_TITLE:
+					if( isActive() )
+						getContext().restoreToolbarTitle();
+					break;
+					
+				case HIDE_TOOLBAR_APPLY_BUTTON:
+					if( isActive() ) {
+						getContext().setPanelApplyStatusEnabled( false );
+					}
+					break;
+					
+				case SHOW_TOOLBAR_APPLY_BUTTON:
+					if( isActive() ) {
+						getContext().setPanelApplyStatusEnabled( true );
+					}
+					break;
+
+				default:
+					break;
+			}
+
+		}
+	};	
 
 	/**
 	 * Instantiates a new abstract effect panel.
@@ -259,6 +336,29 @@ public abstract class AbstractEffectPanel {
 
 	public Handler getHandler() {
 		return mListenerHandler;
+	}
+	
+	/**
+	 * Change the toolbar title
+	 * @param text
+	 */
+	protected void setToolbarTitle( final CharSequence text ) {
+		mListenerHandler.obtainMessage( SET_TOOLBAR_TITLE, text ).sendToTarget();
+	}
+	
+	/**
+	 * Restore the toolbar title to its default value
+	 */
+	protected void restoreToolbarTitle() {
+		mListenerHandler.sendEmptyMessage( RESTORE_TOOLBAR_TITLE );
+	}
+	
+	/**
+	 * Enabled/Disable the "apply" button in the current panel
+	 * @param value
+	 */
+	protected void setApplyEnabled( boolean value ) {
+		mListenerHandler.sendEmptyMessage( value ? SHOW_TOOLBAR_APPLY_BUTTON : HIDE_TOOLBAR_APPLY_BUTTON );
 	}
 
 	/**
@@ -429,7 +529,7 @@ public abstract class AbstractEffectPanel {
 
 	/**
 	 * Manager is asking to cancel the current tool. Return false if no further user interaction is necessary and you agree to close
-	 * this panel. Return true otherwise and the next call to this panel will be onCancelled. If you want to manage this event you
+	 * this panel. Return true otherwise. If you want to manage this event you
 	 * can then cancel the panel by calling {@link EffectContext#cancel()} on the current context
 	 * 
 	 * onCancel -> onCancelled -> onDeactivate -> onDestroy
@@ -442,11 +542,9 @@ public abstract class AbstractEffectPanel {
 	}
 
 	/*
-	 * Panel is being closed without applying the result. Either because the user clicked on the cancel button or because a back
+	 * Panel is being closed without applying the result. 
+	 * Either because the user clicked on the cancel button or because a back
 	 * event has been fired.
-	 */
-	/**
-	 * On cancelled.
 	 */
 	public void onCancelled() {
 		mLogger.info( "onCancelled" );
@@ -490,56 +588,6 @@ public abstract class AbstractEffectPanel {
 	public void onActivate() {
 		mLogger.info( "onActivate" );
 		mActive = true;
-
-		mListenerHandler = new Handler() {
-
-			@Override
-			public void handleMessage( Message msg ) {
-				super.handleMessage( msg );
-
-				switch ( msg.what ) {
-					case PREVIEW_FILTER_CHANGED:
-						if ( mListener != null && isActive() ) {
-							mListener.onPreviewChange( (ColorFilter) msg.obj );
-						}
-						break;
-
-					case PREVIEW_BITMAP_CHANGED:
-						if ( mListener != null && isActive() ) {
-							mListener.onPreviewChange( (Bitmap) msg.obj );
-						}
-						break;
-
-					case PROGRESS_START:
-						if ( mProgressListener != null && isCreated() ) {
-							mProgressListener.onProgressStart();
-						}
-						break;
-
-					case PROGRESS_END:
-						if ( mProgressListener != null && isCreated() ) {
-							mProgressListener.onProgressEnd();
-						}
-						break;
-
-					case PROGRESS_MODAL_START:
-						if ( mProgressListener != null && isCreated() ) {
-							mProgressListener.onProgressModalStart();
-						}
-						break;
-
-					case PROGRESS_MODAL_END:
-						if ( mProgressListener != null && isCreated() ) {
-							mProgressListener.onProgressModalEnd();
-						}
-						break;
-
-					default:
-						break;
-				}
-
-			}
-		};
 	}
 
 	/**
@@ -549,7 +597,6 @@ public abstract class AbstractEffectPanel {
 		mLogger.info( "onDeactivate" );
 		setEnabled( false );
 		mActive = false;
-		mListenerHandler = null;
 	}
 
 	/**
@@ -582,7 +629,7 @@ public abstract class AbstractEffectPanel {
 		mFilterContext = null;
 		mFilter = null;
 	}
-
+	
 	/**
 	 * Recycle and free the preview bitmap.
 	 */

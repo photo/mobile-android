@@ -117,7 +117,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
@@ -128,6 +127,7 @@ import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.ToggleButton;
 import android.widget.ViewAnimator;
 import android.widget.ViewFlipper;
@@ -146,6 +146,7 @@ import com.aviary.android.feather.library.content.EffectEntry;
 import com.aviary.android.feather.library.content.FeatherIntent;
 import com.aviary.android.feather.library.filters.FilterLoaderFactory;
 import com.aviary.android.feather.library.filters.NativeFilterProxy;
+import com.aviary.android.feather.library.filters.NativeFilterProxy.JNIInitError;
 import com.aviary.android.feather.library.graphics.animation.Flip3dAnimation;
 import com.aviary.android.feather.library.graphics.drawable.IBitmapDrawable;
 import com.aviary.android.feather.library.log.LoggerFactory;
@@ -198,13 +199,13 @@ public class FeatherActivity extends MonitoredActivity implements OnToolbarClick
 	}
 
 	/** Version string number. */
-	public static final String SDK_VERSION = "2.1.91";
+	public static final String SDK_VERSION = "2.2.1";
 
 	/** Internal version number. */
-	public static final int SDK_INT = 70;
+	public static final int SDK_INT = 74;
 
 	/** SHA-1 version id. */
-	public static final String ID = "$Id: 81707a8d48adb1a2ffcba4e7d684647b22b66c3f $";
+	public static final String ID = "$Id: ea259b84ab4c54948ab4d5eeb2e340ccfe6ee8e5 $";
 	
 	/** delay between click and panel opening */
 	private static final int TOOLS_OPEN_DELAY_TIME = 50;
@@ -232,9 +233,6 @@ public class FeatherActivity extends MonitoredActivity implements OnToolbarClick
 
 	/** The main filter controller. */
 	protected FilterManager mFilterManager;
-
-	/** api key. */
-	protected String mApiKey = "";
 
 	/** tool list to show. */
 	protected List<String> mToolList;
@@ -277,6 +275,9 @@ public class FeatherActivity extends MonitoredActivity implements OnToolbarClick
 
 	/** The toolbar main animator. */
 	private ViewFlipper mToolbarMainAnimator;
+	
+	/** the popup container */
+	private ViewGroup mPopupContainer;
 
 	private DragLayer mDragLayer;
 
@@ -294,6 +295,8 @@ public class FeatherActivity extends MonitoredActivity implements OnToolbarClick
 		@Override
 		public void handleMessage( Message msg ) {
 			super.handleMessage( msg );
+			
+			logger.info( "handleMessage: " + msg.what );
 
 			FeatherActivity parent = mParent.get();
 			if ( null != parent ) {
@@ -375,27 +378,28 @@ public class FeatherActivity extends MonitoredActivity implements OnToolbarClick
 		pResultCode = resultCode;
 		setResult( resultCode, data );
 	}
-
+	
 	@Override
 	public void onCreate( Bundle savedInstanceState ) {
+		
 		onPreCreate();
 
 		super.onCreate( savedInstanceState );
-		requestWindowFeature( Window.FEATURE_NO_TITLE );
-
+		
 		setContentView( R.layout.feather_main );
 
 		onInitializeUtils();
 		initializeUI();
+		
 		onRegisterReceiver();
-
+		
 		// initiate the filter manager
 		mUIHandler = new MyUIHandler( this );
-		mFilterManager = new FilterManager( this, mUIHandler, mApiKey );
+		mFilterManager = new FilterManager( this, mUIHandler, getApiKey() );
 		mFilterManager.setOnToolListener( this );
 		mFilterManager.setOnBitmapChangeListener( this );
 		mFilterManager.setDragLayer( mDragLayer );
-
+		
 		// first check the validity of the incoming intent
 		Uri srcUri = handleIntent( getIntent() );
 
@@ -438,7 +442,21 @@ public class FeatherActivity extends MonitoredActivity implements OnToolbarClick
 	protected void onInitializeUtils() {
 		UIUtils.init( this );
 		Constants.init( this );
-		NativeFilterProxy.init( this, null );
+		
+		final String api_key = getApiKey();
+		
+		JNIInitError result = NativeFilterProxy.init( this, null, api_key );
+		
+		if( result != JNIInitError.NoError ) {
+			Toast.makeText( getApplicationContext(), "Sorry an error occurred: " + result.name(), Toast.LENGTH_LONG ).show();
+			logger.error("Error initializing Aviary: " + result.name() );
+			finish();
+		}
+		
+		if( api_key == null || !(api_key.length() > 0) ) {
+			logger.error( "Attention. API-KEY cannot be found or is invalid" );
+			finish();
+		}
 	}
 
 	/*
@@ -765,6 +783,8 @@ public class FeatherActivity extends MonitoredActivity implements OnToolbarClick
 
 		mToolbarMainAnimator = ( (ViewFlipper) mToolbar.findViewById( R.id.top_indicator_main ) );
 		mToolbarContentAnimator = ( (ViewFlipper) mToolbar.findViewById( R.id.top_indicator_panel ) );
+		
+		mPopupContainer = (ViewGroup) findViewById( R.id.feather_dialogs_container );
 
 		// update the progressbar animation drawable
 		AnimatedRotateDrawable d = new AnimatedRotateDrawable( getResources(), R.drawable.feather_spinner_white_16 );
@@ -851,7 +871,6 @@ public class FeatherActivity extends MonitoredActivity implements OnToolbarClick
 			Bundle extras = intent.getExtras();
 			if ( extras != null ) {
 				Uri destUri = (Uri) extras.getParcelable( Constants.EXTRA_OUTPUT );
-				mApiKey = extras.getString( Constants.API_KEY );
 
 				if ( destUri != null ) {
 
@@ -942,10 +961,15 @@ public class FeatherActivity extends MonitoredActivity implements OnToolbarClick
 				entryMap.put( entry_name.name(), all_entries[i] );
 			}
 
+			if( !Constants.getValueFromIntent( Constants.EXTRA_FRAMES_ENABLE_EXTERNAL_PACKS, true ) ) {
+				entryMap.remove(  FilterLoaderFactory.Filters.BORDERS.name() );
+			}
+			
 			for ( String toolName : mToolList ) {
 				if ( !entryMap.containsKey( toolName ) ) continue;
 				listEntries.add( entryMap.get( toolName ) );
 			}
+			
 			return listEntries;
 		}
 		return mListEntries;
@@ -1023,6 +1047,18 @@ public class FeatherActivity extends MonitoredActivity implements OnToolbarClick
 	@Override
 	public ViewGroup getDrawingImageContainer() {
 		return mDrawingViewContainer;
+	}
+
+	@Override
+	public ViewGroup activatePopupContainer() {
+		mPopupContainer.setVisibility( View.VISIBLE );
+		return mPopupContainer;
+	}
+	
+	@Override
+	public void deactivatePopupContainer() {
+		mPopupContainer.removeAllViews();
+		mPopupContainer.setVisibility( View.GONE );
 	}
 
 	// ---------------------
@@ -1493,6 +1529,14 @@ public class FeatherActivity extends MonitoredActivity implements OnToolbarClick
 	private void showInfoScreen() {
 
 		createInfoScreenAnimations( true );
+		
+		// Add the infoscreen view to the UI.
+		ViewGroup view = (ViewGroup) mViewFlipper.findViewById( R.id.infocreeen_container );
+		if( null != view && view.getChildCount() == 0 )
+		{
+			UIUtils.getLayoutInflater().inflate( R.layout.feather_infoscreen, view, true );
+		}
+		
 		mViewFlipper.setDisplayedChild( 1 );
 
 		TextView text = (TextView) mViewFlipper.findViewById( R.id.version_text );
@@ -1546,15 +1590,6 @@ public class FeatherActivity extends MonitoredActivity implements OnToolbarClick
 	 */
 	public void resetToolIndicator() {
 		mToolbarContentAnimator.setDisplayedChild( 0 );
-	}
-
-	/**
-	 * Gets the api key.
-	 * 
-	 * @return the api key
-	 */
-	String getApiKey() {
-		return mApiKey;
 	}
 
 	/**
@@ -1710,6 +1745,7 @@ public class FeatherActivity extends MonitoredActivity implements OnToolbarClick
 
 			if ( convertView == null ) {
 				convertView = mLayoutInflater.inflate( mResourceId, mWorkspace, false );
+				( (CellLayout) convertView ).setNumRows( mScreenRows );
 				( (CellLayout) convertView ).setNumCols( mScreenCols );
 			}
 
@@ -1835,5 +1871,9 @@ public class FeatherActivity extends MonitoredActivity implements OnToolbarClick
 				}
 			}
 		}
+	}
+	
+	public FilterManager getController() {
+		return mFilterManager;
 	}
 }

@@ -5,14 +5,9 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.NoSuchElementException;
 import java.util.concurrent.Callable;
-import android.content.pm.ApplicationInfo;
-import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.os.Message;
-import android.view.View;
 import android.widget.ImageView;
 import com.aviary.android.feather.library.log.LoggerFactory;
 import com.aviary.android.feather.library.log.LoggerFactory.Logger;
@@ -28,7 +23,7 @@ public class AsyncImageManager {
 
 	public static interface OnImageLoadListener {
 
-		public void onLoadComplete( ImageView view, Bitmap bitmap );
+		public void onLoadComplete( ImageView view, Bitmap bitmap, int tag );
 	}
 
 	private static final int THUMBNAIL_LOADED = 1;
@@ -51,18 +46,14 @@ public class AsyncImageManager {
 
 	private Logger logger = LoggerFactory.getLogger( "AsyncImageManager", LoggerType.ConsoleLoggerType );
 
-	/**
-	 * Instantiates a new assets async download manager.
-	 * 
-	 * @param context
-	 *           the context
-	 * @param handler
-	 *           the handler
-	 */
 	public AsyncImageManager() {
+		this( 2 );
+	}
+
+	public AsyncImageManager( int nthreads ) {
 		mBitmapCache = new SimpleBitmapCache();
 
-		nThreads = 1;
+		nThreads = Math.min( 5, Math.max( 1, nthreads ) );
 		mQueue = new LinkedList<MyRunnable>();
 		threads = new PoolWorker[nThreads];
 		mHandler = new MyHandler( this );
@@ -94,20 +85,23 @@ public class AsyncImageManager {
 
 					Thumb thumb = (Thumb) msg.obj;
 
-					if ( thumb.image != null && thumb.bitmap != null ) {
-						if ( thumb.image.get() != null && thumb.bitmap.get() != null ) {
+					AsyncImageManager parent = mParent.get();
+					ImageView view = thumb.image.get();
+					Bitmap bitmap = thumb.bitmap != null ? thumb.bitmap.get() : null;
 
-							if ( mParent != null && mParent.get() != null ) {
-								AsyncImageManager parent = mParent.get();
-
-								if ( parent.mListener != null ) {
-									parent.mListener.onLoadComplete( thumb.image.get(), thumb.bitmap.get() );
-								} else {
-									thumb.image.get().setImageBitmap( thumb.bitmap.get() );
-								}
+					if ( null != parent ) {
+						if ( parent.mListener != null ) {
+							if ( null != view ) {
+								parent.mListener.onLoadComplete( view, bitmap, thumb.tag );
 							}
+							return;
 						}
 					}
+
+					if ( view != null && bitmap != null ) {
+						view.setImageBitmap( bitmap );
+					}
+
 					break;
 			}
 		}
@@ -153,19 +147,23 @@ public class AsyncImageManager {
 		}
 	};
 
+	public void execute( final Callable<Bitmap> executor, final String hash, final ImageView view ) {
+		execute( executor, hash, view, -1 );
+	}
+
 	/**
-	 * Load asset.
+	 * Retrive the bitmap either using the internal cache or executing the passed {@link Callable} instance.
 	 * 
-	 * @param resource
-	 *           the resource
+	 * @param executor
+	 *           - the executor
 	 * @param hash
-	 *           the src file
-	 * @param background
-	 *           the background
+	 *           - the unique hash used to store/retrieve the bitmap from the cache
 	 * @param view
-	 *           the view
+	 *           - the final {@link ImageView} where the bitmap will be shown
+	 * @param tag
+	 *           - a custom tag
 	 */
-	public void execute( final MyCallable executor, final String hash, final ImageView view ) {
+	public void execute( final Callable<Bitmap> executor, final String hash, final ImageView view, final int tag ) {
 
 		if ( mStopped ) return;
 
@@ -177,18 +175,21 @@ public class AsyncImageManager {
 			public void run() {
 				if ( mStopped ) return;
 
-				Message message = mHandler.obtainMessage();
+				Message message = Message.obtain();
 
 				Bitmap bitmap = mBitmapCache.getBitmapFromCache( hash );
 				if ( bitmap != null ) {
 					message.what = THUMBNAIL_LOADED;
-					message.obj = new Thumb( bitmap, view.get() );
+					message.obj = new Thumb( bitmap, view.get(), tag );
 				} else {
 					try {
 						bitmap = executor.call();
 					} catch ( Exception e ) {
 						e.printStackTrace();
+						// TODO: a fallback here???
+						return;
 					}
+
 					if ( bitmap != null ) mBitmapCache.addBitmapToCache( hash, bitmap );
 
 					ImageView imageView = view.get();
@@ -198,7 +199,7 @@ public class AsyncImageManager {
 						if ( this == bitmapTask ) {
 							imageView.setTag( null );
 							message.what = THUMBNAIL_LOADED;
-							message.obj = new Thumb( bitmap, imageView );
+							message.obj = new Thumb( bitmap, imageView, tag );
 						} else {
 							logger.error( "image tag is different than current task!" );
 						}
@@ -243,39 +244,10 @@ public class AsyncImageManager {
 	}
 
 	/**
-	 * Download icon.
-	 * 
-	 * @param info
-	 *           the info
-	 * @param pm
-	 *           the pm
-	 * @param view
-	 *           the view
-	 * @return the bitmap
-	 */
-	Bitmap downloadIcon( ApplicationInfo info, PackageManager pm, View view ) {
-		if ( view == null ) return null;
-
-		Drawable d = info.loadIcon( pm );
-		if ( d instanceof BitmapDrawable ) {
-			Bitmap bitmap = ( (BitmapDrawable) d ).getBitmap();
-			return bitmap;
-		}
-
-		return null;
-
-	}
-
-	/**
 	 * The Class PoolWorker.
 	 */
 	private class PoolWorker extends Thread {
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see java.lang.Thread#run()
-		 */
 		@Override
 		public void run() {
 			Runnable r;
@@ -368,19 +340,16 @@ public class AsyncImageManager {
 
 		public WeakReference<Bitmap> bitmap;
 		public WeakReference<ImageView> image;
+		public final int tag;
 
 		public Thumb( Bitmap bmp, ImageView img ) {
+			this( bmp, img, -1 );
+		}
+
+		public Thumb( Bitmap bmp, ImageView img, int ntag ) {
 			image = new WeakReference<ImageView>( img );
 			bitmap = new WeakReference<Bitmap>( bmp );
+			tag = ntag;
 		}
-	}
-
-	public static class MyCallable implements Callable<Bitmap> {
-
-		@Override
-		public Bitmap call() throws Exception {
-			return null;
-		}
-
 	}
 }

@@ -7,7 +7,7 @@
     android:focusableInTouchMode="false"
     android:gravity="center"
     android:orientation="vertical"
-    android:visibility="gone" >
+    android:visibility="visible" >
 
     <ScrollView
         android:layout_width="wrap_content"

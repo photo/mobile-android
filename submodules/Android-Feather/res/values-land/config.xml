@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+        <integer name="feather_iap_dialog_cols">6</integer>
+    	<integer name="feather_iap_dialog_rows">2</integer>
+    	
+    	<integer name="feather_iap_dialog_cols_effects">4</integer>
+    	<integer name="feather_iap_dialog_rows_effects">1</integer>
+    	
+    	<integer name="feather_iap_dialog_height_weight">90</integer>
+</resources>

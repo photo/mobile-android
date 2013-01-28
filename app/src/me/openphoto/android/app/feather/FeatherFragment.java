@@ -8,8 +8,13 @@ import java.io.InputStream;
 import java.util.Date;
 
 import me.openphoto.android.app.OpenPhotoApplication;
+import me.openphoto.android.app.R;
 import me.openphoto.android.app.util.CommonUtils;
 import me.openphoto.android.app.util.GuiUtils;
+
+import org.holoeverywhere.app.Fragment;
+import org.holoeverywhere.app.ProgressDialog;
+
 import android.annotation.SuppressLint;
 import android.content.ContentResolver;
 import android.content.ContentUris;
@@ -30,8 +35,6 @@ import android.support.v4.app.FragmentManager;
 import android.util.DisplayMetrics;
 import android.widget.ImageView;
 
-import org.holoeverywhere.app.Fragment;
-import org.holoeverywhere.app.ProgressDialog;
 import com.aviary.android.feather.Constants;
 import com.aviary.android.feather.FeatherActivity;
 import com.aviary.android.feather.library.media.ExifInterfaceWrapper;
@@ -44,7 +47,6 @@ import com.aviary.android.feather.library.utils.IOUtils;
 import com.aviary.android.feather.library.utils.ImageLoader.ImageSizes;
 import com.aviary.android.feather.library.utils.StringUtils;
 import com.aviary.android.feather.library.utils.SystemUtils;
-import me.openphoto.android.app.R;
 
 /**
  * The feather editor support fragment. It is used as external util to open
@@ -321,15 +323,10 @@ public class FeatherFragment extends Fragment {
             // set the source image uri
             newIntent.setData(uri);
 
-            String API_KEY = OpenPhotoApplication.getContext().getString(R.string.feather_api_key);
-            // pass the required api_key and secret ( see
-            // http://developers.aviary.com/ )
-            newIntent.putExtra("API_KEY", API_KEY);
-
             // pass the uri of the destination image file (optional)
             // This will be the same uri you will receive in the
             // onActivityResult
-            newIntent.putExtra("output", Uri.fromFile(file));
+            newIntent.putExtra(Constants.EXTRA_OUTPUT, Uri.fromFile(file));
 
             // format of the destination image (optional)
             newIntent
@@ -339,23 +336,36 @@ public class FeatherFragment extends Fragment {
             // output format quality (optional)
             newIntent.putExtra(Constants.EXTRA_OUTPUT_QUALITY, 90);
 
+            // === ENABLE/DISABLE IAP FOR EFFECTS ===
+            // Optional
             // If you want to disable the external effects
             // newIntent.putExtra(
             // Constants.EXTRA_EFFECTS_ENABLE_EXTERNAL_PACKS, false );
 
-            // If you want to disable the external effects
+            // === ENABLE/DISABLE IAP FOR FRAMES===
+            // Optional
+            // If you want to disable the external borders.
+            // Note that this will remove the frames tool.
+            // newIntent.putExtra( Constants.EXTRA_FRAMES_ENABLE_EXTERNAL_PACKS,
+            // false );
+
+            // == ENABLE/DISABLE IAP FOR STICKERS ===
+            // Optional
+            // If you want to disable the external stickers. In this case you
+            // must have a folder called "stickers" in your assets folder
+            // containing a list of .png files, which will be your default
+            // stickers
             // newIntent.putExtra(
             // Constants.EXTRA_STICKERS_ENABLE_EXTERNAL_PACKS, false );
 
             // enable fast rendering preview
-            newIntent.putExtra(Constants.EXTRA_EFFECTS_ENABLE_FAST_PREVIEW,
-                    true);
+            newIntent.putExtra(Constants.EXTRA_EFFECTS_ENABLE_FAST_PREVIEW, true);
 
-            // you can force feather to display only a certain ( see
+            // == TOOLS LIST ===
+            // Optional
+            // You can force feather to display only some tools ( see
             // FilterLoaderFactory#Filters )
-            // you can omit this if you just wanto to display the
-            // default
-            // tools
+            // you can omit this if you just want to display the default tools
 
             /*
              * newIntent.putExtra( "tools-list", new String[] {
@@ -377,29 +387,41 @@ public class FeatherFragment extends Fragment {
              * FilterLoaderFactory.Filters.COLORTEMP.name(), } );
              */
 
-            // you want the result bitmap inline. (optional)
+            // === INLINE BITMAP RESULT ===
+            // Optional.
+            // You want the result bitmap inline.
+            // This will work only with small bitmaps
             // newIntent.putExtra( Constants.EXTRA_RETURN_DATA, true );
 
-            // you want to hide the exit alert dialog shown when back is
-            // pressed
+            // === EXIT ALERT ===
+            // Optional
+            // Uou want to hide the exit alert dialog shown when back is pressed
             // without saving image first
             // newIntent.putExtra(
             // Constants.EXTRA_HIDE_EXIT_UNSAVE_CONFIRMATION, true );
 
-            // -- VIBRATION --
-            // Some aviary tools use the device vibration in order to
-            // give a
+            // === VIBRATION ===
+            // Optional
+            // Some aviary tools use the device vibration in order to give a
             // better experience
-            // to the final user. But if you want to disable this
-            // feature,
-            // just
+            // to the final user. But if you want to disable this feature, just
             // pass
-            // any value with the key "tools-vibration-disabled" in the
-            // calling
+            // any value with the key "tools-vibration-disabled" in the calling
             // intent.
-            // This option has been added to version 2.1.5 of the Aviary
-            // SDK
+            // This option has been added to version 2.1.5 of the Aviary SDK
             newIntent.putExtra(Constants.EXTRA_TOOLS_DISABLE_VIBRATION, true);
+
+            // === MAX SIZE ===
+            // Optional
+            // you can pass the maximum allowed image size, otherwise feather
+            // will determine
+            // the max size based on the device memory.
+            // This will not affect the hi-res image size.
+            // Here we're passing the current display size as max image size
+            // because after
+            // the execution of Aviary we're saving the HI-RES image so we don't
+            // need a big
+            // image for the preview
 
             final DisplayMetrics metrics = new DisplayMetrics();
             getCallingFragment().getActivity().getWindowManager().getDefaultDisplay()
@@ -420,10 +442,7 @@ public class FeatherFragment extends Fragment {
             // image for the preview
             max_size = (int) ((double) max_size / 0.8);
             CommonUtils.debug(TAG, "max-image-size: " + max_size);
-            newIntent.putExtra("max-image-size", max_size);
-
-            // Enable/disable the default borders for the effects
-            newIntent.putExtra("effect-enable-borders", true);
+            newIntent.putExtra(Constants.EXTRA_MAX_IMAGE_SIZE, max_size);
 
             // You need to generate a new session id key to pass to
             // Aviary
@@ -434,10 +453,11 @@ public class FeatherFragment extends Fragment {
             // be unique for every new instance of Feather )
             // The session-id key must be 64 char length
 
+            String API_KEY = OpenPhotoApplication.getContext().getString(R.string.feather_api_key);
             mSessionId = StringUtils.getSha256(System.currentTimeMillis() + API_KEY);
             CommonUtils.debug(TAG,
                     "session: " + mSessionId + ", size: " + mSessionId.length());
-            newIntent.putExtra("output-hires-session-id", mSessionId);
+            newIntent.putExtra(Constants.EXTRA_OUTPUT_HIRES_SESSION_ID, mSessionId);
 
             // ..and start feather
             getCallingFragment().startActivityForResult(newIntent, requestCode);
