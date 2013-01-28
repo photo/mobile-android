@@ -1,13 +1,9 @@
 
-package me.openphoto.android.test.net;
+package com.trovebox.android.test.net;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 
-import me.openphoto.android.app.OpenPhotoApplication;
-import me.openphoto.android.app.net.IOpenPhotoApi;
-import me.openphoto.android.app.net.OpenPhotoApi;
-import me.openphoto.android.test.util.MockUtils;
 
 import org.apache.http.client.ClientProtocolException;
 import org.json.JSONException;
@@ -16,28 +12,33 @@ import org.powermock.api.easymock.PowerMock;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
+import com.trovebox.android.app.TroveboxApplication;
+import com.trovebox.android.app.net.ITroveboxApi;
+import com.trovebox.android.app.net.TroveboxApi;
+import com.trovebox.android.test.util.MockUtils;
+
 import android.test.InstrumentationTestCase;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest(IOpenPhotoApi.class)
-public class MockOpenPhotoApiTest extends InstrumentationTestCase
+@PrepareForTest(ITroveboxApi.class)
+public class MockTroveboxApiTest extends InstrumentationTestCase
 {
 
-    private IOpenPhotoApi mApiTested;
-    private IOpenPhotoApi mApiMock;
+    private ITroveboxApi mApiTested;
+    private ITroveboxApi mApiMock;
 
     @Override
     protected void setUp() throws Exception
     {
         super.setUp();
-        mApiMock = MockUtils.mockOpenPhotoApi();
-        mApiTested = OpenPhotoApi.createInstance(OpenPhotoApplication.getContext());
+        mApiMock = MockUtils.mockTroveboxApi();
+        mApiTested = TroveboxApi.createInstance(TroveboxApplication.getContext());
     }
 
     @Override
     protected void tearDown() throws Exception
     {
-        MockUtils.unMockOpenPhotoApi();
+        MockUtils.unMockTroveboxApi();
         super.tearDown();
     }
 

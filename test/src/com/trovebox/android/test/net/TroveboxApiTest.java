@@ -1,5 +1,5 @@
 
-package me.openphoto.android.test.net;
+package com.trovebox.android.test.net;
 
 import java.io.File;
 import java.io.IOException;
@@ -7,42 +7,43 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import me.openphoto.android.app.OpenPhotoApplication;
-import me.openphoto.android.app.model.Photo;
-import me.openphoto.android.app.net.IOpenPhotoApi;
-import me.openphoto.android.app.net.OpenPhotoApi;
-import me.openphoto.android.app.net.PhotoResponse;
-import me.openphoto.android.app.net.PhotosResponse;
-import me.openphoto.android.app.net.TagsResponse;
-import me.openphoto.android.app.net.UploadMetaData;
-import me.openphoto.android.app.net.UploadResponse;
-import me.openphoto.android.app.util.TrackerUtils;
-import me.openphoto.android.test.util.FileUtils;
 
 import org.apache.http.client.ClientProtocolException;
 import org.json.JSONException;
+
+import com.trovebox.android.app.TroveboxApplication;
+import com.trovebox.android.app.model.Photo;
+import com.trovebox.android.app.net.ITroveboxApi;
+import com.trovebox.android.app.net.TroveboxApi;
+import com.trovebox.android.app.net.PhotoResponse;
+import com.trovebox.android.app.net.PhotosResponse;
+import com.trovebox.android.app.net.TagsResponse;
+import com.trovebox.android.app.net.UploadMetaData;
+import com.trovebox.android.app.net.UploadResponse;
+import com.trovebox.android.app.util.TrackerUtils;
+import com.trovebox.android.test.util.FileUtils;
 
 import android.content.Context;
 import android.content.res.AssetManager;
 import android.os.Environment;
 import android.test.ApplicationTestCase;
 
-public class OpenPhotoApiTest extends ApplicationTestCase<OpenPhotoApplication>
+public class TroveboxApiTest extends ApplicationTestCase<TroveboxApplication>
 {
 
-    public OpenPhotoApiTest()
+    public TroveboxApiTest()
     {
-        super(OpenPhotoApplication.class);
+        super(TroveboxApplication.class);
     }
 
-    private IOpenPhotoApi mApi;
+    private ITroveboxApi mApi;
 
     @Override
     protected void setUp() throws Exception {
         super.setUp();
         TrackerUtils.SKIP_UNCAUGHT_SETUP = true;
         createApplication();
-        mApi = OpenPhotoApi.createInstance(OpenPhotoApplication.getContext());
+        mApi = TroveboxApi.createInstance(TroveboxApplication.getContext());
     }
 
     @Override
@@ -75,11 +76,11 @@ public class OpenPhotoApiTest extends ApplicationTestCase<OpenPhotoApplication>
     {
         AssetManager assetMgr = getTestContext().getAssets();
         InputStream imageStream = assetMgr.open("android.jpg");
-        // InputStream imageStream = OpenPhotoApplication.getContext()
+        // InputStream imageStream = TroveboxApplication.getContext()
         // .getResources()
         // .openRawResource(R.raw.android);
         File dir = new File(Environment.getExternalStorageDirectory().getAbsolutePath()
-                + "/data/me.openphoto.android");
+                + "/data/com.trovebox.android");
         if (!dir.exists()) {
             assertTrue(dir.mkdirs());
         }
@@ -124,7 +125,7 @@ public class OpenPhotoApiTest extends ApplicationTestCase<OpenPhotoApplication>
         AssetManager assetMgr = getTestContext().getAssets();
         InputStream imageStream = assetMgr.open("android.jpg");
         File dir = new File(Environment.getExternalStorageDirectory().getAbsolutePath()
-                + "/data/me.openphoto.android");
+                + "/data/com.trovebox.android");
         if (!dir.exists()) {
             assertTrue(dir.mkdirs());
         }

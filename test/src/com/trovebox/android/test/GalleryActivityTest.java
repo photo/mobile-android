@@ -1,18 +1,12 @@
 
-package me.openphoto.android.test;
+package com.trovebox.android.test;
 
 import java.io.IOException;
 import java.util.Collection;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
-import me.openphoto.android.app.GalleryFragment.GalleryAdapterExt;
-import me.openphoto.android.app.MainActivity;
-import me.openphoto.android.app.net.Paging;
-import me.openphoto.android.app.net.PhotosResponse;
-import me.openphoto.android.app.net.ReturnSizes;
-import me.openphoto.android.app.util.CommonUtils;
-import me.openphoto.android.test.net.JSONUtils;
+import com.trovebox.android.test.R;
 
 import org.apache.http.client.ClientProtocolException;
 import org.easymock.EasyMock;
@@ -24,6 +18,13 @@ import android.widget.ListView;
 
 import com.actionbarsherlock.app.ActionBar;
 import com.jayway.android.robotium.solo.Solo;
+import com.trovebox.android.app.MainActivity;
+import com.trovebox.android.app.GalleryFragment.GalleryAdapterExt;
+import com.trovebox.android.app.net.Paging;
+import com.trovebox.android.app.net.PhotosResponse;
+import com.trovebox.android.app.net.ReturnSizes;
+import com.trovebox.android.app.util.CommonUtils;
+import com.trovebox.android.test.net.JSONUtils;
 
 public class GalleryActivityTest extends
         MockedInstrumentationTestCase<MainActivity>

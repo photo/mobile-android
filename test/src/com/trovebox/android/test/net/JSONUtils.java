@@ -1,5 +1,5 @@
 
-package me.openphoto.android.test.net;
+package com.trovebox.android.test.net;
 
 import java.io.BufferedReader;
 import java.io.IOException;

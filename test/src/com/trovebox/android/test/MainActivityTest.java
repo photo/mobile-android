@@ -1,20 +1,20 @@
 
-package me.openphoto.android.test;
+package com.trovebox.android.test;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
-import me.openphoto.android.app.AlbumsFragment;
-import me.openphoto.android.app.GalleryFragment;
-import me.openphoto.android.app.HomeFragment;
-import me.openphoto.android.app.MainActivity;
-import me.openphoto.android.app.SyncFragment;
-import me.openphoto.android.app.TagsFragment;
 import android.app.Instrumentation;
 import android.support.v4.app.Fragment;
 import android.test.ActivityInstrumentationTestCase2;
 
 import com.actionbarsherlock.app.ActionBar;
+import com.trovebox.android.app.AlbumsFragment;
+import com.trovebox.android.app.GalleryFragment;
+import com.trovebox.android.app.HomeFragment;
+import com.trovebox.android.app.MainActivity;
+import com.trovebox.android.app.SyncFragment;
+import com.trovebox.android.app.TagsFragment;
 
 public class MainActivityTest extends
         ActivityInstrumentationTestCase2<MainActivity>
@@ -26,7 +26,7 @@ public class MainActivityTest extends
 
     public MainActivityTest()
     {
-        super("me.openphoto.android.app", MainActivity.class);
+        super("com.trovebox.android.app", MainActivity.class);
     }
 
     /**

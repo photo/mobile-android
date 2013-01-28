@@ -1,8 +1,9 @@
-package me.openphoto.android.test;
+package com.trovebox.android.test;
 
-import me.openphoto.android.app.SplashActivity;
 import android.test.ActivityInstrumentationTestCase2;
 import android.widget.TextView;
+
+import com.trovebox.android.app.SplashActivity;
 
 public class SplashActivityTest extends ActivityInstrumentationTestCase2<SplashActivity> {
 
@@ -11,7 +12,7 @@ public class SplashActivityTest extends ActivityInstrumentationTestCase2<SplashA
 	private String resourceString;
 
 	public SplashActivityTest() {
-		super("me.openphoto.android.app", SplashActivity.class);
+		super("com.trovebox.android.app", SplashActivity.class);
 	}
 
 	/**
@@ -22,9 +23,9 @@ public class SplashActivityTest extends ActivityInstrumentationTestCase2<SplashA
 		super.setUp();
 		activity = this.getActivity();
 		view = (TextView) activity
-				.findViewById(me.openphoto.android.app.R.id.splash_title);
+				.findViewById(com.trovebox.android.app.R.id.splash_title);
 		resourceString = activity
-				.getString(me.openphoto.android.app.R.string.openphoto);
+                .getString(com.trovebox.android.app.R.string.app_name);
 	}
 
 	public void testPreconditions() {

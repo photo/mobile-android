@@ -1,5 +1,5 @@
 
-package me.openphoto.android.test;
+package com.trovebox.android.test;
 
 import java.io.File;
 import java.io.IOException;
@@ -7,13 +7,7 @@ import java.io.InputStream;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
-import me.openphoto.android.app.UploadActivity;
-import me.openphoto.android.app.net.HttpEntityWithProgress.ProgressListener;
-import me.openphoto.android.app.net.PhotosResponse;
-import me.openphoto.android.app.net.UploadMetaData;
-import me.openphoto.android.app.net.UploadResponse;
-import me.openphoto.android.test.net.JSONUtils;
-import me.openphoto.android.test.util.FileUtils;
+import com.trovebox.android.test.R;
 
 import org.easymock.EasyMock;
 import org.powermock.api.easymock.PowerMock;
@@ -26,6 +20,13 @@ import android.os.Environment;
 import android.provider.MediaStore;
 
 import com.jayway.android.robotium.solo.Solo;
+import com.trovebox.android.app.UploadActivity;
+import com.trovebox.android.app.net.PhotosResponse;
+import com.trovebox.android.app.net.UploadMetaData;
+import com.trovebox.android.app.net.UploadResponse;
+import com.trovebox.android.app.net.HttpEntityWithProgress.ProgressListener;
+import com.trovebox.android.test.net.JSONUtils;
+import com.trovebox.android.test.util.FileUtils;
 
 public class UploadActivityTest extends MockedInstrumentationTestCase<UploadActivity> {
 
@@ -57,7 +58,7 @@ public class UploadActivityTest extends MockedInstrumentationTestCase<UploadActi
         File dir = new
                 File(Environment.getExternalStorageDirectory()
                         .getAbsolutePath()
-                        + "/data/me.openphoto.android");
+                        + "/data/com.trovebox.android");
         if (!dir.exists())
         {
             assertTrue(dir.mkdirs());
@@ -71,7 +72,7 @@ public class UploadActivityTest extends MockedInstrumentationTestCase<UploadActi
         values.put(MediaStore.Images.Media.DATA,
                 file.getAbsolutePath());
         values.put(MediaStore.Images.Media.DESCRIPTION,
-                "Image used for testing OpenPhoto Andorid application");
+                "Image used for testing Trovebox Andorid application");
 
         Uri fileUri = getInstrumentation()
                 .getTargetContext()
@@ -82,7 +83,7 @@ public class UploadActivityTest extends MockedInstrumentationTestCase<UploadActi
         // MediaStore.Images.Media.insertImage(getInstrumentation()
         // .getTargetContext()
         // .getContentResolver(), file.getAbsolutePath(), "Test",
-        // "Image used for testing OpenPhoto Andorid application");
+        // "Image used for testing Trovebox Andorid application");
 
         try
         {

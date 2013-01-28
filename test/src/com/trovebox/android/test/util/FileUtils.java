@@ -1,5 +1,5 @@
 
-package me.openphoto.android.test.util;
+package com.trovebox.android.test.util;
 
 import java.io.File;
 import java.io.FileOutputStream;

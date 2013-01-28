@@ -1,15 +1,16 @@
 
-package me.openphoto.android.test;
+package com.trovebox.android.test;
 
-import me.openphoto.android.app.Preferences;
-import me.openphoto.android.app.R;
-import me.openphoto.android.app.SettingsActivity;
-import me.openphoto.android.app.SettingsFragment;
 
 import org.holoeverywhere.preference.CheckBoxPreference;
 import org.holoeverywhere.preference.EditTextPreference;
 import org.holoeverywhere.preference.Preference;
 import org.holoeverywhere.preference.PreferenceActivity;
+
+import com.trovebox.android.app.Preferences;
+import com.trovebox.android.app.R;
+import com.trovebox.android.app.SettingsActivity;
+import com.trovebox.android.app.SettingsFragment;
 
 import android.content.SharedPreferences;
 import android.test.ActivityInstrumentationTestCase2;
@@ -23,7 +24,7 @@ public class SettingsActivityTest extends
     private SharedPreferences mPreferences;
 
     public SettingsActivityTest() {
-        super("me.openphoto.android.app", SettingsActivity.class);
+        super("com.trovebox.android.app", SettingsActivity.class);
     }
 
     /**

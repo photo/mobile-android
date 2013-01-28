@@ -1,10 +1,11 @@
 
-package me.openphoto.android.test.net;
+package com.trovebox.android.test.net;
 
 import java.io.File;
 
+import com.trovebox.android.app.net.ApiRequest;
+
 import junit.framework.TestCase;
-import me.openphoto.android.app.net.ApiRequest;
 import android.os.Environment;
 
 public class ApiRequestTest extends TestCase {

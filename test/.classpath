@@ -2,7 +2,7 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="gen"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/OpenPhoto-Android-App"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/Trovebox-Android-App"/>
 	<classpathentry exported="true" kind="lib" path="libs/junit-4.8.2.jar"/>
 	<classpathentry exported="true" kind="lib" path="libs/objenesis-1.2.jar"/>
 	<classpathentry exported="true" kind="lib" path="libs/robotium-solo-2.5.jar"/>

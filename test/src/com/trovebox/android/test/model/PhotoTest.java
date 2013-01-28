@@ -1,12 +1,13 @@
 
-package me.openphoto.android.test.model;
+package com.trovebox.android.test.model;
 
-import me.openphoto.android.app.model.Photo;
-import me.openphoto.android.test.R;
-import me.openphoto.android.test.net.JSONUtils;
+import com.trovebox.android.test.R;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import com.trovebox.android.app.model.Photo;
+import com.trovebox.android.test.net.JSONUtils;
 
 import android.test.InstrumentationTestCase;
 
@@ -31,7 +32,7 @@ public class PhotoTest extends InstrumentationTestCase {
         assertEquals("Tavin riding the horsey at Murphy Park in Sunnyvale",
                 photo.getTitle());
         assertEquals("Nice description", photo.getDescription());
-        assertEquals("current.openphoto.me", photo.getAppId());
+        assertEquals("current.trovebox.com", photo.getAppId());
         assertEquals(
                 "http://opmecurrent.s3.amazonaws.com/base/201108/1312348300-IMAG0015.jpg",
                 photo.getUrl("base"));

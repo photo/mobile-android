@@ -1,35 +1,36 @@
 
-package me.openphoto.android.test;
+package com.trovebox.android.test;
 
-import me.openphoto.android.app.net.IOpenPhotoApi;
-import me.openphoto.android.app.util.CommonUtils;
-import me.openphoto.android.test.util.MockUtils;
+import com.trovebox.android.app.net.ITroveboxApi;
+import com.trovebox.android.app.util.CommonUtils;
+import com.trovebox.android.test.util.MockUtils;
+
 import android.app.Activity;
 import android.test.ActivityInstrumentationTestCase2;
 
 public abstract class MockedInstrumentationTestCase<T extends Activity> extends
         ActivityInstrumentationTestCase2<T> {
 
-    private IOpenPhotoApi mApiMock;
+    private ITroveboxApi mApiMock;
 
     public MockedInstrumentationTestCase(Class<T> theClass) {
-        super("me.openphoto.android.app", theClass);
+        super("com.trovebox.android.app", theClass);
     }
 
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        mApiMock = MockUtils.mockOpenPhotoApi();
+        mApiMock = MockUtils.mockTroveboxApi();
         CommonUtils.TEST_CASE = true;
     }
 
     @Override
     protected void tearDown() throws Exception {
-        MockUtils.unMockOpenPhotoApi();
+        MockUtils.unMockTroveboxApi();
         super.tearDown();
     }
 
-    protected IOpenPhotoApi getApiMock() {
+    protected ITroveboxApi getApiMock() {
         return mApiMock;
     }
 }

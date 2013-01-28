@@ -1,11 +1,12 @@
 
-package me.openphoto.android.test.net;
+package com.trovebox.android.test.net;
 
-import me.openphoto.android.app.net.PhotosResponse;
-import me.openphoto.android.test.R;
+import com.trovebox.android.test.R;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import com.trovebox.android.app.net.PhotosResponse;
 
 import android.test.InstrumentationTestCase;
 

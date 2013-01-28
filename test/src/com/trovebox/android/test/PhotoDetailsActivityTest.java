@@ -1,20 +1,22 @@
 
-package me.openphoto.android.test;
+package com.trovebox.android.test;
 
 import java.io.IOException;
 
 import junit.framework.Assert;
-import me.openphoto.android.app.PhotoDetailsActivity;
-import me.openphoto.android.app.PhotoDetailsActivity.PhotoDetailsUiFragment;
-import me.openphoto.android.app.model.Photo;
-import me.openphoto.android.app.net.PhotoResponse;
-import me.openphoto.android.app.net.ReturnSizes;
-import me.openphoto.android.test.net.JSONUtils;
+import com.trovebox.android.test.R;
 
 import org.apache.http.client.ClientProtocolException;
 import org.easymock.EasyMock;
 import org.json.JSONException;
 import org.powermock.api.easymock.PowerMock;
+
+import com.trovebox.android.app.PhotoDetailsActivity;
+import com.trovebox.android.app.PhotoDetailsActivity.PhotoDetailsUiFragment;
+import com.trovebox.android.app.model.Photo;
+import com.trovebox.android.app.net.PhotoResponse;
+import com.trovebox.android.app.net.ReturnSizes;
+import com.trovebox.android.test.net.JSONUtils;
 
 import android.content.Intent;
 import android.support.v4.app.Fragment;
