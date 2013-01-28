@@ -4,18 +4,18 @@
     android:layout_height="match_parent"
     android:clickable="true">
 
-    <me.openphoto.android.app.ui.widget.PhotoViewHackyViewPager
+    <com.trovebox.android.app.ui.widget.PhotoViewHackyViewPager
         android:id="@+id/photos"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
-    <me.openphoto.android.app.ui.widget.HorizontalListView 
+    <com.trovebox.android.app.ui.widget.HorizontalListView 
         android:layout_width="match_parent" 
         android:layout_height="@dimen/detail_thumbnail_with_border_size" 
         android:id="@+id/thumbs"
         android:layout_above="@+id/gap"
         android:visibility="visible">
         
-    </me.openphoto.android.app.ui.widget.HorizontalListView>
+    </com.trovebox.android.app.ui.widget.HorizontalListView>
     
     <View android:id="@+id/gap" android:layout_height="50dp"
 		android:layout_width="0dp"
