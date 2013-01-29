@@ -4,7 +4,7 @@
       "tavin"
    ],
    "id":"4t",
-   "appId":"current.openphoto.me",
+   "appId":"current.trovebox.com",
    "pathBase":"\/base\/201108\/1312348300-IMAG0015.jpg",
    "dateUploadedMonth":"08",
    "dateTakenMonth":"08",

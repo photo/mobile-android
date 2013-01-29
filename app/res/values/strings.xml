@@ -2,7 +2,6 @@
 <resources>
 
     <string name="app_name">Trovebox</string>
-    <string name="openphoto">OpenPhoto</string>
     <string name="loading">Loading&#8230;</string>
     <string name="take_photo">Take Photo</string>
 
@@ -60,7 +59,7 @@
     <!-- SetupActivity -->
     <string name="hint_server">username.trovebox.com</string>
     <string name="login">Login</string>
-    <string name="get_openphoto_account">Get an openphoto account</string>
+    <string name="get_trovebox_account">Get an trovebox account</string>
     <string name="logging_in_message">Please wait. Logging you in…</string>
     <string name="signup_message">Please wait. Registering new user…</string>
 

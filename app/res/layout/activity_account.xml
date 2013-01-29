@@ -27,7 +27,7 @@
 
             <Button
                 android:id="@+id/account_signup_button"
-                style="@style/Openphoto.BeigeWithIconButton"
+                style="@style/Trovebox.BeigeWithIconButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:onClick="accountSignupButtonAction"
@@ -48,7 +48,7 @@
 
             <Button
                 android:id="@+id/account_login_button"
-                style="@style/Openphoto.BeigeWithIconButton"
+                style="@style/Trovebox.BeigeWithIconButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:onClick="accountLoginButtonAction"
@@ -65,7 +65,7 @@
 
         <Button
             android:id="@+id/account_own_server_button"
-            style="@style/Openphoto.BeigeButton"
+            style="@style/Trovebox.BeigeButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:onClick="accountOwnServerButtonAction"

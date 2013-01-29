@@ -39,10 +39,10 @@
     <string name="facebook_app_id">486985971321265</string>
     <string name="twitter_api_consumer_key">Z0EVWNVma30RFZH8nJphog</string>
     <string name="twitter_api_consumer_secret">wt2PQuFHwai0ffPvAnlPsQc8W0DIUjeUyvnCOvbQb3E</string>
-    <string name="twitter_callback_url">openphoto-t://twitter-callback</string>
-    <string name="twitter_callback_url_photodetails_activity">openphoto-t2://twitter-callback</string>
-    <string name="twitter_callback_url_upload_activity">openphoto-t3://twitter-callback</string>
-    <string name="openphoto_oauth_callback_url">openphoto://callback</string>
+    <string name="twitter_callback_url">trovebox-t://twitter-callback</string>
+    <string name="twitter_callback_url_photodetails_activity">trovebox-t2://twitter-callback</string>
+    <string name="twitter_callback_url_upload_activity">trovebox-t3://twitter-callback</string>
+    <string name="trovebox_oauth_callback_url">trovebox://callback</string>
     <string name="feather_api_key">WJhD1NTYdkm_OrBNEOPQpA</string>
 
     <!-- Facebook preferences -->

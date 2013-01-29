@@ -14,9 +14,9 @@ https://github.com/photo/mobile-android/blob/master/README.md
 Install Facebook SDK by cloning the GitHub repository: git clone git://github.com/facebook/facebook-android-sdk.git
 
 
-# Fake Account Credentials for OpenPhoto
-The file `FakeAccountOpenPhotoApi.java` is a fake implementation for the interface `IAccountOpenOpenphotoApi.java`.
-This fake implementation will return credentials to the site http://apigee.openphoto.me
+# Fake Account Credentials for Trovebox
+The file `FakeAccountTroveboxApi.java` is a fake implementation for the interface `IAccountTroveboxApi.java`.
+This fake implementation will return credentials to the site http://apigee.trovebox.com
 
 
 #Environment
