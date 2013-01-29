@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>OpenPhoto-Android-Test</name>
+	<name>Trovebox-Android-Test</name>
 	<comment></comment>
 	<projects>
-		<project>OpenPhoto-Android-App</project>
+		<project>Trovebox-Android-App</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

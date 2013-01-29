@@ -43,7 +43,7 @@
 
             <Button
                 android:id="@+id/button_login"
-                style="@style/Openphoto.YellowButton"
+                style="@style/Trovebox.YellowButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:onClick="loginButtonAction"

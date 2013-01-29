@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <style name="Theme.OpenPhoto.Light" parent="Holo.Theme.Light.DarkActionBar">
+    <style name="Theme.Trovebox.Light" parent="Holo.Theme.Light.DarkActionBar">
         <item name="android:windowBackground">@drawable/bg</item>
         <item name="android:listViewStyle">@style/TransparentListView</item>
         <item name="android:expandableListViewStyle">@style/TransparentExpandableListView</item>
         <item name="actionBarStyle">@style/solid_ActionBar</item>
         <item name="actionBarTabTextStyle">@style/ActionBar_TabTextStyle</item>
-        <item name="android:buttonStyle">@style/Openphoto.BeigeButton</item>
+        <item name="android:buttonStyle">@style/Trovebox.BeigeButton</item>
         <item name="actionBarTabStyle">@style/trovebox_ActionBarTabStyle</item>
         <item name="actionBarItemBackground">@drawable/selectable_background_trovebox</item>
         <item name="actionDropDownStyle">@style/trovebox_DropDownNav</item>
@@ -16,28 +16,28 @@
         <item name="actionBarWidgetTheme">@style/Theme.example.widget</item>
     </style>
 
-    <style name="Theme.OpenPhoto.Light.Stacked" parent="Theme.OpenPhoto.Light">
+    <style name="Theme.Trovebox.Light.Stacked" parent="Theme.Trovebox.Light">
         <item name="actionBarTabTextStyle">@style/ActionBar_TabTextStyleStacked</item>
     </style>
 
-    <style name="Theme.OpenPhoto.DialogActivity.Light" parent="Holo.Theme.Dialog.Light">
-        <item name="android:buttonStyle">@style/Openphoto.BeigeButton</item>
+    <style name="Theme.Trovebox.DialogActivity.Light" parent="Holo.Theme.Dialog.Light">
+        <item name="android:buttonStyle">@style/Trovebox.BeigeButton</item>
     </style>
 
-    <style name="Theme.OpenPhoto.Dialog.Light" parent="Holo.Theme.Dialog.Alert.Light">
-        <item name="android:buttonStyle">@style/Openphoto.BeigeButton</item>
+    <style name="Theme.Trovebox.Dialog.Light" parent="Holo.Theme.Dialog.Alert.Light">
+        <item name="android:buttonStyle">@style/Trovebox.BeigeButton</item>
     </style>
 
-    <style name="Theme.OpenPhoto.Fullscreen" parent="Holo.Theme.Light.NoActionBar.Fullscreen">
+    <style name="Theme.Trovebox.Fullscreen" parent="Holo.Theme.Light.NoActionBar.Fullscreen">
         <item name="android:windowBackground">@drawable/bg</item>
     </style>
 
-    <style name="Theme.OpenPhoto.TransparentActionBar" parent="Holo.Theme.Light.Fullscreen">
+    <style name="Theme.Trovebox.TransparentActionBar" parent="Holo.Theme.Light.Fullscreen">
         <item name="actionBarStyle">@style/transparent_ActionBar</item>
         <item name="android:windowBackground">@drawable/bg</item>
     </style>
 
-    <style name="Theme.OpenPhoto.Login" parent="Holo.Theme.NoActionBar">
+    <style name="Theme.Trovebox.Login" parent="Holo.Theme.NoActionBar">
         <item name="android:windowBackground">@drawable/bg_login</item>
     </style>
 
@@ -109,17 +109,17 @@
         <item name="android:textSize">10dp</item>
     </style>
 
-    <style name="Openphoto.YellowButton" parent="Holo.Button">
+    <style name="Trovebox.YellowButton" parent="Holo.Button">
         <item name="android:background">@drawable/btn_bg_yellow</item>
         <item name="android:textColor">@color/ab_fg_black</item>
     </style>
 
-    <style name="Openphoto.BeigeButton" parent="Holo.Button">
+    <style name="Trovebox.BeigeButton" parent="Holo.Button">
         <item name="android:background">@drawable/btn_bg_beige</item>
         <item name="android:textColor">@color/ab_fg_black</item>
     </style>
 
-    <style name="Openphoto.BeigeWithIconButton" parent="Holo.Button">
+    <style name="Trovebox.BeigeWithIconButton" parent="Holo.Button">
         <item name="android:background">@drawable/btn_bg_beige_with_icon</item>
         <item name="android:textColor">@color/ab_fg_black</item>
     </style>

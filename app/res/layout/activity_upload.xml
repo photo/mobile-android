@@ -125,7 +125,7 @@
 
     <Button
         android:id="@+id/button_upload"
-        style="@style/Openphoto.YellowButton"
+        style="@style/Trovebox.YellowButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/upload_button" />

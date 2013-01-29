@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <style name="Theme.OpenPhoto.Light" parent="Holo.Theme.Light.DarkActionBar">
+    <style name="Theme.Trovebox.Light" parent="Holo.Theme.Light.DarkActionBar">
         <item name="android:windowBackground">@drawable/bg</item>
         <item name="android:listViewStyle">@style/TransparentListView</item>
         <item name="android:expandableListViewStyle">@style/TransparentExpandableListView</item>
@@ -9,7 +9,7 @@
         <item name="android:actionBarStyle">@style/solid_ActionBar</item>
         <item name="actionBarTabTextStyle">@style/ActionBar_TabTextStyle</item>
         <item name="android:actionBarTabTextStyle">@style/ActionBar_TabTextStyle</item>
-        <item name="android:buttonStyle">@style/Openphoto.BeigeButton</item>
+        <item name="android:buttonStyle">@style/Trovebox.BeigeButton</item>
         <item name="actionBarTabStyle">@style/trovebox_ActionBarTabStyle</item>
         <item name="android:actionBarTabStyle">@style/trovebox_ActionBarTabStyle</item>
         <item name="actionBarItemBackground">@drawable/selectable_background_trovebox</item>
@@ -24,12 +24,12 @@
         <item name="android:actionBarWidgetTheme">@style/Theme.example.widget</item>
     </style>
 
-    <style name="Theme.OpenPhoto.Light.Stacked" parent="Theme.OpenPhoto.Light">
+    <style name="Theme.Trovebox.Light.Stacked" parent="Theme.Trovebox.Light">
         <item name="actionBarTabTextStyle">@style/ActionBar_TabTextStyleStacked</item>
         <item name="android:actionBarTabTextStyle">@style/ActionBar_TabTextStyleStacked</item>
     </style>
 
-    <style name="Theme.OpenPhoto.TransparentActionBar" parent="Holo.Theme.Light.Fullscreen">
+    <style name="Theme.Trovebox.TransparentActionBar" parent="Holo.Theme.Light.Fullscreen">
         <item name="actionBarStyle">@style/transparent_ActionBar</item>
         <item name="android:actionBarStyle">@style/transparent_ActionBar</item>
         <item name="android:windowBackground">@drawable/bg</item>

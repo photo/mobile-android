@@ -1,19 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-  package="me.openphoto.android.test" android:versionCode="1"
-  android:versionName="1.0">
-  <uses-sdk android:minSdkVersion="7"
-      android:targetSdkVersion="16" />
-  <uses-permission android:name="android.permission.INTERNET" />
-  <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    package="com.trovebox.android.test"
+    android:versionCode="1"
+    android:versionName="1.0" >
 
-  <instrumentation
-    android:targetPackage="me.openphoto.android.app"
-    android:name="android.test.InstrumentationTestRunner" />
-    
-  <application
-	android:icon="@drawable/icon"
-	android:label="@string/app_name">
-    <uses-library android:name="android.test.runner" />
-  </application>
+    <uses-sdk
+        android:minSdkVersion="7"
+        android:targetSdkVersion="16" />
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
+    <instrumentation
+        android:name="android.test.InstrumentationTestRunner"
+        android:targetPackage="com.trovebox.android.app" />
+
+    <application
+        android:icon="@drawable/icon"
+        android:label="@string/app_name" >
+        <uses-library android:name="android.test.runner" />
+    </application>
+
 </manifest>
