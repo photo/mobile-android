@@ -5,7 +5,17 @@ package com.trovebox.android.app;
 import org.holoeverywhere.LayoutInflater;
 import org.holoeverywhere.app.Activity;
 
-import com.trovebox.android.app.R;
+import android.content.Context;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.os.Bundle;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
+import android.widget.ImageView;
+import android.widget.ListView;
+
 import com.trovebox.android.app.bitmapfun.util.ImageCache;
 import com.trovebox.android.app.bitmapfun.util.ImageFetcher;
 import com.trovebox.android.app.common.CommonRefreshableFragmentWithImageWorker;
@@ -21,17 +31,6 @@ import com.trovebox.android.app.util.ImageFlowUtils;
 import com.trovebox.android.app.util.LoadingControl;
 import com.trovebox.android.app.util.TrackerUtils;
 import com.trovebox.android.app.util.Utils;
-
-import android.content.Context;
-import android.content.Intent;
-import android.graphics.Bitmap;
-import android.os.Bundle;
-import android.view.View;
-import android.view.View.OnClickListener;
-import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
-import android.widget.ImageView;
-import android.widget.ListView;
 
 public class GalleryFragment extends CommonRefreshableFragmentWithImageWorker
         implements PhotoDeletedHandler, PhotoUpdatedHandler
@@ -306,6 +305,7 @@ public class GalleryFragment extends CommonRefreshableFragmentWithImageWorker
                             intent.putExtra(PhotoDetailsActivity.EXTRA_ADAPTER_PHOTOS,
                                     new PhotosEndlessAdapter.ParametersHolder(mAdapter, value));
                             startActivity(intent);
+                            clearImageWorkerCaches(true);
                         }
                     });
                 }
