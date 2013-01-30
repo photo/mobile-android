@@ -5,14 +5,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 
+import org.holoeverywhere.LayoutInflater;
+
 import android.content.Context;
 import android.util.FloatMath;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-
-import org.holoeverywhere.LayoutInflater;
 
 import com.trovebox.android.app.bitmapfun.util.ImageWorker;
 
@@ -255,7 +255,6 @@ public abstract class ImageFlowUtils<T>
      * @param lineLayoutId
      * @param childLayoutId
      * @param imageViewId
-     * @param imageWorker
      * @param context
      * @return
      */
@@ -266,7 +265,6 @@ public abstract class ImageFlowUtils<T>
             int lineLayoutId,
             int childLayoutId,
             int imageViewId,
-            ImageWorker imageWorker,
             Context context) {
         ViewGroup view;
         if (convertView == null)
@@ -286,7 +284,6 @@ public abstract class ImageFlowUtils<T>
         addOrReuseChilds(view, childCount, values,
                 childLayoutId,
                 imageViewId,
-                imageWorker,
                 context);
         removeUnusedViews(imageViewId, view, values, childCount);
         return view;
@@ -296,7 +293,6 @@ public abstract class ImageFlowUtils<T>
             int childCount, List<T> values,
             int layoutId,
             int imageViewId,
-            ImageWorker imageWorker,
             Context context) {
         View convertView;
         ImageFlowUtils.ImageHeightResult imageHeightResult = calculateImageHeightResult(values);
@@ -342,7 +338,6 @@ public abstract class ImageFlowUtils<T>
                     extraWidth,
                     layoutId,
                     imageViewId,
-                    imageWorker,
                     context);
             if (add)
             {
@@ -374,7 +369,6 @@ public abstract class ImageFlowUtils<T>
             int extraWidth,
             int layoutId,
             int imageViewId,
-            ImageWorker imageWorker,
             Context context) {
         View view;
         if (convertView == null)
@@ -411,7 +405,7 @@ public abstract class ImageFlowUtils<T>
         // Finally load the image asynchronously into the ImageView, this
         // also takes care of
         // setting a placeholder image while the background thread runs
-        imageWorker.loadImage(value, imageView);
+        loadImage(value, imageView);
         return view;
     }
 
@@ -433,5 +427,29 @@ public abstract class ImageFlowUtils<T>
      */
     public int getTotalWidth() {
         return totalWidth;
+    }
+
+    public abstract void loadImage(T value, ImageView imageView);
+
+    public static class FlowObjectToStringWrapper<T>
+    {
+        T object;
+        String toStringValue;
+
+        public FlowObjectToStringWrapper(T object, String toStringValue) {
+            super();
+            this.object = object;
+            this.toStringValue = toStringValue;
+        }
+
+        public T getObject()
+        {
+            return object;
+        }
+
+        @Override
+        public String toString() {
+            return toStringValue;
+        }
     }
 }

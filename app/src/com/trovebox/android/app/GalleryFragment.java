@@ -28,7 +28,9 @@ import com.trovebox.android.app.ui.adapter.PhotosEndlessAdapter;
 import com.trovebox.android.app.util.CommonUtils;
 import com.trovebox.android.app.util.GuiUtils;
 import com.trovebox.android.app.util.ImageFlowUtils;
+import com.trovebox.android.app.util.ImageFlowUtils.FlowObjectToStringWrapper;
 import com.trovebox.android.app.util.LoadingControl;
+import com.trovebox.android.app.util.RunnableWithParameter;
 import com.trovebox.android.app.util.TrackerUtils;
 import com.trovebox.android.app.util.Utils;
 
@@ -224,10 +226,12 @@ public class GalleryFragment extends CommonRefreshableFragmentWithImageWorker
             super(context, loadingControl, size);
         }
 
+        @SuppressWarnings("unchecked")
         @Override
         protected Bitmap processBitmap(Object data)
         {
-            Photo imageData = (Photo) data;
+            FlowObjectToStringWrapper<Photo> fo = (FlowObjectToStringWrapper<Photo>) data;
+            Photo imageData = fo.getObject();
             double ratio = imageData.getHeight() == 0 ? 1 : (float) imageData.getWidth()
                     / (float) imageData.getHeight();
             int height = mImageHeight;
@@ -236,7 +240,7 @@ public class GalleryFragment extends CommonRefreshableFragmentWithImageWorker
             try
             {
                 imageData = PhotoUtils.validateUrlForSizeExistAndReturn(imageData, thumbSize);
-                result = super.processBitmap(imageData.getUrl(thumbSize.toString()), width, height);
+                result = super.processBitmap(fo.toString(), width, height);
             } catch (Exception e)
             {
                 GuiUtils.noAlertError(TAG, e);
@@ -309,6 +313,22 @@ public class GalleryFragment extends CommonRefreshableFragmentWithImageWorker
                         }
                     });
                 }
+
+                @Override
+                public void loadImage(final Photo photo, final ImageView imageView) {
+                    PhotoUtils.validateUrlForSizeExistAsyncAndRun(photo, thumbSize,
+                            new RunnableWithParameter<Photo>() {
+
+                                @Override
+                                public void run(Photo photo) {
+                                    FlowObjectToStringWrapper<Photo> fo = new FlowObjectToStringWrapper<Photo>(
+                                            photo, photo.getUrl(thumbSize.toString()));
+                                    mImageWorker
+                                            .loadImage(fo,
+                                                    imageView);
+                                }
+                            }, loadingControl);
+                }
             };
         }
 
@@ -340,7 +360,7 @@ public class GalleryFragment extends CommonRefreshableFragmentWithImageWorker
             return imageFlowUtils.getView(position, convertView, parent,
                     R.layout.item_gallery_image_line,
                     R.layout.item_gallery_image,
-                    R.id.image, mImageWorker, getActivity());
+                    R.id.image, getActivity());
         }
 
         @Override
