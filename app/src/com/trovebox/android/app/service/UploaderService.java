@@ -40,11 +40,11 @@ import com.trovebox.android.app.UploadActivity;
 import com.trovebox.android.app.facebook.FacebookProvider;
 import com.trovebox.android.app.model.Photo;
 import com.trovebox.android.app.model.utils.PhotoUtils;
+import com.trovebox.android.app.net.HttpEntityWithProgress.ProgressListener;
 import com.trovebox.android.app.net.ITroveboxApi;
 import com.trovebox.android.app.net.PhotosResponse;
 import com.trovebox.android.app.net.ReturnSizes;
 import com.trovebox.android.app.net.UploadResponse;
-import com.trovebox.android.app.net.HttpEntityWithProgress.ProgressListener;
 import com.trovebox.android.app.provider.PhotoUpload;
 import com.trovebox.android.app.provider.UploadsProviderAccessor;
 import com.trovebox.android.app.twitter.TwitterProvider;
@@ -291,9 +291,9 @@ public class UploaderService extends Service {
                     .getTwitter(getApplicationContext());
             if (twitter != null)
             {
-                TwitterFragment.sendTweet(String.format(
-                        getString(R.string.share_twitter_default_msg),
-                        photo.getUrl(Photo.URL)), twitter);
+                String message = TwitterFragment.getDefaultTweetMessage(getApplicationContext(),
+                        photo);
+                TwitterFragment.sendTweet(message, twitter);
             }
         } catch (Exception ex)
         {

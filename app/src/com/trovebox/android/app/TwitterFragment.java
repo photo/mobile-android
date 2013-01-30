@@ -7,7 +7,19 @@ import org.holoeverywhere.app.Activity;
 import org.holoeverywhere.app.Dialog;
 import org.holoeverywhere.widget.ProgressBar;
 
-import com.trovebox.android.app.R;
+import twitter4j.StatusUpdate;
+import twitter4j.Twitter;
+import twitter4j.TwitterException;
+import android.content.Context;
+import android.os.Bundle;
+import android.text.TextUtils;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
+
 import com.trovebox.android.app.common.CommonStyledDialogFragment;
 import com.trovebox.android.app.model.Photo;
 import com.trovebox.android.app.twitter.TwitterProvider;
@@ -18,18 +30,6 @@ import com.trovebox.android.app.util.LoadingControlWithCounter;
 import com.trovebox.android.app.util.SimpleAsyncTaskEx;
 import com.trovebox.android.app.util.TrackerUtils;
 import com.trovebox.android.app.util.concurrent.AsyncTaskEx;
-
-import twitter4j.StatusUpdate;
-import twitter4j.Twitter;
-import twitter4j.TwitterException;
-import android.content.Context;
-import android.os.Bundle;
-import android.view.View;
-import android.view.View.OnClickListener;
-import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.TextView;
 
 /**
  * @author Eugene Popovich
@@ -84,9 +84,8 @@ public class TwitterFragment extends CommonStyledDialogFragment
                 messageEt.setText(savedInstanceState.getString(TWEET));
             } else
             {
-                messageEt.setText(String.format(
-                        getString(R.string.share_twitter_default_msg),
-                        photo.getUrl(Photo.URL)));
+                String message = getDefaultTweetMessage(getActivity(), photo);
+                messageEt.setText(message);
             }
             Button logOutButton = (Button) view.findViewById(R.id.logoutBtn);
             logOutButton.setOnClickListener(new OnClickListener()
@@ -263,6 +262,27 @@ public class TwitterFragment extends CommonStyledDialogFragment
         twitter.updateStatus(update);
     }
 
+    /**
+     * Generate default tweet message. It may be different
+     * depend on whether photo has title or no
+     * @param context
+     * @param photo
+     * @return
+     */
+    public static String getDefaultTweetMessage(Context context, Photo photo) {
+        String message;
+        if (TextUtils.isEmpty(photo.getTitle()))
+        {
+            message = context.getString(R.string.share_twitter_default_msg,
+                    photo.getUrl(Photo.URL));
+        } else
+        {
+            message = context.getString(R.string.share_twitter_default_with_title_msg,
+                    photo.getTitle(),
+                    photo.getUrl(Photo.URL));
+        }
+        return message;
+    }
     public static interface TwitterLoadingControlAccessor
     {
         LoadingControl getTwitterLoadingControl();

@@ -5,7 +5,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Stack;
 
-
 import org.holoeverywhere.LayoutInflater;
 import org.holoeverywhere.app.Activity;
 
@@ -27,7 +26,6 @@ import android.widget.TextView;
 import com.actionbarsherlock.view.ContextMenu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
-import com.trovebox.android.app.R;
 import com.trovebox.android.app.bitmapfun.util.ImageCache;
 import com.trovebox.android.app.bitmapfun.util.ImageFetcher;
 import com.trovebox.android.app.common.CommonRefreshableFragmentWithImageWorker;
@@ -37,8 +35,8 @@ import com.trovebox.android.app.model.Photo;
 import com.trovebox.android.app.model.utils.PhotoUtils;
 import com.trovebox.android.app.model.utils.PhotoUtils.PhotoDeletedHandler;
 import com.trovebox.android.app.model.utils.PhotoUtils.PhotoUpdatedHandler;
-import com.trovebox.android.app.net.TroveboxApi;
 import com.trovebox.android.app.net.ReturnSizes;
+import com.trovebox.android.app.net.TroveboxApi;
 import com.trovebox.android.app.share.ShareUtils;
 import com.trovebox.android.app.share.ShareUtils.FacebookShareRunnable;
 import com.trovebox.android.app.share.ShareUtils.TwitterShareRunnable;
@@ -303,6 +301,7 @@ public class HomeFragment extends CommonRefreshableFragmentWithImageWorker
                     intent.putExtra(PhotoDetailsActivity.EXTRA_ADAPTER_PHOTOS,
                             new PhotosEndlessAdapter.ParametersHolder(mAdapter, photo));
                     startActivity(intent);
+                    clearImageWorkerCaches(true);
                 }
             });
             PhotoUtils.validateUrlForSizeExistAsyncAndRun(photo, photoSize,

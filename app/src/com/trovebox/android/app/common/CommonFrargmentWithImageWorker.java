@@ -4,9 +4,9 @@ package com.trovebox.android.app.common;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.trovebox.android.app.bitmapfun.util.ImageWorker;
-
 import android.os.Bundle;
+
+import com.trovebox.android.app.bitmapfun.util.ImageWorker;
 
 /**
  * @author Eugene Popovich
@@ -27,11 +27,15 @@ public abstract class CommonFrargmentWithImageWorker extends CommonFragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+        clearImageWorkerCaches(true);
+    }
+
+    public void clearImageWorkerCaches(boolean memoryOnly) {
         for (ImageWorker mImageWorker : imageWorkers)
         {
             if (mImageWorker != null && mImageWorker.getImageCache() != null)
             {
-                mImageWorker.getImageCache().clearMemoryCache();
+                mImageWorker.getImageCache().clearCaches(memoryOnly);
             }
         }
     }
@@ -40,24 +44,22 @@ public abstract class CommonFrargmentWithImageWorker extends CommonFragment {
     public void onResume()
     {
         super.onResume();
-        for (ImageWorker mImageWorker : imageWorkers)
-        {
-            if (mImageWorker != null)
-            {
-                mImageWorker.setExitTasksEarly(false);
-            }
-        }
+        setImageWorkerExitTaskEarly(false);
     }
 
     @Override
     public void onPause()
     {
         super.onPause();
+        setImageWorkerExitTaskEarly(true);
+    }
+
+    public void setImageWorkerExitTaskEarly(boolean exitTaskEarly) {
         for (ImageWorker mImageWorker : imageWorkers)
         {
             if (mImageWorker != null)
             {
-                mImageWorker.setExitTasksEarly(true);
+                mImageWorker.setExitTasksEarly(exitTaskEarly);
             }
         }
     }

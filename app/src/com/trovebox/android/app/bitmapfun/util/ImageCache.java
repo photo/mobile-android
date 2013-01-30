@@ -18,17 +18,17 @@ package com.trovebox.android.app.bitmapfun.util;
 
 import java.io.File;
 
-import com.trovebox.android.app.BuildConfig;
-import com.trovebox.android.app.TroveboxApplication;
-import com.trovebox.android.app.util.CommonUtils;
-import com.trovebox.android.app.util.TrackerUtils;
-
 import android.app.ActivityManager;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.util.LruCache;
+
+import com.trovebox.android.app.BuildConfig;
+import com.trovebox.android.app.TroveboxApplication;
+import com.trovebox.android.app.util.CommonUtils;
+import com.trovebox.android.app.util.TrackerUtils;
 
 /**
  * This class holds our bitmap caches (memory and disk).
@@ -59,6 +59,7 @@ public class ImageCache {
 
     private DiskLruCache mDiskCache;
     private LruCache<String, Bitmap> mMemoryCache;
+    private ImageCacheParams cacheParams;
 
     /**
      * Creating a new ImageCache object using the specified parameters.
@@ -104,11 +105,29 @@ public class ImageCache {
      * 
      * @param activity The calling {@link FragmentActivity}
      * @param uniqueName A unique name to append to the cache directory
+     * @param clearDiskCacheOnStart whether to clear disk cache on start
+     * @return An existing retained ImageCache object or a new one if one did
+     *         not exist.
+     * @return
+     */
+    public static ImageCache findOrCreateCache(
+            final FragmentActivity activity, final String uniqueName,
+            boolean clearDiskCacheOnStart) {
+        return findOrCreateCache(activity, uniqueName, DEFAULT_DISK_CACHE_MAX_ITEM_SIZE,
+                clearDiskCacheOnStart);
+    }
+
+    /**
+     * Find and return an existing ImageCache stored in a {@link RetainFragment}
+     * , if not found a new one is created with defaults and saved to a
+     * {@link RetainFragment}.
+     * 
+     * @param activity The calling {@link FragmentActivity}
+     * @param uniqueName A unique name to append to the cache directory
      * @param diskCacheMaxItemSize max item size for the disk cache
      * @param clearDiskCacheOnStart whether to clear disk cache on start
      * @return An existing retained ImageCache object or a new one if one did
      *         not exist.
-     * @param clearDiskCacheOnStart whether to clear disk cache on start
      * @return
      */
     public static ImageCache findOrCreateCache(
@@ -154,7 +173,7 @@ public class ImageCache {
         // No existing ImageCache, create one and store it in RetainFragment
         if (imageCache == null) {
             imageCache = new ImageCache(activity, cacheParams);
-            mRetainFragment.setObject(imageCache);
+            mRetainFragment.setObject(cacheParams.uniqueName, imageCache);
         }
 
         return imageCache;
@@ -168,7 +187,7 @@ public class ImageCache {
      */
     private void init(Context context, ImageCacheParams cacheParams) {
         final File diskCacheDir = DiskLruCache.getDiskCacheDir(context, cacheParams.uniqueName);
-
+        this.cacheParams = cacheParams;
         // Set up disk cache
         if (cacheParams.diskCacheEnabled) {
             mDiskCache = DiskLruCache.openCache(context, diskCacheDir,
@@ -253,13 +272,16 @@ public class ImageCache {
         return null;
     }
 
-    public void clearCaches() {
-        clearDiskCache();
+    public void clearCaches(boolean memoryOnly) {
+        if (!memoryOnly)
+        {
+            clearDiskCacheIfNeeded();
+        }
         clearMemoryCache();
     }
 
-    public void clearDiskCache() {
-        if (mDiskCache != null)
+    public void clearDiskCacheIfNeeded() {
+        if (mDiskCache != null && cacheParams.clearDiskCacheOnStart)
         {
             mDiskCache.clearCache();
         }

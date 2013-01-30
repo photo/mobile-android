@@ -16,7 +16,9 @@
 
 package com.trovebox.android.app.bitmapfun.util;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import android.os.Bundle;
@@ -107,5 +109,16 @@ public class RetainFragment extends Fragment {
         {
             map.put(key, object);
         }
+    }
+
+    public List<Object> getObjects()
+    {
+        List<Object> result = new ArrayList<Object>();
+        result.addAll(map.values());
+        if (mObject != null)
+        {
+            result.add(mObject);
+        }
+        return result;
     }
 }
