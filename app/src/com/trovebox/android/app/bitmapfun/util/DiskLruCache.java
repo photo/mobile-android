@@ -30,16 +30,16 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import com.trovebox.android.app.BuildConfig;
-import com.trovebox.android.app.util.CommonUtils;
-import com.trovebox.android.app.util.GuiUtils;
-import com.trovebox.android.app.util.TrackerUtils;
-
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
 import android.graphics.BitmapFactory;
 import android.os.Environment;
+
+import com.trovebox.android.app.BuildConfig;
+import com.trovebox.android.app.util.CommonUtils;
+import com.trovebox.android.app.util.GuiUtils;
+import com.trovebox.android.app.util.TrackerUtils;
 
 /**
  * A simple disk LRU bitmap cache to illustrate how a disk cache would be used
@@ -296,6 +296,9 @@ public class DiskLruCache {
      */
     public void clearCache() {
         DiskLruCache.clearCache(mCacheDir);
+        synchronized (mLinkedHashMap) {
+            mLinkedHashMap.clear();
+        }
     }
 
     /**

@@ -5,7 +5,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-
 import org.holoeverywhere.LayoutInflater;
 import org.holoeverywhere.app.Activity;
 import org.holoeverywhere.widget.AdapterView;
@@ -38,7 +37,6 @@ import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.view.Window;
-import com.trovebox.android.app.R;
 import com.trovebox.android.app.FacebookFragment.FacebookLoadingControlAccessor;
 import com.trovebox.android.app.TwitterFragment.TwitterLoadingControlAccessor;
 import com.trovebox.android.app.bitmapfun.util.ImageCache;
@@ -60,9 +58,9 @@ import com.trovebox.android.app.ui.adapter.PhotosEndlessAdapter;
 import com.trovebox.android.app.ui.adapter.PhotosEndlessAdapter.DetailsReturnSizes;
 import com.trovebox.android.app.ui.adapter.PhotosEndlessAdapter.ParametersHolder;
 import com.trovebox.android.app.ui.widget.HorizontalListView;
+import com.trovebox.android.app.ui.widget.HorizontalListView.OnDownListener;
 import com.trovebox.android.app.ui.widget.PhotoViewHackyViewPager;
 import com.trovebox.android.app.ui.widget.YesNoDialogFragment;
-import com.trovebox.android.app.ui.widget.HorizontalListView.OnDownListener;
 import com.trovebox.android.app.ui.widget.YesNoDialogFragment.YesNoButtonPressedHandler;
 import com.trovebox.android.app.util.CommonUtils;
 import com.trovebox.android.app.util.GuiUtils;
@@ -448,12 +446,12 @@ public class PhotoDetailsActivity extends CommonActivity implements TwitterLoadi
             mImageWorker = new ImageFetcher(getActivity(), null, bigPhotoSize.getWidth(),
                     bigPhotoSize.getHeight());
             mImageWorker.setImageCache(ImageCache.findOrCreateCache(getActivity(),
-                    ImageCache.LARGE_IMAGES_CACHE_DIR));
+                    ImageCache.LARGE_IMAGES_CACHE_DIR, false));
             mImageWorker.setImageFadeIn(false);
             mImageWorker2 = new ImageFetcher(getActivity(), null, thumbSize.getWidth(),
                     thumbSize.getHeight());
             mImageWorker2.setImageCache(ImageCache.findOrCreateCache(getActivity(),
-                    ImageCache.THUMBS_CACHE_DIR));
+                    ImageCache.THUMBS_CACHE_DIR, false));
             mImageWorker2.setLoadingImage(R.drawable.empty_photo);
             imageWorkers.add(mImageWorker2);
         }

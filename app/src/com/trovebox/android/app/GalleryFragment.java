@@ -5,7 +5,17 @@ package com.trovebox.android.app;
 import org.holoeverywhere.LayoutInflater;
 import org.holoeverywhere.app.Activity;
 
-import com.trovebox.android.app.R;
+import android.content.Context;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.os.Bundle;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
+import android.widget.ImageView;
+import android.widget.ListView;
+
 import com.trovebox.android.app.bitmapfun.util.ImageCache;
 import com.trovebox.android.app.bitmapfun.util.ImageFetcher;
 import com.trovebox.android.app.common.CommonRefreshableFragmentWithImageWorker;
@@ -18,20 +28,11 @@ import com.trovebox.android.app.ui.adapter.PhotosEndlessAdapter;
 import com.trovebox.android.app.util.CommonUtils;
 import com.trovebox.android.app.util.GuiUtils;
 import com.trovebox.android.app.util.ImageFlowUtils;
+import com.trovebox.android.app.util.ImageFlowUtils.FlowObjectToStringWrapper;
 import com.trovebox.android.app.util.LoadingControl;
+import com.trovebox.android.app.util.RunnableWithParameter;
 import com.trovebox.android.app.util.TrackerUtils;
 import com.trovebox.android.app.util.Utils;
-
-import android.content.Context;
-import android.content.Intent;
-import android.graphics.Bitmap;
-import android.os.Bundle;
-import android.view.View;
-import android.view.View.OnClickListener;
-import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
-import android.widget.ImageView;
-import android.widget.ListView;
 
 public class GalleryFragment extends CommonRefreshableFragmentWithImageWorker
         implements PhotoDeletedHandler, PhotoUpdatedHandler
@@ -225,10 +226,12 @@ public class GalleryFragment extends CommonRefreshableFragmentWithImageWorker
             super(context, loadingControl, size);
         }
 
+        @SuppressWarnings("unchecked")
         @Override
         protected Bitmap processBitmap(Object data)
         {
-            Photo imageData = (Photo) data;
+            FlowObjectToStringWrapper<Photo> fo = (FlowObjectToStringWrapper<Photo>) data;
+            Photo imageData = fo.getObject();
             double ratio = imageData.getHeight() == 0 ? 1 : (float) imageData.getWidth()
                     / (float) imageData.getHeight();
             int height = mImageHeight;
@@ -237,7 +240,7 @@ public class GalleryFragment extends CommonRefreshableFragmentWithImageWorker
             try
             {
                 imageData = PhotoUtils.validateUrlForSizeExistAndReturn(imageData, thumbSize);
-                result = super.processBitmap(imageData.getUrl(thumbSize.toString()), width, height);
+                result = super.processBitmap(fo.toString(), width, height);
             } catch (Exception e)
             {
                 GuiUtils.noAlertError(TAG, e);
@@ -306,8 +309,25 @@ public class GalleryFragment extends CommonRefreshableFragmentWithImageWorker
                             intent.putExtra(PhotoDetailsActivity.EXTRA_ADAPTER_PHOTOS,
                                     new PhotosEndlessAdapter.ParametersHolder(mAdapter, value));
                             startActivity(intent);
+                            clearImageWorkerCaches(true);
                         }
                     });
+                }
+
+                @Override
+                public void loadImage(final Photo photo, final ImageView imageView) {
+                    PhotoUtils.validateUrlForSizeExistAsyncAndRun(photo, thumbSize,
+                            new RunnableWithParameter<Photo>() {
+
+                                @Override
+                                public void run(Photo photo) {
+                                    FlowObjectToStringWrapper<Photo> fo = new FlowObjectToStringWrapper<Photo>(
+                                            photo, photo.getUrl(thumbSize.toString()));
+                                    mImageWorker
+                                            .loadImage(fo,
+                                                    imageView);
+                                }
+                            }, loadingControl);
                 }
             };
         }
@@ -340,7 +360,7 @@ public class GalleryFragment extends CommonRefreshableFragmentWithImageWorker
             return imageFlowUtils.getView(position, convertView, parent,
                     R.layout.item_gallery_image_line,
                     R.layout.item_gallery_image,
-                    R.id.image, mImageWorker, getActivity());
+                    R.id.image, getActivity());
         }
 
         @Override
