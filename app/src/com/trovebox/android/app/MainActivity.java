@@ -22,7 +22,6 @@ import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.view.Window;
-import com.trovebox.android.app.R;
 import com.trovebox.android.app.FacebookFragment.FacebookLoadingControlAccessor;
 import com.trovebox.android.app.SyncFragment.SyncHandler;
 import com.trovebox.android.app.TwitterFragment.TwitterLoadingControlAccessor;
@@ -44,9 +43,9 @@ import com.trovebox.android.app.util.CommonUtils;
 import com.trovebox.android.app.util.GalleryOpenControl;
 import com.trovebox.android.app.util.LoadingControl;
 import com.trovebox.android.app.util.SyncUtils;
+import com.trovebox.android.app.util.SyncUtils.SyncStartedHandler;
 import com.trovebox.android.app.util.TrackerUtils;
 import com.trovebox.android.app.util.Utils;
-import com.trovebox.android.app.util.SyncUtils.SyncStartedHandler;
 
 public class MainActivity extends CommonActivity
         implements LoadingControl, GalleryOpenControl, SyncHandler,
@@ -258,8 +257,6 @@ public class MainActivity extends CommonActivity
 
     public void reinitMenu(Menu menu)
     {
-        menu.findItem(R.id.menu_camera).setVisible(
-                Preferences.isLoggedIn(this));
     }
 
     @Override
