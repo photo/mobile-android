@@ -6,15 +6,14 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.Iterator;
 
-
 import org.apache.http.client.ClientProtocolException;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.content.Context;
+
 import com.trovebox.android.app.Preferences;
 import com.trovebox.android.app.net.HttpEntityWithProgress.ProgressListener;
-
-import android.content.Context;
 
 /**
  * TroveboxApi provides access to the acTrovebox API.
@@ -51,7 +50,16 @@ public class TroveboxApi extends ApiBase implements ITroveboxApi {
             IOException,
             IllegalStateException, JSONException
     {
+        return getAlbums(null);
+    }
+
+    @Override
+    public AlbumsResponse getAlbums(Paging paging) throws ClientProtocolException,
+            IOException,
+            IllegalStateException, JSONException
+    {
         ApiRequest request = new ApiRequest(ApiRequest.GET, "/albums/list.json");
+        addPagingRestrictions(paging, request);
         ApiResponse response = execute(request);
         String content = response.getContentAsString();
         return new AlbumsResponse(new JSONObject(content));
@@ -163,6 +171,19 @@ public class TroveboxApi extends ApiBase implements ITroveboxApi {
             }
             request.addParameter("tags", sb.toString());
         }
+        addPagingRestrictions(paging, request);
+        ApiResponse response = execute(request);
+        // TODO: Fix null pointer exception at this place.
+        return new PhotosResponse(new JSONObject(response.getContentAsString()));
+    }
+
+    /**
+     * Add paging restrictions to the request if
+     * paging parameter is not null
+     * @param paging
+     * @param request
+     */
+    public void addPagingRestrictions(Paging paging, ApiRequest request) {
         if (paging != null)
         {
             if (paging.hasPage())
@@ -175,9 +196,6 @@ public class TroveboxApi extends ApiBase implements ITroveboxApi {
                         Integer.toString(paging.getPageSize()));
             }
         }
-        ApiResponse response = execute(request);
-        // TODO: Fix null pointer exception at this place.
-        return new PhotosResponse(new JSONObject(response.getContentAsString()));
     }
 
     /*

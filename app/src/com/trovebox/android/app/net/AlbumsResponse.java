@@ -4,7 +4,6 @@ package com.trovebox.android.app.net;
 import java.util.ArrayList;
 import java.util.List;
 
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -14,7 +13,7 @@ import com.trovebox.android.app.model.Album;
 /**
  * @author Eugene Popovich
  */
-public class AlbumsResponse extends TroveboxResponse
+public class AlbumsResponse extends PagedResponse
 {
     private final List<Album> mAlbums;
 
@@ -34,5 +33,10 @@ public class AlbumsResponse extends TroveboxResponse
     public List<Album> getAlbums()
     {
         return mAlbums;
+    }
+
+    @Override
+    public boolean hasNextPage() {
+        return !mAlbums.isEmpty();
     }
 }
