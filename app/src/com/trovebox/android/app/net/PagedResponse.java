@@ -19,11 +19,15 @@ public class PagedResponse extends TroveboxResponse {
     public PagedResponse(JSONObject json) throws JSONException {
         super(json);
         if (json.get("result") instanceof JSONArray) {
-            JSONObject objectContainingPaging = json.getJSONArray("result").getJSONObject(0);
-            mTotalRows = objectContainingPaging.optInt("totalRows");
-            mPageSize = objectContainingPaging.optInt("pageSize");
-            mCurrentPage = objectContainingPaging.optInt("currentPage");
-            mTotalPages = objectContainingPaging.optInt("totalPages");
+            JSONArray array = json.getJSONArray("result");
+            if (array.length() > 0)
+            {
+                JSONObject objectContainingPaging = array.getJSONObject(0);
+                mTotalRows = objectContainingPaging.optInt("totalRows");
+                mPageSize = objectContainingPaging.optInt("pageSize");
+                mCurrentPage = objectContainingPaging.optInt("currentPage");
+                mTotalPages = objectContainingPaging.optInt("totalPages");
+            }
         }
     }
 

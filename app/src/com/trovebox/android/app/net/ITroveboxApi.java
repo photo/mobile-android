@@ -5,13 +5,12 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
 
-
 import org.apache.http.client.ClientProtocolException;
 import org.json.JSONException;
 
-import com.trovebox.android.app.net.HttpEntityWithProgress.ProgressListener;
-
 import android.content.Context;
+
+import com.trovebox.android.app.net.HttpEntityWithProgress.ProgressListener;
 
 public interface ITroveboxApi {
 
@@ -34,6 +33,21 @@ public interface ITroveboxApi {
      */
     AlbumsResponse getAlbums() throws ClientProtocolException, IOException,
             IllegalStateException, JSONException;
+    
+    /**
+     * Get albums.
+     * 
+     * @param resize which sizes should be returned
+     * @param paging paging information
+     * @return albums which are used on the server
+     * @throws ClientProtocolException
+     * @throws IOException
+     * @throws IllegalStateException
+     * @throws JSONException
+     */
+    AlbumsResponse getAlbums(Paging paging)
+            throws ClientProtocolException, IllegalStateException, IOException,
+            JSONException;
 
     /**
      * Retrieve a single photo.
