@@ -5,21 +5,6 @@ package com.trovebox.android.app;
 import org.holoeverywhere.LayoutInflater;
 import org.holoeverywhere.app.Activity;
 
-import com.trovebox.android.app.R;
-import com.trovebox.android.app.bitmapfun.util.ImageCache;
-import com.trovebox.android.app.bitmapfun.util.ImageFetcher;
-import com.trovebox.android.app.common.CommonFrargmentWithImageWorker;
-import com.trovebox.android.app.model.Album;
-import com.trovebox.android.app.net.AlbumsResponse;
-import com.trovebox.android.app.net.ITroveboxApi;
-import com.trovebox.android.app.net.ReturnSizes;
-import com.trovebox.android.app.ui.adapter.EndlessAdapter;
-import com.trovebox.android.app.util.CommonUtils;
-import com.trovebox.android.app.util.GalleryOpenControl;
-import com.trovebox.android.app.util.GuiUtils;
-import com.trovebox.android.app.util.LoadingControl;
-import com.trovebox.android.app.util.TrackerUtils;
-
 import android.content.Context;
 import android.os.Bundle;
 import android.view.View;
@@ -29,6 +14,21 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+
+import com.trovebox.android.app.bitmapfun.util.ImageCache;
+import com.trovebox.android.app.bitmapfun.util.ImageFetcher;
+import com.trovebox.android.app.common.CommonFrargmentWithImageWorker;
+import com.trovebox.android.app.model.Album;
+import com.trovebox.android.app.net.AlbumsResponse;
+import com.trovebox.android.app.net.ITroveboxApi;
+import com.trovebox.android.app.net.Paging;
+import com.trovebox.android.app.net.ReturnSizes;
+import com.trovebox.android.app.ui.adapter.EndlessAdapter;
+import com.trovebox.android.app.util.CommonUtils;
+import com.trovebox.android.app.util.GalleryOpenControl;
+import com.trovebox.android.app.util.GuiUtils;
+import com.trovebox.android.app.util.LoadingControl;
+import com.trovebox.android.app.util.TrackerUtils;
 
 /**
  * The fragment which displays albums list
@@ -45,7 +45,7 @@ public class AlbumsFragment extends CommonFrargmentWithImageWorker implements
 
     private AlbumsAdapter mAdapter;
 
-    private ReturnSizes returnSizes;
+    private ReturnSizes thumbSize;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -71,10 +71,11 @@ public class AlbumsFragment extends CommonFrargmentWithImageWorker implements
 
     @Override
     protected void initImageWorker() {
-        int width = 100;
-        int height = 100;
-        returnSizes = new ReturnSizes(width, height, true);
-        mImageWorker = new ImageFetcher(getActivity(), loadingControl, width, height);
+        int mImageThumbSize = getResources().getDimensionPixelSize(
+                R.dimen.album_item_size);
+        thumbSize = new ReturnSizes(mImageThumbSize, mImageThumbSize, true);
+        mImageWorker = new ImageFetcher(getActivity(), loadingControl, thumbSize.getWidth(),
+                thumbSize.getHeight());
         mImageWorker.setImageCache(ImageCache.findOrCreateCache(getActivity(),
                 ImageCache.THUMBS_CACHE_DIR));
     }
@@ -97,11 +98,17 @@ public class AlbumsFragment extends CommonFrargmentWithImageWorker implements
 
     private class AlbumsAdapter extends EndlessAdapter<Album>
     {
+        public static final int DEFAULT_PAGE_SIZE = 20;
         private final ITroveboxApi mTroveboxApi;
 
         public AlbumsAdapter()
         {
-            super(Integer.MAX_VALUE);
+            this(DEFAULT_PAGE_SIZE);
+        }
+
+        public AlbumsAdapter(int pageSize)
+        {
+            super(pageSize);
             mTroveboxApi = Preferences.getApi(getActivity());
             loadFirstPage();
         }
@@ -133,7 +140,7 @@ public class AlbumsFragment extends CommonFrargmentWithImageWorker implements
             if (album.getCover() != null)
             {
                 mImageWorker
-                        .loadImage(album.getCover().getUrl(returnSizes.toString()), image);
+                        .loadImage(album.getCover().getUrl(thumbSize.toString()), image);
             } else
             {
                 image.setImageBitmap(null);
@@ -148,8 +155,9 @@ public class AlbumsFragment extends CommonFrargmentWithImageWorker implements
             {
                 try
                 {
-                    AlbumsResponse response = mTroveboxApi.getAlbums();
-                    return new LoadResponse(response.getAlbums(), false);
+                    AlbumsResponse response = mTroveboxApi.getAlbums(new Paging(page,
+                            getPageSize()));
+                    return new LoadResponse(response.getAlbums(), response.hasNextPage());
                 } catch (Exception e)
                 {
                     GuiUtils.error(
