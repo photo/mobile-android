@@ -24,6 +24,7 @@ import com.trovebox.android.app.net.Paging;
 import com.trovebox.android.app.net.PhotoResponse;
 import com.trovebox.android.app.net.PhotosResponse;
 import com.trovebox.android.app.net.ReturnSizes;
+import com.trovebox.android.app.net.TroveboxResponse.RequestType;
 import com.trovebox.android.app.util.CommonUtils;
 import com.trovebox.android.test.net.JSONUtils;
 
@@ -61,7 +62,7 @@ public class GalleryActivityTest extends
         PowerMock
                 .expectLastCall()
                 .andReturn(
-                        new PhotoResponse(JSONUtils.getJson(
+                        new PhotoResponse(RequestType.UNKNOWN, JSONUtils.getJson(
                                 getInstrumentation().getContext(),
                                 R.raw.json_photo_get)))
                 .anyTimes();

@@ -185,6 +185,18 @@ public class TrackerUtils {
     }
 
     /**
+     * Track error event
+     * 
+     * @param action
+     * @param label
+     */
+    public static void trackErrorEvent(String action,
+            String label)
+    {
+        trackEvent("error_event", action, label);
+    }
+
+    /**
      * Track background event
      * 
      * @param action
@@ -276,6 +288,15 @@ public class TrackerUtils {
         EasyTracker.getInstance().setContext(TroveboxApplication.getContext());
         EasyTracker.getTracker().setExceptionParser(parser);
         EasyTracker.getTracker().trackException(Thread.currentThread().getName(), t, false);
+    }
+
+    /**
+     * Track message as exception
+     * @param message
+     */
+    public static void trackException(String message)
+    {
+        EasyTracker.getTracker().trackException(message, false);
     }
 
     /**

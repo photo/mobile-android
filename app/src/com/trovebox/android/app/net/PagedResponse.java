@@ -16,8 +16,8 @@ public class PagedResponse extends TroveboxResponse {
     private int mCurrentPage;
     private int mTotalPages;
 
-    public PagedResponse(JSONObject json) throws JSONException {
-        super(json);
+    public PagedResponse(RequestType requestType, JSONObject json) throws JSONException {
+        super(requestType, json);
         if (json.get("result") instanceof JSONArray) {
             JSONArray array = json.getJSONArray("result");
             if (array.length() > 0)

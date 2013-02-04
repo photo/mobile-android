@@ -10,8 +10,8 @@ import com.trovebox.android.app.model.Photo;
 public class PhotoResponse extends TroveboxResponse {
     private final Photo mPhoto;
 
-    public PhotoResponse(JSONObject json) throws JSONException {
-        super(json);
+    public PhotoResponse(RequestType requestType, JSONObject json) throws JSONException {
+        super(requestType, json);
         if (isSuccess() && json.get("result") instanceof JSONObject) {
             mPhoto = Photo.fromJson(json.getJSONObject("result"));
         } else {

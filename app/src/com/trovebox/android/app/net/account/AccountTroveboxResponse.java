@@ -5,11 +5,12 @@ package com.trovebox.android.app.net.account;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.content.Context;
+
 import com.trovebox.android.app.Preferences;
 import com.trovebox.android.app.R;
+import com.trovebox.android.app.TroveboxApplication;
 import com.trovebox.android.app.net.TroveboxResponse;
-
-import android.content.Context;
 
 /**
  * @author Patrick Santana <patrick@trovebox.com>
@@ -73,8 +74,8 @@ public class AccountTroveboxResponse extends TroveboxResponse {
         this.email = email;
     }
 
-    public AccountTroveboxResponse(JSONObject json) throws JSONException {
-        super(json);
+    public AccountTroveboxResponse(RequestType requestType, JSONObject json) throws JSONException {
+        super(requestType, json);
         if (isSuccess() && json.get("result") instanceof JSONObject) {
             JSONObject result = json.getJSONObject("result");
             server = "http://" + result.getString("host");
@@ -123,5 +124,16 @@ public class AccountTroveboxResponse extends TroveboxResponse {
     public boolean isUnknownError()
     {
         return getCode() == UNKNOWN_ERROR_CODE;
+    }
+
+    @Override
+    public String getAlertMessage() {
+        if (isInvalidCredentials())
+        {
+            return TroveboxApplication.getContext().getString(R.string.invalid_credentials);
+        } else
+        {
+            return super.getAlertMessage();
+        }
     }
 }

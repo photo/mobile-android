@@ -23,6 +23,7 @@ import com.trovebox.android.app.net.AlbumsResponse;
 import com.trovebox.android.app.net.ITroveboxApi;
 import com.trovebox.android.app.net.Paging;
 import com.trovebox.android.app.net.ReturnSizes;
+import com.trovebox.android.app.net.TroveboxResponseUtils;
 import com.trovebox.android.app.ui.adapter.EndlessAdapter;
 import com.trovebox.android.app.util.CommonUtils;
 import com.trovebox.android.app.util.GalleryOpenControl;
@@ -157,7 +158,10 @@ public class AlbumsFragment extends CommonFrargmentWithImageWorker implements
                 {
                     AlbumsResponse response = mTroveboxApi.getAlbums(new Paging(page,
                             getPageSize()));
-                    return new LoadResponse(response.getAlbums(), response.hasNextPage());
+                    if (TroveboxResponseUtils.checkResponseValid(response))
+                    {
+                        return new LoadResponse(response.getAlbums(), response.hasNextPage());
+                    }
                 } catch (Exception e)
                 {
                     GuiUtils.error(

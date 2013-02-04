@@ -5,8 +5,13 @@ package com.trovebox.android.app;
 import org.holoeverywhere.app.Activity;
 import org.holoeverywhere.app.ProgressDialog;
 
-import com.trovebox.android.app.R;
+import android.content.Intent;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.EditText;
+
 import com.trovebox.android.app.common.CommonActivity;
+import com.trovebox.android.app.net.TroveboxResponseUtils;
 import com.trovebox.android.app.net.account.AccountTroveboxResponse;
 import com.trovebox.android.app.net.account.FakeAccountTroveboxApi;
 import com.trovebox.android.app.net.account.IAccountTroveboxApi;
@@ -17,11 +22,6 @@ import com.trovebox.android.app.util.LoginUtils;
 import com.trovebox.android.app.util.ProgressDialogLoadingControl;
 import com.trovebox.android.app.util.TrackerUtils;
 import com.trovebox.android.app.util.concurrent.AsyncTaskEx;
-
-import android.content.Intent;
-import android.os.Bundle;
-import android.view.View;
-import android.widget.EditText;
 
 /**
  * Class to create new accounts on Trovebox
@@ -130,23 +130,13 @@ public class AccountSignup extends CommonActivity
                 loadingControl.stopLoading();
                 if (result != null)
                 {
-                    if (result.isSuccess())
+                    if (TroveboxResponseUtils.checkResponseValid(result))
                     {
                         result.saveCredentials(this.activity);
                         activity.setResult(RESULT_OK);
                         LoginUtils.sendLoggedInBroadcast(activity);
                         startActivity(new Intent(activity, MainActivity.class));
                         activity.finish();
-                    } else if (result.isUnknownError())
-                    {
-                        if (result.getMessage() != null
-                                && result.getMessage().length() > 0)
-                        {
-                            GuiUtils.alert(result.getMessage(), activity);
-                        } else
-                        {
-                            GuiUtils.alert(R.string.unknown_error);
-                        }
                     }
                 }
             } catch (Exception e)

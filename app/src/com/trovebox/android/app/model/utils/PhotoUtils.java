@@ -3,29 +3,29 @@ package com.trovebox.android.app.model.utils;
 import java.io.IOException;
 import java.util.Collection;
 
-
 import org.apache.http.client.ClientProtocolException;
 import org.json.JSONException;
-
-import com.trovebox.android.app.TroveboxApplication;
-import com.trovebox.android.app.Preferences;
-import com.trovebox.android.app.R;
-import com.trovebox.android.app.model.Photo;
-import com.trovebox.android.app.net.TroveboxResponse;
-import com.trovebox.android.app.net.PhotoResponse;
-import com.trovebox.android.app.net.ReturnSizes;
-import com.trovebox.android.app.util.CommonUtils;
-import com.trovebox.android.app.util.GuiUtils;
-import com.trovebox.android.app.util.LoadingControl;
-import com.trovebox.android.app.util.RunnableWithParameter;
-import com.trovebox.android.app.util.SimpleAsyncTaskEx;
-import com.trovebox.android.app.util.TrackerUtils;
 
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+
+import com.trovebox.android.app.Preferences;
+import com.trovebox.android.app.R;
+import com.trovebox.android.app.TroveboxApplication;
+import com.trovebox.android.app.model.Photo;
+import com.trovebox.android.app.net.PhotoResponse;
+import com.trovebox.android.app.net.ReturnSizes;
+import com.trovebox.android.app.net.TroveboxResponse;
+import com.trovebox.android.app.net.TroveboxResponseUtils;
+import com.trovebox.android.app.util.CommonUtils;
+import com.trovebox.android.app.util.GuiUtils;
+import com.trovebox.android.app.util.LoadingControl;
+import com.trovebox.android.app.util.RunnableWithParameter;
+import com.trovebox.android.app.util.SimpleAsyncTaskEx;
+import com.trovebox.android.app.util.TrackerUtils;
 
 /**
  * Utils class for the photo object
@@ -199,7 +199,7 @@ public class PhotoUtils {
                 TroveboxResponse response =
                         Preferences.getApi(TroveboxApplication.getContext())
                                 .deletePhoto(photo.getId());
-                return response.isSuccess();
+                return TroveboxResponseUtils.checkResponseValid(response);
             } catch (Exception e) {
                 GuiUtils.error(TAG, R.string.errorCouldNotDeletePhoto, e);
             }
@@ -247,7 +247,7 @@ public class PhotoUtils {
                                         isPrivate ? Photo.PERMISSION_PRIVATE
                                                 : Photo.PERMISSION_PUBLIC);
                 photo = response.getPhoto();
-                return response.isSuccess();
+                return TroveboxResponseUtils.checkResponseValid(response);
             } catch (Exception e) {
                 GuiUtils.error(TAG, R.string.errorCouldNotUpdatePhoto, e);
             }
