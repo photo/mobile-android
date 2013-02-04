@@ -5,12 +5,32 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class TroveboxResponse {
+    /**
+     * Possible request types
+     */
+    public enum RequestType
+    {
+        UNKNOWN,
+        TAGS,
+        PHOTO_UPLOAD, ALBUMS, PHOTOS,
+        PHOTO, DELETE_PHOTO, UPDATE_PHOTO,
+        CREATE_USER, SIGN_IN
+    }
     private final String mMessage;
     private final int mCode;
+    private final RequestType requestType;
 
-    public TroveboxResponse(JSONObject json) throws JSONException {
+    /**
+     * @param requestType the request type for this response. Used to track invalid responses
+     * @param json
+     * @throws JSONException
+     */
+    public TroveboxResponse(RequestType requestType, JSONObject json) throws JSONException {
         mMessage = json.getString("message");
         mCode = json.getInt("code");
+        this.requestType = requestType;
+
+        TroveboxResponseUtils.trackResponseIfInvalid(this);
     }
 
     public String getMessage() {
@@ -23,5 +43,27 @@ public class TroveboxResponse {
 
     public boolean isSuccess() {
         return mCode >= 200 && mCode < 300;
+    }
+
+    /**
+     * Gets the alert message for the user alert.
+     * This can be overrode in the inherited classes
+     * to process different status codes and show custom
+     * localized messages. 
+     * As example see AccountTroveboxResponse.getAlertMessage()
+     * 
+     * @return message for user alert
+     */
+    public String getAlertMessage()
+    {
+        return getMessage();
+    }
+
+    /**
+     * @return the request type for this response
+     */
+    public RequestType getRequestType()
+    {
+        return requestType;
     }
 }

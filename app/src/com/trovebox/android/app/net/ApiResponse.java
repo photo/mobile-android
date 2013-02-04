@@ -10,6 +10,13 @@ import java.io.StringWriter;
 import java.io.Writer;
 
 import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import com.trovebox.android.app.util.CommonUtils;
+import com.trovebox.android.app.util.GuiUtils;
+import com.trovebox.android.app.util.TrackerUtils;
 
 /**
  * ApiResponse represents the response returned from an API. It gives easier
@@ -18,7 +25,11 @@ import org.apache.http.HttpResponse;
  * @author Patrick Boos
  */
 public class ApiResponse {
+    private static final String TAG = ApiResponse.class.getSimpleName();
     private final HttpResponse mResponse;
+    private JSONObject jsonObject;
+    private boolean jsonParseError = false;
+    private String content;
 
     /**
      * Constructor.
@@ -37,7 +48,11 @@ public class ApiResponse {
      * @throws IOException
      */
     public String getContentAsString() throws IllegalStateException, IOException {
-        return convertStreamToString(mResponse.getEntity().getContent());
+        if (content == null)
+        {
+            content = convertStreamToString(mResponse.getEntity().getContent());
+        }
+        return content;
     }
 
     /**
@@ -96,6 +111,59 @@ public class ApiResponse {
             return writer.toString();
         } else {
             return "";
+        }
+    }
+
+    /**
+     * Checks the http response code whether it is success (200 <= code < 300)
+     * 
+     * @return true if getStatusCode() is 200 or more and less than 300
+     */
+    public boolean isSuccess() {
+        int statusCode = getStatusCode();
+        return statusCode >= HttpStatus.SC_OK && statusCode < 300;
+    }
+
+    /**
+     * Get the json object parsed from the response content
+     * 
+     * @return
+     * @throws IllegalStateException
+     * @throws IOException
+     * @throws InvalidApiResponseException if JSONException occurs during
+     *             content parse
+     */
+    public JSONObject getJSONObject() throws IllegalStateException, IOException
+    {
+        if(jsonObject == null && !jsonParseError)
+        {
+            try
+            {
+                jsonObject = new JSONObject(getContentAsString());
+            } catch(JSONException ex)
+            {
+                GuiUtils.noAlertError(TAG, ex);
+                jsonParseError = true;
+                String error = CommonUtils.format(
+                        "Invalid JSON Response. Status code: %1$d; Reason: %2$s", getStatusCode(),
+                        mResponse.getStatusLine()
+                                .getReasonPhrase());
+                CommonUtils.error(TAG, error);
+                TrackerUtils.trackErrorEvent("invalid_json_response",
+                        error);
+                throw new InvalidApiResponseException(error);
+            }
+        }
+        return jsonObject;
+    }
+
+    public static class InvalidApiResponseException extends RuntimeException
+    {
+        private static final long serialVersionUID = 1L;
+
+        public InvalidApiResponseException(String message)
+        {
+            super(message);
         }
     }
 }

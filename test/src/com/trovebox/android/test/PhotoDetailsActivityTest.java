@@ -4,22 +4,22 @@ package com.trovebox.android.test;
 import java.io.IOException;
 
 import junit.framework.Assert;
-import com.trovebox.android.test.R;
 
 import org.apache.http.client.ClientProtocolException;
 import org.easymock.EasyMock;
 import org.json.JSONException;
 import org.powermock.api.easymock.PowerMock;
 
+import android.content.Intent;
+import android.support.v4.app.Fragment;
+
 import com.trovebox.android.app.PhotoDetailsActivity;
 import com.trovebox.android.app.PhotoDetailsActivity.PhotoDetailsUiFragment;
 import com.trovebox.android.app.model.Photo;
 import com.trovebox.android.app.net.PhotoResponse;
 import com.trovebox.android.app.net.ReturnSizes;
+import com.trovebox.android.app.net.TroveboxResponse.RequestType;
 import com.trovebox.android.test.net.JSONUtils;
-
-import android.content.Intent;
-import android.support.v4.app.Fragment;
 
 public class PhotoDetailsActivityTest extends
         MockedInstrumentationTestCase<PhotoDetailsActivity>
@@ -52,7 +52,7 @@ public class PhotoDetailsActivityTest extends
         PowerMock
                 .expectLastCall()
                 .andReturn(
-                        new PhotoResponse(JSONUtils.getJson(
+                        new PhotoResponse(RequestType.UNKNOWN, JSONUtils.getJson(
                                 getInstrumentation().getContext(),
                                 R.raw.json_photo_get))).times(2);
         PowerMock.replayAll();

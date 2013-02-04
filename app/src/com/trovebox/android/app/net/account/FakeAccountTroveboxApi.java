@@ -4,13 +4,13 @@ package com.trovebox.android.app.net.account;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.trovebox.android.app.net.ApiBase;
-
 import android.content.Context;
+
+import com.trovebox.android.app.net.ApiBase;
+import com.trovebox.android.app.net.TroveboxResponse.RequestType;
 
 /**
  * @author Patrick Santana <patrick@trovebox.com>
@@ -68,6 +68,6 @@ public class FakeAccountTroveboxApi extends ApiBase implements
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-        return new AccountTroveboxResponse(jsonObjFake);
+        return new AccountTroveboxResponse(RequestType.UNKNOWN, jsonObjFake);
     }
 }

@@ -8,12 +8,12 @@ import java.util.Iterator;
 
 import org.apache.http.client.ClientProtocolException;
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import android.content.Context;
 
 import com.trovebox.android.app.Preferences;
 import com.trovebox.android.app.net.HttpEntityWithProgress.ProgressListener;
+import com.trovebox.android.app.net.TroveboxResponse.RequestType;
 
 /**
  * TroveboxApi provides access to the acTrovebox API.
@@ -24,7 +24,6 @@ public class TroveboxApi extends ApiBase implements ITroveboxApi {
 
     private static ITroveboxApi sMock;
     public static final String NEWEST_PHOTO_SORT_ORDER = "dateUploaded,DESC";
-
     public static ITroveboxApi createInstance(Context context) {
         if (sMock != null) {
             return sMock;
@@ -42,7 +41,7 @@ public class TroveboxApi extends ApiBase implements ITroveboxApi {
             IllegalStateException, JSONException {
         ApiRequest request = new ApiRequest(ApiRequest.GET, "/tags/list.json");
         ApiResponse response = execute(request);
-        return new TagsResponse(new JSONObject(response.getContentAsString()));
+        return new TagsResponse(response.getJSONObject());
     }
 
     @Override
@@ -61,8 +60,7 @@ public class TroveboxApi extends ApiBase implements ITroveboxApi {
         ApiRequest request = new ApiRequest(ApiRequest.GET, "/albums/list.json");
         addPagingRestrictions(paging, request);
         ApiResponse response = execute(request);
-        String content = response.getContentAsString();
-        return new AlbumsResponse(new JSONObject(content));
+        return new AlbumsResponse(response.getJSONObject());
     }
 
     @Override
@@ -75,7 +73,7 @@ public class TroveboxApi extends ApiBase implements ITroveboxApi {
             request.addParameter("returnSizes", returnSize.toString());
         }
         ApiResponse response = execute(request);
-        return new PhotoResponse(new JSONObject(response.getContentAsString()));
+        return new PhotoResponse(RequestType.PHOTO, response.getJSONObject());
     }
 
     @Override
@@ -174,7 +172,7 @@ public class TroveboxApi extends ApiBase implements ITroveboxApi {
         addPagingRestrictions(paging, request);
         ApiResponse response = execute(request);
         // TODO: Fix null pointer exception at this place.
-        return new PhotosResponse(new JSONObject(response.getContentAsString()));
+        return new PhotosResponse(response.getJSONObject());
     }
 
     /**
@@ -224,8 +222,7 @@ public class TroveboxApi extends ApiBase implements ITroveboxApi {
 
         request.addFileParameter("photo", imageFile);
         ApiResponse response = execute(request, progressListener);
-        String responseString = response.getContentAsString();
-        return new UploadResponse(new JSONObject(responseString));
+        return new UploadResponse(response.getJSONObject());
     }
 
     @Override
@@ -269,8 +266,7 @@ public class TroveboxApi extends ApiBase implements ITroveboxApi {
         ApiRequest request = new ApiRequest(ApiRequest.POST, "/photo/" + photoId
                 + "/delete.json");
         ApiResponse response = execute(request);
-        String content = response.getContentAsString();
-        return new TroveboxResponse(new JSONObject(content));
+        return new TroveboxResponse(RequestType.DELETE_PHOTO, response.getJSONObject());
     }
 
     @Override
@@ -302,7 +298,6 @@ public class TroveboxApi extends ApiBase implements ITroveboxApi {
                     Integer.toString(permission));
         }
         ApiResponse response = execute(request);
-        String content = response.getContentAsString();
-        return new PhotoResponse(new JSONObject(content));
+        return new PhotoResponse(RequestType.UPDATE_PHOTO, response.getJSONObject());
     }
 }
