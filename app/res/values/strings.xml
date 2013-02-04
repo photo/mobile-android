@@ -181,6 +181,7 @@
     <string name="title_activity_account_signup">AccountSignup</string>
     <string name="invalid_credentials">Invalid username or password</string>
     <string name="unknown_error">Unknown error</string>
+    <string name="unknown_error_with_code">Unknown error with code %1$d</string>
 
     <!-- Hints -->
     <string name="hint_email">email</string>

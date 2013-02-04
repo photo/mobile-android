@@ -4,8 +4,13 @@ package com.trovebox.android.app;
 
 import org.holoeverywhere.app.Activity;
 
-import com.trovebox.android.app.R;
+import android.content.Intent;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.EditText;
+
 import com.trovebox.android.app.common.CommonActivity;
+import com.trovebox.android.app.net.TroveboxResponseUtils;
 import com.trovebox.android.app.net.account.AccountTroveboxResponse;
 import com.trovebox.android.app.net.account.FakeAccountTroveboxApi;
 import com.trovebox.android.app.net.account.IAccountTroveboxApi;
@@ -16,11 +21,6 @@ import com.trovebox.android.app.util.LoginUtils;
 import com.trovebox.android.app.util.ProgressDialogLoadingControl;
 import com.trovebox.android.app.util.TrackerUtils;
 import com.trovebox.android.app.util.concurrent.AsyncTaskEx;
-
-import android.content.Intent;
-import android.os.Bundle;
-import android.view.View;
-import android.widget.EditText;
 
 public class AccountLogin extends CommonActivity
 {
@@ -118,7 +118,7 @@ public class AccountLogin extends CommonActivity
 
                 if (result != null)
                 {
-                    if (result.isSuccess())
+                    if (TroveboxResponseUtils.checkResponseValid(result))
                     {
                         // save credentials.
                         result.saveCredentials(this.activity);
@@ -129,19 +129,6 @@ public class AccountLogin extends CommonActivity
                                 MainActivity.class));
                         LoginUtils.sendLoggedInBroadcast(activity);
                         this.activity.finish();
-                    } else if (result.isInvalidCredentials())
-                    {
-                        GuiUtils.alert(R.string.invalid_credentials);
-                    } else if (result.isUnknownError())
-                    {
-                        if (result.getMessage() != null
-                                && result.getMessage().length() > 0)
-                        {
-                            GuiUtils.alert(result.getMessage(), activity);
-                        } else
-                        {
-                            GuiUtils.alert(R.string.unknown_error);
-                        }
                     }
                 }
             } catch (Exception e)

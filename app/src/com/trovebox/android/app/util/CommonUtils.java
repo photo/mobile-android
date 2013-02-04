@@ -3,14 +3,14 @@ package com.trovebox.android.app.util;
 
 import java.util.Locale;
 
-import com.trovebox.android.app.BuildConfig;
-import com.trovebox.android.app.TroveboxApplication;
-import com.trovebox.android.app.Preferences;
-import com.trovebox.android.app.R;
-
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
+
+import com.trovebox.android.app.BuildConfig;
+import com.trovebox.android.app.Preferences;
+import com.trovebox.android.app.R;
+import com.trovebox.android.app.TroveboxApplication;
 
 public class CommonUtils
 {
@@ -20,6 +20,14 @@ public class CommonUtils
     public static boolean TEST_CASE = false;
     
     public static final String TAG = CommonUtils.class.getSimpleName();
+
+    /**
+     * Write message to the debug log
+     * 
+     * @param TAG
+     * @param message
+     * @param params
+     */
     public static void debug(String TAG, String message, Object... params)
     {
         try
@@ -40,6 +48,13 @@ public class CommonUtils
         }
     }
 
+    /**
+     * Format string with params
+     * 
+     * @param message
+     * @param params
+     * @return
+     */
     public static String format(String message, Object... params) {
         try
         {
@@ -51,6 +66,13 @@ public class CommonUtils
         return null;
     }
 
+    /**
+     * Write message to the verbose log
+     * 
+     * @param TAG
+     * @param message
+     * @param params
+     */
     public static void verbose(String TAG, String message, Object... params)
     {
         try
@@ -82,6 +104,25 @@ public class CommonUtils
         Log.e(TAG, message);
     }
 
+    /**
+     * Write message to the error log
+     * 
+     * @param TAG
+     * @param message
+     * @param tr
+     */
+    public static void error(String TAG, String message, Throwable tr)
+    {
+        Log.e(TAG, message, tr);
+    }
+
+    /**
+     * Get serializable object from bundle if it is not null
+     * 
+     * @param key
+     * @param bundle
+     * @return
+     */
     @SuppressWarnings("unchecked")
     public static <T> T getSerializableFromBundleIfNotNull(String key, Bundle bundle)
     {

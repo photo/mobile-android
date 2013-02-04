@@ -4,7 +4,6 @@ package com.trovebox.android.app.net;
 import java.util.ArrayList;
 import java.util.List;
 
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -16,7 +15,7 @@ public class PhotosResponse extends PagedResponse {
     private List<Photo> mPhotos;
 
     public PhotosResponse(JSONObject json) throws JSONException {
-        super(json);
+        super(RequestType.PHOTOS, json);
 
         mPhotos = new ArrayList<Photo>();
 

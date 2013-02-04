@@ -7,21 +7,22 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import com.trovebox.android.app.TroveboxApplication;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
+
 import com.trovebox.android.app.Preferences;
 import com.trovebox.android.app.R;
+import com.trovebox.android.app.TroveboxApplication;
 import com.trovebox.android.app.model.Tag;
 import com.trovebox.android.app.model.utils.TagUtils;
 import com.trovebox.android.app.net.ITroveboxApi;
 import com.trovebox.android.app.net.TagsResponse;
+import com.trovebox.android.app.net.TroveboxResponseUtils;
 import com.trovebox.android.app.util.CommonUtils;
 import com.trovebox.android.app.util.GuiUtils;
 import com.trovebox.android.app.util.LoadingControl;
 import com.trovebox.android.app.util.compare.ToStringComparator;
-
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
-import android.widget.CompoundButton.OnCheckedChangeListener;
 
 /**
  * @author Eugene Popovich
@@ -75,12 +76,15 @@ public abstract class MultiSelectTagsAdapter extends EndlessAdapter<Tag>
             try
             {
                 TagsResponse response = mTroveboxApi.getTags();
-                List<Tag> tags = response.getTags();
-                if (tags != null)
+                if (TroveboxResponseUtils.checkResponseValid(response))
                 {
-                    Collections.sort(tags, new ToStringComparator());
+                    List<Tag> tags = response.getTags();
+                    if (tags != null)
+                    {
+                        Collections.sort(tags, new ToStringComparator());
+                    }
+                    return new LoadResponse(tags, false);
                 }
-                return new LoadResponse(tags, false);
             } catch (Exception e)
             {
                 GuiUtils.error(TAG,

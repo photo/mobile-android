@@ -4,6 +4,12 @@ package com.trovebox.android.app.ui.adapter;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.app.Activity;
+import android.content.Context;
+import android.os.Parcel;
+import android.os.Parcelable;
+import android.util.DisplayMetrics;
+
 import com.trovebox.android.app.Preferences;
 import com.trovebox.android.app.R;
 import com.trovebox.android.app.model.Photo;
@@ -11,15 +17,10 @@ import com.trovebox.android.app.net.ITroveboxApi;
 import com.trovebox.android.app.net.Paging;
 import com.trovebox.android.app.net.PhotosResponse;
 import com.trovebox.android.app.net.ReturnSizes;
+import com.trovebox.android.app.net.TroveboxResponseUtils;
 import com.trovebox.android.app.util.CommonUtils;
 import com.trovebox.android.app.util.GuiUtils;
 import com.trovebox.android.app.util.TrackerUtils;
-
-import android.app.Activity;
-import android.content.Context;
-import android.os.Parcel;
-import android.os.Parcelable;
-import android.util.DisplayMetrics;
 
 public abstract class PhotosEndlessAdapter extends EndlessAdapter<Photo>
 {
@@ -135,12 +136,16 @@ public abstract class PhotosEndlessAdapter extends EndlessAdapter<Photo>
             PhotosResponse response = mTroveboxApi.getPhotos(returnSizes,
                     mTagFilter, mAlbumFilter, sortBy, new Paging(page,
                             pageSize));
-            TrackerUtils.trackDataLoadTiming(System.currentTimeMillis() - start,
-                    CommonUtils.format("loadPhotos: page = %1$d, pageSize = %2$d", page, pageSize),
-                    getClass().getSimpleName());
-            boolean hasNextPage = response.getCurrentPage() < response
-                    .getTotalPages();
-            return new LoadResponse(response.getPhotos(), hasNextPage);
+            if (TroveboxResponseUtils.checkResponseValid(response))
+            {
+                TrackerUtils.trackDataLoadTiming(System.currentTimeMillis() - start,
+                        CommonUtils.format("loadPhotos: page = %1$d, pageSize = %2$d", page,
+                                pageSize),
+                        getClass().getSimpleName());
+                boolean hasNextPage = response.getCurrentPage() < response
+                        .getTotalPages();
+                return new LoadResponse(response.getPhotos(), hasNextPage);
+            }
         } catch (Exception e)
         {
             GuiUtils.error(

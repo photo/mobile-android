@@ -7,7 +7,7 @@ import org.json.JSONObject;
 public class UploadResponse extends PhotoResponse {
 
     public UploadResponse(JSONObject json) throws JSONException {
-        super(json);
+        super(RequestType.PHOTO_UPLOAD, json);
     }
 
     /**

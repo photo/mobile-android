@@ -19,7 +19,7 @@ public class AlbumsResponse extends PagedResponse
 
     public AlbumsResponse(JSONObject json) throws JSONException
     {
-        super(json);
+        super(RequestType.ALBUMS, json);
         JSONArray data = json.getJSONArray("result");
         mAlbums = new ArrayList<Album>(data.length());
         for (int i = 0; i < data.length(); i++) {
