@@ -6,32 +6,11 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.Date;
 
-
 import org.holoeverywhere.LayoutInflater;
 import org.holoeverywhere.app.AlertDialog;
 import org.holoeverywhere.app.Dialog;
 import org.holoeverywhere.app.Fragment;
 import org.holoeverywhere.widget.Switch;
-
-import com.trovebox.android.app.R;
-import com.trovebox.android.app.bitmapfun.util.ImageResizer;
-import com.trovebox.android.app.common.CommonActivity;
-import com.trovebox.android.app.common.CommonClosableOnRestoreDialogFragment;
-import com.trovebox.android.app.common.CommonFragment;
-import com.trovebox.android.app.facebook.FacebookProvider;
-import com.trovebox.android.app.facebook.FacebookUtils;
-import com.trovebox.android.app.feather.FeatherFragment;
-import com.trovebox.android.app.net.UploadMetaData;
-import com.trovebox.android.app.provider.PhotoUpload;
-import com.trovebox.android.app.provider.UploadsProviderAccessor;
-import com.trovebox.android.app.service.UploaderService;
-import com.trovebox.android.app.twitter.TwitterUtils;
-import com.trovebox.android.app.util.CommonUtils;
-import com.trovebox.android.app.util.FileUtils;
-import com.trovebox.android.app.util.GuiUtils;
-import com.trovebox.android.app.util.ImageUtils;
-import com.trovebox.android.app.util.ProgressDialogLoadingControl;
-import com.trovebox.android.app.util.TrackerUtils;
 
 import android.content.ContentValues;
 import android.content.DialogInterface;
@@ -44,10 +23,31 @@ import android.provider.MediaStore;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
 import android.widget.ImageView;
+
+import com.trovebox.android.app.bitmapfun.util.ImageResizer;
+import com.trovebox.android.app.common.CommonActivity;
+import com.trovebox.android.app.common.CommonClosableOnRestoreDialogFragment;
+import com.trovebox.android.app.common.CommonFragment;
+import com.trovebox.android.app.facebook.FacebookProvider;
+import com.trovebox.android.app.facebook.FacebookUtils;
+import com.trovebox.android.app.feather.FeatherFragment;
+import com.trovebox.android.app.net.UploadMetaData;
+import com.trovebox.android.app.net.account.AccountLimitUtils;
+import com.trovebox.android.app.provider.PhotoUpload;
+import com.trovebox.android.app.provider.UploadsProviderAccessor;
+import com.trovebox.android.app.service.UploaderService;
+import com.trovebox.android.app.twitter.TwitterUtils;
+import com.trovebox.android.app.util.CommonUtils;
+import com.trovebox.android.app.util.FileUtils;
+import com.trovebox.android.app.util.GuiUtils;
+import com.trovebox.android.app.util.ImageUtils;
+import com.trovebox.android.app.util.ProgressDialogLoadingControl;
+import com.trovebox.android.app.util.TrackerUtils;
 
 /**
  * This activity handles uploading pictures to Trovebox.
@@ -68,6 +68,13 @@ public class UploadActivity extends CommonActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (!CommonUtils.checkLoggedIn())
+        {
+            CommonUtils.debug(TAG, "Not logged in. Finishing...");
+            TrackerUtils.trackUiEvent(TAG + ".AutoClose", "Not logged in");
+            finish();
+            return;
+        }
         if (savedInstanceState == null)
         {
             getSupportFragmentManager().beginTransaction()
@@ -108,6 +115,7 @@ public class UploadActivity extends CommonActivity {
             }
         }
     }
+
     public static class UploadUiFragment extends CommonFragment
             implements OnClickListener
     {
@@ -202,7 +210,9 @@ public class UploadActivity extends CommonActivity {
 
         void init(View v)
         {
-            v.findViewById(R.id.button_upload).setOnClickListener(this);
+            final Button buttonUpload = (Button) v.findViewById(R.id.button_upload);
+            buttonUpload.setOnClickListener(this);
+            buttonUpload.setEnabled(false);
             v.findViewById(R.id.select_tags).setOnClickListener(this);
             v.findViewById(R.id.image_upload).setOnClickListener(this);
             v.findViewById(R.id.button_edit).setOnClickListener(this);
@@ -265,6 +275,28 @@ public class UploadActivity extends CommonActivity {
             {
                 showSelectionDialog();
             }
+            AccountLimitUtils.checkQuotaPerOneUploadAvailableAndRunAsync(
+                    new Runnable() {
+
+                        @Override
+                        public void run() {
+                            CommonUtils.debug(TAG, "Upload limit check passed");
+                            TrackerUtils.trackLimitEvent("upload_activity_upload_enabled_check",
+                                    "success");
+                            buttonUpload.setEnabled(true);
+                        }
+                    },
+                    new Runnable() {
+
+                        @Override
+                        public void run() {
+                            CommonUtils.debug(TAG, "Upload limit check failed");
+                            TrackerUtils.trackLimitEvent("upload_activity_upload_enabled_check",
+                                    "fail");
+                        }
+                    },
+                    new ProgressDialogLoadingControl(getActivity(), true, true,
+                            getString(R.string.loading)));
         }
 
         void reinitShareSwitches()
@@ -642,6 +674,7 @@ public class UploadActivity extends CommonActivity {
                 super.onCancel(dialog);
                 getActivity().finish();
             }
+
             @Override
             public void onDismiss(DialogInterface dialog) {
                 super.onDismiss(dialog);

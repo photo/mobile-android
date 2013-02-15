@@ -23,29 +23,6 @@ public class GuiUtils
     static Handler mHandler;
 
     /**
-     * Get message by id
-     * 
-     * @param messageId
-     * @return
-     */
-    static String getMessage(int messageId)
-    {
-        return TroveboxApplication.getContext().getString(messageId);
-    }
-
-    /**
-     * Get message by id with parameters
-     * 
-     * @param messageId
-     * @param args
-     * @return
-     */
-    static String getMessage(int messageId, Object ... args)
-    {
-        return TroveboxApplication.getContext().getString(messageId, args);
-    }
-
-    /**
      * Setup application
      */
     public static void setup()
@@ -84,7 +61,7 @@ public class GuiUtils
      */
     public static void alert(int messageId)
     {
-        alert(getMessage(messageId));
+        alert(CommonUtils.getStringResource(messageId));
     }
 
     /**
@@ -95,7 +72,7 @@ public class GuiUtils
      */
     public static void alert(int messageId, Object... args)
     {
-        alert(getMessage(messageId, args));
+        alert(CommonUtils.getStringResource(messageId, args));
     }
 
     /**
@@ -136,7 +113,7 @@ public class GuiUtils
      */
     public static void info(int messagId)
     {
-        info(getMessage(messagId));
+        info(CommonUtils.getStringResource(messagId));
     }
 
     /**
@@ -169,7 +146,7 @@ public class GuiUtils
      */
     public static void error(String TAG, int messageId, Exception ex)
     {
-        error(TAG, getMessage(messageId), ex);
+        error(TAG, CommonUtils.getStringResource(messageId), ex);
     }
 
     /**
@@ -206,7 +183,7 @@ public class GuiUtils
     public static void error(String TAG, int messageId, Exception ex,
             Context context)
     {
-        error(TAG, getMessage(messageId), ex, context);
+        error(TAG, CommonUtils.getStringResource(messageId), ex, context);
     }
 
     /**
@@ -258,7 +235,7 @@ public class GuiUtils
     public static void processError(String TAG, int messageId, Exception ex,
             Context context, boolean alertMessage)
     {
-        processError(TAG, getMessage(messageId), ex, context, alertMessage);
+        processError(TAG, CommonUtils.getStringResource(messageId), ex, context, alertMessage);
     }
 
     /**

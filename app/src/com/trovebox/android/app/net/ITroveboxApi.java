@@ -246,4 +246,14 @@ public interface ITroveboxApi {
      */
     public TroveboxResponse deletePhoto(String photoId) throws ClientProtocolException,
             IOException, IllegalStateException, JSONException;
+
+    /**
+     * @return profile information
+     * @throws ClientProtocolException
+     * @throws IOException
+     * @throws IllegalStateException
+     * @throws JSONException
+     */
+    ProfileResponse getProfile() throws ClientProtocolException, IOException,
+            IllegalStateException, JSONException;
 }

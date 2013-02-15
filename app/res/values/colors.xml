@@ -15,5 +15,7 @@
     <color name="ab_fg_black">#000000</color>
     <color name="button_color">#fac806</color>
     <color name="pressed_trovebox">#CCfece31</color>
+    <color name="profile_icon_color">#8c7b73</color>
+    <color name="profile_icon_color_transparent">#558c7b73</color>
 
 </resources>

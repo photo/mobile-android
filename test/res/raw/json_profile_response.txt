@@ -1,0 +1,19 @@
+{ "code" : 200,
+  "message" : "User profile",
+  "result" : { "counts" : { "albums" : 7,
+          "photos" : 134,
+          "storage" : 24720384,
+          "tags" : 26
+        },
+      "email" : "test@trovebox.com",
+      "id" : "current.trovebox.com",
+      "isOwner" : true,
+      "limit" : { "remaining" : 62,
+          "resetsInDays" : 17,
+          "resetsOn" : 1362124800
+        },
+      "name" : "Trovebox User",
+      "paid" : false,
+      "photoUrl" : "http://www.gravatar.com/avatar/12f2ed3922ab37da6e4cf082b31e63b6?s=100"
+    }
+}

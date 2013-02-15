@@ -27,6 +27,7 @@ import android.net.NetworkInfo;
 
 import com.actionbarsherlock.internal.ResourcesCompat;
 import com.trovebox.android.app.R;
+import com.trovebox.android.app.TroveboxApplication;
 
 /**
  * Class containing some static utility methods.
@@ -36,6 +37,17 @@ import com.trovebox.android.app.R;
  */
 public class Utils {
     private static final String TAG = Utils.class.getSimpleName();
+
+    /**
+     * Check whether the device is connected to any network
+     * 
+     * @return true if device is connected to any network, otherwise return
+     *         false
+     */
+    public static boolean isOnline()
+    {
+        return isOnline(TroveboxApplication.getContext());
+    }
 
     /**
      * Check whether the device is connected to any network

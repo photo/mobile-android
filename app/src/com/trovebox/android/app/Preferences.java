@@ -1,6 +1,8 @@
 
 package com.trovebox.android.app;
 
+import java.util.Date;
+
 import oauth.signpost.OAuthConsumer;
 import oauth.signpost.OAuthProvider;
 import oauth.signpost.basic.DefaultOAuthProvider;
@@ -8,17 +10,17 @@ import oauth.signpost.commonshttp.CommonsHttpOAuthConsumer;
 
 import org.holoeverywhere.preference.PreferenceManager;
 
-import com.trovebox.android.app.R;
+import android.content.Context;
+import android.content.SharedPreferences;
+
 import com.trovebox.android.app.net.ITroveboxApi;
 import com.trovebox.android.app.net.TroveboxApi;
 import com.trovebox.android.app.util.CommonUtils;
 
-import android.content.Context;
-import android.content.SharedPreferences;
-
 public class Preferences {
     public final static int PREFERENCES_MODE = Context.MODE_MULTI_PROCESS;
     public final static String PREFERENCES_NAME = "default";
+    public final static String LIMITS_PREFERENCES_NAME = "limits";
 
     public static SharedPreferences getDefaultSharedPreferences(Context context)
     {
@@ -94,10 +96,122 @@ public class Preferences {
                 .commit();
     }
 
+    /**
+     * Is user logged in to application
+     * 
+     * @return
+     */
+    public static boolean isLoggedIn() {
+        return isLoggedIn(TroveboxApplication.getContext());
+    }
+
+    /**
+     * Is user logged in to application
+     * 
+     * @return
+     */
     public static boolean isLoggedIn(Context context) {
         return getDefaultSharedPreferences(context)
                 .getBoolean(context.getString(R.string.setting_account_loggedin_key), false)
                 || CommonUtils.TEST_CASE;
+    }
+
+    /**
+     * Gets the shared preferences for uploading limit information
+     * 
+     * @return
+     */
+    public static SharedPreferences getLimitsSharedPreferences() {
+        return getSharedPreferences(LIMITS_PREFERENCES_NAME);
+    }
+
+    /**
+     * Check whether currently logged in user account type (pro or free)
+     * 
+     * @return
+     */
+    public static boolean isProUser() {
+        return getLimitsSharedPreferences()
+                .getBoolean(CommonUtils.getStringResource(R.string.setting_account_type), false);
+    }
+
+    /**
+     * Set currently logged in user account type
+     * 
+     * @param value true if user is a pro, false if user uses free account type
+     */
+    public static void setProUser(boolean value)
+    {
+        getLimitsSharedPreferences()
+                .edit()
+                .putBoolean(CommonUtils.getStringResource(R.string.setting_account_type), value)
+                .commit();
+    }
+
+    /**
+     * Get the remaining uploading limit
+     * 
+     * @return
+     */
+    public static int getRemainingUploadingLimit() {
+        return getLimitsSharedPreferences()
+                .getInt(CommonUtils.getStringResource(R.string.setting_remaining_upload_limit),
+                        Integer.MAX_VALUE);
+    }
+
+    /**
+     * Set the remaining uploading limit
+     * 
+     * @param limit
+     */
+    public static void setRemainingUploadingLimit(int limit)
+    {
+        getLimitsSharedPreferences()
+                .edit()
+                .putInt(CommonUtils.getStringResource(R.string.setting_remaining_upload_limit),
+                        limit)
+                .commit();
+    }
+
+    /**
+     * Adjust remaining uploading limit
+     * 
+     * @param delta value on which to adjust limit
+     */
+    public static void adjustRemainingUploadingLimit(int delta)
+    {
+        setRemainingUploadingLimit(getRemainingUploadingLimit() + delta);
+    }
+
+    /**
+     * Get the uploading limit resets on date
+     * 
+     * @return
+     */
+    public static Date getUploadLimitResetsOnDate() {
+        long value = getLimitsSharedPreferences()
+                .getLong(CommonUtils.getStringResource(R.string.setting_upload_limit_reset_date), 0);
+        if (value == 0)
+        {
+            return null;
+        } else
+        {
+            return new Date(value);
+        }
+    }
+
+    /**
+     * Set the uploading limit resets on date
+     * 
+     * @param date
+     */
+    public static void setUploadLimitResetsOnDate(Date date)
+    {
+        getLimitsSharedPreferences()
+                .edit()
+                .putLong(CommonUtils.getStringResource(R.string.setting_upload_limit_reset_date),
+                        date == null ? 0l : date.getTime())
+                .commit();
     }
 
     public static void logout(Context context) {
@@ -111,6 +225,10 @@ public class Preferences {
                         context.getString(R.string.setting_account_server_default)).commit();
 
         getSharedPreferences("oauth")
+                .edit()
+                .clear()
+                .commit();
+        getLimitsSharedPreferences()
                 .edit()
                 .clear()
                 .commit();
