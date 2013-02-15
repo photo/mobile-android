@@ -5,12 +5,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import com.trovebox.android.app.util.concurrent.AsyncTaskEx;
-
 import android.util.FloatMath;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+
+import com.trovebox.android.app.util.concurrent.AsyncTaskEx;
 
 public abstract class EndlessAdapter<T> extends BaseAdapter {
     @Override
@@ -78,10 +78,21 @@ public abstract class EndlessAdapter<T> extends BaseAdapter {
     @SuppressWarnings("unchecked")
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        if (position >= getCount() - itemsBeforeLoadNextPage) {
+        if (checkNeedToLoadNextPage(position))
+        {
             loadNextPage();
         }
         return getView((T) getItem(position), convertView, parent);
+    }
+
+    /**
+     * Check whether need to load next page for the specified position. If so
+     * then load
+     * 
+     * @param position
+     */
+    public boolean checkNeedToLoadNextPage(int position) {
+        return (position >= getCount() - itemsBeforeLoadNextPage);
     }
 
     public void loadFirstPage() {
