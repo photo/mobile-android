@@ -14,7 +14,8 @@ public class TroveboxResponse {
         TAGS,
         PHOTO_UPLOAD, ALBUMS, PHOTOS,
         PHOTO, DELETE_PHOTO, UPDATE_PHOTO,
-        CREATE_USER, SIGN_IN
+        CREATE_USER, SIGN_IN,
+        PROFILE
     }
     private final String mMessage;
     private final int mCode;

@@ -70,6 +70,7 @@
     <string name="tab_tags">Tags</string>
     <string name="tab_albums">Albums</string>
     <string name="tab_sync">Sync</string>
+    <string name="tab_account">Account</string>
 
     <!-- UploadActivity -->
     <string name="uploading_in_background">Your upload has been started</string>
@@ -104,6 +105,7 @@
     <!-- Notifications -->
     <string name="notification_uploading_photo">Uploading %1$s</string>
     <string name="notification_upload_failed_title">Upload failed</string>
+    <string name="notification_upload_failed_title_with_reason">Upload failed: %1$s</string>
     <string name="notification_upload_failed_text">%1$s</string>
     <string name="notification_upload_success_title">Upload finished</string>
     <string name="notification_upload_skipped_title">Upload skipped. Found same photo on the server.</string>
@@ -128,6 +130,10 @@
     <string name="areYouSureQuestion">Are you sure?</string>
     <string name="external_storage_na_message">sdcard is missing or currently not mounted. Cannot continue.</string>
     <string name="action_not_supported_on_os_version">This action is not supported on your device OS version.</string>
+    <string name="upload_limit_reached_message">The free upload limit is reached.</string>
+    <string name="upload_limit_reached_with_reset_message">The free upload limit is reached. Please upgrade to Pro or wait until it will reset at %1$s</string>
+    <string name="upload_limit_for_multiple_upload_reached_message">You\'ve selected to upload %1$d photos but the remaining free uploading limit for your account is %2$d. Please select the number of photos which feets the limit or upgrade to Pro.</string>
+    <string name="autoupload_ignored">Automatic upload ignored.</string>
 
     <!-- Errors -->
     <string name="errorWithAuthentication">Error with authentication</string>
@@ -156,6 +162,8 @@
     <string name="errorSpecifiedUrlIsInvalid">The specified URL is invalid</string>
     <string name="errorCantFindPendingUploadInformation">Can\'t find pending upload information</string>
     <string name="errorCouldNotStoreDownloadablePhotoNotEnoughSpace">Couldn\'t store downloadable photo on disk. Not enough free space.</string>
+    <string name="errorCouldNotRetrieveProfileInfo">Could not retrieve profile information.</string>
+    <string name="errorNotLoggedIn">You are not yet logged in.</string>
 
     <!-- Preferences -->
     <string name="upload_preference_category">Camera upload</string>
@@ -215,5 +223,17 @@
     <string name="photo_edit_save_button">Save</string>
     <string name="updating_photo_message">Updating photo…</string>
     <string name="photo_edit_dialog_title">Edit this photo</string>
+
+    <!-- Profile details -->
+    <string name="profile_counter_photos">photos</string>
+    <string name="profile_counter_albums">albums</string>
+    <string name="profile_counter_tags">tags</string>
+    <string name="profile_counter_storage">MB used</string>
+    <string name="profile_server">Server</string>
+    <string name="profile_account">Account</string>
+    <string name="profile_account_type_free">Free</string>
+    <string name="profile_account_type_pro">Pro</string>
+    <string name="profile_upgrade_offer">Upgrade for $29.99 / year</string>
+    <string name="profile_upgrade_offer_details">What do Pros get? We\'ve got some great features for Pro users. And we\'re adding more every month. <a href="https://trovebox.com/plans">See full list</a></string>
 
 </resources>

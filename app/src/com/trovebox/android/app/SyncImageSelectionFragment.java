@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
-
 import org.holoeverywhere.LayoutInflater;
 import org.holoeverywhere.app.Activity;
 import org.holoeverywhere.widget.Switch;
@@ -36,13 +35,12 @@ import android.widget.ImageView;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
-import com.trovebox.android.app.BuildConfig;
-import com.trovebox.android.app.R;
 import com.trovebox.android.app.bitmapfun.util.ImageCache;
 import com.trovebox.android.app.bitmapfun.util.ImageFileSystemFetcher;
 import com.trovebox.android.app.bitmapfun.util.ImageResizer;
 import com.trovebox.android.app.bitmapfun.util.ImageWorker.ImageWorkerAdapter;
 import com.trovebox.android.app.common.CommonRefreshableFragmentWithImageWorker;
+import com.trovebox.android.app.net.account.AccountLimitUtils;
 import com.trovebox.android.app.provider.UploadsProviderAccessor;
 import com.trovebox.android.app.util.CommonUtils;
 import com.trovebox.android.app.util.GuiUtils;
@@ -195,7 +193,7 @@ public class SyncImageSelectionFragment extends CommonRefreshableFragmentWithIma
                         }
                     }
                 });
-        Button nextStepBtn = (Button) v.findViewById(R.id.nextBtn);
+        final Button nextStepBtn = (Button) v.findViewById(R.id.nextBtn);
         nextStepBtn.setOnClickListener(new OnClickListener()
         {
             @Override
@@ -206,10 +204,28 @@ public class SyncImageSelectionFragment extends CommonRefreshableFragmentWithIma
                 {
                     if (selectionController.hasSelected())
                     {
-                        if (nextStepFlow != null)
-                        {
-                            nextStepFlow.activateNextStep();
-                        }
+                        int selectedCount = getSelectedCount();
+                        nextStepBtn.setEnabled(false);
+                        AccountLimitUtils.checkQuotaPerUploadAvailableAndRunAsync(new Runnable() {
+                            @Override
+                            public void run() {
+                                CommonUtils.debug(TAG, "Upload limit check passed");
+                                TrackerUtils.trackLimitEvent("sync_move_to_second_step", "success");
+                                if (nextStepFlow != null)
+                                {
+                                    nextStepFlow.activateNextStep();
+                                }
+                                nextStepBtn.setEnabled(true);
+                            }
+                        }, new Runnable() {
+
+                            @Override
+                            public void run() {
+                                CommonUtils.debug(TAG, "Upload limit check failed");
+                                TrackerUtils.trackLimitEvent("sync_move_to_second_step", "fail");
+                                nextStepBtn.setEnabled(true);
+                            }
+                        }, selectedCount, loadingControl);
                     } else
                     {
                         GuiUtils.alert(R.string.sync_please_pick_at_least_one_photo);
@@ -340,6 +356,18 @@ public class SyncImageSelectionFragment extends CommonRefreshableFragmentWithIma
         selectionController.clearSelection();
     }
 
+    /**
+     * Get the selected images count
+     * 
+     * @return
+     */
+    public int getSelectedCount() {
+        if (selectionController == null)
+        {
+            return 0;
+        }
+        return selectionController.selectedIds.size();
+    }
     public ArrayList<String> getSelectedFileNames()
     {
         long start = System.currentTimeMillis();

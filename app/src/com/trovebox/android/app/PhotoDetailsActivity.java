@@ -4,6 +4,7 @@ package com.trovebox.android.app;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.holoeverywhere.LayoutInflater;
 import org.holoeverywhere.app.Activity;
@@ -215,6 +216,7 @@ public class PhotoDetailsActivity extends CommonActivity implements TwitterLoadi
         ImageView privateBtn;
         View detailsView;
         boolean detailsVisible;
+        AtomicBoolean nextPageLoaded = new AtomicBoolean(false);
 
         @Override
         public void onCreate(Bundle savedInstanceState) {
@@ -627,6 +629,10 @@ public class PhotoDetailsActivity extends CommonActivity implements TwitterLoadi
                     detailsVisible = visible;
                     thumbnailsList.setVisibility(detailsVisible ? View.VISIBLE : View.GONE);
                     detailsView.setVisibility(detailsVisible ? View.VISIBLE : View.GONE);
+                    if (detailsVisible && nextPageLoaded.getAndSet(false))
+                    {
+                        ensureThumbVisible(getActivePhoto());
+                    }
                 }
             }, animationDuration);
             ActionBar actionBar = ((Activity) getSupportActivity())
@@ -674,9 +680,11 @@ public class PhotoDetailsActivity extends CommonActivity implements TwitterLoadi
 
             @Override
             public Object instantiateItem(View collection, int position) {
-                // if (getCount() > 1 && position > getCount() - 6) {
-                // mAdapter.loadNextPage();
-                // }
+                if (mAdapter.checkNeedToLoadNextPage(position))
+                {
+                    mAdapter.loadNextPage();
+                    nextPageLoaded.set(true);
+                }
                 Photo photo = (Photo) mAdapter.getItem(position);
 
                 final View view = mInflator.inflate(R.layout.item_photo_detail,

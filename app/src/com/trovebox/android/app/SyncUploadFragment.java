@@ -4,24 +4,9 @@ package com.trovebox.android.app;
 import java.io.File;
 import java.util.ArrayList;
 
-
 import org.holoeverywhere.LayoutInflater;
 import org.holoeverywhere.app.Activity;
 import org.holoeverywhere.widget.Switch;
-
-import com.trovebox.android.app.R;
-import com.trovebox.android.app.common.CommonFragment;
-import com.trovebox.android.app.facebook.FacebookUtils;
-import com.trovebox.android.app.net.UploadMetaData;
-import com.trovebox.android.app.provider.UploadsProviderAccessor;
-import com.trovebox.android.app.service.UploaderService;
-import com.trovebox.android.app.twitter.TwitterUtils;
-import com.trovebox.android.app.util.GuiUtils;
-import com.trovebox.android.app.util.LoadingControl;
-import com.trovebox.android.app.util.ProgressDialogLoadingControl;
-import com.trovebox.android.app.util.SyncUtils;
-import com.trovebox.android.app.util.TrackerUtils;
-import com.trovebox.android.app.util.concurrent.AsyncTaskEx;
 
 import android.content.Intent;
 import android.net.Uri;
@@ -33,6 +18,21 @@ import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
+
+import com.trovebox.android.app.common.CommonFragment;
+import com.trovebox.android.app.facebook.FacebookUtils;
+import com.trovebox.android.app.net.UploadMetaData;
+import com.trovebox.android.app.net.account.AccountLimitUtils;
+import com.trovebox.android.app.provider.UploadsProviderAccessor;
+import com.trovebox.android.app.service.UploaderService;
+import com.trovebox.android.app.twitter.TwitterUtils;
+import com.trovebox.android.app.util.CommonUtils;
+import com.trovebox.android.app.util.GuiUtils;
+import com.trovebox.android.app.util.LoadingControl;
+import com.trovebox.android.app.util.ProgressDialogLoadingControl;
+import com.trovebox.android.app.util.SyncUtils;
+import com.trovebox.android.app.util.TrackerUtils;
+import com.trovebox.android.app.util.concurrent.AsyncTaskEx;
 
 public class SyncUploadFragment extends CommonFragment
 {
@@ -93,7 +93,7 @@ public class SyncUploadFragment extends CommonFragment
                 }
             }
         });
-        Button uploadBtn = (Button) v.findViewById(R.id.uploadBtn);
+        final Button uploadBtn = (Button) v.findViewById(R.id.uploadBtn);
         uploadBtn.setOnClickListener(new OnClickListener()
         {
             @Override
@@ -104,6 +104,7 @@ public class SyncUploadFragment extends CommonFragment
                 uploadSelectedFiles(true, true);
             }
         });
+        uploadBtn.setEnabled(false);
         editTitle = (EditText) v.findViewById(
                 R.id.edit_title);
         editTags = (EditText) v.findViewById(
@@ -120,6 +121,26 @@ public class SyncUploadFragment extends CommonFragment
             }
         });
         reinitShareSwitches();
+        AccountLimitUtils.checkQuotaPerUploadAvailableAndRunAsync(
+                new Runnable() {
+
+                    @Override
+                    public void run() {
+                        CommonUtils.debug(TAG, "Upload limit check passed");
+                        TrackerUtils.trackLimitEvent("sync_upload_enabled_check", "success");
+                        uploadBtn.setEnabled(true);
+                    }
+                },
+                new Runnable() {
+
+                    @Override
+                    public void run() {
+                        CommonUtils.debug(TAG, "Upload limit check failed");
+                        TrackerUtils.trackLimitEvent("sync_upload_enabled_check", "fail");
+                    }
+                },
+                previousStepFlow.getSelectedCount(),
+                loadingControl);
     }
 
     void reinitShareSwitches()
@@ -132,6 +153,7 @@ public class SyncUploadFragment extends CommonFragment
         twitterSwitch.setEnabled(enabled);
         facebookSwitch.setEnabled(enabled);
     }
+
     void uploadSelectedFiles(
             final boolean checkTwitter,
             final boolean checkFacebook)
@@ -185,9 +207,24 @@ public class SyncUploadFragment extends CommonFragment
 
     static interface PreviousStepFlow
     {
+        /**
+         * Activate previous step in the sync flow
+         */
         void activatePreviousStep();
 
+        /**
+         * Get selected images file names
+         * 
+         * @return
+         */
         ArrayList<String> getSelectedFileNames();
+
+        /**
+         * Get the selected images count
+         * 
+         * @return
+         */
+        int getSelectedCount();
     }
 
     private class UploadInitTask extends

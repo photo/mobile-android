@@ -3,6 +3,7 @@ package com.trovebox.android.app;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import android.content.BroadcastReceiver;
@@ -32,6 +33,7 @@ import com.trovebox.android.app.model.Photo;
 import com.trovebox.android.app.model.utils.PhotoUtils;
 import com.trovebox.android.app.model.utils.PhotoUtils.PhotoDeletedHandler;
 import com.trovebox.android.app.model.utils.PhotoUtils.PhotoUpdatedHandler;
+import com.trovebox.android.app.net.account.AccountLimitUtils;
 import com.trovebox.android.app.provider.UploadsUtils;
 import com.trovebox.android.app.provider.UploadsUtils.UploadsClearedHandler;
 import com.trovebox.android.app.service.UploaderService;
@@ -58,19 +60,23 @@ public class MainActivity extends CommonActivity
     public static final int SYNC_INDEX = 2;
     public static final int ALBUMS_INDEX = 3;
     public static final int TAGS_INDEX = 4;
+    public static final int ACCOUNT_INDEX = 4;
     private static final String HOME_TAG = "home";
     private static final String GALLERY_TAG = "gallery";
     private static final String SYNC_TAG = "sync";
+    private static final String ACCOUNT_TAG = "account";
     public static final String TAG = MainActivity.class.getSimpleName();
     public static final String ACTIVE_TAB = "ActiveTab";
     public final static int AUTHORIZE_ACTIVITY_REQUEST_CODE = 0;
 
     private ActionBar mActionBar;
     private AtomicInteger loaders = new AtomicInteger(0);
+    private AtomicBoolean cameraActionProcessing = new AtomicBoolean(false);
 
     private List<BroadcastReceiver> receivers = new ArrayList<BroadcastReceiver>();
     boolean instanceSaved = false;
     boolean actionbBarNavigationModeInitiated = false;
+
     /**
      * Called when Main Activity is first loaded
      * 
@@ -92,8 +98,15 @@ public class MainActivity extends CommonActivity
         mActionBar = getSupportActionBar();
         mActionBar.setDisplayUseLogoEnabled(true);
         mActionBar.setDisplayShowTitleEnabled(false);
-        // To make sure the service is initialized
-        startService(new Intent(this, UploaderService.class));
+        if (!UploaderServiceUtils.isServiceRunning())
+        {
+            TrackerUtils.trackBackgroundEvent(
+                    "uploader_service_start",
+                    "starting_not_running_service_from_main");
+            CommonUtils.debug(TAG, "Uploader service is not run. Starting...");
+            // To make sure the service is initialized
+            startService(new Intent(this, UploaderService.class));
+        }
 
         // This has to be called before setContentView and you must use the
         // class in com.actionbarsherlock.view and NOT android.view
@@ -111,6 +124,10 @@ public class MainActivity extends CommonActivity
                 TAG, this, this));
         receivers.add(PhotoUtils.getAndRegisterOnPhotoUpdatedActionBroadcastReceiver(
                 TAG, this, this));
+        if (CommonUtils.checkLoggedIn(true))
+        {
+            AccountLimitUtils.updateLimitInformationCache();
+        }
     }
 
     @Override
@@ -156,6 +173,10 @@ public class MainActivity extends CommonActivity
                 R.string.tab_tags,
                 new TabListener<TagsFragment>("tags",
                         TagsFragment.class, null));
+        addTab(View.NO_ID,
+                R.string.tab_account,
+                new TabListener<AccountFragment>(ACCOUNT_TAG,
+                        AccountFragment.class, null));
 
         mActionBar.selectTab(mActionBar.getTabAt(activeTab));
         // hack which refreshes indeterminate progress state on
@@ -274,7 +295,7 @@ public class MainActivity extends CommonActivity
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item)
+    public boolean onOptionsItemSelected(final MenuItem item)
     {
         // Handle item selection
         switch (item.getItemId())
@@ -287,8 +308,32 @@ public class MainActivity extends CommonActivity
             }
             case R.id.menu_camera: {
                 TrackerUtils.trackOptionsMenuClickEvent("menu_camera", MainActivity.this);
-                Intent i = new Intent(this, UploadActivity.class);
-                startActivity(i);
+                if (!cameraActionProcessing.getAndSet(true))
+                {
+                    AccountLimitUtils.checkQuotaPerOneUploadAvailableAndRunAsync(
+                            new Runnable() {
+
+                                @Override
+                                public void run() {
+                                    CommonUtils.debug(TAG, "Upload limit check passed");
+                                    TrackerUtils.trackLimitEvent("upload_activity_open", "success");
+                                    Intent i = new Intent(MainActivity.this, UploadActivity.class);
+                                    startActivity(i);
+                                    cameraActionProcessing.set(false);
+                                }
+                            },
+                            new Runnable() {
+
+                                @Override
+                                public void run() {
+                                    CommonUtils.debug(TAG, "Upload limit check failed");
+                                    TrackerUtils.trackLimitEvent("upload_activity_open", "fail");
+                                    cameraActionProcessing.set(false);
+                                }
+                            },
+                            this);
+
+                }
                 return true;
             }
             default:

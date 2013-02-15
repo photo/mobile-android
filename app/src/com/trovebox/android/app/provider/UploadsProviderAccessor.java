@@ -5,14 +5,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import com.trovebox.android.app.net.UploadMetaData;
-import com.trovebox.android.app.util.CommonUtils;
-import com.trovebox.android.app.util.GuiUtils;
-import com.trovebox.android.app.util.ImageUtils;
 
 import android.content.ContentResolver;
 import android.content.ContentUris;
@@ -20,6 +14,11 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
+
+import com.trovebox.android.app.net.UploadMetaData;
+import com.trovebox.android.app.util.CommonUtils;
+import com.trovebox.android.app.util.GuiUtils;
+import com.trovebox.android.app.util.ImageUtils;
 
 public class UploadsProviderAccessor {
     private static final String TAG = UploadsProviderAccessor.class.getSimpleName();
@@ -101,6 +100,31 @@ public class UploadsProviderAccessor {
         {
             closeCursor(cursor);
         }
+    }
+
+    /**
+     * Get the count of pending uploads
+     * @return
+     */
+    public int getPendingUploadsCount()
+    {
+        Cursor cursor = mContext.getContentResolver().query(
+                UploadsProvider.CONTENT_URI, new String[] {
+                    "count(*) AS count"
+                },
+                UploadsProvider.KEY_UPLOADED + "=0", null, null);
+        int count = 0;
+        try
+        {
+            if (cursor.moveToFirst())
+            {
+                count = cursor.getInt(0);
+            }
+        } finally
+        {
+            closeCursor(cursor);
+        }
+        return count;
     }
 
     public List<String> getUploadedOrPendingPhotosFileNames()
