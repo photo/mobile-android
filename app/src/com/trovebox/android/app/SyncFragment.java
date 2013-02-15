@@ -4,23 +4,21 @@ package com.trovebox.android.app;
 import java.util.ArrayList;
 import java.util.List;
 
-
 import org.holoeverywhere.LayoutInflater;
 import org.holoeverywhere.app.Activity;
-
-import com.trovebox.android.app.R;
-import com.trovebox.android.app.SyncImageSelectionFragment.NextStepFlow;
-import com.trovebox.android.app.SyncUploadFragment.PreviousStepFlow;
-import com.trovebox.android.app.common.CommonFragment;
-import com.trovebox.android.app.provider.UploadsUtils.UploadsClearedHandler;
-import com.trovebox.android.app.util.BackKeyControl;
-import com.trovebox.android.app.util.CommonUtils;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.trovebox.android.app.SyncImageSelectionFragment.NextStepFlow;
+import com.trovebox.android.app.SyncUploadFragment.PreviousStepFlow;
+import com.trovebox.android.app.common.CommonFragment;
+import com.trovebox.android.app.provider.UploadsUtils.UploadsClearedHandler;
+import com.trovebox.android.app.util.BackKeyControl;
+import com.trovebox.android.app.util.CommonUtils;
 
 public class SyncFragment extends CommonFragment implements NextStepFlow,
         PreviousStepFlow, UploadsClearedHandler, BackKeyControl
@@ -135,6 +133,11 @@ public class SyncFragment extends CommonFragment implements NextStepFlow,
     void selectFragment(Fragment fragment, boolean attachOnly)
     {
         CommonUtils.debug(TAG, "Selecting fragment: " + fragment + "; attachOnly: " + attachOnly);
+        if (getActivity() == null)
+        {
+            CommonUtils.debug(TAG, "Fragment is no more attached to activity.");
+            return;
+        }
         FragmentTransaction transaction = getActivity()
                 .getSupportFragmentManager().beginTransaction();
         if (activeFragment != null && !activeFragment.isDetached())
@@ -224,6 +227,11 @@ public class SyncFragment extends CommonFragment implements NextStepFlow,
     @Override
     public void activateNextStep()
     {
+        if (getActivity() == null)
+        {
+            CommonUtils.debug(TAG, "Fragment is no more attached to activity.");
+            return;
+        }
         if (secondStepFragment == null)
         {
             secondStepFragment = (SyncUploadFragment) getActivity().getSupportFragmentManager()
@@ -247,6 +255,11 @@ public class SyncFragment extends CommonFragment implements NextStepFlow,
     public ArrayList<String> getSelectedFileNames()
     {
         return firstStepFragment.getSelectedFileNames();
+    }
+
+    @Override
+    public int getSelectedCount() {
+        return firstStepFragment.getSelectedCount();
     }
 
     public void syncStarted(List<String> processedFileNames)

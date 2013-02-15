@@ -21,16 +21,23 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
+import android.content.Context;
+import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.Bitmap.Config;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.PorterDuff.Mode;
+import android.graphics.PorterDuffXfermode;
+import android.graphics.Rect;
+import android.graphics.RectF;
+
 import com.trovebox.android.app.BuildConfig;
 import com.trovebox.android.app.util.CommonUtils;
 import com.trovebox.android.app.util.GuiUtils;
 import com.trovebox.android.app.util.LoadingControl;
 import com.trovebox.android.app.util.TrackerUtils;
-
-import android.content.Context;
-import android.content.res.Resources;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 
 /**
  * A simple subclass of {@link ImageWorker} that resizes images from resources
@@ -41,6 +48,7 @@ public class ImageResizer extends ImageWorker {
     private static final String TAG = "ImageWorker";
     protected int mImageWidth;
     protected int mImageHeight;
+    protected int cornerRadius;
 
     /**
      * Initialize providing a single target image size (used for both width and
@@ -54,8 +62,26 @@ public class ImageResizer extends ImageWorker {
     public ImageResizer(Context context, LoadingControl loadingControl,
             int imageWidth, int imageHeight)
     {
+        this(context, loadingControl, imageWidth, imageHeight, -1);
+    }
+    
+    /**
+     * Initialize providing a single target image size (used for both width and
+     * height);
+     * 
+     * @param context
+     * @param loadingControl
+     * @param imageWidth
+     * @param imageHeight
+     * @param cornerRadius radius to round image corners. Ignored if <=0
+     */
+    public ImageResizer(Context context, LoadingControl loadingControl,
+            int imageWidth, int imageHeight,
+            int cornerRadius)
+    {
         super(context, loadingControl);
         setImageSize(imageWidth, imageHeight);
+        this.cornerRadius = cornerRadius;
     }
 
     /**
@@ -169,6 +195,24 @@ public class ImageResizer extends ImageWorker {
      */
     public static synchronized Bitmap decodeSampledBitmapFromFile(String filename,
             int reqWidth, int reqHeight) {
+        return decodeSampledBitmapFromFile(filename, reqWidth, reqHeight, -1);
+    }
+
+    /**
+     * Decode and sample down a bitmap from a file to the requested width and
+     * height.
+     * 
+     * @param filename The full path of the file to decode
+     * @param reqWidth The requested width of the resulting bitmap
+     * @param reqHeight The requested height of the resulting bitmap
+     * @param cornerRadius
+     * @return A bitmap sampled down from the original with the same aspect
+     *         ratio and dimensions that are equal to or greater than the
+     *         requested width and height
+     */
+    public static synchronized Bitmap decodeSampledBitmapFromFile(String filename,
+            int reqWidth, int reqHeight,
+            int cornerRadius) {
         long start = System.currentTimeMillis();
         // First decode with inJustDecodeBounds=true to check dimensions
         final BitmapFactory.Options options = calculateImageSize(filename);
@@ -181,6 +225,10 @@ public class ImageResizer extends ImageWorker {
         Bitmap result = decodeBitmap(filename, options);
         TrackerUtils.trackDataProcessingTiming(System.currentTimeMillis() - start,
                 "decodeSampledBitmapFromFile", TAG);
+        if (cornerRadius > 0)
+        {
+            result = getRoundedCornerBitmap(result, cornerRadius);
+        }
         return result;
     }
 
@@ -289,5 +337,35 @@ public class ImageResizer extends ImageWorker {
             }
         }
         return inSampleSize;
+    }
+
+    /**
+     * Get the bitmap with rounded corners.
+     * Taken from here http://stackoverflow.com/a/3292810/527759
+     * 
+     * @param bitmap - bitmap to add corners to
+     * @param pixels - corner radius
+     * @return
+     */
+    public static Bitmap getRoundedCornerBitmap(Bitmap bitmap, int pixels) {
+        Bitmap output = Bitmap.createBitmap(bitmap.getWidth(), bitmap
+                .getHeight(), Config.ARGB_8888);
+        Canvas canvas = new Canvas(output);
+
+        final int color = 0xff424242;
+        final Paint paint = new Paint();
+        final Rect rect = new Rect(0, 0, bitmap.getWidth(), bitmap.getHeight());
+        final RectF rectF = new RectF(rect);
+        final float roundPx = pixels;
+
+        paint.setAntiAlias(true);
+        canvas.drawARGB(0, 0, 0, 0);
+        paint.setColor(color);
+        canvas.drawRoundRect(rectF, roundPx, roundPx, paint);
+
+        paint.setXfermode(new PorterDuffXfermode(Mode.SRC_IN));
+        canvas.drawBitmap(bitmap, rect, rect, paint);
+
+        return output;
     }
 }

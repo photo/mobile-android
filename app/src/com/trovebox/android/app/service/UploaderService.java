@@ -45,6 +45,7 @@ import com.trovebox.android.app.net.ITroveboxApi;
 import com.trovebox.android.app.net.PhotosResponse;
 import com.trovebox.android.app.net.ReturnSizes;
 import com.trovebox.android.app.net.UploadResponse;
+import com.trovebox.android.app.net.account.AccountLimitUtils;
 import com.trovebox.android.app.provider.PhotoUpload;
 import com.trovebox.android.app.provider.UploadsProviderAccessor;
 import com.trovebox.android.app.twitter.TwitterProvider;
@@ -139,7 +140,7 @@ public class UploaderService extends Service {
     }
 
     private void handleIntent(Intent intent) {
-        if (!Utils.isOnline(getBaseContext()) || !Preferences.isLoggedIn(getApplicationContext()))
+        if (!CommonUtils.checkLoggedInAndOnline(true))
         {
             return;
         }
@@ -153,12 +154,12 @@ public class UploaderService extends Service {
             if (filePath == null || !(new File(filePath).exists())) {
                 uploads.delete(photoUpload.getId());
                 // TODO: Maybe set error, and set as "do not try again"
-                Log.i(TAG, "Upload canceled, because file does not exist anymore.");
+                CommonUtils.info(TAG, "Upload canceled, because file does not exist anymore.");
                 continue;
             }
             if (wifiOnlyUpload && !Utils.isWiFiActive(getBaseContext()))
             {
-                Log.i(TAG, "Upload canceled because WiFi is not active anymore");
+                CommonUtils.info(TAG, "Upload canceled because WiFi is not active anymore");
                 break;
             }
             File file = new File(filePath);
@@ -166,6 +167,13 @@ public class UploaderService extends Service {
             try {
                 String hash = SHA1Utils.computeSha1ForFile(filePath);
                 PhotosResponse photos = mApi.getPhotos(hash);
+                if(!photos.isSuccess())
+                {
+                    uploads.setError(photoUpload.getId(),
+                            photos.getAlertMessage());
+                    showErrorNotification(photoUpload, file);
+                    continue;
+                }
                 Photo photo = null;
                 boolean skipped = false;
                 if (photos.getPhotos().size() > 0)
@@ -209,18 +217,24 @@ public class UploaderService extends Service {
                                     }
                                 }
                             });
-                    Log.i(TAG, "Upload to Trovebox completed for: "
-                            + photoUpload.getPhotoUri());
-                    photo = uploadResponse.getPhoto();
-                    TrackerUtils.trackDataLoadTiming(System.currentTimeMillis() - start,
-                            "photoUpload", TAG);
+                    if(uploadResponse.isSuccess())
+                    {
+                        Log.i(TAG, "Upload to Trovebox completed for: "
+                                + photoUpload.getPhotoUri());
+                        photo = uploadResponse.getPhoto();
+                        TrackerUtils.trackDataLoadTiming(System.currentTimeMillis() - start,
+                                "photoUpload", TAG);
+                    } else
+                    {
+                        photoUpload.setError(uploadResponse.getAlertMessage());
+                        showErrorNotification(photoUpload, file);
+                        continue;
+                    }
                 }
+                Preferences.adjustRemainingUploadingLimit(-1);
                 uploads.setUploaded(photoUpload.getId());
-                if (!photoUpload.isAutoUpload())
-                {
-                    showSuccessNotification(photoUpload, file,
-                            photo, skipped);
-                }
+                showSuccessNotification(photoUpload, file,
+                        photo, skipped);
                 shareIfRequested(photoUpload, photo, true);
                 if (!skipped)
                 {
@@ -231,11 +245,9 @@ public class UploaderService extends Service {
                     TrackerUtils.trackServiceEvent("photo_upload_skip", TAG);
                 }
             } catch (Exception e) {
-                if (!photoUpload.isAutoUpload()) {
-                    uploads.setError(photoUpload.getId(),
-                            e.getClass().getSimpleName() + ": " + e.getMessage());
-                    showErrorNotification(photoUpload, file);
-                }
+                uploads.setError(photoUpload.getId(),
+                        e.getClass().getSimpleName() + ": " + e.getLocalizedMessage());
+                showErrorNotification(photoUpload, file);
                 GuiUtils.processError(TAG,
                         R.string.errorCouldNotUploadTakenPhoto,
                         e,
@@ -244,6 +256,7 @@ public class UploaderService extends Service {
 
             stopUploadNotification();
         }
+        AccountLimitUtils.updateLimitInformationCache();
     }
 
     public void shareIfRequested(PhotoUpload photoUpload,
@@ -406,7 +419,9 @@ public class UploaderService extends Service {
 
     private void showErrorNotification(PhotoUpload photoUpload, File file) {
         int icon = R.drawable.icon;
-        CharSequence titleText = getString(R.string.notification_upload_failed_title);
+        CharSequence titleText = photoUpload.getError() == null ?
+                getString(R.string.notification_upload_failed_title)
+                :getString(R.string.notification_upload_failed_title_with_reason, photoUpload.getError());
         long when = System.currentTimeMillis();
         CharSequence contentMessageTitle = getString(R.string.notification_upload_failed_text,
                 file.getName());

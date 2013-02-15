@@ -197,6 +197,18 @@ public class TrackerUtils {
     }
 
     /**
+     * Track limit event
+     * 
+     * @param action
+     * @param label
+     */
+    public static void trackLimitEvent(String action,
+            String label)
+    {
+        trackEvent("limit_event", action, label);
+    }
+
+    /**
      * Track background event
      * 
      * @param action

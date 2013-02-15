@@ -24,6 +24,7 @@ public class TroveboxApi extends ApiBase implements ITroveboxApi {
 
     private static ITroveboxApi sMock;
     public static final String NEWEST_PHOTO_SORT_ORDER = "dateUploaded,DESC";
+
     public static ITroveboxApi createInstance(Context context) {
         if (sMock != null) {
             return sMock;
@@ -176,8 +177,8 @@ public class TroveboxApi extends ApiBase implements ITroveboxApi {
     }
 
     /**
-     * Add paging restrictions to the request if
-     * paging parameter is not null
+     * Add paging restrictions to the request if paging parameter is not null
+     * 
      * @param paging
      * @param request
      */
@@ -299,5 +300,14 @@ public class TroveboxApi extends ApiBase implements ITroveboxApi {
         }
         ApiResponse response = execute(request);
         return new PhotoResponse(RequestType.UPDATE_PHOTO, response.getJSONObject());
+    }
+
+    @Override
+    public ProfileResponse getProfile() throws ClientProtocolException, IOException,
+            IllegalStateException, JSONException {
+        ApiRequest request = new ApiRequest(ApiRequest.GET,
+                "/user/profile.json");
+        ApiResponse response = execute(request);
+        return new ProfileResponse(response.getJSONObject());
     }
 }

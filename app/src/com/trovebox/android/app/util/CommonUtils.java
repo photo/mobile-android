@@ -1,6 +1,7 @@
 
 package com.trovebox.android.app.util;
 
+import java.text.DecimalFormat;
 import java.util.Locale;
 
 import android.os.Bundle;
@@ -67,6 +68,15 @@ public class CommonUtils
     }
 
     /**
+     * Format the number
+     * @param number
+     * @return
+     */
+    public static String format(Number number)
+    {
+        return DecimalFormat.getInstance().format(number);
+    }
+    /**
      * Write message to the verbose log
      * 
      * @param TAG
@@ -102,6 +112,17 @@ public class CommonUtils
     public static void error(String TAG, String message)
     {
         Log.e(TAG, message);
+    }
+
+    /**
+     * Write message to the info log
+     * 
+     * @param TAG
+     * @param message
+     */
+    public static void info(String TAG, String message)
+    {
+        Log.i(TAG, message);
     }
 
     /**
@@ -169,7 +190,18 @@ public class CommonUtils
      */
     public static boolean checkLoggedInAndOnline()
     {
-        return Preferences.isLoggedIn(TroveboxApplication.getContext()) && checkOnline();
+        return checkLoggedInAndOnline(false);
+    }
+
+    /**
+     * Checks whether user is logged in and internet is available
+     * 
+     * @param silent whether or not to do not show message in case check failure
+     * @return
+     */
+    public static boolean checkLoggedInAndOnline(boolean silent)
+    {
+        return checkLoggedIn(silent) && checkOnline(silent);
     }
 
     /**
@@ -180,11 +212,72 @@ public class CommonUtils
      */
     public static boolean checkOnline()
     {
+        return checkOnline(false);
+    }
+
+    /**
+     * Checks whether network connection is available. Otherwise shows warning
+     * message
+     * 
+     * @param silent whether or not to do not show message in case check failure
+     * @return
+     */
+    public static boolean checkOnline(boolean silent)
+    {
         boolean result = Utils.isOnline(TroveboxApplication.getContext()) || TEST_CASE;
-        if (!result)
+        if (!result && !silent)
         {
             GuiUtils.alert(R.string.noInternetAccess);
         }
         return result;
+    }
+
+    /**
+     * Checks whether user is logged in
+     * 
+     * @return
+     */
+    public static boolean checkLoggedIn()
+    {
+        return checkLoggedIn(false);
+    }
+
+    /**
+     * Checks whether user is logged in
+     * 
+     * @param silent
+     * @return
+     */
+    public static boolean checkLoggedIn(boolean silent)
+    {
+        boolean result = Preferences.isLoggedIn();
+        if (!result && !silent)
+        {
+            GuiUtils.alert(R.string.errorNotLoggedIn);
+        }
+        return result;
+    }
+
+    /**
+     * Get string resource by id
+     * 
+     * @param resourceId
+     * @return
+     */
+    public static String getStringResource(int resourceId)
+    {
+        return TroveboxApplication.getContext().getString(resourceId);
+    }
+
+    /**
+     * Get string resource by id with parameters
+     * 
+     * @param resourceId
+     * @param args
+     * @return
+     */
+    public static String getStringResource(int resourceId, Object... args)
+    {
+        return TroveboxApplication.getContext().getString(resourceId, args);
     }
 }

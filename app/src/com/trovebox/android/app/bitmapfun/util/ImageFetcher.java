@@ -57,7 +57,24 @@ public class ImageFetcher extends ImageResizer {
     public ImageFetcher(Context context, LoadingControl loadingControl,
             int imageWidth, int imageHeight)
     {
-        super(context, loadingControl, imageWidth, imageHeight);
+        this(context, loadingControl, imageWidth, imageHeight, -1);
+    }
+
+    /**
+     * Initialize providing a target image width and height for the processing
+     * images.
+     * 
+     * @param context
+     * @param loadingControl
+     * @param imageWidth
+     * @param imageHeight
+     * @param cornerRadius radius to round image corners. Ignored if <=0
+     */
+    public ImageFetcher(Context context, LoadingControl loadingControl,
+            int imageWidth, int imageHeight,
+            int cornerRadius)
+    {
+        super(context, loadingControl, imageWidth, imageHeight, cornerRadius);
         init(context);
     }
 
@@ -119,7 +136,7 @@ public class ImageFetcher extends ImageResizer {
 
         if (f != null) {
             // Return a sampled down version
-            return decodeSampledBitmapFromFile(f.toString(), imageWidth, imageHeight);
+            return decodeSampledBitmapFromFile(f.toString(), imageWidth, imageHeight, cornerRadius);
         }
 
         return null;
