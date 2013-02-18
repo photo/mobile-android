@@ -2,13 +2,16 @@
 package com.trovebox.android.app.bitmapfun.util;
 
 import java.io.File;
-
-import com.trovebox.android.app.BuildConfig;
-import com.trovebox.android.app.util.CommonUtils;
-import com.trovebox.android.app.util.LoadingControl;
+import java.io.IOException;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.media.ExifInterface;
+
+import com.trovebox.android.app.BuildConfig;
+import com.trovebox.android.app.util.CommonUtils;
+import com.trovebox.android.app.util.GuiUtils;
+import com.trovebox.android.app.util.LoadingControl;
 
 public class ImageFileSystemFetcher extends ImageResizer
 {
@@ -61,30 +64,37 @@ public class ImageFileSystemFetcher extends ImageResizer
      * The main process method, which will be called by the ImageWorker in the
      * AsyncTaskEx background thread.
      * 
-     * @param data The data to load the bitmap, in this case, a regular http URL
+     * @param fileName The fileName to load the bitmap
      * @param imageWidth
      * @param imageHeight
      * @return The downloaded and resized bitmap
      */
-    protected Bitmap processBitmap(String data, int imageWidth, int imageHeight)
+    public static Bitmap processBitmap(String fileName, int imageWidth, int imageHeight)
     {
         if (BuildConfig.DEBUG)
         {
-            CommonUtils.debug(TAG, "processBitmap - " + data);
+            CommonUtils.debug(TAG, "processBitmap - " + fileName);
         }
-        if (data == null)
+        if (fileName == null)
         {
             return null;
         }
 
         // Download a bitmap, write it to a file
-        final File f = new File(data);
+        final File f = new File(fileName);
 
         if (f != null && f.exists())
         {
-            // Return a sampled down version
-            return decodeSampledBitmapFromFile(f.toString(), imageWidth,
-                    imageHeight);
+            try
+            {
+                int rotationInDegrees = getOrientationInDegreesForFileName(fileName);
+                // Return a sampled down version
+                return decodeSampledBitmapFromFile(f.toString(), imageWidth,
+                        imageHeight, -1, rotationInDegrees);
+            } catch (Exception ex)
+            {
+                GuiUtils.error(TAG, ex);
+            }
         }
 
         return null;
@@ -94,5 +104,43 @@ public class ImageFileSystemFetcher extends ImageResizer
     protected Bitmap processBitmap(Object data)
     {
         return processBitmap(String.valueOf(data));
+    }
+
+    /**
+     * Get the orientation in degrees from file EXIF
+     * information.
+     * Idea and code from http://stackoverflow.com/a/11081918/527759
+     * 
+     * @param fileName
+     * @return
+     * @throws IOException
+     */
+    public static int getOrientationInDegreesForFileName(String fileName) throws IOException
+    {
+        ExifInterface exif = new ExifInterface(fileName);
+        int rotation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION,
+                ExifInterface.ORIENTATION_NORMAL);
+        int rotationInDegrees = exifToDegrees(rotation);
+        return rotationInDegrees;
+    }
+
+    /**
+     * Convert exif orientation information to degrees.
+     * Idea and code taken from http://stackoverflow.com/a/11081918/527759
+     * 
+     * @param exifOrientation
+     * @return
+     */
+    private static int exifToDegrees(int exifOrientation) {
+        if (exifOrientation == ExifInterface.ORIENTATION_ROTATE_90) {
+            return 90;
+        }
+        else if (exifOrientation == ExifInterface.ORIENTATION_ROTATE_180) {
+            return 180;
+        }
+        else if (exifOrientation == ExifInterface.ORIENTATION_ROTATE_270) {
+            return 270;
+        }
+        return 0;
     }
 }
