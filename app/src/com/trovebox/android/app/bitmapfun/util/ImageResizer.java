@@ -27,6 +27,7 @@ import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.PorterDuff.Mode;
 import android.graphics.PorterDuffXfermode;
@@ -213,6 +214,26 @@ public class ImageResizer extends ImageWorker {
     public static synchronized Bitmap decodeSampledBitmapFromFile(String filename,
             int reqWidth, int reqHeight,
             int cornerRadius) {
+        return decodeSampledBitmapFromFile(filename, reqWidth, reqHeight, cornerRadius, 0);
+    }
+
+    /**
+     * Decode and sample down a bitmap from a file to the requested width and
+     * height.
+     * 
+     * @param filename The full path of the file to decode
+     * @param reqWidth The requested width of the resulting bitmap
+     * @param reqHeight The requested height of the resulting bitmap
+     * @param cornerRadius
+     * @param orientation the image orientation in degrees. Final bitmap will be
+     *            pre rotated at this value
+     * @return A bitmap sampled down from the original with the same aspect
+     *         ratio and dimensions that are equal to or greater than the
+     *         requested width and height
+     */
+    public static synchronized Bitmap decodeSampledBitmapFromFile(String filename,
+            int reqWidth, int reqHeight,
+            int cornerRadius, int orientation) {
         long start = System.currentTimeMillis();
         // First decode with inJustDecodeBounds=true to check dimensions
         final BitmapFactory.Options options = calculateImageSize(filename);
@@ -229,6 +250,7 @@ public class ImageResizer extends ImageWorker {
         {
             result = getRoundedCornerBitmap(result, cornerRadius);
         }
+        result = getCorrectlyOrientedBitmap(result, orientation);
         return result;
     }
 
@@ -367,5 +389,24 @@ public class ImageResizer extends ImageWorker {
         canvas.drawBitmap(bitmap, rect, rect, paint);
 
         return output;
+    }
+
+    /**
+     * Get the correctly oriented bitmap if orientation is different fro 0 value
+     * Idea and code from http://stackoverflow.com/a/11081918/527759
+     * 
+     * @param bitmap - bitmap to orient properly
+     * @param orientation - rotation degrees
+     * @return
+     */
+    public static Bitmap getCorrectlyOrientedBitmap(Bitmap bitmap, int orientation) {
+        if (orientation != 0) {
+            Matrix matrix = new Matrix();
+            matrix.postRotate(orientation);
+
+            bitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(),
+                    bitmap.getHeight(), matrix, true);
+        }
+        return bitmap;
     }
 }

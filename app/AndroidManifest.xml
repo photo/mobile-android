@@ -2,8 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.trovebox.android.app"
     android:installLocation="auto"
-    android:versionCode="4"
-    android:versionName="1.2" >
+    android:versionCode="999999999999"
+    android:versionName="dev" >
 
     <uses-sdk
         android:minSdkVersion="7"
@@ -76,6 +76,8 @@
             android:launchMode="singleTask" >
             <intent-filter>
                 <action android:name="android.intent.action.SEND" />
+
+                <category android:name="android.intent.category.DEFAULT" />
 
                 <data android:mimeType="image/*" />
             </intent-filter>

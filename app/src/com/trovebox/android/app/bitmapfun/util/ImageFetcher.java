@@ -135,8 +135,15 @@ public class ImageFetcher extends ImageResizer {
         final File f = downloadBitmap(mContext, data);
 
         if (f != null) {
-            // Return a sampled down version
-            return decodeSampledBitmapFromFile(f.toString(), imageWidth, imageHeight, cornerRadius);
+            try
+            {
+                // Return a sampled down version
+                return decodeSampledBitmapFromFile(f.toString(), imageWidth, imageHeight,
+                        cornerRadius);
+            } catch (Exception ex)
+            {
+                GuiUtils.error(TAG, ex);
+            }
         }
 
         return null;

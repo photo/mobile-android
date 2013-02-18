@@ -29,6 +29,7 @@ import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
 import android.widget.ImageView;
 
+import com.trovebox.android.app.bitmapfun.util.ImageFileSystemFetcher;
 import com.trovebox.android.app.bitmapfun.util.ImageResizer;
 import com.trovebox.android.app.common.CommonActivity;
 import com.trovebox.android.app.common.CommonClosableOnRestoreDialogFragment;
@@ -487,7 +488,8 @@ public class UploadActivity extends CommonActivity {
                 return false;
             }
             ImageView previewImage = (ImageView) getView().findViewById(R.id.image_upload);
-            previewImage.setImageBitmap(ImageUtils.decodeFile(mUploadImageFile, 200));
+            previewImage.setImageBitmap(ImageFileSystemFetcher.processBitmap(
+                    mUploadImageFile.getAbsolutePath(), 200, 200));
             return true;
         }
 
