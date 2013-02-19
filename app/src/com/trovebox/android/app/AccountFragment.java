@@ -30,6 +30,9 @@ import com.trovebox.android.app.util.RunnableWithParameter;
 public class AccountFragment extends CommonFrargmentWithImageWorker
 {
     public static final String TAG = AccountFragment.class.getSimpleName();
+    private static final long KB = 1024l;
+    private static final long MB = KB * KB;
+    private static final long GB = MB * KB;
 
     private LoadingControl loadingControl;
 
@@ -40,6 +43,7 @@ public class AccountFragment extends CommonFrargmentWithImageWorker
     private TextView tagsCount;
     private TextView albumsCount;
     private TextView storageUsed;
+    private TextView storageUsedUnit;
     private TextView server;
     private TextView accountType;
     private View upgradeOffer;
@@ -83,6 +87,7 @@ public class AccountFragment extends CommonFrargmentWithImageWorker
         tagsCount = (TextView) view.findViewById(R.id.tagsCount);
         albumsCount = (TextView) view.findViewById(R.id.albumsCount);
         storageUsed = (TextView) view.findViewById(R.id.storageUsed);
+        storageUsedUnit = (TextView) view.findViewById(R.id.storageUsedUnit);
         server = (TextView) view.findViewById(R.id.server);
         accountType = (TextView) view.findViewById(R.id.accountType);
         upgradeOffer = view.findViewById(R.id.upgradeOffer);
@@ -112,6 +117,7 @@ public class AccountFragment extends CommonFrargmentWithImageWorker
             tagsCount.setText(null);
             albumsCount.setText(null);
             storageUsed.setText(null);
+            storageUsedUnit.setText(null);
             server.setText(null);
             accountType.setText(null);
             upgradeOffer.setVisibility(View.GONE);
@@ -124,8 +130,7 @@ public class AccountFragment extends CommonFrargmentWithImageWorker
                 photosCount.setText(CommonUtils.format(counters.getPhotos()));
                 tagsCount.setText(CommonUtils.format(counters.getTags()));
                 albumsCount.setText(CommonUtils.format(counters.getAlbums()));
-                long storageUsedValue = counters.getStorage() / 1024 / 1024;
-                storageUsed.setText(CommonUtils.format(storageUsedValue));
+                initStorageUsedFields(counters.getStorage());
             }
             server.setText(response.getId());
             accountType.setText(response.isPaid() ? R.string.profile_account_type_pro
@@ -138,5 +143,24 @@ public class AccountFragment extends CommonFrargmentWithImageWorker
         }
     }
 
+    public void initStorageUsedFields(long storageUsedValue)
+    {
+        int stringResourceId;
+        if (storageUsedValue < MB)
+        {
+            storageUsedValue = storageUsedValue / KB;
+            stringResourceId = R.string.profile_counter_storage_kb_used;
+        } else if (storageUsedValue < GB)
+        {
+            storageUsedValue = storageUsedValue / MB;
+            stringResourceId = R.string.profile_counter_storage_mb_used;
+        } else
+        {
+            storageUsedValue = storageUsedValue / GB;
+            stringResourceId = R.string.profile_counter_storage_gb_used;
+        }
+        storageUsed.setText(CommonUtils.format(storageUsedValue));
+        storageUsedUnit.setText(stringResourceId);
+    }
 
 }

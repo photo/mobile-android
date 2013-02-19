@@ -148,9 +148,10 @@
                     android:textStyle="bold" />
 
                 <TextView
+                    android:id="@+id/storageUsedUnit"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/profile_counter_storage"
+                    android:text="@string/profile_counter_storage_mb_used"
                     android:textAppearance="?android:attr/textAppearanceSmall" />
             </LinearLayout>
         </LinearLayout>
