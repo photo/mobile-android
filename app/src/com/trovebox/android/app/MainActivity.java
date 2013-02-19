@@ -126,7 +126,7 @@ public class MainActivity extends CommonActivity
                 TAG, this, this));
         if (CommonUtils.checkLoggedIn(true))
         {
-            AccountLimitUtils.updateLimitInformationCache();
+            AccountLimitUtils.updateLimitInformationCacheAsync(this);
         }
     }
 

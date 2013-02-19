@@ -16,6 +16,7 @@ import com.trovebox.android.app.util.CommonUtils;
 import com.trovebox.android.app.util.GuiUtils;
 import com.trovebox.android.app.util.LoadingControl;
 import com.trovebox.android.app.util.RunnableWithParameter;
+import com.trovebox.android.app.util.SimpleAsyncTaskEx;
 import com.trovebox.android.app.util.TrackerUtils;
 
 /**
@@ -223,6 +224,18 @@ public class AccountLimitUtils {
     }
 
     /**
+     * Update the limit information cache asynchronously. Operation will be done
+     * in separate async task thread
+     * 
+     * @param loadingControl
+     */
+    public static void updateLimitInformationCacheAsync(LoadingControl loadingControl)
+    {
+        CommonUtils.debug(TAG, "Async update limit information cache request");
+        new UpdateLimitInformationCacheTask(loadingControl);
+    }
+
+    /**
      * Update the limit information cache. Should not be called in UI thread
      */
     public static void updateLimitInformationCache()
@@ -231,6 +244,7 @@ public class AccountLimitUtils {
         {
             if (CommonUtils.checkLoggedInAndOnline(true))
             {
+                CommonUtils.debug(TAG, "Update limit information cache request");
                 ITroveboxApi api = Preferences.getApi(TroveboxApplication.getContext());
                 ProfileResponse response = api.getProfile();
                 AccountLimitUtils.saveLimitInformationToCache(response);
@@ -238,6 +252,30 @@ public class AccountLimitUtils {
         } catch (Exception ex)
         {
             GuiUtils.noAlertError(TAG, ex);
+        }
+    }
+
+    private static class UpdateLimitInformationCacheTask extends SimpleAsyncTaskEx
+    {
+        public UpdateLimitInformationCacheTask(LoadingControl loadingControl) {
+            super(loadingControl);
+        }
+
+        @Override
+        protected void onSuccessPostExecute() {
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... params) {
+            try
+            {
+                updateLimitInformationCache();
+                return true;
+            } catch (Exception ex)
+            {
+                GuiUtils.noAlertError(TAG, ex);
+            }
+            return false;
         }
     }
 }

@@ -228,7 +228,9 @@
     <string name="profile_counter_photos">photos</string>
     <string name="profile_counter_albums">albums</string>
     <string name="profile_counter_tags">tags</string>
-    <string name="profile_counter_storage">MB used</string>
+    <string name="profile_counter_storage_kb_used">KB used</string>
+    <string name="profile_counter_storage_mb_used">MB used</string>
+    <string name="profile_counter_storage_gb_used">GB used</string>
     <string name="profile_server">Server</string>
     <string name="profile_account">Account</string>
     <string name="profile_account_type_free">Free</string>
