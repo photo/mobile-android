@@ -28,12 +28,12 @@ import org.apache.http.params.HttpParams;
 import org.apache.http.params.HttpProtocolParams;
 import org.apache.http.protocol.HTTP;
 
+import android.content.Context;
+
 import com.trovebox.android.app.Preferences;
 import com.trovebox.android.app.net.ApiRequest.Parameter;
 import com.trovebox.android.app.net.HttpEntityWithProgress.ProgressListener;
 import com.trovebox.android.app.util.GuiUtils;
-
-import android.content.Context;
 
 /**
  * ApiBase provides the basic functionality to call RESTful APIs using an
@@ -119,7 +119,7 @@ public class ApiBase {
                 GuiUtils.noAlertError(TAG, "Error signing request", e);
             }
         }
-        return new ApiResponse(httpClient.execute(httpRequest));
+        return new ApiResponse(baseUrl + request.getPath(), httpClient.execute(httpRequest));
     }
 
     /**
