@@ -7,14 +7,6 @@ import oauth.signpost.commonshttp.CommonsHttpOAuthConsumer;
 
 import org.holoeverywhere.app.Activity;
 
-import com.trovebox.android.app.Preferences;
-import com.trovebox.android.app.R;
-import com.trovebox.android.app.ui.widget.YesNoDialogFragment;
-import com.trovebox.android.app.ui.widget.YesNoDialogFragment.YesNoButtonPressedHandler;
-import com.trovebox.android.app.util.GuiUtils;
-import com.trovebox.android.app.util.LoadingControl;
-import com.trovebox.android.app.util.concurrent.AsyncTaskEx;
-
 import twitter4j.Twitter;
 import twitter4j.TwitterFactory;
 import twitter4j.auth.AccessToken;
@@ -23,6 +15,14 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
+
+import com.trovebox.android.app.Preferences;
+import com.trovebox.android.app.R;
+import com.trovebox.android.app.ui.widget.YesNoDialogFragment;
+import com.trovebox.android.app.ui.widget.YesNoDialogFragment.YesNoButtonPressedHandler;
+import com.trovebox.android.app.util.GuiUtils;
+import com.trovebox.android.app.util.LoadingControl;
+import com.trovebox.android.app.util.concurrent.AsyncTaskEx;
 
 /**
  * @author Eugene Popovich
@@ -407,9 +407,9 @@ public class TwitterUtils
                         getConsumerKey(activity),
                         getConsumerSecret(activity));
                 provider = new DefaultOAuthProvider(
-                        "http://twitter.com/oauth/request_token",
-                        "http://twitter.com/oauth/access_token",
-                        "http://twitter.com/oauth/authorize");
+                        "https://api.twitter.com/oauth/request_token",
+                        "https://api.twitter.com/oauth/access_token",
+                        "https://api.twitter.com/oauth/authorize");
                 authUrl = provider.retrieveRequestToken(consumer,
                         callbackUrl);
                 return true;
