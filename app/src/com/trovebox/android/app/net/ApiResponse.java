@@ -30,14 +30,17 @@ public class ApiResponse {
     private JSONObject jsonObject;
     private boolean jsonParseError = false;
     private String content;
+    String requestUrl;
 
     /**
      * Constructor.
      * 
+     * @param requestUrl the url for the request. Used for logging
      * @param response HttpResponse on which this ApiResponse is built.
      */
-    public ApiResponse(HttpResponse response) {
+    public ApiResponse(String requestUrl, HttpResponse response) {
         mResponse = response;
+        this.requestUrl = requestUrl;
     }
 
     /**
@@ -145,9 +148,11 @@ public class ApiResponse {
                 GuiUtils.noAlertError(TAG, ex);
                 jsonParseError = true;
                 String error = CommonUtils.format(
-                        "Invalid JSON Response. Status code: %1$d; Reason: %2$s", getStatusCode(),
+                        "Invalid JSON Response. Status code: %1$d; Reason: %2$s; Path: %3$s",
+                        getStatusCode(),
                         mResponse.getStatusLine()
-                                .getReasonPhrase());
+                                .getReasonPhrase(),
+                        requestUrl);
                 CommonUtils.error(TAG, error);
                 TrackerUtils.trackErrorEvent("invalid_json_response",
                         error);
