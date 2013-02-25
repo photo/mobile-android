@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.Set;
 
 import org.holoeverywhere.LayoutInflater;
 import org.holoeverywhere.app.AlertDialog;
@@ -37,6 +38,7 @@ import com.trovebox.android.app.common.CommonFragment;
 import com.trovebox.android.app.facebook.FacebookProvider;
 import com.trovebox.android.app.facebook.FacebookUtils;
 import com.trovebox.android.app.feather.FeatherFragment;
+import com.trovebox.android.app.model.utils.TagUtils;
 import com.trovebox.android.app.net.UploadMetaData;
 import com.trovebox.android.app.net.account.AccountLimitUtils;
 import com.trovebox.android.app.provider.PhotoUpload;
@@ -121,11 +123,14 @@ public class UploadActivity extends CommonActivity {
             implements OnClickListener
     {
         static final String UPLOAD_IMAGE_FILE = "UploadActivityFile";
+        static final String UPLOAD_IMAGE_FILE_ORIGINAL = "UploadActivityFileOriginal";
         static final String UPLOAD_IMAGE_FILE_URI = "UploadActivityFileUri";
 
         private File mUploadImageFile;
+        private File mUploadImageFileOriginal;
         private Uri fileUri;
 
+        Switch uploadOriginalSwitch;
         Switch privateSwitch;
         Switch twitterSwitch;
         Switch facebookSwitch;
@@ -149,6 +154,8 @@ public class UploadActivity extends CommonActivity {
             {
                 mUploadImageFile = CommonUtils.getSerializableFromBundleIfNotNull(
                         UPLOAD_IMAGE_FILE, savedInstanceState);
+                mUploadImageFileOriginal = CommonUtils.getSerializableFromBundleIfNotNull(
+                        UPLOAD_IMAGE_FILE_ORIGINAL, savedInstanceState);
                 String fileUriString = savedInstanceState.getString(UPLOAD_IMAGE_FILE_URI);
                 if (fileUriString != null)
                 {
@@ -203,6 +210,7 @@ public class UploadActivity extends CommonActivity {
         public void onSaveInstanceState(Bundle outState) {
             super.onSaveInstanceState(outState);
             outState.putSerializable(UPLOAD_IMAGE_FILE, mUploadImageFile);
+            outState.putSerializable(UPLOAD_IMAGE_FILE_ORIGINAL, mUploadImageFileOriginal);
             if (fileUri != null)
             {
                 outState.putString(UPLOAD_IMAGE_FILE_URI, fileUri.toString());
@@ -219,6 +227,7 @@ public class UploadActivity extends CommonActivity {
             v.findViewById(R.id.button_edit).setOnClickListener(this);
             tagsText = ((EditText) v.findViewById(R.id.edit_tags));
 
+            uploadOriginalSwitch = (Switch) v.findViewById(R.id.upload_original_switch);
             privateSwitch = (Switch) v.findViewById(R.id.private_switch);
             twitterSwitch = (Switch) v.findViewById(R.id.twitter_switch);
             facebookSwitch = (Switch) v.findViewById(R.id.facebook_switch);
@@ -276,6 +285,7 @@ public class UploadActivity extends CommonActivity {
             {
                 showSelectionDialog();
             }
+            adjustUploadOriginalSwitchVisibility();
             AccountLimitUtils.checkQuotaPerOneUploadAvailableAndRunAsync(
                     new Runnable() {
 
@@ -485,6 +495,7 @@ public class UploadActivity extends CommonActivity {
             if (!mUploadImageFile.exists())
             {
                 mUploadImageFile = null;
+                mUploadImageFileOriginal = null;
                 return false;
             }
             ImageView previewImage = (ImageView) getView().findViewById(R.id.image_upload);
@@ -505,7 +516,7 @@ public class UploadActivity extends CommonActivity {
                 case R.id.button_upload:
                     TrackerUtils.trackButtonClickEvent("button_upload", getActivity());
                     if (mUploadImageFile != null) {
-                        startUpload(mUploadImageFile, true, true);
+                        startUpload(mUploadImageFile, mUploadImageFileOriginal, true, true);
                     } else
                     {
                         GuiUtils.alert(R.string.upload_pick_photo_first);
@@ -534,8 +545,15 @@ public class UploadActivity extends CommonActivity {
             }
         }
 
+        /**
+         * @param uploadFile the original or edited file
+         * @param originalUploadFile the original file (before editing)
+         * @param checkTwitter
+         * @param checkFacebook
+         */
         void startUpload(
                 final File uploadFile,
+                final File originalUploadFile,
                 final boolean checkTwitter,
                 final boolean checkFacebook)
         {
@@ -547,7 +565,7 @@ public class UploadActivity extends CommonActivity {
                     @Override
                     public void run()
                     {
-                        instance.startUpload(uploadFile, false, checkFacebook);
+                        instance.startUpload(uploadFile, originalUploadFile, false, checkFacebook);
                     }
                 };
                 TwitterUtils.runAfterTwitterAuthentication(
@@ -566,7 +584,7 @@ public class UploadActivity extends CommonActivity {
                     @Override
                     public void run()
                     {
-                        instance.startUpload(uploadFile, checkTwitter, false);
+                        instance.startUpload(uploadFile, originalUploadFile, checkTwitter, false);
                     }
                 };
                 FacebookUtils.runAfterFacebookAuthentication(getSupportActivity(),
@@ -574,21 +592,36 @@ public class UploadActivity extends CommonActivity {
                         runnable, runnable);
                 return;
             }
-            startUpload(uploadFile);
+            startUpload(uploadFile, originalUploadFile);
         }
 
-        private void startUpload(File uploadFile) {
+        /**
+         * @param uploadFile
+         * @param originalUploadFile the original upload file. Necessary only in
+         *            case image was edited in editor
+         */
+        private void startUpload(File uploadFile, File originalUploadFile) {
             UploadsProviderAccessor uploads = new UploadsProviderAccessor(getActivity());
-            UploadMetaData metaData = new UploadMetaData();
-
-            metaData.setTitle(((EditText) getView().findViewById(R.id.edit_title)).getText()
-                    .toString());
-            metaData.setDescription(((EditText) getView().findViewById(R.id.edit_description))
-                    .getText()
-                    .toString());
-            metaData.setTags(((EditText) getView().findViewById(R.id.edit_tags)).getText()
-                    .toString());
-            metaData.setPrivate(privateSwitch.isChecked());
+            if (originalUploadFile != null && uploadOriginalSwitch.isChecked())
+            {
+                CommonUtils.debug(TAG, "Upload request for additional original image");
+                TrackerUtils.trackBackgroundEvent("upload_request", "original_additional");
+                UploadMetaData metaData = getUploadMetaData(true,
+                        getString(R.string.original_upload_extra_tag));
+                uploads.addPendingUpload(Uri.fromFile(originalUploadFile), metaData,
+                        false, false
+                        );
+            }
+            if (originalUploadFile == null)
+            {
+                CommonUtils.debug(TAG, "Upload request for original image");
+                TrackerUtils.trackBackgroundEvent("upload_request", "original");
+            } else
+            {
+                CommonUtils.debug(TAG, "Upload request for edited image");
+                TrackerUtils.trackBackgroundEvent("upload_request", "edited");
+            }
+            UploadMetaData metaData = getUploadMetaData(privateSwitch.isChecked());
 
             boolean shareOnFacebook = facebookSwitch.isChecked();
             boolean shareOnTwitter = twitterSwitch.isChecked();
@@ -601,10 +634,63 @@ public class UploadActivity extends CommonActivity {
             getActivity().finish();
         }
 
+        /**
+         * Get the standard upload meta data
+         * 
+         * @param isPrivate whether upload should be private
+         * @return
+         */
+        public UploadMetaData getUploadMetaData(boolean isPrivate)
+        {
+            return getUploadMetaData(isPrivate, null);
+        }
+
+        /**
+         * Get the standard upload meta data
+         * 
+         * @param isPrivate whether upload should be private
+         * @param extraTags to append to already entered tags
+         * @return
+         */
+        public UploadMetaData getUploadMetaData(boolean isPrivate, String extraTags) {
+            UploadMetaData metaData = new UploadMetaData();
+
+            metaData.setTitle(((EditText) getView().findViewById(R.id.edit_title)).getText()
+                    .toString());
+            metaData.setDescription(((EditText) getView().findViewById(R.id.edit_description))
+                    .getText()
+                    .toString());
+            String tags = ((EditText) getView().findViewById(R.id.edit_tags)).getText()
+                    .toString();
+            if (extraTags != null)
+            {
+                Set<String> tagsSet = TagUtils.getTags(tags);
+                Set<String> extraTagsSet = TagUtils.getTags(extraTags);
+                tagsSet.addAll(extraTagsSet);
+                tags = TagUtils.getTagsString(tagsSet);
+            }
+            metaData.setTags(tags);
+            metaData.setPrivate(isPrivate);
+            return metaData;
+        }
+
         @Override
         public void onDestroyView() {
             super.onDestroyView();
             getFeatherFragment().onCallingViewDestroyed();
+        }
+
+        /**
+         * Adjust visibility of uploadOriginalSwitch. It will be visible only if
+         * mUploadImageFileOriginal is not null
+         */
+        void adjustUploadOriginalSwitchVisibility()
+        {
+            if (uploadOriginalSwitch != null)
+            {
+                uploadOriginalSwitch.setVisibility(mUploadImageFileOriginal == null ? View.GONE
+                        : View.VISIBLE);
+            }
         }
 
         class CustomFeatherFragmentParameters implements FeatherFragment.FeatherFragmentParameters
@@ -617,12 +703,25 @@ public class UploadActivity extends CommonActivity {
 
             @Override
             public void setImageUri(Uri uri) {
-                mUploadImageFile = new File(ImageUtils.getRealPathFromURI(getActivity(), uri));
+                setFile(new File(ImageUtils.getRealPathFromURI(getActivity(), uri)));
             }
 
             @Override
             public void setHDFile(String path) {
-                mUploadImageFile = new File(path);
+                setFile(new File(path));
+            }
+
+            public void setFile(File file) {
+                keepOriginalFileNameIfNecessary();
+                mUploadImageFile = file;
+                adjustUploadOriginalSwitchVisibility();
+            }
+
+            public void keepOriginalFileNameIfNecessary() {
+                if (mUploadImageFileOriginal == null)
+                {
+                    mUploadImageFileOriginal = mUploadImageFile;
+                }
             }
 
             @Override

@@ -85,9 +85,11 @@
     <string name="upload_private">Private</string>
     <string name="upload_share_facebook">Facebook</string>
     <string name="upload_share_twitter">Twitter</string>
+    <string name="upload_upload_original">Upload Original</string>
     <string name="upload_button">Upload!</string>
     <string name="upload_pick_photo_first">Please pick a photo first</string>
     <string name="upload_image_edit_button">Crop &amp; effects</string>
+    <string name="original_upload_extra_tag">Original</string>
 
     <!-- Tags -->
     <string name="tags_view_in_gallery">View tagged photos</string>

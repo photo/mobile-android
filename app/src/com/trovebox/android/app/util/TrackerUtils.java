@@ -72,7 +72,7 @@ public class TrackerUtils {
     public static void trackSocial(String network, String action,
             String target)
     {
-        EasyTracker.getTracker().trackSocial(network, action,
+        EasyTracker.getTracker().sendSocial(network, action,
                 target);
         trackEvent("social", "action", network);
     }
@@ -244,7 +244,7 @@ public class TrackerUtils {
             String action,
             String label)
     {
-        EasyTracker.getTracker().trackEvent(category, action, label, null);
+        EasyTracker.getTracker().sendEvent(category, action, label, null);
     }
 
     /**
@@ -277,7 +277,7 @@ public class TrackerUtils {
      */
     public static void trackTiming(String category, long inteval, String name, String label)
     {
-        EasyTracker.getTracker().trackTiming(category, inteval, name, label);
+        EasyTracker.getTracker().sendTiming(category, inteval, name, label);
     }
 
     /**
@@ -287,7 +287,7 @@ public class TrackerUtils {
      */
     public static void trackView(Object view)
     {
-        EasyTracker.getTracker().trackView(view.getClass().getSimpleName());
+        EasyTracker.getTracker().sendView(view.getClass().getSimpleName());
     }
 
     /**
@@ -299,7 +299,7 @@ public class TrackerUtils {
     {
         EasyTracker.getInstance().setContext(TroveboxApplication.getContext());
         EasyTracker.getTracker().setExceptionParser(parser);
-        EasyTracker.getTracker().trackException(Thread.currentThread().getName(), t, false);
+        EasyTracker.getTracker().sendException(Thread.currentThread().getName(), t, false);
     }
 
     /**
@@ -308,7 +308,7 @@ public class TrackerUtils {
      */
     public static void trackException(String message)
     {
-        EasyTracker.getTracker().trackException(message, false);
+        EasyTracker.getTracker().sendException(message, false);
     }
 
     /**
