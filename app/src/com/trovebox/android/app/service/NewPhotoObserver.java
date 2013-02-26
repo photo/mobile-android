@@ -76,12 +76,18 @@ public class NewPhotoObserver extends FileObserver {
     private boolean checkLimits()
     {
         AccountLimitUtils.updateLimitInformationCache();
-        int remaining = Preferences.getRemainingUploadingLimit();
-        UploadsProviderAccessor uploads = new UploadsProviderAccessor(
-                TroveboxApplication.getContext());
-        int pending = uploads.getPendingUploadsCount();
-        boolean result = remaining - pending >= 1;
-        return result;
+        if (Preferences.isProUser())
+        {
+            return true;
+        } else
+        {
+            int remaining = Preferences.getRemainingUploadingLimit();
+            UploadsProviderAccessor uploads = new UploadsProviderAccessor(
+                    TroveboxApplication.getContext());
+            int pending = uploads.getPendingUploadsCount();
+            boolean result = remaining - pending >= 1;
+            return result;
+        }
     }
 
     /**
