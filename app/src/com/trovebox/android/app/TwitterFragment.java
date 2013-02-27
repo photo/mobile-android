@@ -24,6 +24,7 @@ import com.trovebox.android.app.common.CommonStyledDialogFragment;
 import com.trovebox.android.app.model.Photo;
 import com.trovebox.android.app.twitter.TwitterProvider;
 import com.trovebox.android.app.twitter.TwitterUtils;
+import com.trovebox.android.app.util.CommonUtils;
 import com.trovebox.android.app.util.GuiUtils;
 import com.trovebox.android.app.util.LoadingControl;
 import com.trovebox.android.app.util.LoadingControlWithCounter;
@@ -105,7 +106,10 @@ public class TwitterFragment extends CommonStyledDialogFragment
                 public void onClick(View v)
                 {
                     TrackerUtils.trackButtonClickEvent("sendBtn", TwitterFragment.this);
-                    postTweet();
+                    if (CommonUtils.checkLoggedInAndOnline())
+                    {
+                        postTweet();
+                    }
                 }
             });
         } catch (Exception ex)

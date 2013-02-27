@@ -157,7 +157,13 @@ public abstract class PhotosEndlessAdapter extends EndlessAdapter<Photo>
 
     @Override
     public LoadResponse loadOneMoreItem(int index) {
-        return loadItemsGeneral(index, 1);
+        if (CommonUtils.checkLoggedInAndOnline())
+        {
+            return loadItemsGeneral(index, 1);
+        } else
+        {
+            return new LoadResponse(null, false);
+        }
     }
 
     public String getTagFilter() {

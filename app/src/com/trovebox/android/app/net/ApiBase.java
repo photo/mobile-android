@@ -34,6 +34,7 @@ import com.trovebox.android.app.Preferences;
 import com.trovebox.android.app.net.ApiRequest.Parameter;
 import com.trovebox.android.app.net.HttpEntityWithProgress.ProgressListener;
 import com.trovebox.android.app.util.GuiUtils;
+import com.trovebox.android.app.util.TrackerUtils;
 
 /**
  * ApiBase provides the basic functionality to call RESTful APIs using an
@@ -118,6 +119,9 @@ public class ApiBase {
             } catch (Exception e) {
                 GuiUtils.noAlertError(TAG, "Error signing request", e);
             }
+        } else
+        {
+            TrackerUtils.trackBackgroundEvent("not_signed_request", baseUrl + request.getPath());
         }
         return new ApiResponse(baseUrl + request.getPath(), httpClient.execute(httpRequest));
     }
