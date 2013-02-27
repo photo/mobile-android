@@ -1,17 +1,17 @@
 
 package com.trovebox.android.app.provider;
 
-import com.trovebox.android.app.TroveboxApplication;
-import com.trovebox.android.app.R;
-import com.trovebox.android.app.util.CommonUtils;
-import com.trovebox.android.app.util.GuiUtils;
-import com.trovebox.android.app.util.concurrent.AsyncTaskEx;
-
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+
+import com.trovebox.android.app.R;
+import com.trovebox.android.app.TroveboxApplication;
+import com.trovebox.android.app.util.CommonUtils;
+import com.trovebox.android.app.util.GuiUtils;
+import com.trovebox.android.app.util.concurrent.AsyncTaskEx;
 
 public class UploadsUtils
 {
@@ -50,28 +50,32 @@ public class UploadsUtils
         TroveboxApplication.getContext().sendBroadcast(intent);
     }
 
-    public static void clearUploads()
+    public static void clearUploadsAsync()
     {
         new ClearUploadsTask().execute();
     }
 
+    public static boolean clearUploads()
+    {
+        try
+        {
+            UploadsProviderAccessor uploads = new UploadsProviderAccessor(
+                    TroveboxApplication.getContext());
+            uploads.deleteAll();
+            return true;
+        } catch (Exception ex)
+        {
+            GuiUtils.error(TAG, ex);
+        }
+        return false;
+    }
     public static class ClearUploadsTask extends
             AsyncTaskEx<Void, Void, Boolean>
     {
         @Override
         protected Boolean doInBackground(Void... params)
         {
-            try
-            {
-                UploadsProviderAccessor uploads = new UploadsProviderAccessor(
-                        TroveboxApplication.getContext());
-                uploads.deleteAll();
-                return true;
-            } catch (Exception ex)
-            {
-                GuiUtils.error(TAG, ex);
-            }
-            return false;
+            return clearUploads();
         }
 
         @Override

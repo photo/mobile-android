@@ -144,11 +144,13 @@ public class UploaderService extends Service {
         {
             return;
         }
-        boolean wifiOnlyUpload = Preferences
-                .isWiFiOnlyUploadActive(getBaseContext());
         UploadsProviderAccessor uploads = new UploadsProviderAccessor(this);
         List<PhotoUpload> pendingUploads = uploads.getPendingUploads();
         for (PhotoUpload photoUpload : pendingUploads) {
+            if (!CommonUtils.checkLoggedInAndOnline(true))
+            {
+                return;
+            }
             Log.i(TAG, "Starting upload to Trovebox: " + photoUpload.getPhotoUri());
             String filePath = ImageUtils.getRealPathFromURI(this, photoUpload.getPhotoUri());
             if (filePath == null || !(new File(filePath).exists())) {
@@ -157,6 +159,8 @@ public class UploaderService extends Service {
                 CommonUtils.info(TAG, "Upload canceled, because file does not exist anymore.");
                 continue;
             }
+            boolean wifiOnlyUpload = Preferences
+                    .isWiFiOnlyUploadActive(getBaseContext());
             if (wifiOnlyUpload && !Utils.isWiFiActive(getBaseContext()))
             {
                 CommonUtils.info(TAG, "Upload canceled because WiFi is not active anymore");

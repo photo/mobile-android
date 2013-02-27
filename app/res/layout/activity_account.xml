@@ -70,7 +70,7 @@
             android:layout_height="wrap_content"
             android:onClick="accountOwnServerButtonAction"
             android:text="@string/account_own_server_button"
-            android:visibility="gone" />
+            android:visibility="visible" />
     </LinearLayout>
 
 </RelativeLayout>
