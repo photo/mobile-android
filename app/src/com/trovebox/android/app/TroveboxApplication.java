@@ -5,12 +5,11 @@ package com.trovebox.android.app;
 import org.holoeverywhere.app.Application;
 import org.holoeverywhere.app.Application.Config.PreferenceImpl;
 
-import com.trovebox.android.app.R;
+import android.content.Context;
+
 import com.trovebox.android.app.facebook.FacebookProvider;
 import com.trovebox.android.app.util.CommonUtils;
 import com.trovebox.android.app.util.GuiUtils;
-
-import android.content.Context;
 
 /**
  * @author Eugene Popovich
@@ -34,7 +33,17 @@ public class TroveboxApplication extends Application
     public void onCreate()
     {
         super.onCreate();
-
+        // temp hack to lowercase all the server paths to
+        // overcome oauth issue
+        String server = Preferences.getServer(this);
+        if (server != null)
+        {
+            String lowerCaseServerName = server.toLowerCase();
+            if (!server.equals(lowerCaseServerName))
+            {
+                Preferences.setServer(this, lowerCaseServerName);
+            }
+        }
         GuiUtils.setup();
         getConfig().setPreferenceImpl(PreferenceImpl.XML);
         
