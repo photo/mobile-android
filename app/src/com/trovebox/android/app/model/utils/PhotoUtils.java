@@ -1,3 +1,4 @@
+
 package com.trovebox.android.app.model.utils;
 
 import java.io.IOException;
@@ -163,7 +164,6 @@ public class PhotoUtils {
             this.runnable = runnable;
         }
 
-
         @Override
         protected Boolean doInBackground(Void... params) {
             try {
@@ -196,10 +196,13 @@ public class PhotoUtils {
         @Override
         protected Boolean doInBackground(Void... params) {
             try {
-                TroveboxResponse response =
-                        Preferences.getApi(TroveboxApplication.getContext())
-                                .deletePhoto(photo.getId());
-                return TroveboxResponseUtils.checkResponseValid(response);
+                if (CommonUtils.checkLoggedInAndOnline())
+                {
+                    TroveboxResponse response =
+                            Preferences.getApi(TroveboxApplication.getContext())
+                                    .deletePhoto(photo.getId());
+                    return TroveboxResponseUtils.checkResponseValid(response);
+                }
             } catch (Exception e) {
                 GuiUtils.error(TAG, R.string.errorCouldNotDeletePhoto, e);
             }
@@ -237,17 +240,20 @@ public class PhotoUtils {
         @Override
         protected Boolean doInBackground(Void... params) {
             try {
-                PhotoResponse response =
-                        Preferences.getApi(TroveboxApplication.getContext())
-                                .updatePhotoDetails(
-                                        photo.getId(),
-                                        title,
-                                        description,
-                                        tags,
-                                        isPrivate ? Photo.PERMISSION_PRIVATE
-                                                : Photo.PERMISSION_PUBLIC);
-                photo = response.getPhoto();
-                return TroveboxResponseUtils.checkResponseValid(response);
+                if (CommonUtils.checkLoggedInAndOnline())
+                {
+                    PhotoResponse response =
+                            Preferences.getApi(TroveboxApplication.getContext())
+                                    .updatePhotoDetails(
+                                            photo.getId(),
+                                            title,
+                                            description,
+                                            tags,
+                                            isPrivate ? Photo.PERMISSION_PRIVATE
+                                                    : Photo.PERMISSION_PUBLIC);
+                    photo = response.getPhoto();
+                    return TroveboxResponseUtils.checkResponseValid(response);
+                }
             } catch (Exception e) {
                 GuiUtils.error(TAG, R.string.errorCouldNotUpdatePhoto, e);
             }
@@ -263,9 +269,10 @@ public class PhotoUtils {
             }
         }
     }
-    
+
     /**
      * Get and register the broadcast receiver for the photo removed event
+     * 
      * @param TAG
      * @param handler
      * @param activity

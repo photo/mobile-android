@@ -5,7 +5,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.MalformedURLException;
 
-
 import org.holoeverywhere.LayoutInflater;
 import org.holoeverywhere.app.Activity;
 import org.holoeverywhere.app.Dialog;
@@ -22,13 +21,13 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.facebook.android.Facebook;
-import com.trovebox.android.app.R;
 import com.trovebox.android.app.common.CommonStyledDialogFragment;
 import com.trovebox.android.app.facebook.FacebookProvider;
 import com.trovebox.android.app.facebook.FacebookUtils;
 import com.trovebox.android.app.model.Photo;
 import com.trovebox.android.app.model.utils.PhotoUtils;
 import com.trovebox.android.app.net.ReturnSizes;
+import com.trovebox.android.app.util.CommonUtils;
 import com.trovebox.android.app.util.GuiUtils;
 import com.trovebox.android.app.util.LoadingControl;
 import com.trovebox.android.app.util.LoadingControlWithCounter;
@@ -114,7 +113,10 @@ public class FacebookFragment extends CommonStyledDialogFragment
                 public void onClick(View v)
                 {
                     TrackerUtils.trackButtonClickEvent("sendBtn", FacebookFragment.this);
-                    postPhoto();
+                    if (CommonUtils.checkLoggedInAndOnline())
+                    {
+                        postPhoto();
+                    }
                 }
             });
         } catch (Exception ex)

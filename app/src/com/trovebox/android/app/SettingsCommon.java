@@ -10,19 +10,19 @@ import org.holoeverywhere.preference.Preference.OnPreferenceChangeListener;
 import org.holoeverywhere.preference.Preference.OnPreferenceClickListener;
 import org.holoeverywhere.preference.PreferenceCategory;
 
-import com.trovebox.android.app.R;
+import android.content.DialogInterface;
+
 import com.trovebox.android.app.bitmapfun.util.ImageCache;
 import com.trovebox.android.app.facebook.FacebookProvider;
 import com.trovebox.android.app.facebook.FacebookSessionEvents;
-import com.trovebox.android.app.facebook.FacebookUtils;
 import com.trovebox.android.app.facebook.FacebookSessionEvents.LogoutListener;
+import com.trovebox.android.app.facebook.FacebookUtils;
 import com.trovebox.android.app.provider.UploadsUtils;
+import com.trovebox.android.app.twitter.TwitterUtils;
 import com.trovebox.android.app.util.GuiUtils;
 import com.trovebox.android.app.util.ProgressDialogLoadingControl;
 import com.trovebox.android.app.util.SimpleAsyncTaskEx;
 import com.trovebox.android.app.util.TrackerUtils;
-
-import android.content.DialogInterface;
 
 public class SettingsCommon implements
         OnPreferenceClickListener
@@ -69,7 +69,7 @@ public class SettingsCommon implements
                                                 activity);
                                         Preferences
                                                 .logout(activity);
-                                        new ClearCachesTask().execute();
+                                        new LogoutTask().execute();
                                     }
                                 })
                         .setNegativeButton(R.string.no, null)
@@ -255,7 +255,7 @@ public class SettingsCommon implements
                                             {
                                                 TrackerUtils.trackButtonClickEvent(
                                                         "setting_sync_clear", activity);
-                                                UploadsUtils.clearUploads();
+                                                UploadsUtils.clearUploadsAsync();
                                             }
                                         })
                                 .setNegativeButton(R.string.no, null)
@@ -266,10 +266,10 @@ public class SettingsCommon implements
                 });
     }
 
-    public class ClearCachesTask extends SimpleAsyncTaskEx
+    public class LogoutTask extends SimpleAsyncTaskEx
     {
 
-        public ClearCachesTask() {
+        public LogoutTask() {
             super(new ProgressDialogLoadingControl(activity, true, false,
                     activity.getString(R.string.loading)));
         }
@@ -294,6 +294,9 @@ public class SettingsCommon implements
         protected Boolean doInBackground(Void... params) {
             try
             {
+                UploadsUtils.clearUploads();
+                FacebookUtils.logoutRequest(activity);
+                TwitterUtils.logout(activity);
                 ImageCache.clearDiskCaches();
                 return true;
             } catch (Exception ex)

@@ -5,15 +5,6 @@ package com.trovebox.android.app;
 import org.holoeverywhere.LayoutInflater;
 import org.holoeverywhere.app.Activity;
 
-import com.trovebox.android.app.R;
-import com.trovebox.android.app.common.CommonFragment;
-import com.trovebox.android.app.model.Tag;
-import com.trovebox.android.app.ui.adapter.MultiSelectTagsAdapter;
-import com.trovebox.android.app.util.CommonUtils;
-import com.trovebox.android.app.util.GalleryOpenControl;
-import com.trovebox.android.app.util.LoadingControl;
-import com.trovebox.android.app.util.TrackerUtils;
-
 import android.content.Context;
 import android.os.Bundle;
 import android.view.KeyEvent;
@@ -26,6 +17,14 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
+
+import com.trovebox.android.app.common.CommonFragment;
+import com.trovebox.android.app.model.Tag;
+import com.trovebox.android.app.ui.adapter.MultiSelectTagsAdapter;
+import com.trovebox.android.app.util.CommonUtils;
+import com.trovebox.android.app.util.GalleryOpenControl;
+import com.trovebox.android.app.util.LoadingControl;
+import com.trovebox.android.app.util.TrackerUtils;
 
 public class TagsFragment extends CommonFragment
 {
@@ -60,24 +59,27 @@ public class TagsFragment extends CommonFragment
             public boolean onEditorAction(TextView v, int actionId,
                     KeyEvent event)
             {
-                switch (event.getKeyCode())
+                if (event != null)
                 {
-                    case KeyEvent.KEYCODE_ENTER:
-                        CommonUtils.debug(TAG, "Key code enter");
-                        if (KeyEvent.ACTION_DOWN == event.getAction())
-                        {
-                            CommonUtils.debug(TAG, "Opening gallery");
-                            search.post(new Runnable() {
+                    switch (event.getKeyCode())
+                    {
+                        case KeyEvent.KEYCODE_ENTER:
+                            CommonUtils.debug(TAG, "Key code enter");
+                            if (KeyEvent.ACTION_DOWN == event.getAction())
+                            {
+                                CommonUtils.debug(TAG, "Opening gallery");
+                                search.post(new Runnable() {
 
-                                @Override
-                                public void run() {
-                                    galleryOpenControl.openGallery(search.getText()
-                                            .toString().trim(), null);
-                                }
-                            });
-                            return true;
-                        }
-                        break;
+                                    @Override
+                                    public void run() {
+                                        galleryOpenControl.openGallery(search.getText()
+                                                .toString().trim(), null);
+                                    }
+                                });
+                                return true;
+                            }
+                            break;
+                    }
                 }
                 return false;
             }
