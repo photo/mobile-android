@@ -204,7 +204,10 @@ public class ImageFetcher extends ImageResizer {
             }
             return cacheFile;
         }
-
+        if (!CommonUtils.checkLoggedInAndOnline(true))
+        {
+            return null;
+        }
         if (BuildConfig.DEBUG) {
             Log.d(TAG, "downloadBitmap - downloading - " + urlString);
         }
