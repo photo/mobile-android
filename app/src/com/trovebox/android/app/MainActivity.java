@@ -77,6 +77,7 @@ public class MainActivity extends CommonActivity
     boolean instanceSaved = false;
     boolean actionbBarNavigationModeInitiated = false;
 
+    final Handler handler = new Handler();
     /**
      * Called when Main Activity is first loaded
      * 
@@ -181,7 +182,6 @@ public class MainActivity extends CommonActivity
         mActionBar.selectTab(mActionBar.getTabAt(activeTab));
         // hack which refreshes indeterminate progress state on
         // orientation change
-        Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
 
             @Override
@@ -266,7 +266,6 @@ public class MainActivity extends CommonActivity
 
     public void reinitMenu()
     {
-        Handler handler = new Handler();
         handler.post(new Runnable() {
 
             @Override
@@ -386,9 +385,15 @@ public class MainActivity extends CommonActivity
         return loaders.get() > 0;
     }
 
-    private void showLoading(boolean show)
+    private void showLoading(final boolean show)
     {
-        setSupportProgressBarIndeterminateVisibility(show);
+        handler.post(new Runnable() {
+
+            @Override
+            public void run() {
+                setSupportProgressBarIndeterminateVisibility(show);
+            }
+        });
     }
 
     public class TabListener<T extends Fragment> implements
