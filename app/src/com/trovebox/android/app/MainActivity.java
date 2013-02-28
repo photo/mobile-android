@@ -24,6 +24,7 @@ import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.view.Window;
 import com.trovebox.android.app.FacebookFragment.FacebookLoadingControlAccessor;
+import com.trovebox.android.app.HomeFragment.StartNowHandler;
 import com.trovebox.android.app.SyncFragment.SyncHandler;
 import com.trovebox.android.app.TwitterFragment.TwitterLoadingControlAccessor;
 import com.trovebox.android.app.common.CommonActivity;
@@ -53,7 +54,7 @@ public class MainActivity extends CommonActivity
         implements LoadingControl, GalleryOpenControl, SyncHandler,
         UploadsClearedHandler, PhotoUploadedHandler, TwitterLoadingControlAccessor,
         FacebookLoadingControlAccessor, SyncStartedHandler,
-        PhotoDeletedHandler, PhotoUpdatedHandler
+        PhotoDeletedHandler, PhotoUpdatedHandler, StartNowHandler
 {
     public static final int HOME_INDEX = 0;
     public static final int GALLERY_INDEX = 1;
@@ -78,6 +79,7 @@ public class MainActivity extends CommonActivity
     boolean actionbBarNavigationModeInitiated = false;
 
     final Handler handler = new Handler();
+
     /**
      * Called when Main Activity is first loaded
      * 
@@ -595,6 +597,18 @@ public class MainActivity extends CommonActivity
         if (galleryFragment != null)
         {
             galleryFragment.photoUpdated(photo);
+        }
+    }
+
+    @Override
+    public void startNow() {
+        CommonUtils.debug(TAG, "Start now");
+        if (mActionBar.getSelectedNavigationIndex() != SYNC_INDEX)
+        {
+            if (!instanceSaved)
+            {
+                mActionBar.selectTab(mActionBar.getTabAt(SYNC_INDEX));
+            }
         }
     }
 }

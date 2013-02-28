@@ -1,16 +1,15 @@
 
 package com.trovebox.android.app;
 
-import com.trovebox.android.app.R;
-import com.trovebox.android.app.common.CommonActivity;
-import com.trovebox.android.app.util.CommonUtils;
-import com.trovebox.android.app.util.LoginUtils;
-import com.trovebox.android.app.util.TrackerUtils;
-
 import android.content.BroadcastReceiver;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+
+import com.trovebox.android.app.common.CommonActivity;
+import com.trovebox.android.app.util.CommonUtils;
+import com.trovebox.android.app.util.LoginUtils;
+import com.trovebox.android.app.util.TrackerUtils;
 
 public class AccountActivity extends CommonActivity
 {
@@ -45,14 +44,6 @@ public class AccountActivity extends CommonActivity
         CommonUtils.debug(TAG, "Start account login button action");
         TrackerUtils.trackButtonClickEvent("account_login_button", AccountActivity.this);
         Intent intent = new Intent(this, AccountLogin.class);
-        startActivity(intent);
-    }
-
-    public void accountOwnServerButtonAction(View view)
-    {
-        CommonUtils.debug(TAG, "Start own server button action");
-        TrackerUtils.trackButtonClickEvent("own_server_login_button", AccountActivity.this);
-        Intent intent = new Intent(this, SetupActivity.class);
         startActivity(intent);
     }
 

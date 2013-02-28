@@ -44,7 +44,7 @@ public class AccountFragment extends CommonFrargmentWithImageWorker
     private TextView albumsCount;
     private TextView storageUsed;
     private TextView storageUsedUnit;
-    private TextView server;
+    private TextView email;
     private TextView accountType;
     private View upgradeOffer;
     private ImageView profileImage;
@@ -88,7 +88,7 @@ public class AccountFragment extends CommonFrargmentWithImageWorker
         albumsCount = (TextView) view.findViewById(R.id.albumsCount);
         storageUsed = (TextView) view.findViewById(R.id.storageUsed);
         storageUsedUnit = (TextView) view.findViewById(R.id.storageUsedUnit);
-        server = (TextView) view.findViewById(R.id.server);
+        email = (TextView) view.findViewById(R.id.email);
         accountType = (TextView) view.findViewById(R.id.accountType);
         upgradeOffer = view.findViewById(R.id.upgradeOffer);
         profileImage = (ImageView) view.findViewById(R.id.profilePic);
@@ -118,7 +118,7 @@ public class AccountFragment extends CommonFrargmentWithImageWorker
             albumsCount.setText(null);
             storageUsed.setText(null);
             storageUsedUnit.setText(null);
-            server.setText(null);
+            email.setText(null);
             accountType.setText(null);
             upgradeOffer.setVisibility(View.GONE);
         } else
@@ -132,7 +132,7 @@ public class AccountFragment extends CommonFrargmentWithImageWorker
                 albumsCount.setText(CommonUtils.format(counters.getAlbums()));
                 initStorageUsedFields(counters.getStorage());
             }
-            server.setText(response.getId());
+            email.setText(response.getEmail());
             accountType.setText(response.isPaid() ? R.string.profile_account_type_pro
                     : R.string.profile_account_type_free);
             upgradeOffer.setVisibility(response.isPaid() ? View.GONE : View.VISIBLE);
