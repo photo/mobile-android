@@ -119,6 +119,11 @@
         <item name="android:textColor">@color/ab_fg_black</item>
     </style>
 
+    <style name="Trovebox.OliveButton" parent="Holo.Button">
+        <item name="android:background">@drawable/btn_bg_olive</item>
+        <item name="android:textColor">@color/ab_fg_black</item>
+    </style>
+
     <style name="Trovebox.BeigeWithIconButton" parent="Holo.Button">
         <item name="android:background">@drawable/btn_bg_beige_with_icon</item>
         <item name="android:textColor">@color/ab_fg_black</item>

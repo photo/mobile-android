@@ -4,6 +4,12 @@
     android:layout_height="match_parent" >
 
     <LinearLayout
+        android:layout_width="0px"
+        android:layout_height="0px"
+        android:focusable="true"
+        android:focusableInTouchMode="true" />
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_margin="@dimen/site_padding"
@@ -23,9 +29,16 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
+            android:layout_height="wrap_content"
             android:orientation="vertical" >
+
+            <TextView
+                android:id="@+id/sign_in_instructions"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="@string/sign_in_instructions"
+                android:textAppearance="?android:attr/textAppearanceSmall" />
 
             <EditText
                 android:id="@+id/edit_email"
@@ -48,6 +61,19 @@
                 android:layout_height="wrap_content"
                 android:onClick="loginButtonAction"
                 android:text="@string/login" />
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="30dp" />
+
+            <Button
+                android:id="@+id/account_own_server_button"
+                style="@style/Trovebox.OliveButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:onClick="accountOwnServerButtonAction"
+                android:text="@string/account_own_server_button"
+                android:visibility="visible" />
         </LinearLayout>
     </LinearLayout>
 

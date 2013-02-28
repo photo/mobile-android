@@ -184,8 +184,8 @@
 
     <!-- Screens for Create/Login/Own domain: Account -->
     <string name="account_signup_button">Sign up with your email</string>
-    <string name="account_login_button">Login with your email</string>
-    <string name="account_own_server_button">Have your own server?</string>
+    <string name="account_login_button">Sign in with your email</string>
+    <string name="account_own_server_button">Using your own domain?</string>
     <string name="account_facebook">Connect using Facebook login</string>
     <string name="account_create_button">Create Account</string>
     <string name="title_activity_account_facebook">AccountFacebook</string>
@@ -194,7 +194,7 @@
     <string name="invalid_credentials">Invalid username or password</string>
     <string name="unknown_error">Unknown error</string>
     <string name="unknown_error_with_code">Unknown error with code %1$d</string>
-
+    <string name="sign_in_instructions"><![CDATA[<b>Enter</b> an email, password and hit <b>Login</b>]]></string>
     <!-- Hints -->
     <string name="hint_email">email</string>
     <string name="hint_password">password</string>

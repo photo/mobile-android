@@ -62,15 +62,6 @@
                 android:layout_marginLeft="14dp"
                 android:src="@drawable/login_icon" />
         </RelativeLayout>
-
-        <Button
-            android:id="@+id/account_own_server_button"
-            style="@style/Trovebox.BeigeButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:onClick="accountOwnServerButtonAction"
-            android:text="@string/account_own_server_button"
-            android:visibility="visible" />
     </LinearLayout>
 
 </RelativeLayout>

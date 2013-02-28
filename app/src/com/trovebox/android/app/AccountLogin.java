@@ -3,9 +3,11 @@ package com.trovebox.android.app;
 
 
 import org.holoeverywhere.app.Activity;
+import org.holoeverywhere.widget.TextView;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Html;
 import android.view.View;
 import android.widget.EditText;
 
@@ -31,8 +33,14 @@ public class AccountLogin extends CommonActivity
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_account_login);
+        init();
     }
 
+    void init()
+    {
+        TextView signInInstructions = (TextView) findViewById(R.id.sign_in_instructions);
+        signInInstructions.setText(Html.fromHtml(getString(R.string.sign_in_instructions)));
+    }
     public void loginButtonAction(View view)
     {
         CommonUtils.debug(TAG, "Login the user");
@@ -65,6 +73,15 @@ public class AccountLogin extends CommonActivity
                         getString(R.string.logging_in_message)), this)
                 .execute();
 
+    }
+
+    public void accountOwnServerButtonAction(View view)
+    {
+        CommonUtils.debug(TAG, "Start own server button action");
+        TrackerUtils.trackButtonClickEvent("own_server_login_button", AccountLogin.this);
+        Intent intent = new Intent(this, SetupActivity.class);
+        startActivity(intent);
+        finish();
     }
 
     private class LogInUserTask extends
