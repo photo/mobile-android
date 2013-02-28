@@ -117,7 +117,9 @@
     <!-- Newest Home -->
     <string name="newest_this_photo_was_taken">This photo was taken %1$d %2$s ago.</string>
     <string name="newest_this_photo_was_taken_less_one_hour">This photo was taken less than one hour ago.</string>
-
+	<string name="havent_uploaded_any_photos">Hmm, you haven\'t uploaded any photos.</string>
+	<string name="use_sync_to_start">Use the sync tab to start!</string>
+    
     <!-- general -->
     <string name="day">day</string>
     <string name="days">days</string>
@@ -183,7 +185,7 @@
     <!-- Screens for Create/Login/Own domain: Account -->
     <string name="account_signup_button">Sign up with your email</string>
     <string name="account_login_button">Login with your email</string>
-    <string name="account_own_server_button">Have your own server</string>
+    <string name="account_own_server_button">Have your own server?</string>
     <string name="account_facebook">Connect using Facebook login</string>
     <string name="account_create_button">Create Account</string>
     <string name="title_activity_account_facebook">AccountFacebook</string>

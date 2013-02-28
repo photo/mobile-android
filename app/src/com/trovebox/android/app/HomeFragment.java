@@ -7,6 +7,7 @@ import java.util.Stack;
 
 import org.holoeverywhere.LayoutInflater;
 import org.holoeverywhere.app.Activity;
+import org.holoeverywhere.app.Fragment;
 
 import android.content.Context;
 import android.content.Intent;
@@ -56,6 +57,7 @@ public class HomeFragment extends CommonRefreshableFragmentWithImageWorker
     public static final String TAG = HomeFragment.class.getSimpleName();
 
     private LoadingControl loadingControl;
+    private StartNowHandler startNowHandler;
     private NewestPhotosAdapter mAdapter;
     private LayoutInflater mInflater;
     private Photo activePhoto;
@@ -106,6 +108,7 @@ public class HomeFragment extends CommonRefreshableFragmentWithImageWorker
     {
         super.onAttach(activity);
         loadingControl = ((LoadingControl) activity);
+        startNowHandler = ((StartNowHandler) activity);
 
     }
 
@@ -520,32 +523,63 @@ public class HomeFragment extends CommonRefreshableFragmentWithImageWorker
         @Override
         public LoadResponse loadItems(int page) {
             LoadResponse result = super.loadItems(page);
-            showUploadPhotosImage(result.items != null && result.items.isEmpty()
-                    && getItems().isEmpty());
+            // show start now notification in case response returned no items
+            // and there are no already loaded items
+            showStartNowNotification(startNowHandler,
+                    HomeFragment.this, result.items != null && result.items.isEmpty()
+                            && getItems().isEmpty());
             return result;
         }
 
-        void showUploadPhotosImage(final boolean show)
-        {
-            GuiUtils.runOnUiThread(
-                    new Runnable() {
-
-                        @Override
-                        public void run() {
-                            View view = HomeFragment.this.getView();
-                            if (view != null)
-                            {
-                                view.findViewById(R.id.upload_new_images).setVisibility(
-                                        show ? View.VISIBLE : View.GONE);
-                            }
-
-                        }
-                    });
-        }
     }
 
     @Override
     protected boolean isRefreshMenuVisible() {
         return !loadingControl.isLoading();
+    }
+
+    /**
+     * Adjust start now notification visibility state and init it in case it is
+     * visible. When user clicked on int startNowHandler.startNow will be
+     * executed
+     * 
+     * @param startNowHandler
+     * @param fragment
+     * @param show
+     */
+    public static void showStartNowNotification(final StartNowHandler startNowHandler,
+            final Fragment fragment,
+            final boolean show)
+    {
+        GuiUtils.runOnUiThread(
+                new Runnable() {
+
+                    @Override
+                    public void run() {
+                        View view = fragment.getView();
+                        if (view != null)
+                        {
+                            view = view.findViewById(R.id.upload_new_images);
+                            if (show)
+                            {
+                                view.setOnClickListener(new OnClickListener() {
+
+                                    @Override
+                                    public void onClick(View v) {
+                                        startNowHandler.startNow();
+                                    }
+                                });
+                            }
+                            view.setVisibility(
+                                    show ? View.VISIBLE : View.GONE);
+                        }
+
+                    }
+                });
+    }
+
+    public static interface StartNowHandler
+    {
+        void startNow();
     }
 }
