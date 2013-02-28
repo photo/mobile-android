@@ -235,7 +235,7 @@
     <string name="profile_counter_storage_kb_used">KB used</string>
     <string name="profile_counter_storage_mb_used">MB used</string>
     <string name="profile_counter_storage_gb_used">GB used</string>
-    <string name="profile_server">Server</string>
+    <string name="profile_email">E-Mail</string>
     <string name="profile_account">Account</string>
     <string name="profile_account_type_free">Free</string>
     <string name="profile_account_type_pro">Pro</string>
