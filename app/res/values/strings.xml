@@ -117,9 +117,9 @@
     <!-- Newest Home -->
     <string name="newest_this_photo_was_taken">This photo was taken %1$d %2$s ago.</string>
     <string name="newest_this_photo_was_taken_less_one_hour">This photo was taken less than one hour ago.</string>
-	<string name="havent_uploaded_any_photos">Hmm, you haven\'t uploaded any photos.</string>
-	<string name="use_sync_to_start">Use the sync tab to start!</string>
-    
+    <string name="havent_uploaded_any_photos">Hmm, you haven\'t uploaded any photos.</string>
+    <string name="use_sync_to_start">Use the sync tab to start!</string>
+
     <!-- general -->
     <string name="day">day</string>
     <string name="days">days</string>
@@ -239,7 +239,7 @@
     <string name="profile_account">Account</string>
     <string name="profile_account_type_free">Free</string>
     <string name="profile_account_type_pro">Pro</string>
-    <string name="profile_upgrade_offer">Upgrade for $29.99 / year</string>
-    <string name="profile_upgrade_offer_details">What do Pros get? We\'ve got some great features for Pro users. And we\'re adding more every month. <a href="https://trovebox.com/plans">See full list</a></string>
+    <string name="profile_upgrade_offer">Upgrade for just $29.99 / year</string>
+    <string name="profile_upgrade_offer_details"><a href="https://trovebox.com/plans">See a full list of benefits</a></string>
 
 </resources>
