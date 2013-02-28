@@ -19,6 +19,9 @@ import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
 
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuInflater;
+import com.actionbarsherlock.view.MenuItem;
 import com.trovebox.android.app.common.CommonFragment;
 import com.trovebox.android.app.facebook.FacebookUtils;
 import com.trovebox.android.app.net.UploadMetaData;
@@ -50,7 +53,31 @@ public class SyncUploadFragment extends CommonFragment
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
         instance = this;
+    }
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.sync_upload, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId())
+        {
+            case R.id.menu_back: {
+                TrackerUtils
+                        .trackOptionsMenuClickEvent("menu_back", SyncUploadFragment.this);
+                if (previousStepFlow != null)
+                {
+                    previousStepFlow.activatePreviousStep();
+                }
+                return true;
+            }
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     @Override
@@ -80,19 +107,6 @@ public class SyncUploadFragment extends CommonFragment
 
     public void init(View v)
     {
-        Button previousStepBtn = (Button) v.findViewById(R.id.previousBtn);
-        previousStepBtn.setOnClickListener(new OnClickListener()
-        {
-            @Override
-            public void onClick(View v)
-            {
-                TrackerUtils.trackButtonClickEvent("previousBtn", SyncUploadFragment.this);
-                if (previousStepFlow != null)
-                {
-                    previousStepFlow.activatePreviousStep();
-                }
-            }
-        });
         final Button uploadBtn = (Button) v.findViewById(R.id.uploadBtn);
         uploadBtn.setOnClickListener(new OnClickListener()
         {

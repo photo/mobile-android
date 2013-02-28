@@ -99,7 +99,7 @@
 
     <!-- Sync screen -->
     <string name="sync_next_button">Next</string>
-    <string name="sync_previous_button">Pick photos</string>
+    <string name="sync_previous_button">Back</string>
     <string name="sync_please_pick_at_least_one_photo">Please pick at least one photo first!</string>
     <string name="sync_show_all">Show all</string>
     <string name="sync_uploaded">UPLOADED!</string>
