@@ -16,6 +16,7 @@ import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.ListView;
 
+import com.trovebox.android.app.HomeFragment.StartNowHandler;
 import com.trovebox.android.app.bitmapfun.util.ImageCache;
 import com.trovebox.android.app.bitmapfun.util.ImageFetcher;
 import com.trovebox.android.app.common.CommonRefreshableFragmentWithImageWorker;
@@ -43,6 +44,7 @@ public class GalleryFragment extends CommonRefreshableFragmentWithImageWorker
     public static String EXTRA_ALBUM = "EXTRA_ALBUM";
 
     private LoadingControl loadingControl;
+    private StartNowHandler startNowHandler;
     private GalleryAdapterExt mAdapter;
     private String mTags;
     private String mAlbum;
@@ -92,6 +94,7 @@ public class GalleryFragment extends CommonRefreshableFragmentWithImageWorker
     {
         super.onAttach(activity);
         loadingControl = ((LoadingControl) activity);
+        startNowHandler = ((StartNowHandler) activity);
 
     }
 
@@ -412,6 +415,16 @@ public class GalleryFragment extends CommonRefreshableFragmentWithImageWorker
             loadingControl.stopLoading();
         }
 
+        @Override
+        public LoadResponse loadItems(int page) {
+            LoadResponse result = super.loadItems(page);
+            // show start now notification in case response returned no items
+            // and there are no already loaded items
+            HomeFragment.showStartNowNotification(startNowHandler,
+                    GalleryFragment.this, result.items != null && result.items.isEmpty()
+                            && getItems().isEmpty());
+            return result;
+        }
     }
 
     @Override

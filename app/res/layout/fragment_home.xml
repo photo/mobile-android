@@ -13,12 +13,6 @@
         android:longClickable="false" >
     </ListView>
 
-    <ImageView
-        android:id="@+id/upload_new_images"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:src="@drawable/home_upload_now"
-        android:visibility="gone" />
+    <include layout="@layout/start_now" />
 
 </RelativeLayout>

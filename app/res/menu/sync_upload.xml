@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <item
+        android:id="@+id/menu_back"
+        android:icon="@drawable/ic_menu_back"
+        android:menuCategory="container"
+        android:orderInCategory="15"
+        android:showAsAction="always"
+        android:title="@string/sync_previous_button"/>
+
+</menu>
