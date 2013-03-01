@@ -21,6 +21,7 @@ public class Preferences {
     public final static int PREFERENCES_MODE = Context.MODE_MULTI_PROCESS;
     public final static String PREFERENCES_NAME = "default";
     public final static String LIMITS_PREFERENCES_NAME = "limits";
+    public final static String SYSTEM_VERSION_PREFERENCES_NAME = "system_version";
 
     public static SharedPreferences getDefaultSharedPreferences(Context context)
     {
@@ -126,6 +127,15 @@ public class Preferences {
     }
 
     /**
+     * Gets the shared preferences for system version information
+     * 
+     * @return
+     */
+    public static SharedPreferences getSystemVersionPreferences() {
+        return getSharedPreferences(SYSTEM_VERSION_PREFERENCES_NAME);
+    }
+
+    /**
      * Check whether currently logged in user account type (pro or free)
      * 
      * @return
@@ -214,6 +224,68 @@ public class Preferences {
                 .commit();
     }
 
+    /**
+     * Check whether currently used server is self-hosted
+     * @return true if server is self-hosted, otherwise return false
+     */
+    public static boolean isSelfHosted()
+    {
+        return !isHosted();
+    }
+    /**
+     * Check whether currently used server is hosted or self-hosted
+     * 
+     * @return true if server is hosted, otherwise return false
+     */
+    public static boolean isHosted() {
+        return getSystemVersionPreferences()
+                .getBoolean(CommonUtils.getStringResource(R.string.setting_system_version_hosted),
+                        false);
+    }
+
+    /**
+     * Set used server type (hosted or serlf-hosted)
+     * 
+     * @param value true if server is hosted (*.trovebox.com), false if user
+     *            uses own self-hosted installation
+     */
+    public static void setHosted(boolean value)
+    {
+        getSystemVersionPreferences()
+                .edit()
+                .putBoolean(CommonUtils.getStringResource(R.string.setting_system_version_hosted),
+                        value)
+                .commit();
+    }
+
+    /**
+     * Check whether necessary system version information already retrieved and
+     * stored in the cache
+     * 
+     * @return
+     */
+    public static boolean isSystemVersionInformationCached() {
+        return getSystemVersionPreferences()
+                .getBoolean(
+                        CommonUtils.getStringResource(R.string.setting_system_version_info_updated),
+                        false);
+    }
+
+    /**
+     * Set whether necessary system version information retrieved
+     * and cached properly
+     * 
+     * @param value true if information retrieved and saved, false othwerwise
+     */
+    public static void setSystemVersionInformationCached(boolean value)
+    {
+        getSystemVersionPreferences()
+                .edit()
+                .putBoolean(
+                        CommonUtils.getStringResource(R.string.setting_system_version_info_updated),
+                        value)
+                .commit();
+    }
     public static void logout(Context context) {
         getDefaultSharedPreferences(context)
                 .edit()
@@ -229,6 +301,10 @@ public class Preferences {
                 .clear()
                 .commit();
         getLimitsSharedPreferences()
+                .edit()
+                .clear()
+                .commit();
+        getSystemVersionPreferences()
                 .edit()
                 .clear()
                 .commit();

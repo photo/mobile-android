@@ -75,8 +75,8 @@ public class NewPhotoObserver extends FileObserver {
      */
     private boolean checkLimits()
     {
-        AccountLimitUtils.updateLimitInformationCache();
-        if (Preferences.isProUser())
+        AccountLimitUtils.updateLimitInformationCacheIfNecessary(true);
+        if (Preferences.isSelfHosted() || Preferences.isProUser())
         {
             return true;
         } else

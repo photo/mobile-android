@@ -34,6 +34,7 @@ import com.trovebox.android.app.model.Photo;
 import com.trovebox.android.app.model.utils.PhotoUtils;
 import com.trovebox.android.app.model.utils.PhotoUtils.PhotoDeletedHandler;
 import com.trovebox.android.app.model.utils.PhotoUtils.PhotoUpdatedHandler;
+import com.trovebox.android.app.net.SystemVersionResponseUtils;
 import com.trovebox.android.app.net.account.AccountLimitUtils;
 import com.trovebox.android.app.provider.UploadsUtils;
 import com.trovebox.android.app.provider.UploadsUtils.UploadsClearedHandler;
@@ -143,7 +144,7 @@ public class MainActivity extends CommonActivity
         }
     }
 
-    private void setUpTabs(int activeTab, Bundle savedInstanceState)
+    private void setUpTabs(final int activeTab, Bundle savedInstanceState)
     {
         addTab(R.drawable.tab_home_2states,
                 R.string.tab_home,
@@ -176,12 +177,40 @@ public class MainActivity extends CommonActivity
                 R.string.tab_tags,
                 new TabListener<TagsFragment>("tags",
                         TagsFragment.class, null));
-        addTab(View.NO_ID,
-                R.string.tab_account,
-                new TabListener<AccountFragment>(ACCOUNT_TAG,
-                        AccountFragment.class, null));
+//        the account tab should appear only for hosted installation such
+//        as profile api is absent on self-hosted
+        if (CommonUtils.checkLoggedIn(true))
+        {
+            SystemVersionResponseUtils
+                    .tryToUpdateSystemVersionCacheIfNecessaryAndRunInContextAsync(
+                            new Runnable() {
 
-        mActionBar.selectTab(mActionBar.getTabAt(activeTab));
+                                @Override
+                                public void run() {
+                                    if (!isFinishing())
+                                    {
+                                        if (Preferences.isHosted())
+                                        {
+                                            addTab(View.NO_ID,
+                                                    R.string.tab_account,
+                                                    new TabListener<AccountFragment>(ACCOUNT_TAG,
+                                                            AccountFragment.class, null));
+                                            if (activeTab == ACCOUNT_INDEX)
+                                            {
+                                                mActionBar.selectTab(mActionBar.getTabAt(activeTab));
+                                            }
+                                        }
+                                    }
+                                }
+                            }, this);
+        }
+//        sych as account tab may be absent at this step
+//        we need to exclute tab selection in case actibeTab
+//        is account
+        if (activeTab != ACCOUNT_INDEX)
+        {
+            mActionBar.selectTab(mActionBar.getTabAt(activeTab));
+        }
         // hack which refreshes indeterminate progress state on
         // orientation change
         handler.postDelayed(new Runnable() {
