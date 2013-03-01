@@ -22,6 +22,8 @@
     <string name="setting_remaining_upload_limit">setting_remaining_upload_limit</string>
     <string name="setting_account_type">setting_account_type</string>
     <string name="setting_upload_limit_reset_date">setting_upload_limit_reset_date</string>
+    <string name="setting_system_version_info_updated">setting_system_version_info_updated</string>
+    <string name="setting_system_version_hosted">setting_system_version_hosted</string>
     <string name="setting_account_edit_account_title">Edit account</string>
     <string name="setting_account_change_profile_picture_title">Change profile picture</string>
 

@@ -1,0 +1,11 @@
+{ "code" : 200,
+  "message" : "System versions",
+  "result" : { "api" : "v2",
+      "database" : "2.0.0",
+      "databaseType" : [ "mysql" ],
+      "filesystem" : "0.0.0",
+      "filesystemType" : [ "s3" ],
+      "isHosted" : true,
+      "system" : "1.3.3"
+    }
+}

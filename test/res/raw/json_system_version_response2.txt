@@ -1,0 +1,10 @@
+{ "code" : 200,
+  "message" : "System versions",
+  "result" : { "api" : "v1",
+      "database" : "3.0.8",
+      "databaseType" : [ "mysql" ],
+      "filesystem" : "0.0.0",
+      "filesystemType" : [ "local" ],
+      "system" : "3.0.6"
+    }
+}
