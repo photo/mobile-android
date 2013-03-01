@@ -310,4 +310,13 @@ public class TroveboxApi extends ApiBase implements ITroveboxApi {
         ApiResponse response = execute(request);
         return new ProfileResponse(response.getJSONObject());
     }
+
+    @Override
+    public SystemVersionResponse getSystemVersion() throws ClientProtocolException, IOException,
+            IllegalStateException, JSONException {
+        ApiRequest request = new ApiRequest(ApiRequest.GET,
+                "/system/version.json");
+        ApiResponse response = execute(request);
+        return new SystemVersionResponse(response.getJSONObject());
+    }
 }

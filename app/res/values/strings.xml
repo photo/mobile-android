@@ -167,6 +167,7 @@
     <string name="errorCantFindPendingUploadInformation">Can\'t find pending upload information</string>
     <string name="errorCouldNotStoreDownloadablePhotoNotEnoughSpace">Couldn\'t store downloadable photo on disk. Not enough free space.</string>
     <string name="errorCouldNotRetrieveProfileInfo">Could not retrieve profile information.</string>
+    <string name="errorCouldNotRetrieveSystemVersionInfo">Could not retrieve system version information.</string>
     <string name="errorNotLoggedIn">You are not yet logged in.</string>
 
     <!-- Preferences -->

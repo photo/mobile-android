@@ -11,6 +11,8 @@ import com.trovebox.android.app.net.ITroveboxApi;
 import com.trovebox.android.app.net.ProfileResponse;
 import com.trovebox.android.app.net.ProfileResponse.ProfileLimits;
 import com.trovebox.android.app.net.ProfileResponseUtils;
+import com.trovebox.android.app.net.SystemVersionResponseUtils;
+import com.trovebox.android.app.net.TroveboxResponseUtils;
 import com.trovebox.android.app.provider.UploadsProviderAccessor;
 import com.trovebox.android.app.util.CommonUtils;
 import com.trovebox.android.app.util.GuiUtils;
@@ -25,6 +27,7 @@ import com.trovebox.android.app.util.TrackerUtils;
  * @author Eugene Popovich
  */
 public class AccountLimitUtils {
+    private static final String LIMIT_INFORMATION_CACHE_UPDATE_EVENT = "limit_information_cache_update";
     private static String TAG = AccountLimitUtils.class.getSimpleName();
 
     /**
@@ -88,66 +91,94 @@ public class AccountLimitUtils {
             final Runnable runnable,
             final Runnable runnableOnFailure,
             final int requiredUploadSlotsCount,
-            LoadingControl loadingControl
+            final LoadingControl loadingControl
             )
     {
-        tryToRefreshLimitInformationAndRunInContextAsync(new Runnable() {
+        SystemVersionResponseUtils.tryToUpdateSystemVersionCacheIfNecessaryAndRunInContextAsync(
+                new Runnable() {
 
-            @Override
-            public void run() {
-
-                if (Preferences.isProUser())
-                {
-                    runnable.run();
-                } else
-                {
-                    int remaining = Preferences.getRemainingUploadingLimit();
-                    UploadsProviderAccessor uploads = new UploadsProviderAccessor(
-                            TroveboxApplication.getContext());
-                    int pending = uploads.getPendingUploadsCount();
-                    if (remaining - pending >= requiredUploadSlotsCount)
-                    {
-                        CommonUtils.debug(TAG, "Quota check passed");
-                        if (requiredUploadSlotsCount == 1)
+                    @Override
+                    public void run() {
+                        if (Preferences.isSelfHosted())
                         {
-                            TrackerUtils.trackLimitEvent("quota_per_one_image_check", "success");
+                            runnable.run();
                         } else
                         {
-                            TrackerUtils.trackLimitEvent("quota_per_multiple_images_check",
-                                    "success");
-                        }
-                        runnable.run();
-                    } else
-                    {
-                        CommonUtils.debug(TAG, "Quota check failed");
-                        if (requiredUploadSlotsCount == 1)
-                        {
-                            TrackerUtils.trackLimitEvent("quota_per_one_image_check", "fail");
-                            Date resetsOnDate = Preferences.getUploadLimitResetsOnDate();
-                            if (resetsOnDate == null)
-                            {
-                                GuiUtils.alert(R.string.upload_limit_reached_message);
-                            } else
-                            {
-                                GuiUtils.alert(
-                                        R.string.upload_limit_reached_with_reset_message,
-                                        SimpleDateFormat.getInstance().format(resetsOnDate));
-                            }
-                        } else
-                        {
-                            TrackerUtils.trackLimitEvent("quota_per_multiple_images_check", "fail");
-                            GuiUtils.alert(
-                                    R.string.upload_limit_for_multiple_upload_reached_message,
-                                    requiredUploadSlotsCount, remaining - pending);
-                        }
-                        if (runnableOnFailure != null)
-                        {
-                            runnableOnFailure.run();
+                            tryToRefreshLimitInformationAndRunInContextAsync(
+                                    new Runnable() {
+
+                                        @Override
+                                        public void run() {
+
+                                            if (Preferences.isProUser())
+                                            {
+                                                runnable.run();
+                                            } else
+                                            {
+                                                int remaining = Preferences
+                                                        .getRemainingUploadingLimit();
+                                                UploadsProviderAccessor uploads = new UploadsProviderAccessor(
+                                                        TroveboxApplication.getContext());
+                                                int pending = uploads.getPendingUploadsCount();
+                                                if (remaining - pending >= requiredUploadSlotsCount)
+                                                {
+                                                    CommonUtils.debug(TAG, "Quota check passed");
+                                                    if (requiredUploadSlotsCount == 1)
+                                                    {
+                                                        TrackerUtils.trackLimitEvent(
+                                                                "quota_per_one_image_check",
+                                                                "success");
+                                                    } else
+                                                    {
+                                                        TrackerUtils.trackLimitEvent(
+                                                                "quota_per_multiple_images_check",
+                                                                "success");
+                                                    }
+                                                    runnable.run();
+                                                } else
+                                                {
+                                                    CommonUtils.debug(TAG, "Quota check failed");
+                                                    if (requiredUploadSlotsCount == 1)
+                                                    {
+                                                        TrackerUtils
+                                                                .trackLimitEvent(
+                                                                        "quota_per_one_image_check",
+                                                                        "fail");
+                                                        Date resetsOnDate = Preferences
+                                                                .getUploadLimitResetsOnDate();
+                                                        if (resetsOnDate == null)
+                                                        {
+                                                            GuiUtils.alert(R.string.upload_limit_reached_message);
+                                                        } else
+                                                        {
+                                                            GuiUtils.alert(
+                                                                    R.string.upload_limit_reached_with_reset_message,
+                                                                    SimpleDateFormat.getInstance()
+                                                                            .format(resetsOnDate));
+                                                        }
+                                                    } else
+                                                    {
+                                                        TrackerUtils.trackLimitEvent(
+                                                                "quota_per_multiple_images_check",
+                                                                "fail");
+                                                        GuiUtils.alert(
+                                                                R.string.upload_limit_for_multiple_upload_reached_message,
+                                                                requiredUploadSlotsCount, remaining
+                                                                        - pending);
+                                                    }
+                                                    if (runnableOnFailure != null)
+                                                    {
+                                                        runnableOnFailure.run();
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    },
+                                    runnableOnFailure, loadingControl);
                         }
                     }
                 }
-            }
-        }, runnableOnFailure, loadingControl);
+                , runnableOnFailure, loadingControl);
     }
 
     /**
@@ -168,7 +199,7 @@ public class AccountLimitUtils {
         if (CommonUtils.checkLoggedInAndOnline(true))
         {
             CommonUtils.debug(TAG,
-                    "Logged in and online. Running actions in ProfileResponse context.€");
+                    "Logged in and online. Running actions in ProfileResponse context.");
             ProfileResponseUtils.runWithProfileResponseAsync(
                     new RunnableWithParameter<ProfileResponse>() {
 
@@ -205,9 +236,12 @@ public class AccountLimitUtils {
      * store the maximum possible limit value
      * 
      * @param response
+     * @return true if response is successful and information was saved to
+     *         cache. Othwerwise returns false
      */
-    public static void saveLimitInformationToCache(ProfileResponse response)
+    public static boolean saveLimitInformationToCache(ProfileResponse response)
     {
+        boolean result = false;
         if (response.isSuccess())
         {
             Preferences.setProUser(response.isPaid());
@@ -220,7 +254,13 @@ public class AccountLimitUtils {
             {
                 Preferences.setRemainingUploadingLimit(Integer.MAX_VALUE);
             }
+            TrackerUtils.trackBackgroundEvent(LIMIT_INFORMATION_CACHE_UPDATE_EVENT, "success");
+            result = true;
+        } else
+        {
+            TrackerUtils.trackBackgroundEvent(LIMIT_INFORMATION_CACHE_UPDATE_EVENT, "fail");
         }
+        return result;
     }
 
     /**
@@ -236,23 +276,61 @@ public class AccountLimitUtils {
     }
 
     /**
-     * Update the limit information cache. Should not be called in UI thread
+     * Update the limit information cache if necessary. Should not be called in
+     * UI thread. The method first tries to perofrm system version
+     * information cache retrieval and updates limit information
+     * only in case installation is hosted
+     * 
+     * @param silent whether to do not notify user about an errors
      */
-    public static void updateLimitInformationCache()
+    public static boolean updateLimitInformationCacheIfNecessary(boolean silent)
+    {
+        if (!SystemVersionResponseUtils.updateSystemVersionCacheIfNecessary(silent))
+        {
+            return false;
+        }
+        if (Preferences.isSelfHosted())
+        {
+            return true;
+        } else
+        {
+            return updateLimitInformationCache(silent);
+        }
+    }
+
+    /**
+     * Update the limit information cache. Should not be called in UI thread
+     * @param silent whether to do not notify user about an errors
+     * @return
+     */
+    public static boolean updateLimitInformationCache(boolean silent)
     {
         try
         {
-            if (CommonUtils.checkLoggedInAndOnline(true))
+            if (CommonUtils.checkLoggedInAndOnline(silent))
             {
+                TrackerUtils.trackBackgroundEvent(LIMIT_INFORMATION_CACHE_UPDATE_EVENT, "started");
                 CommonUtils.debug(TAG, "Update limit information cache request");
                 ITroveboxApi api = Preferences.getApi(TroveboxApplication.getContext());
                 ProfileResponse response = api.getProfile();
-                AccountLimitUtils.saveLimitInformationToCache(response);
+                if (silent || TroveboxResponseUtils.checkResponseValid(response))
+                {
+                    return AccountLimitUtils.saveLimitInformationToCache(response);
+                } else
+                {
+                    TrackerUtils.trackBackgroundEvent(LIMIT_INFORMATION_CACHE_UPDATE_EVENT, "fail");
+                }
+            } else
+            {
+                TrackerUtils.trackBackgroundEvent(LIMIT_INFORMATION_CACHE_UPDATE_EVENT,
+                        "skipped_not_logged_in_or_not_online");
             }
         } catch (Exception ex)
         {
-            GuiUtils.noAlertError(TAG, ex);
+            GuiUtils.processError(TAG, R.string.errorCouldNotRetrieveProfileInfo, ex, null,
+                    !silent);
         }
+        return false;
     }
 
     private static class UpdateLimitInformationCacheTask extends SimpleAsyncTaskEx
@@ -269,7 +347,7 @@ public class AccountLimitUtils {
         protected Boolean doInBackground(Void... params) {
             try
             {
-                updateLimitInformationCache();
+                updateLimitInformationCacheIfNecessary(true);
                 return true;
             } catch (Exception ex)
             {

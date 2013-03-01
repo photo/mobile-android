@@ -260,7 +260,7 @@ public class UploaderService extends Service {
 
             stopUploadNotification();
         }
-        AccountLimitUtils.updateLimitInformationCache();
+        AccountLimitUtils.updateLimitInformationCacheIfNecessary(true);
     }
 
     public void shareIfRequested(PhotoUpload photoUpload,

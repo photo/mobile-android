@@ -256,4 +256,15 @@ public interface ITroveboxApi {
      */
     ProfileResponse getProfile() throws ClientProtocolException, IOException,
             IllegalStateException, JSONException;
+
+    /**
+     * @return system version information
+     * @throws ClientProtocolException
+     * @throws IOException
+     * @throws IllegalStateException
+     * @throws JSONException
+     */
+    SystemVersionResponse getSystemVersion() throws ClientProtocolException, IOException,
+            IllegalStateException, JSONException;
+
 }
