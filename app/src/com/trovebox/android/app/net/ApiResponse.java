@@ -138,12 +138,12 @@ public class ApiResponse {
      */
     public JSONObject getJSONObject() throws IllegalStateException, IOException
     {
-        if(jsonObject == null && !jsonParseError)
+        if (jsonObject == null && !jsonParseError)
         {
             try
             {
                 jsonObject = new JSONObject(getContentAsString());
-            } catch(JSONException ex)
+            } catch (JSONException ex)
             {
                 GuiUtils.noAlertError(TAG, ex);
                 jsonParseError = true;
@@ -156,6 +156,20 @@ public class ApiResponse {
                 CommonUtils.error(TAG, error);
                 TrackerUtils.trackErrorEvent("invalid_json_response",
                         error);
+                // advanced log to investigate invalid json responses causes
+                {
+                    error = CommonUtils
+                            .format(
+                                    "Invalid JSON Response. Status code: %1$d; Reason: %2$s; Path: %3$s; Content:\n%4$s",
+                                    getStatusCode(),
+                                    mResponse.getStatusLine()
+                                            .getReasonPhrase(),
+                                    requestUrl,
+                                    getContentAsString()
+                            );
+                    TrackerUtils.trackErrorEvent("invalid_json_response_advanced",
+                            error);
+                }
                 throw new InvalidApiResponseException(error);
             }
         }
