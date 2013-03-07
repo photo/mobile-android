@@ -422,7 +422,7 @@ public class GalleryFragment extends CommonRefreshableFragmentWithImageWorker
             // and there are no already loaded items
             HomeFragment.showStartNowNotification(startNowHandler,
                     GalleryFragment.this, result.items != null && result.items.isEmpty()
-                            && getItems().isEmpty());
+                            && getItems().isEmpty() && mTags == null && mAlbum == null);
             return result;
         }
     }
