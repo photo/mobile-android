@@ -30,6 +30,7 @@ import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.Message;
 
@@ -232,7 +233,7 @@ public abstract class AsyncTaskEx<Params, Progress, Result> {
      * An {@link Executor} that executes tasks one at a time in serial order.
      * This serialization is global to a particular process.
      */
-    public static final Executor SERIAL_EXECUTOR = new SerialExecutor();
+    public static final Executor SERIAL_EXECUTOR = new SerialExecutor(THREAD_POOL_EXECUTOR);
 
     private static final int MESSAGE_POST_RESULT = 0x1;
     private static final int MESSAGE_POST_PROGRESS = 0x2;
@@ -247,32 +248,6 @@ public abstract class AsyncTaskEx<Params, Progress, Result> {
 
     private final AtomicBoolean mCancelled = new AtomicBoolean();
     private final AtomicBoolean mTaskInvoked = new AtomicBoolean();
-
-    private static class SerialExecutor implements Executor {
-        final ArrayDeque<Runnable> mTasks = new ArrayDeque<Runnable>();
-        Runnable mActive;
-
-        public synchronized void execute(final Runnable r) {
-            mTasks.offer(new Runnable() {
-                public void run() {
-                    try {
-                        r.run();
-                    } finally {
-                        scheduleNext();
-                    }
-                }
-            });
-            if (mActive == null) {
-                scheduleNext();
-            }
-        }
-
-        protected synchronized void scheduleNext() {
-            if ((mActive = mTasks.poll()) != null) {
-                THREAD_POOL_EXECUTOR.execute(mActive);
-            }
-        }
-    }
 
     /**
      * Indicates the current status of the task. Each status will be set only

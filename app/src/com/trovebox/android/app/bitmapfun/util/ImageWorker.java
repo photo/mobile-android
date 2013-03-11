@@ -17,13 +17,7 @@
 package com.trovebox.android.app.bitmapfun.util;
 
 import java.lang.ref.WeakReference;
-
-import com.trovebox.android.app.BuildConfig;
-import com.trovebox.android.app.util.CommonUtils;
-import com.trovebox.android.app.util.GuiUtils;
-import com.trovebox.android.app.util.LoadingControl;
-import com.trovebox.android.app.util.TrackerUtils;
-import com.trovebox.android.app.util.concurrent.AsyncTaskEx;
+import java.util.concurrent.Executor;
 
 import android.annotation.TargetApi;
 import android.content.Context;
@@ -36,6 +30,14 @@ import android.graphics.drawable.Drawable;
 import android.graphics.drawable.TransitionDrawable;
 import android.widget.ImageView;
 
+import com.trovebox.android.app.BuildConfig;
+import com.trovebox.android.app.util.CommonUtils;
+import com.trovebox.android.app.util.GuiUtils;
+import com.trovebox.android.app.util.LoadingControl;
+import com.trovebox.android.app.util.TrackerUtils;
+import com.trovebox.android.app.util.concurrent.AsyncTaskEx;
+import com.trovebox.android.app.util.concurrent.SerialExecutor;
+
 /**
  * This class wraps up completing some arbitrary long running work when loading
  * a bitmap to an ImageView. It handles things like using a memory and disk
@@ -43,6 +45,14 @@ import android.widget.ImageView;
  * image.
  */
 public abstract class ImageWorker {
+
+    /**
+     * An {@link Executor} that executes tasks one at a time in serial order.
+     * This serialization is global to a particular process.
+     */
+    public static final Executor SERIAL_EXECUTOR = new SerialExecutor(
+            AsyncTaskEx.THREAD_POOL_EXECUTOR);
+
     private static final String TAG = "ImageWorker";
     private static final int FADE_IN_TIME = 200;
 
@@ -106,7 +116,7 @@ public abstract class ImageWorker {
             final AsyncDrawable asyncDrawable =
                     new AsyncDrawable(mContext.getResources(), mLoadingBitmap, task);
             imageView.setImageDrawable(asyncDrawable);
-            task.execute(data);
+            task.executeOnExecutor(SERIAL_EXECUTOR, data);
         }
     }
 
