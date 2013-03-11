@@ -819,7 +819,6 @@ public class PhotoDetailsActivity extends CommonActivity implements TwitterLoadi
             public ThumbnailsAdapter(PhotosEndlessAdapter.ParametersHolder parameters)
             {
                 super(getActivity(), parameters, returnSizes);
-                itemsBeforeLoadNextPage = 5;
             }
 
             @Override

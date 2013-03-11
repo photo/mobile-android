@@ -129,6 +129,7 @@ public abstract class PhotosEndlessAdapter extends EndlessAdapter<Photo>
     public LoadResponse loadItemsGeneral(int page, int pageSize) {
         try
         {
+            CommonUtils.debug(TAG, "loadPhotos: page = %1$d, pageSize = %2$d", page, pageSize);
             TrackerUtils.trackBackgroundEvent(
                     CommonUtils.format("loadPhotos: page = %1$d, pageSize = %2$d", page, pageSize),
                     getClass().getSimpleName());

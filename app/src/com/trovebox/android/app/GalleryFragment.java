@@ -1,7 +1,6 @@
 
 package com.trovebox.android.app;
 
-
 import org.holoeverywhere.LayoutInflater;
 import org.holoeverywhere.app.Activity;
 
@@ -71,6 +70,7 @@ public class GalleryFragment extends CommonRefreshableFragmentWithImageWorker
         outState.putString(EXTRA_TAG, mTags);
         outState.putString(EXTRA_ALBUM, mAlbum);
     }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState)
@@ -145,6 +145,7 @@ public class GalleryFragment extends CommonRefreshableFragmentWithImageWorker
                 new ViewTreeObserver.OnGlobalLayoutListener()
                 {
                     int lastHeight = 0;
+
                     @Override
                     public void onGlobalLayout()
                     {
@@ -196,6 +197,7 @@ public class GalleryFragment extends CommonRefreshableFragmentWithImageWorker
         intent.putExtra(GalleryFragment.EXTRA_TAG, mTags);
         intent.putExtra(GalleryFragment.EXTRA_ALBUM, mAlbum);
     }
+
     @Override
     public void onDestroyView()
     {
@@ -219,6 +221,7 @@ public class GalleryFragment extends CommonRefreshableFragmentWithImageWorker
             mAdapter.photoUpdated(photo);
         }
     }
+
     /**
      * Process all the images preserving aspect ratio and using same height
      */
@@ -357,7 +360,8 @@ public class GalleryFragment extends CommonRefreshableFragmentWithImageWorker
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
-            if (position == getCount() - 1) {
+            if (checkNeedToLoadNextPage(position))
+            {
                 loadNextPage();
             }
             return imageFlowUtils.getView(position, convertView, parent,

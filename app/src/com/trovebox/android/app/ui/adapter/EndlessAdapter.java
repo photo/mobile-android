@@ -49,6 +49,7 @@ public abstract class EndlessAdapter<T> extends BaseAdapter {
     public EndlessAdapter(int pageSize, ArrayList<T> items) {
         mItems = items != null ? items : new ArrayList<T>();
         mPageSize = pageSize;
+        itemsBeforeLoadNextPage = pageSize;
         int loadedPages = (int) FloatMath.ceil((float) mItems.size() / mPageSize);
         if (mItems.size() > 0 && loadedPages * mPageSize > mItems.size())
         {
