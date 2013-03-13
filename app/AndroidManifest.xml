@@ -26,7 +26,16 @@
         android:icon="@drawable/icon"
         android:label="@string/app_name"
         android:theme="@style/Theme.Trovebox.Light" >
-        <activity android:name=".SplashActivity" />
+        <activity
+            android:name=".SplashActivity"
+            android:launchMode="singleTask"
+            android:theme="@style/Theme.Trovebox.Login" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
         <activity
             android:name=".SetupActivity"
             android:launchMode="singleTask"
@@ -44,11 +53,6 @@
             android:name=".MainActivity"
             android:launchMode="singleTask"
             android:logo="@drawable/actionbar_logo" >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
 

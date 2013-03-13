@@ -2,12 +2,11 @@
 package com.trovebox.android.app;
 
 
-import com.trovebox.android.app.R;
-import com.trovebox.android.app.util.concurrent.AsyncTaskEx;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+
+import com.trovebox.android.app.util.concurrent.AsyncTaskEx;
 
 /**
  * The splash/loading screen before you get to the Main screen
@@ -47,13 +46,13 @@ public class SplashActivity extends Activity {
          */
         @Override
         protected Void doInBackground(Void... params) {
-            // TODO Remove this fake work and replace with real work
-            try {
-                Thread.sleep(2000);
-            } catch (InterruptedException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
+            // // TODO Remove this fake work and replace with real work
+            // try {
+            // Thread.sleep(2000);
+            // } catch (InterruptedException e) {
+            // // TODO Auto-generated catch block
+            // e.printStackTrace();
+            // }
             return null;
         }
 
