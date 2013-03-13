@@ -158,7 +158,7 @@ public class ApiResponse {
                         error);
                 // advanced log to investigate invalid json responses causes
                 {
-                    error = CommonUtils
+                    String error2 = CommonUtils
                             .format(
                                     "Invalid JSON Response. Status code: %1$d; Reason: %2$s; Path: %3$s; Content:\n%4$s",
                                     getStatusCode(),
@@ -168,7 +168,7 @@ public class ApiResponse {
                                     getContentAsString()
                             );
                     TrackerUtils.trackErrorEvent("invalid_json_response_advanced",
-                            error);
+                            error2);
                 }
                 throw new InvalidApiResponseException(error);
             }
