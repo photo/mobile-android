@@ -320,15 +320,13 @@ public class UploadActivity extends CommonActivity {
             twitterSwitch.setEnabled(enabled);
             facebookSwitch.setEnabled(enabled);
         }
-
         @Override
-        public void onActivityResultUI(int requestCode, int resultCode, Intent data) {
-            super.onActivityResultUI(requestCode, resultCode, data);
-            if (resultCode != RESULT_OK && (requestCode == REQUEST_GALLERY
-                    || requestCode == REQUEST_CAMERA)) {
+        public void onActivityResult(int requestCode, int resultCode, Intent data) {
+            super.onActivityResult(requestCode, resultCode, data);
+            if (checkNoUploadImageSelectedResult(requestCode, resultCode)) {
                 TrackerUtils.trackUiEvent("uploadNoImageSelectedResult",
                         requestCode == REQUEST_GALLERY ? "gallery" : "camera");
-                showSelectionDialog();
+                showSelectionDialogOnResume = true;
                 if (requestCode == REQUEST_CAMERA)
                 {
                     removeGalleryEntryForCurrentFile();
@@ -364,6 +362,20 @@ public class UploadActivity extends CommonActivity {
                     break;
                 default:
                     break;
+            }
+        }
+
+        private boolean checkNoUploadImageSelectedResult(int requestCode, int resultCode) {
+            return resultCode != RESULT_OK && (requestCode == REQUEST_GALLERY
+                    || requestCode == REQUEST_CAMERA);
+        }
+
+        @Override
+        public void onActivityResultUI(int requestCode, int resultCode, Intent data) {
+            super.onActivityResultUI(requestCode, resultCode, data);
+            if (checkNoUploadImageSelectedResult(requestCode, resultCode)) {
+                showSelectionDialog();
+                return;
             }
             // discard delayed selection dialog showing if planned
             showSelectionDialogOnResume = false;
