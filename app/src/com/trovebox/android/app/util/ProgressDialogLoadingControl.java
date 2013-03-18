@@ -4,6 +4,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.holoeverywhere.app.ProgressDialog;
 
+import android.app.Activity;
 import android.content.Context;
 
 /**
@@ -73,6 +74,14 @@ public class ProgressDialogLoadingControl implements LoadingControl
     }
 
     public void showProgress() {
+        if (context instanceof Activity)
+        {
+            Activity activity = (Activity) context;
+            if (activity.isFinishing())
+            {
+                return;
+            }
+        }
         progress = new ProgressDialog(context);
         progress.setCancelable(cancelable);
         updateProgress(message, indeterminate, currentProgress, max);
