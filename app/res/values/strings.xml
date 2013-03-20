@@ -189,6 +189,10 @@
     <string name="setting_account_server_title">URL</string>
     <string name="setting_set_tag_dialog_title">Set tag for uploaded pictures</string>
     <string name="setting_set_tag_hint">Include these tags</string>
+    <string name="cache_preference_category">Cache</string>
+    <string name="disk_cache_clear">Clear disk cache</string>
+    <string name="disk_cache_clear_comment">This will clear downloaded images cache.</string>
+    <string name="disk_caches_cleared_message">The disk caches has been cleared</string>
 
     <!-- Screens for Create/Login/Own domain: Account -->
     <string name="account_signup_button">Sign up with your email</string>

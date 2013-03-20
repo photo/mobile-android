@@ -12,7 +12,7 @@ import org.holoeverywhere.preference.PreferenceCategory;
 
 import android.content.DialogInterface;
 
-import com.trovebox.android.app.bitmapfun.util.ImageCache;
+import com.trovebox.android.app.bitmapfun.util.ImageCacheUtils;
 import com.trovebox.android.app.facebook.FacebookProvider;
 import com.trovebox.android.app.facebook.FacebookSessionEvents;
 import com.trovebox.android.app.facebook.FacebookSessionEvents.LogoutListener;
@@ -32,6 +32,7 @@ public class SettingsCommon implements
     Preference mLoginPreference;
     Preference mFacebookLoginPreference;
     Preference mSyncClearPreference;
+    Preference diskCacheClearPreference;
     PreferenceCategory loginCategory;
     Preference mServerUrl;
     Preference autoUploadTagPreference;
@@ -266,6 +267,48 @@ public class SettingsCommon implements
                 });
     }
 
+    public void setDiskCachClearPreference(Preference diskCacheClearPreference)
+    {
+        this.diskCacheClearPreference = diskCacheClearPreference;
+        diskCacheClearPreference
+                .setOnPreferenceClickListener(new OnPreferenceClickListener()
+                {
+
+                    @Override
+                    public boolean onPreferenceClick(Preference preference)
+                    {
+                        // confirm if user wants to clear sync information
+                        new AlertDialog.Builder(activity, R.style.Theme_Trovebox_Dialog_Light)
+                                .setTitle(R.string.disk_cache_clear)
+                                .setMessage(R.string.areYouSureQuestion)
+                                .setIcon(android.R.drawable.ic_dialog_alert)
+                                .setPositiveButton(R.string.yes,
+                                        new DialogInterface.OnClickListener()
+                                        {
+
+                                            @Override
+                                            public void onClick(
+                                                    DialogInterface dialog,
+                                                    int whichButton)
+                                            {
+                                                TrackerUtils.trackButtonClickEvent(
+                                                        "setting_disk_cache_clear", activity);
+                                                ImageCacheUtils
+                                                        .clearDiskCachesAsync(new ProgressDialogLoadingControl(
+                                                                activity,
+                                                                true,
+                                                                false,
+                                                                activity.getString(R.string.loading)));
+                                            }
+                                        })
+                                .setNegativeButton(R.string.no, null)
+                                .show();
+
+                        return true;
+                    }
+                });
+    }
+
     public class LogoutTask extends SimpleAsyncTaskEx
     {
 
@@ -297,7 +340,7 @@ public class SettingsCommon implements
                 UploadsUtils.clearUploads();
                 FacebookUtils.logoutRequest(activity);
                 TwitterUtils.logout(activity);
-                ImageCache.clearDiskCaches();
+                ImageCacheUtils.clearDiskCaches();
                 return true;
             } catch (Exception ex)
             {

@@ -295,6 +295,7 @@ public class DiskLruCache {
      * Removes all disk cache entries from this instance cache dir
      */
     public void clearCache() {
+        CommonUtils.debug(TAG, "Disk cache clear request");
         DiskLruCache.clearCache(mCacheDir);
         synchronized (mLinkedHashMap) {
             mLinkedHashMap.clear();
