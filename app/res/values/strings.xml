@@ -169,6 +169,13 @@
     <string name="errorCouldNotRetrieveProfileInfo">Could not retrieve profile information.</string>
     <string name="errorCouldNotRetrieveSystemVersionInfo">Could not retrieve system version information.</string>
     <string name="errorNotLoggedIn">You are not yet logged in.</string>
+    <string name="errorSubscriptionNotSupported">Subscriptions are not supported by your device. Sorry!</string>
+    <string name="errorIabNotSupported">Billing operations are not supported by your device. Sorry!</string>
+    <string name="errorPurchasing">Error purchasing: %1$s</string>
+    <string name="errorPurchasingAuthVerificationFailed">Error purchasing. Authenticity verification failed.</string>
+    <string name="errorCouldNotQueryInventory">Could not query purchased inventory</string>
+    <string name="errorCouldNotVerifyPayment">Could not verify payment</string>
+    <string name="errorIabUserCanceled">User canceled</string>
 
     <!-- Preferences -->
     <string name="upload_preference_category">Camera upload</string>
@@ -240,7 +247,12 @@
     <string name="profile_account">Account</string>
     <string name="profile_account_type_free">Free</string>
     <string name="profile_account_type_pro">Pro</string>
+    <string name="profile_button_upgrade">Upgrade to Pro account</string>
     <string name="profile_upgrade_offer">Upgrade for just $29.99 / year</string>
     <string name="profile_upgrade_offer_details"><a href="https://trovebox.com/plans">See a full list of benefits</a></string>
+
+    <!-- In-App Billing -->
+    <string name="iabMonthlySubscriptionSuccess">Thank you for subscribing to premium!</string>
+    <string name="iabNoNeedToUpgrade">You are already a premium member and don\'t need to upgrade!</string>
 
 </resources>

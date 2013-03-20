@@ -15,6 +15,7 @@ import android.content.SharedPreferences;
 
 import com.trovebox.android.app.net.ITroveboxApi;
 import com.trovebox.android.app.net.TroveboxApi;
+import com.trovebox.android.app.purchase.util.Purchase;
 import com.trovebox.android.app.util.CommonUtils;
 
 public class Preferences {
@@ -22,6 +23,7 @@ public class Preferences {
     public final static String PREFERENCES_NAME = "default";
     public final static String LIMITS_PREFERENCES_NAME = "limits";
     public final static String SYSTEM_VERSION_PREFERENCES_NAME = "system_version";
+    public final static String VERIFIED_PAYMENTS_PREFERENCES_NAME = "verified_payments";
 
     public static SharedPreferences getDefaultSharedPreferences(Context context)
     {
@@ -133,6 +135,15 @@ public class Preferences {
      */
     public static SharedPreferences getSystemVersionPreferences() {
         return getSharedPreferences(SYSTEM_VERSION_PREFERENCES_NAME);
+    }
+
+    /**
+     * Gets the shared preferences for verified payments cache information
+     * 
+     * @return
+     */
+    public static SharedPreferences getVerifiedPaymentsPreferences() {
+        return getSharedPreferences(VERIFIED_PAYMENTS_PREFERENCES_NAME);
     }
 
     /**
@@ -259,6 +270,27 @@ public class Preferences {
     }
 
     /**
+     * Check whether the purchase was already verified by the application
+     * @param purchase purchase to verify
+     * @return true if purchase was successfully verified
+     */
+    public static boolean isPurchaseVerified(Purchase purchase)
+    {
+        return getVerifiedPaymentsPreferences().getBoolean(
+                purchase.getDeveloperPayload() + ":" + purchase.getToken(), false);
+    }
+
+    /**
+     * Set purchase verified state to the cache
+     * @param purchase related purchase
+     * @param verified whether the verification was successful
+     */
+    public static void setPurchaseVerified(Purchase purchase, boolean verified)
+    {
+        getVerifiedPaymentsPreferences().edit().putBoolean(
+                purchase.getDeveloperPayload() + ":" + purchase.getToken(), verified);
+    }
+    /**
      * Check whether necessary system version information already retrieved and
      * stored in the cache
      * 
@@ -305,6 +337,10 @@ public class Preferences {
                 .clear()
                 .commit();
         getSystemVersionPreferences()
+                .edit()
+                .clear()
+                .commit();
+        getVerifiedPaymentsPreferences()
                 .edit()
                 .clear()
                 .commit();

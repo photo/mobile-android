@@ -38,6 +38,8 @@ import com.trovebox.android.app.net.SystemVersionResponseUtils;
 import com.trovebox.android.app.net.account.AccountLimitUtils;
 import com.trovebox.android.app.provider.UploadsUtils;
 import com.trovebox.android.app.provider.UploadsUtils.UploadsClearedHandler;
+import com.trovebox.android.app.purchase.PurchaseController;
+import com.trovebox.android.app.purchase.PurchaseController.PurchaseHandler;
 import com.trovebox.android.app.service.UploaderService;
 import com.trovebox.android.app.service.UploaderServiceUtils;
 import com.trovebox.android.app.service.UploaderServiceUtils.PhotoUploadedHandler;
@@ -46,6 +48,7 @@ import com.trovebox.android.app.util.BackKeyControl;
 import com.trovebox.android.app.util.CommonUtils;
 import com.trovebox.android.app.util.GalleryOpenControl;
 import com.trovebox.android.app.util.LoadingControl;
+import com.trovebox.android.app.util.ObjectAccessor;
 import com.trovebox.android.app.util.SyncUtils;
 import com.trovebox.android.app.util.SyncUtils.SyncStartedHandler;
 import com.trovebox.android.app.util.TrackerUtils;
@@ -55,7 +58,8 @@ public class MainActivity extends CommonActivity
         implements LoadingControl, GalleryOpenControl, SyncHandler,
         UploadsClearedHandler, PhotoUploadedHandler, TwitterLoadingControlAccessor,
         FacebookLoadingControlAccessor, SyncStartedHandler,
-        PhotoDeletedHandler, PhotoUpdatedHandler, StartNowHandler
+        PhotoDeletedHandler, PhotoUpdatedHandler, StartNowHandler,
+        PurchaseHandler
 {
     public static final int HOME_INDEX = 0;
     public static final int GALLERY_INDEX = 1;
@@ -70,6 +74,7 @@ public class MainActivity extends CommonActivity
     public static final String TAG = MainActivity.class.getSimpleName();
     public static final String ACTIVE_TAB = "ActiveTab";
     public final static int AUTHORIZE_ACTIVITY_REQUEST_CODE = 0;
+    public final static int PURCHASE_FLOW_REQUEST_CODE = 1;
 
     private ActionBar mActionBar;
     private AtomicInteger loaders = new AtomicInteger(0);
@@ -80,6 +85,18 @@ public class MainActivity extends CommonActivity
     boolean actionbBarNavigationModeInitiated = false;
 
     final Handler handler = new Handler();
+    PurchaseController purchaseController;
+
+    static MainActivity currentInstance;
+
+    static ObjectAccessor<MainActivity> currentInstanceAccessor = new ObjectAccessor<MainActivity>() {
+        private static final long serialVersionUID = 1L;
+
+        @Override
+        public MainActivity run() {
+            return currentInstance;
+        }
+    };
 
     /**
      * Called when Main Activity is first loaded
@@ -97,6 +114,7 @@ public class MainActivity extends CommonActivity
             setTheme(R.style.Theme_Trovebox_Light_Stacked);
         }
         super.onCreate(savedInstanceState);
+        currentInstance = this;
         instanceSaved = false;
         requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
         mActionBar = getSupportActionBar();
@@ -132,12 +150,17 @@ public class MainActivity extends CommonActivity
         {
             AccountLimitUtils.updateLimitInformationCacheAsync(this);
         }
+        purchaseController = PurchaseController.getAndSetup(this, this);
     }
 
     @Override
     protected void onDestroy()
     {
         super.onDestroy();
+        currentInstance = null;
+        if (purchaseController != null)
+            purchaseController.dispose();
+        purchaseController = null;
         for (BroadcastReceiver br : receivers)
         {
             unregisterReceiver(br);
@@ -177,8 +200,8 @@ public class MainActivity extends CommonActivity
                 R.string.tab_tags,
                 new TabListener<TagsFragment>("tags",
                         TagsFragment.class, null));
-//        the account tab should appear only for hosted installation such
-//        as profile api is absent on self-hosted
+        // the account tab should appear only for hosted installation such
+        // as profile api is absent on self-hosted
         if (CommonUtils.checkLoggedIn(true))
         {
             SystemVersionResponseUtils
@@ -204,9 +227,9 @@ public class MainActivity extends CommonActivity
                                 }
                             }, this);
         }
-//        sych as account tab may be absent at this step
-//        we need to exclute tab selection in case actibeTab
-//        is account
+        // sych as account tab may be absent at this step
+        // we need to exclute tab selection in case actibeTab
+        // is account
         if (activeTab != ACCOUNT_INDEX)
         {
             mActionBar.selectTab(mActionBar.getTabAt(activeTab));
@@ -290,8 +313,12 @@ public class MainActivity extends CommonActivity
                 FacebookProvider.getFacebook().authorizeCallback(requestCode,
                         resultCode,
                         data);
-                break;
             }
+                break;
+            case PURCHASE_FLOW_REQUEST_CODE: {
+                purchaseController.handleActivityResult(resultCode, data);
+            }
+                break;
         }
     }
 
@@ -639,5 +666,11 @@ public class MainActivity extends CommonActivity
                 mActionBar.selectTab(mActionBar.getTabAt(SYNC_INDEX));
             }
         }
+    }
+
+    @Override
+    public void purchaseMonthlySubscription() {
+        purchaseController.purchaseMonthlySubscription(this, PURCHASE_FLOW_REQUEST_CODE,
+                currentInstanceAccessor);
     }
 }

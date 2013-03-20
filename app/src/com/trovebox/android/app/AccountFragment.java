@@ -8,7 +8,9 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -18,9 +20,11 @@ import com.trovebox.android.app.net.ProfileResponse;
 import com.trovebox.android.app.net.ProfileResponse.ProfileCounters;
 import com.trovebox.android.app.net.ProfileResponseUtils;
 import com.trovebox.android.app.net.ReturnSizes;
+import com.trovebox.android.app.purchase.PurchaseController.PurchaseHandler;
 import com.trovebox.android.app.util.CommonUtils;
 import com.trovebox.android.app.util.LoadingControl;
 import com.trovebox.android.app.util.RunnableWithParameter;
+import com.trovebox.android.app.util.TrackerUtils;
 
 /**
  * The fragment which displays account information
@@ -35,6 +39,7 @@ public class AccountFragment extends CommonFrargmentWithImageWorker
     private static final long GB = MB * KB;
 
     private LoadingControl loadingControl;
+    private PurchaseHandler purchaseHandler;
 
     private ReturnSizes thumbSize;
 
@@ -63,6 +68,7 @@ public class AccountFragment extends CommonFrargmentWithImageWorker
     {
         super.onAttach(activity);
         loadingControl = ((LoadingControl) activity);
+        purchaseHandler = ((PurchaseHandler) activity);
 
     }
 
@@ -92,6 +98,17 @@ public class AccountFragment extends CommonFrargmentWithImageWorker
         accountType = (TextView) view.findViewById(R.id.accountType);
         upgradeOffer = view.findViewById(R.id.upgradeOffer);
         profileImage = (ImageView) view.findViewById(R.id.profilePic);
+
+        Button upgradeButton = (Button) view.findViewById(R.id.upgradeButton);
+        upgradeButton.setOnClickListener(new OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                TrackerUtils.trackButtonClickEvent("upgradeBtn", AccountFragment.this);
+                CommonUtils.debug(TAG, "Upgrade button clicked.");
+                purchaseHandler.purchaseMonthlySubscription();
+            }
+        });
 
         initView(null);
         ProfileResponseUtils.runWithProfileResponseAsync(

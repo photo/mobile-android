@@ -13,8 +13,8 @@ import android.widget.EditText;
 import com.trovebox.android.app.common.CommonActivity;
 import com.trovebox.android.app.net.TroveboxResponseUtils;
 import com.trovebox.android.app.net.account.AccountTroveboxResponse;
-import com.trovebox.android.app.net.account.FakeAccountTroveboxApi;
 import com.trovebox.android.app.net.account.IAccountTroveboxApi;
+import com.trovebox.android.app.net.account.IAccountTroveboxApiFactory;
 import com.trovebox.android.app.util.CommonUtils;
 import com.trovebox.android.app.util.GuiUtils;
 import com.trovebox.android.app.util.LoadingControl;
@@ -98,7 +98,7 @@ public class AccountSignup extends CommonActivity
         @Override
         protected AccountTroveboxResponse doInBackground(Void... params)
         {
-            IAccountTroveboxApi api = new FakeAccountTroveboxApi(
+            IAccountTroveboxApi api = IAccountTroveboxApiFactory.getApi(
                     activity);
             try
             {
