@@ -26,7 +26,6 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.util.LruCache;
 
 import com.trovebox.android.app.BuildConfig;
-import com.trovebox.android.app.TroveboxApplication;
 import com.trovebox.android.app.util.CommonUtils;
 import com.trovebox.android.app.util.TrackerUtils;
 
@@ -287,6 +286,13 @@ public class ImageCache {
         }
     }
 
+    public void clearDiskCacheIfExists() {
+        if (mDiskCache != null)
+        {
+            mDiskCache.clearCache();
+        }
+    }
+
     public void clearMemoryCache()
     {
         if (mMemoryCache != null)
@@ -294,13 +300,6 @@ public class ImageCache {
             CommonUtils.debug(TAG, "Requested memory cache cleaning");
             mMemoryCache.evictAll();
         }
-    }
-
-    public static void clearDiskCaches()
-    {
-        DiskLruCache.clearCaches(TroveboxApplication.getContext(),
-                THUMBS_CACHE_DIR, LOCAL_THUMBS_CACHE_DIR,
-                LARGE_IMAGES_CACHE_DIR, ImageFetcher.HTTP_CACHE_DIR);
     }
 
     /**

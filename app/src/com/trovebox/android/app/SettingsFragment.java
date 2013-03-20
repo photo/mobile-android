@@ -4,10 +4,9 @@ package com.trovebox.android.app;
 
 import org.holoeverywhere.preference.PreferenceCategory;
 
-import com.trovebox.android.app.R;
-import com.trovebox.android.app.common.CommonPreferenceFragment;
-
 import android.os.Bundle;
+
+import com.trovebox.android.app.common.CommonPreferenceFragment;
 
 /**
  * @author Eugene Popovich
@@ -36,6 +35,8 @@ public class SettingsFragment extends CommonPreferenceFragment
                 .setServerUrl(findPreference(getString(R.string.setting_account_server_key)));
         settingsCommon
                 .setSyncClearPreference(findPreference(getString(R.string.setting_sync_clear_key)));
+        settingsCommon
+                .setDiskCachClearPreference(findPreference(getString(R.string.setting_disk_cache_clear_key)));
         settingsCommon
                 .setAutoUploadTagPreference(findPreference(getString(R.string.setting_autoupload_tag_key)));
         settingsCommon
