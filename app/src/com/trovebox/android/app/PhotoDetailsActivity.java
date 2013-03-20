@@ -41,6 +41,7 @@ import com.actionbarsherlock.view.Window;
 import com.trovebox.android.app.FacebookFragment.FacebookLoadingControlAccessor;
 import com.trovebox.android.app.TwitterFragment.TwitterLoadingControlAccessor;
 import com.trovebox.android.app.bitmapfun.util.ImageCache;
+import com.trovebox.android.app.bitmapfun.util.ImageCacheUtils;
 import com.trovebox.android.app.bitmapfun.util.ImageFetcher;
 import com.trovebox.android.app.bitmapfun.util.ImageWorker;
 import com.trovebox.android.app.common.CommonActivity;
@@ -75,12 +76,6 @@ import com.trovebox.android.app.util.TrackerUtils;
  * The general photo viewing screen
  * 
  * @author pboos
- * @version 05.10.2012 <br>
- *          - removed action bar reference <br>
- *          - removed custom onClick listener from the ImageView
- *          <p>
- *          03.10.2012 <br>
- *          - added initial support for album photos filter
  */
 public class PhotoDetailsActivity extends CommonActivity implements TwitterLoadingControlAccessor,
         FacebookLoadingControlAccessor, PhotoDeletedHandler, PhotoUpdatedHandler {
@@ -111,6 +106,8 @@ public class PhotoDetailsActivity extends CommonActivity implements TwitterLoadi
                 TAG, this, this));
         receivers.add(PhotoUtils.getAndRegisterOnPhotoUpdatedActionBroadcastReceiver(
                 TAG, this, this));
+        receivers.add(ImageCacheUtils.getAndRegisterOnDiskCacheClearedBroadcastReceiver(TAG,
+                this));
     }
 
     @Override

@@ -9,6 +9,7 @@
     <string name="setting_account_title">Account</string>
     <string name="setting_account_facebook_loggedin_key">setting_facebook_loggedin</string>
     <string name="setting_sync_clear_key">setting_sync_clear_key</string>
+    <string name="setting_disk_cache_clear_key">setting_disk_cache_clear_key</string>
     <string name="setting_account_category">setting_account_category</string>
     <string name="setting_account_loggedin_key">setting_loggedin</string>
     <string name="setting_account_loggedin_logout">Log out</string>

@@ -27,6 +27,7 @@ import com.trovebox.android.app.FacebookFragment.FacebookLoadingControlAccessor;
 import com.trovebox.android.app.HomeFragment.StartNowHandler;
 import com.trovebox.android.app.SyncFragment.SyncHandler;
 import com.trovebox.android.app.TwitterFragment.TwitterLoadingControlAccessor;
+import com.trovebox.android.app.bitmapfun.util.ImageCacheUtils;
 import com.trovebox.android.app.common.CommonActivity;
 import com.trovebox.android.app.common.Refreshable;
 import com.trovebox.android.app.facebook.FacebookProvider;
@@ -146,6 +147,8 @@ public class MainActivity extends CommonActivity
                 TAG, this, this));
         receivers.add(PhotoUtils.getAndRegisterOnPhotoUpdatedActionBroadcastReceiver(
                 TAG, this, this));
+        receivers.add(ImageCacheUtils.getAndRegisterOnDiskCacheClearedBroadcastReceiver(TAG,
+                this));
         if (CommonUtils.checkLoggedIn(true))
         {
             AccountLimitUtils.updateLimitInformationCacheAsync(this);

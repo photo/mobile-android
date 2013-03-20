@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:holo="http://schemas.android.com/apk/res-auto" xmlns:android="http://schemas.android.com/apk/res/android">
+<PreferenceScreen xmlns:holo="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android" >
 
-    <PreferenceCategory holo:title="@string/setting_account_title" 
-        holo:key="@string/setting_account_category">
+    <PreferenceCategory
+        holo:key="@string/setting_account_category"
+        holo:title="@string/setting_account_title" >
         <Preference
             holo:defaultValue="@string/setting_account_server_default"
             holo:key="@string/setting_account_server_key"
@@ -10,10 +12,11 @@
             holo:title="@string/setting_account_server_title" />
 
         <PreferenceScreen holo:key="@string/setting_account_loggedin_key" />
-        <!-- PreferenceScreen holo:key="@string/setting_account_facebook_loggedin_key" 
-            holo:title="@string/setting_account_facebook_loggedin_logout"/-->
+        <!--
+             PreferenceScreen holo:key="@string/setting_account_facebook_loggedin_key" 
+            holo:title="@string/setting_account_facebook_loggedin_logout"/
+        -->
     </PreferenceCategory>
-    
     <PreferenceCategory holo:title="@string/upload_preference_category" >
         <CheckBoxPreference
             holo:defaultValue="@bool/setting_wifi_only_upload_on_default"
@@ -33,12 +36,17 @@
             holo:key="@string/setting_autoupload_tag_key"
             holo:title="@string/setting_set_tag_hint" />
     </PreferenceCategory>
-    
-    <PreferenceCategory holo:title="@string/sync_preference_category">
-        <Preference holo:key="@string/setting_sync_clear_key" 
-            holo:title="@string/sync_clear"
+    <PreferenceCategory holo:title="@string/sync_preference_category" >
+        <Preference
+            holo:key="@string/setting_sync_clear_key"
             holo:summary="@string/sync_clear_comment"
-            />
+            holo:title="@string/sync_clear" />
+    </PreferenceCategory>
+    <PreferenceCategory holo:title="@string/cache_preference_category" >
+        <Preference
+            holo:key="@string/setting_disk_cache_clear_key"
+            holo:summary="@string/disk_cache_clear_comment"
+            holo:title="@string/disk_cache_clear" />
     </PreferenceCategory>
 
 </PreferenceScreen>
