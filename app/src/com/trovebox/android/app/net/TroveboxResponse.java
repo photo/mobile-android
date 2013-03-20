@@ -15,7 +15,8 @@ public class TroveboxResponse {
         PHOTO_UPLOAD, ALBUMS, PHOTOS,
         PHOTO, DELETE_PHOTO, UPDATE_PHOTO,
         CREATE_USER, SIGN_IN,
-        PROFILE, SYSTEM_VERSION
+        PROFILE, SYSTEM_VERSION,
+        PAYMENT_VERIFICATION
     }
     private final String mMessage;
     private final int mCode;

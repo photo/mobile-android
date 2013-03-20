@@ -221,6 +221,18 @@ public class TrackerUtils {
     }
 
     /**
+     * Track In-app billing event
+     * 
+     * @param action
+     * @param label
+     */
+    public static void trackInAppBillingEvent(String action,
+            String label)
+    {
+        trackEvent("in_app_billing_event", action, label);
+    }
+
+    /**
      * Track background event
      * 
      * @param action
