@@ -49,6 +49,7 @@
     <string name="twitter_callback_url_upload_activity">trovebox-t3://twitter-callback</string>
     <string name="trovebox_oauth_callback_url">trovebox://callback</string>
     <string name="feather_api_key">WJhD1NTYdkm_OrBNEOPQpA</string>
+    <string name="application_public_key">cn19NTIcGw02PTUiZGBsLSMXEQ8sJjM9fXNwIzkHGhEqJz4o</string>
 
     <!-- Facebook preferences -->
     <string-array name="share_facebook_permissions">

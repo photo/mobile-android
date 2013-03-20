@@ -3,10 +3,11 @@ package com.trovebox.android.app.common;
 
 import org.holoeverywhere.app.Activity;
 
+import android.content.Intent;
+import android.os.Bundle;
+
 import com.trovebox.android.app.util.CommonUtils;
 import com.trovebox.android.app.util.TrackerUtils;
-
-import android.os.Bundle;
 
 /**
  * Common activity
@@ -72,4 +73,9 @@ public class CommonActivity extends Activity {
         trackLifecycleEvent("onPause");
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        trackLifecycleEvent("onActivityResult");
+    }
 }
