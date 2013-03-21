@@ -31,7 +31,7 @@ public class SplashActivity extends Activity {
     }
 
     @Override
-    protected void onPause() {
+    protected void onStop() {
         loadTask.cancel(true);
         super.onPause();
     }
