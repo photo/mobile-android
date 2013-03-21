@@ -6,6 +6,8 @@ import org.holoeverywhere.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 
+import com.trovebox.android.app.common.lifecycle.LifecycleEventHandler;
+import com.trovebox.android.app.common.lifecycle.LifecycleEventHandler.HasLifecycleEventHandler;
 import com.trovebox.android.app.util.CommonUtils;
 import com.trovebox.android.app.util.TrackerUtils;
 
@@ -14,9 +16,11 @@ import com.trovebox.android.app.util.TrackerUtils;
  * 
  * @author Eugene Popovich
  */
-public class CommonActivity extends Activity {
+public class CommonActivity extends Activity implements HasLifecycleEventHandler {
     static final String TAG = CommonActivity.class.getSimpleName();
     static final String CATEGORY = "Activity Lifecycle";
+
+    private LifecycleEventHandler lifecycleEventHandler = new LifecycleEventHandler(this);
 
     void trackLifecycleEvent(String event)
     {
@@ -29,6 +33,7 @@ public class CommonActivity extends Activity {
         trackLifecycleEvent("onStart");
         TrackerUtils.activityStart(this);
         TrackerUtils.trackView(this);
+        lifecycleEventHandler.fireOnStartEvent();
     }
 
     @Override
@@ -36,6 +41,7 @@ public class CommonActivity extends Activity {
         super.onStop();
         trackLifecycleEvent("onStop");
         TrackerUtils.activityStop(this);
+        lifecycleEventHandler.fireOnStopEvent();
     };
 
     @Override
@@ -43,6 +49,7 @@ public class CommonActivity extends Activity {
     {
         super.onCreate(savedInstanceState);
         trackLifecycleEvent("onCreate");
+        lifecycleEventHandler.fireOnCreateEvent(savedInstanceState);
     }
 
     @Override
@@ -50,6 +57,7 @@ public class CommonActivity extends Activity {
     {
         super.onDestroy();
         trackLifecycleEvent("onDestroy");
+        lifecycleEventHandler.fireOnDestroyEvent();
     }
 
     @Override
@@ -57,6 +65,7 @@ public class CommonActivity extends Activity {
     {
         super.onSaveInstanceState(outState);
         trackLifecycleEvent("onSaveInstanceState");
+        lifecycleEventHandler.fireOnSaveInstanceStateEvent(outState);
     }
 
     @Override
@@ -64,6 +73,7 @@ public class CommonActivity extends Activity {
     {
         super.onResume();
         trackLifecycleEvent("onResume");
+        lifecycleEventHandler.fireOnResumeEvent();
     }
 
     @Override
@@ -71,11 +81,18 @@ public class CommonActivity extends Activity {
     {
         super.onPause();
         trackLifecycleEvent("onPause");
+        lifecycleEventHandler.fireOnPauseEvent();
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         trackLifecycleEvent("onActivityResult");
+        lifecycleEventHandler.fireOnActivityResultEvent(requestCode, resultCode, data);
+    }
+
+    @Override
+    public LifecycleEventHandler getLifecycleEventHandler() {
+        return lifecycleEventHandler;
     }
 }
