@@ -704,6 +704,11 @@ public class IabHelper {
 
         @Override
         protected Boolean doInBackground(Void... params) {
+            // if helper was disposed before the doInBackground called
+            if (!mSetupDone)
+            {
+                return false;
+            }
             try {
                 result = new IabResult(BILLING_RESPONSE_RESULT_OK,
                         "Inventory refresh successful.");
