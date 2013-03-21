@@ -7,6 +7,9 @@ import org.holoeverywhere.app.ProgressDialog;
 import android.app.Activity;
 import android.content.Context;
 
+import com.trovebox.android.app.common.lifecycle.LifecycleAdapter;
+import com.trovebox.android.app.common.lifecycle.LifecycleEventHandler.HasLifecycleEventHandler;
+
 /**
  * Simple loading control which shows progress dialog
  * 
@@ -25,6 +28,7 @@ public class ProgressDialogLoadingControl implements LoadingControl
     int currentProgress;
     boolean cancelable;
     String message;
+    LifecycleAdapter lifecycleListener;
 
     public ProgressDialogLoadingControl(
             Context context,
@@ -86,6 +90,19 @@ public class ProgressDialogLoadingControl implements LoadingControl
         progress.setCancelable(cancelable);
         updateProgress(message, indeterminate, currentProgress, max);
         progress.show();
+        if (context instanceof HasLifecycleEventHandler)
+        {
+            HasLifecycleEventHandler handler = (HasLifecycleEventHandler) context;
+            lifecycleListener = new LifecycleAdapter(ProgressDialogLoadingControl.this)
+            {
+                @Override
+                public void onStop() {
+                    super.onStop();
+                    dismissProgress();
+                }
+            };
+            handler.getLifecycleEventHandler().addLifecycleListener(lifecycleListener);
+        }
     }
 
     public void updateProgress(String message, boolean indeterminate, int currentProgress, int max)
@@ -106,6 +123,7 @@ public class ProgressDialogLoadingControl implements LoadingControl
     public void dismissProgress() {
         try
         {
+            removeLifecycleListenerIfExist();
             if (progress != null && progress.getWindow() != null && progress.isShowing()) {
                 progress.dismiss();
             }
@@ -114,5 +132,17 @@ public class ProgressDialogLoadingControl implements LoadingControl
             GuiUtils.noAlertError(TAG, ex);
         }
         progress = null;
+    }
+
+    /**
+     * Remove the registered lifecycle listener from the parent
+     */
+    public void removeLifecycleListenerIfExist() {
+        if (context instanceof HasLifecycleEventHandler && lifecycleListener != null)
+        {
+            HasLifecycleEventHandler handler = (HasLifecycleEventHandler) context;
+            handler.getLifecycleEventHandler().removeLifecycleListener(lifecycleListener);
+            lifecycleListener = null;
+        }
     }
 }
