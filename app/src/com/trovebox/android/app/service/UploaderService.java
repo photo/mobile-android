@@ -146,6 +146,7 @@ public class UploaderService extends Service {
         }
         UploadsProviderAccessor uploads = new UploadsProviderAccessor(this);
         List<PhotoUpload> pendingUploads = uploads.getPendingUploads();
+        boolean hasSuccessfulUploads = false;
         for (PhotoUpload photoUpload : pendingUploads) {
             if (!CommonUtils.checkLoggedInAndOnline(true))
             {
@@ -236,6 +237,7 @@ public class UploaderService extends Service {
                     }
                 }
                 Preferences.adjustRemainingUploadingLimit(-1);
+                hasSuccessfulUploads = true;
                 uploads.setUploaded(photoUpload.getId());
                 showSuccessNotification(photoUpload, file,
                         photo, skipped);
@@ -260,7 +262,13 @@ public class UploaderService extends Service {
 
             stopUploadNotification();
         }
-        AccountLimitUtils.updateLimitInformationCacheIfNecessary(true);
+        // to avoid so many invalid json response errors at unauthorised wi-fi
+        // networks we need to
+        // update limit information only in case we had successful uploads
+        if (hasSuccessfulUploads)
+        {
+            AccountLimitUtils.updateLimitInformationCacheIfNecessary(true);
+        }
     }
 
     public void shareIfRequested(PhotoUpload photoUpload,
