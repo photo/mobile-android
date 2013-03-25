@@ -2,8 +2,8 @@
 package com.trovebox.android.app.common.lifecycle;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -26,8 +26,16 @@ public class LifecycleEventHandler {
     /**
      * the registered listeners
      */
-    private List<LifecycleListener> listeners = Collections
-            .synchronizedList(new ArrayList<LifecycleListener>());
+    private List<LifecycleListener> listeners = new ArrayList<LifecycleListener>();
+    /**
+     * the pending listeners to remove list
+     */
+    private List<LifecycleListener> listenersToRemove = new ArrayList<LifecycleListener>();
+
+    /**
+     * the work indicator
+     */
+    private AtomicInteger workers = new AtomicInteger(0);
 
     void trackEvent(String event)
     {
@@ -51,7 +59,11 @@ public class LifecycleEventHandler {
     public void addLifecycleListener(LifecycleListener listener)
     {
         trackEvent("addLifecycleListener");
-        listeners.add(listener);
+        synchronized (listeners)
+        {
+            trackEvent("addLifecycleListener.Synchronized");
+            listeners.add(listener);
+        }
     }
 
     /**
@@ -62,7 +74,31 @@ public class LifecycleEventHandler {
     public void removeLifecycleListener(LifecycleListener listener)
     {
         trackEvent("removeLifecycleListener");
-        listeners.remove(listener);
+        try
+        {
+            if (workers.getAndIncrement() == 0)
+            {
+                trackEvent("removeLifecycleListener. No pending work, removing listener");
+                synchronized (listeners)
+                {
+                    trackEvent("removeLifecycleListener. No pending work, removing listener. Synchronized");
+                    listeners.remove(listener);
+                }
+            } else
+            {
+                trackEvent("removeLifecycleListener. Where is pending work, adding listener to delayed removal");
+                synchronized (listenersToRemove)
+                {
+                    CommonUtils
+                            .debug(TAG,
+                                    "removeLifecycleListener. Where is pending work, adding listener to delayed removal. Synchronized");
+                    listenersToRemove.add(listener);
+                }
+            }
+        } finally
+        {
+            workers.decrementAndGet();
+        }
     }
 
     /**
@@ -72,9 +108,62 @@ public class LifecycleEventHandler {
      */
     private void fireEventOccurred(RunnableWithParameter<LifecycleListener> runnable)
     {
-        for (LifecycleListener listener : listeners)
+        workers.getAndIncrement();
+        try
         {
-            runnable.run(listener);
+            for (LifecycleListener listener : listeners)
+            {
+                if (!listenersToRemove.contains(listener))
+                {
+                    runnable.run(listener);
+                }
+            }
+        } finally
+        {
+            workers.decrementAndGet();
+        }
+        performListenersRemoval();
+    }
+
+    /**
+     * Process listeners waiting for removal
+     */
+    private void performListenersRemoval() {
+        try
+        {
+            if (workers.getAndIncrement() == 0)
+            {
+                trackEvent("performListenersRemoval. Performing delayed listeners removal");
+                synchronized (listeners)
+                {
+                    trackEvent("performListenersRemoval. Performing delayed listeners removal. Synchronized listeners");
+                    synchronized (listenersToRemove)
+                    {
+                        CommonUtils
+                                .debug(TAG,
+                                        "performListenersRemoval. Performing delayed listeners removal. Synchronized listenersToRemove");
+                        trackEvent("performListenersRemoval. Synchronized lists for removal");
+                        if (listenersToRemove.isEmpty())
+                        {
+                            CommonUtils
+                                    .debug(TAG,
+                                            "performListenersRemoval. Listeners to remove are empty. Skipping");
+                        } else
+                        {
+                            for (LifecycleListener listener : listenersToRemove)
+                            {
+                                trackEvent("performListenersRemoval. Removing listener");
+                                listeners.remove(listener);
+                            }
+                            trackEvent("performListenersRemoval. Clearing listenersToRemove");
+                            listenersToRemove.clear();
+                        }
+                    }
+                }
+            }
+        } finally
+        {
+            workers.decrementAndGet();
         }
     }
 
