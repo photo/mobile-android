@@ -181,6 +181,7 @@
     <string name="upload_preference_category">Camera upload</string>
     <string name="wifi_only_upload">Upload only if WiFi network used</string>
     <string name="auto_upload_preference_category">Automatically upload photos (Experimental)</string>
+    <string name="auto_upload_preference">Auto upload taken pictures</string>
     <string name="sync_preference_category">Sync</string>
     <string name="sync_clear">Clear sync information</string>
     <string name="sync_clear_comment">This doesn\'t touch your images. Only uploaded markers are removed.</string>
@@ -193,6 +194,11 @@
     <string name="disk_cache_clear">Clear disk cache</string>
     <string name="disk_cache_clear_comment">This will clear downloaded images cache.</string>
     <string name="disk_caches_cleared_message">The disk caches has been cleared</string>
+    <string name="setting_account_edit_account_title">Edit account</string>
+    <string name="setting_account_change_profile_picture_title">Change profile picture</string>
+    <string name="setting_account_title">Account</string>
+    <string name="setting_account_loggedin_logout">Log out</string>
+    <string name="setting_account_loggedin_login">Log in</string>
 
     <!-- Screens for Create/Login/Own domain: Account -->
     <string name="account_signup_button">Sign up with your email</string>
