@@ -27,7 +27,7 @@
         <CheckBoxPreference
             holo:defaultValue="@bool/setting_autoupload_on_default"
             holo:key="@string/setting_autoupload_on_key"
-            holo:title="Auto upload taken pictures" />
+            holo:title="@string/auto_upload_preference" />
 
         <EditTextPreference
             holo:defaultValue="@string/setting_autoupload_tag_default"

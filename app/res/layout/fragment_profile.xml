@@ -170,7 +170,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/profile_email"
                 android:textAppearance="?android:attr/textAppearanceMedium"
-                android:width="70dip" />
+                android:width="@dimen/profile_label_width" />
 
             <TextView
                 android:id="@+id/email"
@@ -197,7 +197,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/profile_account"
                 android:textAppearance="?android:attr/textAppearanceMedium"
-                android:width="70dip" />
+                android:width="@dimen/profile_label_width" />
 
             <TextView
                 android:id="@+id/accountType"

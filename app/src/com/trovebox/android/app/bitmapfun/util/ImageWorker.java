@@ -18,6 +18,7 @@ package com.trovebox.android.app.bitmapfun.util;
 
 import java.lang.ref.WeakReference;
 import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 import android.annotation.TargetApi;
 import android.content.Context;
@@ -52,6 +53,12 @@ public abstract class ImageWorker {
      */
     public static final Executor SERIAL_EXECUTOR = new SerialExecutor(
             AsyncTaskEx.THREAD_POOL_EXECUTOR);
+
+
+    /**
+     * An {@link Executor} that can be used to execute tasks in parallel.
+     */
+    public static final Executor THREAD_POOL_EXECUTOR = Executors.newFixedThreadPool(5);
 
     private static final String TAG = "ImageWorker";
     private static final int FADE_IN_TIME = 200;
@@ -116,7 +123,7 @@ public abstract class ImageWorker {
             final AsyncDrawable asyncDrawable =
                     new AsyncDrawable(mContext.getResources(), mLoadingBitmap, task);
             imageView.setImageDrawable(asyncDrawable);
-            task.executeOnExecutor(SERIAL_EXECUTOR, data);
+            task.executeOnExecutor(THREAD_POOL_EXECUTOR, data);
         }
     }
 

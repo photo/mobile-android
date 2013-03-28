@@ -6,14 +6,11 @@
     <!-- ######### -->
     <string name="setting_account_server_key">setting_server</string>
     <string name="setting_account_server_default">https://trovebox.com</string>
-    <string name="setting_account_title">Account</string>
     <string name="setting_account_facebook_loggedin_key">setting_facebook_loggedin</string>
     <string name="setting_sync_clear_key">setting_sync_clear_key</string>
     <string name="setting_disk_cache_clear_key">setting_disk_cache_clear_key</string>
     <string name="setting_account_category">setting_account_category</string>
     <string name="setting_account_loggedin_key">setting_loggedin</string>
-    <string name="setting_account_loggedin_logout">Log out</string>
-    <string name="setting_account_loggedin_login">Log in</string>
     <string name="setting_account_loggedin_consumer_key">setting_loggedin</string>
     <!-- OAuth store information -->
     <string name="setting_oauth_consumer_key">setting_oauth_consumer_key</string>
@@ -25,8 +22,6 @@
     <string name="setting_upload_limit_reset_date">setting_upload_limit_reset_date</string>
     <string name="setting_system_version_info_updated">setting_system_version_info_updated</string>
     <string name="setting_system_version_hosted">setting_system_version_hosted</string>
-    <string name="setting_account_edit_account_title">Edit account</string>
-    <string name="setting_account_change_profile_picture_title">Change profile picture</string>
 
     <!-- AutoUpload -->
     <string name="setting_autoupload_on_key">setting_autoupload_on</string>
