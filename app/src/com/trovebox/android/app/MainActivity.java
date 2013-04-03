@@ -328,7 +328,7 @@ public class MainActivity extends CommonActivity
      * 
      * @return
      */
-    Fragment getCurrentFragment()
+    public Fragment getCurrentFragment()
     {
         return navigationHandlerFragment.getCurrentFragment();
     }
@@ -344,7 +344,7 @@ public class MainActivity extends CommonActivity
         }
         intent.putExtra(GalleryFragment.EXTRA_TAG, tag);
         intent.putExtra(GalleryFragment.EXTRA_ALBUM, album);
-        navigationHandlerFragment.selectTab(NavigationHandlerFragment.GALLERY_INDEX);
+        selectTab(NavigationHandlerFragment.GALLERY_INDEX);
     }
 
     @Override
@@ -391,7 +391,7 @@ public class MainActivity extends CommonActivity
         {
             if (!instanceSaved)
             {
-                navigationHandlerFragment.selectTab(NavigationHandlerFragment.HOME_INDEX);
+                selectTab(NavigationHandlerFragment.HOME_INDEX);
             }
         }
     }
@@ -494,7 +494,7 @@ public class MainActivity extends CommonActivity
         {
             if (!instanceSaved)
             {
-                navigationHandlerFragment.selectTab(NavigationHandlerFragment.SYNC_INDEX);
+                selectTab(NavigationHandlerFragment.SYNC_INDEX);
             }
         }
     }
@@ -526,5 +526,10 @@ public class MainActivity extends CommonActivity
     public void setActionBarTitle(String title)
     {
         mActionBar.setTitle(title);
+    }
+
+    public void selectTab(int index)
+    {
+        navigationHandlerFragment.selectTab(index);
     }
 }
