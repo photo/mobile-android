@@ -9,7 +9,9 @@
     <color name="detail_thumb_unselected_border">#000</color>
     <color name="detail_thumb_selected_border">#9eddff</color>
 
+    <drawable name="selection_handler_drawable">#fece31</drawable>
     <drawable name="ab_bg_black">#66000000</drawable>
+    <drawable name="ab_bg_brown">#3c2514</drawable>
 
     <color name="ab_fg_white">#ffffff</color>
     <color name="ab_fg_black">#000000</color>

@@ -56,6 +56,8 @@ public class GalleryFragment extends CommonRefreshableFragmentWithImageWorker
     private int mImageThumbBorder;
     private int pageSize;
 
+    boolean refreshOnPageActivated = false;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -85,6 +87,7 @@ public class GalleryFragment extends CommonRefreshableFragmentWithImageWorker
             mTags = null;
             mAlbum = null;
         }
+        refreshOnPageActivated = false;
         refresh(v);
         return v;
     }
@@ -435,4 +438,42 @@ public class GalleryFragment extends CommonRefreshableFragmentWithImageWorker
     protected boolean isRefreshMenuVisible() {
         return !loadingControl.isLoading();
     }
+
+    @Override
+    public void pageActivated() {
+        super.pageActivated();
+        if (!isVisible())
+        {
+            return;
+        }
+        // if refresh is scheduled
+        if (refreshOnPageActivated)
+        {
+            refreshOnPageActivated = false;
+            refresh();
+        } else
+        {
+            Intent intent = getActivity().getIntent();
+            if (intent != null)
+            {
+                if (intent.hasExtra(EXTRA_ALBUM) || intent.hasExtra(EXTRA_TAG))
+                {
+                    refresh();
+                }
+            }
+        }
+    }
+
+    @Override
+    public void pageDeactivated() {
+        super.pageDeactivated();
+        if (mTags != null || mAlbum != null)
+        {
+            mTags = null;
+            mAlbum = null;
+            // we need to schedule refresh when the page will be activated in
+            // viewpager to clear filters
+            refreshOnPageActivated = true;
+        }
+    };
 }

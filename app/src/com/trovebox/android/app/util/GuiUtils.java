@@ -19,6 +19,7 @@ import com.trovebox.android.app.TroveboxApplication;
  */
 public class GuiUtils
 {
+    static final String TAG = GuiUtils.class.getSimpleName();
     static Thread mUiThread;
     static Handler mHandler;
 
@@ -47,9 +48,11 @@ public class GuiUtils
         }
         if (Thread.currentThread() != mUiThread)
         {
+            CommonUtils.debug(TAG, "runOnUiThread: thread is not ui, posting action");
             mHandler.post(action);
         } else
         {
+            CommonUtils.debug(TAG, "runOnUiThread: thread is ui, running action");
             action.run();
         }
     }

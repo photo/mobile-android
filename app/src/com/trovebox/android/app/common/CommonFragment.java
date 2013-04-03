@@ -3,14 +3,9 @@ package com.trovebox.android.app.common;
 
 import java.io.Serializable;
 
-
 import org.holoeverywhere.LayoutInflater;
 import org.holoeverywhere.app.Activity;
 import org.holoeverywhere.app.Fragment;
-
-import com.trovebox.android.app.util.CommonUtils;
-import com.trovebox.android.app.util.RunnableWithResult;
-import com.trovebox.android.app.util.TrackerUtils;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -18,13 +13,18 @@ import android.os.Handler;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.trovebox.android.app.common.lifecycle.ViewPagerHandler;
+import com.trovebox.android.app.util.CommonUtils;
+import com.trovebox.android.app.util.RunnableWithResult;
+import com.trovebox.android.app.util.TrackerUtils;
+
 /**
  * Common parent fragment. All the tab fragments under MainActivity should to
  * inherit this class
  * 
  * @author Eugene Popovich
  */
-public class CommonFragment extends Fragment
+public class CommonFragment extends Fragment implements ViewPagerHandler
 {
     static final String TAG = CommonFragment.class.getSimpleName();
     static final String CATEGORY = "Fragment Lifecycle";
@@ -114,9 +114,9 @@ public class CommonFragment extends Fragment
     }
 
     @Override
-    public void onViewCreated(View view)
+    public void onViewCreated(View view, Bundle savedInstanceState)
     {
-        super.onViewCreated(view);
+        super.onViewCreated(view, savedInstanceState);
         trackLifecycleEvent("onViewCreated");
     }
 
@@ -165,4 +165,15 @@ public class CommonFragment extends Fragment
     {
         return instanceSaved;
     }
+
+    @Override
+    public void pageActivated() {
+        trackLifecycleEvent("pageActivated");
+    }
+
+    @Override
+    public void pageDeactivated() {
+        trackLifecycleEvent("pageDeactivated");
+    }
+
 }

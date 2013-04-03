@@ -201,8 +201,8 @@ public class UploadActivity extends CommonActivity {
         }
 
         @Override
-        public void onViewCreated(View view) {
-            super.onViewCreated(view);
+        public void onViewCreated(View view, Bundle savedInstanceState) {
+            super.onViewCreated(view, savedInstanceState);
             init(view);
         }
 

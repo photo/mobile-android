@@ -71,6 +71,7 @@
     <string name="tab_albums">Albums</string>
     <string name="tab_sync">Sync</string>
     <string name="tab_account">Account</string>
+    <string name="tab_preferences">Preferences</string>
 
     <!-- UploadActivity -->
     <string name="uploading_in_background">Your upload has been started</string>

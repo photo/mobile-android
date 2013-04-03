@@ -1,11 +1,14 @@
 
 package com.trovebox.android.app;
 
-
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 
+import com.trovebox.android.app.service.UploaderService;
+import com.trovebox.android.app.service.UploaderServiceUtils;
+import com.trovebox.android.app.util.CommonUtils;
+import com.trovebox.android.app.util.TrackerUtils;
 import com.trovebox.android.app.util.concurrent.AsyncTaskEx;
 
 /**
@@ -14,6 +17,7 @@ import com.trovebox.android.app.util.concurrent.AsyncTaskEx;
  * @author pas
  */
 public class SplashActivity extends Activity {
+    public static final String TAG = SplashActivity.class.getSimpleName();
     private InitialLoad loadTask;
 
     /**
@@ -46,13 +50,15 @@ public class SplashActivity extends Activity {
          */
         @Override
         protected Void doInBackground(Void... params) {
-            // // TODO Remove this fake work and replace with real work
-            // try {
-            // Thread.sleep(2000);
-            // } catch (InterruptedException e) {
-            // // TODO Auto-generated catch block
-            // e.printStackTrace();
-            // }
+            if (!UploaderServiceUtils.isServiceRunning())
+            {
+                TrackerUtils.trackBackgroundEvent(
+                        "uploader_service_start",
+                        "starting_not_running_service_from_main");
+                CommonUtils.debug(TAG, "Uploader service is not run. Starting...");
+                // To make sure the service is initialized
+                startService(new Intent(SplashActivity.this, UploaderService.class));
+            }
             return null;
         }
 
@@ -65,7 +71,9 @@ public class SplashActivity extends Activity {
 
             if (!isCancelled()) {
                 // Go to Main screen
-                Intent i = new Intent(SplashActivity.this, MainActivity.class);
+                Intent i = Preferences.isLoggedIn() ?
+                        new Intent(SplashActivity.this, MainActivity.class) :
+                        new Intent(SplashActivity.this, AccountActivity.class);
                 startActivity(i);
                 finish();
             }

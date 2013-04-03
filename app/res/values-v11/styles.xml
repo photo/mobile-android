@@ -1,27 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <style name="Theme.Trovebox.Light" parent="Holo.Theme.Light.DarkActionBar">
-        <item name="android:windowBackground">@drawable/bg</item>
-        <item name="android:listViewStyle">@style/TransparentListView</item>
+    <style name="Theme.Trovebox.Light" parent="Theme.Trovebox.Light_Base">
         <item name="android:expandableListViewStyle">@style/TransparentExpandableListView</item>
-        <item name="actionBarStyle">@style/solid_ActionBar</item>
         <item name="android:actionBarStyle">@style/solid_ActionBar</item>
-        <item name="actionBarTabTextStyle">@style/ActionBar_TabTextStyle</item>
         <item name="android:actionBarTabTextStyle">@style/ActionBar_TabTextStyle</item>
-        <item name="android:buttonStyle">@style/Trovebox.BeigeButton</item>
-        <item name="actionBarTabStyle">@style/trovebox_ActionBarTabStyle</item>
         <item name="android:actionBarTabStyle">@style/trovebox_ActionBarTabStyle</item>
-        <item name="actionBarItemBackground">@drawable/selectable_background_trovebox</item>
         <item name="android:actionBarItemBackground">@drawable/selectable_background_trovebox</item>
-        <item name="actionDropDownStyle">@style/trovebox_DropDownNav</item>
         <item name="android:actionDropDownStyle">@style/trovebox_DropDownNav</item>
-        <item name="popupMenuStyle">@style/trovebox_PopupMenu</item>
         <item name="android:popupMenuStyle">@style/trovebox_PopupMenu</item>
-        <item name="dropDownListViewStyle">@style/trovebox_DropDownListView</item>
         <item name="android:dropDownListViewStyle">@style/trovebox_DropDownListView</item>
-        <item name="actionBarWidgetTheme">@style/Theme.example.widget</item>
         <item name="android:actionBarWidgetTheme">@style/Theme.example.widget</item>
+        <item name="android:spinnerDropDownItemStyle">@style/trovebox_DropDownItem</item>
+        <item name="android:actionMenuTextColor">@color/ab_fg_white</item>
+        <item name="android:spinnerItemStyle">@style/trovebox_SpinnerItemStyle</item>
+        <item name="android:textAppearanceLargePopupMenu">@style/trovebox_PopupMenuTextLarge</item>
     </style>
 
     <style name="Theme.Trovebox.Light.Stacked" parent="Theme.Trovebox.Light">

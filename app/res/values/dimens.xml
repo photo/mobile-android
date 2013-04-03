@@ -23,4 +23,6 @@
     <dimen name="profile_thumbnail_corner_radius">10dp</dimen>
     <dimen name="profile_label_width">70dip</dimen>
 
+    <item name="slider_menu_width" type="dimen">200dip</item>
+
 </resources>

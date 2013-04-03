@@ -15,7 +15,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.trovebox.android.app.bitmapfun.util.ImageFetcher;
-import com.trovebox.android.app.common.CommonFrargmentWithImageWorker;
+import com.trovebox.android.app.common.CommonRefreshableFragmentWithImageWorker;
 import com.trovebox.android.app.net.ProfileResponse;
 import com.trovebox.android.app.net.ProfileResponse.ProfileCounters;
 import com.trovebox.android.app.net.ProfileResponseUtils;
@@ -31,7 +31,7 @@ import com.trovebox.android.app.util.TrackerUtils;
  * 
  * @author Eugene Popovich
  */
-public class AccountFragment extends CommonFrargmentWithImageWorker
+public class AccountFragment extends CommonRefreshableFragmentWithImageWorker
 {
     public static final String TAG = AccountFragment.class.getSimpleName();
     private static final long KB = 1024l;
@@ -111,6 +111,12 @@ public class AccountFragment extends CommonFrargmentWithImageWorker
         });
 
         initView(null);
+
+        refresh(view);
+    }
+
+    void refresh(View v)
+    {
         ProfileResponseUtils.runWithProfileResponseAsync(
                 new RunnableWithParameter<ProfileResponse>()
                 {
@@ -122,9 +128,7 @@ public class AccountFragment extends CommonFrargmentWithImageWorker
                         }
                     }
                 }, loadingControl);
-
     }
-
     void initView(ProfileResponse response)
     {
         if (response == null)
@@ -180,4 +184,13 @@ public class AccountFragment extends CommonFrargmentWithImageWorker
         storageUsedUnit.setText(stringResourceId);
     }
 
+    @Override
+    public void refresh() {
+        refresh(getView());
+    }
+
+    @Override
+    protected boolean isRefreshMenuVisible() {
+        return !loadingControl.isLoading();
+    }
 }

@@ -11,6 +11,7 @@ import org.holoeverywhere.preference.Preference.OnPreferenceClickListener;
 import org.holoeverywhere.preference.PreferenceCategory;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 
 import com.trovebox.android.app.bitmapfun.util.ImageCacheUtils;
 import com.trovebox.android.app.facebook.FacebookProvider;
@@ -78,7 +79,7 @@ public class SettingsCommon implements
 
             } else
             {
-                activity.finish();
+                finishActivity();
             }
         } else if (activity.getString(
                 R.string.setting_account_facebook_loggedin_key)
@@ -309,6 +310,14 @@ public class SettingsCommon implements
                 });
     }
 
+    private void finishActivity()
+    {
+        if (activity != null)
+        {
+            activity.startActivity(new Intent(activity, AccountActivity.class));
+            activity.finish();
+        }
+    }
     public class LogoutTask extends SimpleAsyncTaskEx
     {
 
@@ -319,18 +328,12 @@ public class SettingsCommon implements
 
         @Override
         protected void onSuccessPostExecute() {
-            if (activity != null)
-            {
-                activity.finish();
-            }
+            finishActivity();
         }
 
         @Override
         protected void onFailedPostExecute() {
-            if (activity != null)
-            {
-                activity.finish();
-            }
+            finishActivity();
         }
 
         @Override

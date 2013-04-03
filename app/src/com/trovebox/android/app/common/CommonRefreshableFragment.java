@@ -13,8 +13,8 @@ import com.trovebox.android.app.R;
  * 
  * @author Eugene Popovich
  */
-public abstract class CommonRefreshableFragmentWithImageWorker extends
-        CommonFragmentWithImageWorker implements
+public abstract class CommonRefreshableFragment extends
+        CommonFragment implements
         Refreshable {
 
     @Override

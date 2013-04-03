@@ -128,6 +128,32 @@ public class TrackerUtils {
     }
 
     /**
+     * Track navigation item selected event
+     * 
+     * @param navigationItemName
+     * @param navigationItemHolder
+     */
+    public static void trackNavigationItemSelectedEvent(String navigationItemName,
+            Object navigationItemHolder)
+    {
+        trackUiEvent(navigationItemHolder.getClass().getSimpleName() + ".NavigationItemSelected",
+                navigationItemName);
+    }
+
+    /**
+     * Track navigation item reselected event
+     * 
+     * @param navigationItemName
+     * @param navigationItemHolder
+     */
+    public static void trackNavigationItemReselectedEvent(String navigationItemName,
+            Object navigationItemHolder)
+    {
+        trackUiEvent(navigationItemHolder.getClass().getSimpleName() + ".NavigationItemReselected",
+                navigationItemName);
+    }
+
+    /**
      * Track button click event
      * 
      * @param buttonName
