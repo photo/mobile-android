@@ -11,6 +11,7 @@ import com.google.analytics.tracking.android.EasyTracker;
 import com.google.analytics.tracking.android.ExceptionParser;
 import com.google.analytics.tracking.android.ExceptionReporter;
 import com.google.analytics.tracking.android.GAServiceManager;
+import com.trovebox.android.app.Preferences;
 import com.trovebox.android.app.TroveboxApplication;
 
 /**
@@ -19,6 +20,7 @@ import com.trovebox.android.app.TroveboxApplication;
  * @author Eugene Popovich
  */
 public class TrackerUtils {
+    static final String TAG = TrackerUtils.class.getSimpleName();
     /**
      * Used for tests
      */
@@ -29,17 +31,18 @@ public class TrackerUtils {
     static ExceptionParser parser = new ExceptionParser() {
         @Override
         public String getDescription(String threadName, Throwable t) {
-            return getStackTrace(t);
+            return getStackTrace(t) + getTrackingSuffix(true);
         }
 
-        private String getStackTrace(Throwable throwable) {
-            final Writer result = new StringWriter();
-            final PrintWriter printWriter = new PrintWriter(result);
-            throwable.printStackTrace(printWriter);
-
-            return result.toString();
-        }
     };
+
+    private static String getStackTrace(Throwable throwable) {
+        final Writer result = new StringWriter();
+        final PrintWriter printWriter = new PrintWriter(result);
+        throwable.printStackTrace(printWriter);
+
+        return result.toString();
+    }
 
     /**
      * Setup uncaug exception handler
@@ -282,7 +285,7 @@ public class TrackerUtils {
             String action,
             String label)
     {
-        EasyTracker.getTracker().sendEvent(category, action, label, null);
+        EasyTracker.getTracker().sendEvent(category + getTrackingSuffix(), action, label, null);
     }
 
     /**
@@ -315,7 +318,7 @@ public class TrackerUtils {
      */
     public static void trackTiming(String category, long inteval, String name, String label)
     {
-        EasyTracker.getTracker().sendTiming(category, inteval, name, label);
+        EasyTracker.getTracker().sendTiming(category + getTrackingSuffix(), inteval, name, label);
     }
 
     /**
@@ -325,7 +328,7 @@ public class TrackerUtils {
      */
     public static void trackView(Object view)
     {
-        EasyTracker.getTracker().sendView(view.getClass().getSimpleName());
+        EasyTracker.getTracker().sendView(view.getClass().getSimpleName() + getTrackingSuffix());
     }
 
     /**
@@ -367,5 +370,30 @@ public class TrackerUtils {
     public static void activityStop(Activity activity)
     {
         EasyTracker.getInstance().activityStop(activity);
+    }
+
+    static String getTrackingSuffix()
+    {
+        return getTrackingSuffix(false);
+    }
+
+    /**
+     * Get the tracking suffix to separate self_hosted usage from the hosted
+     * 
+     * @param trackRetrievalError
+     * @return
+     */
+    static String getTrackingSuffix(boolean trackRetrievalError)
+    {
+        try
+        {
+            return Preferences.isLoggedIn() && Preferences.isSelfHosted() ? " (self_hosted)" : "";
+        } catch (Throwable t)
+        {
+            CommonUtils.error(TAG, null, t);
+            return trackRetrievalError ?
+                    CommonUtils.format(" (suffix_retrieval_error: %1$s)", getStackTrace(t))
+                    : " (suffix_retrieval_error)";
+        }
     }
 }
