@@ -77,7 +77,6 @@ public class PurchaseController {
         return context.getString(R.string.application_public_key);
     }
 
-
     /**
      * Get the already configured instance of {@link PurchaseController}
      * 
@@ -207,7 +206,6 @@ public class PurchaseController {
 
         return true;
     }
-
 
     /**
      * Start purchase monthly subscription flow
@@ -391,6 +389,7 @@ public class PurchaseController {
                         {
                             AccountLimitUtils.updateLimitInformationCacheAsync(getLoadingControl());
                         }
+                        PurchaseControllerUtils.sendSubscriptionPurchasedBroadcast();
                     }
                 }, new Runnable() {
 

@@ -21,6 +21,7 @@ import com.trovebox.android.app.net.ProfileResponse.ProfileCounters;
 import com.trovebox.android.app.net.ProfileResponseUtils;
 import com.trovebox.android.app.net.ReturnSizes;
 import com.trovebox.android.app.purchase.PurchaseController.PurchaseHandler;
+import com.trovebox.android.app.purchase.PurchaseControllerUtils.SubscriptionPurchasedHandler;
 import com.trovebox.android.app.util.CommonUtils;
 import com.trovebox.android.app.util.LoadingControl;
 import com.trovebox.android.app.util.RunnableWithParameter;
@@ -31,7 +32,8 @@ import com.trovebox.android.app.util.TrackerUtils;
  * 
  * @author Eugene Popovich
  */
-public class AccountFragment extends CommonRefreshableFragmentWithImageWorker
+public class AccountFragment extends CommonRefreshableFragmentWithImageWorker implements
+        SubscriptionPurchasedHandler
 {
     public static final String TAG = AccountFragment.class.getSimpleName();
     private static final long KB = 1024l;
@@ -58,6 +60,7 @@ public class AccountFragment extends CommonRefreshableFragmentWithImageWorker
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState)
     {
+        super.onCreateView(inflater, container, savedInstanceState);
         View v = inflater.inflate(R.layout.fragment_profile, container, false);
         init(v, savedInstanceState);
         return v;
@@ -129,6 +132,7 @@ public class AccountFragment extends CommonRefreshableFragmentWithImageWorker
                     }
                 }, loadingControl);
     }
+
     void initView(ProfileResponse response)
     {
         if (response == null)
@@ -192,5 +196,10 @@ public class AccountFragment extends CommonRefreshableFragmentWithImageWorker
     @Override
     protected boolean isRefreshMenuVisible() {
         return !loadingControl.isLoading();
+    }
+
+    @Override
+    public void subscriptionPurchased() {
+        refreshImmediatelyOrScheduleIfNecessary();
     }
 }

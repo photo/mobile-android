@@ -29,7 +29,6 @@ import com.trovebox.android.app.SyncFragment.SyncHandler;
 import com.trovebox.android.app.TwitterFragment.TwitterLoadingControlAccessor;
 import com.trovebox.android.app.bitmapfun.util.ImageCacheUtils;
 import com.trovebox.android.app.common.CommonActivity;
-import com.trovebox.android.app.common.Refreshable;
 import com.trovebox.android.app.facebook.FacebookProvider;
 import com.trovebox.android.app.model.Photo;
 import com.trovebox.android.app.model.utils.PhotoUtils;
@@ -40,6 +39,8 @@ import com.trovebox.android.app.provider.UploadsUtils;
 import com.trovebox.android.app.provider.UploadsUtils.UploadsClearedHandler;
 import com.trovebox.android.app.purchase.PurchaseController;
 import com.trovebox.android.app.purchase.PurchaseController.PurchaseHandler;
+import com.trovebox.android.app.purchase.PurchaseControllerUtils;
+import com.trovebox.android.app.purchase.PurchaseControllerUtils.SubscriptionPurchasedHandler;
 import com.trovebox.android.app.service.UploaderServiceUtils;
 import com.trovebox.android.app.service.UploaderServiceUtils.PhotoUploadedHandler;
 import com.trovebox.android.app.twitter.TwitterUtils;
@@ -59,7 +60,7 @@ public class MainActivity extends CommonActivity
         UploadsClearedHandler, PhotoUploadedHandler, TwitterLoadingControlAccessor,
         FacebookLoadingControlAccessor, SyncStartedHandler,
         PhotoDeletedHandler, PhotoUpdatedHandler, StartNowHandler,
-        PurchaseHandler
+        PurchaseHandler, SubscriptionPurchasedHandler
 {
     private static final String NAVIGATION_HANDLER_FRAGMENT_TAG = "NavigationHandlerFragment";
 
@@ -131,6 +132,8 @@ public class MainActivity extends CommonActivity
                 TAG, this, this));
         receivers.add(ImageCacheUtils.getAndRegisterOnDiskCacheClearedBroadcastReceiver(TAG,
                 this));
+        receivers.add(PurchaseControllerUtils
+                .getAndRegisterOnSubscriptionPurchasedActionBroadcastReceiver(TAG, this, this));
     }
 
     @Override
@@ -155,10 +158,12 @@ public class MainActivity extends CommonActivity
                 .findFragmentByTag(NAVIGATION_HANDLER_FRAGMENT_TAG);
         if (navigationHandlerFragment == null)
         {
-            navigationHandlerFragment = (NavigationHandlerFragment) Fragment.instantiate(MainActivity.this,
+            navigationHandlerFragment = (NavigationHandlerFragment) Fragment.instantiate(
+                    MainActivity.this,
                     NavigationHandlerFragment.class.getName());
-            getSupportFragmentManager().beginTransaction().add(R.id.leftView, navigationHandlerFragment,
-                    NAVIGATION_HANDLER_FRAGMENT_TAG).commit();
+            getSupportFragmentManager().beginTransaction()
+                    .add(R.id.leftView, navigationHandlerFragment,
+                            NAVIGATION_HANDLER_FRAGMENT_TAG).commit();
         }
         if (CommonUtils.checkLoggedIn(true))
         {
@@ -399,7 +404,8 @@ public class MainActivity extends CommonActivity
     @Override
     public void uploadsCleared()
     {
-        SyncFragment fragment = navigationHandlerFragment.getFragment(NavigationHandlerFragment.SYNC_INDEX);
+        SyncFragment fragment = navigationHandlerFragment
+                .getFragment(NavigationHandlerFragment.SYNC_INDEX);
         if (fragment != null)
         {
             fragment.uploadsCleared();
@@ -408,16 +414,16 @@ public class MainActivity extends CommonActivity
 
     @Override
     public void photoUploaded() {
-        switch (navigationHandlerFragment.getSelectedNavigationIndex())
+        HomeFragment homeFragment = navigationHandlerFragment.getHomeFragment();
+        if (homeFragment != null)
         {
-            case NavigationHandlerFragment.HOME_INDEX:
-            case NavigationHandlerFragment.GALLERY_INDEX:
-                Fragment fragment = getCurrentFragment();
-                if (fragment != null)
-                {
-                    ((Refreshable) fragment).refresh();
-                }
-                break;
+            homeFragment.photoUploaded();
+        }
+
+        GalleryFragment galleryFragment = navigationHandlerFragment.getGalleryFragment();
+        if (galleryFragment != null)
+        {
+            galleryFragment.photoUploaded();
         }
     }
 
@@ -509,6 +515,7 @@ public class MainActivity extends CommonActivity
 
     /**
      * Get the slider addon
+     * 
      * @return
      */
     public AddonSliderA addonSlider() {
@@ -521,6 +528,7 @@ public class MainActivity extends CommonActivity
 
     /**
      * Set the action bar title
+     * 
      * @param title
      */
     public void setActionBarTitle(String title)
@@ -531,5 +539,14 @@ public class MainActivity extends CommonActivity
     public void selectTab(int index)
     {
         navigationHandlerFragment.selectTab(index);
+    }
+
+    @Override
+    public void subscriptionPurchased() {
+        AccountFragment accountFragment = navigationHandlerFragment.getAccountFragment();
+        if (accountFragment != null)
+        {
+            accountFragment.subscriptionPurchased();
+        }
     }
 }

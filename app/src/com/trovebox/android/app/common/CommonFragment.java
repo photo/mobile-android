@@ -29,6 +29,7 @@ public class CommonFragment extends Fragment implements ViewPagerHandler
     static final String TAG = CommonFragment.class.getSimpleName();
     static final String CATEGORY = "Fragment Lifecycle";
     private boolean instanceSaved = false;
+    protected boolean isActivePage = false;
 
     void trackLifecycleEvent(String event)
     {
@@ -40,6 +41,7 @@ public class CommonFragment extends Fragment implements ViewPagerHandler
     {
         trackLifecycleEvent("Constructor");
     }
+
     @Override
     public void onAttach(Activity activity)
     {
@@ -88,6 +90,7 @@ public class CommonFragment extends Fragment implements ViewPagerHandler
     {
         super.onDestroyView();
         trackLifecycleEvent("onDestroyView");
+        isActivePage = false;
     }
 
     @Override
@@ -169,11 +172,13 @@ public class CommonFragment extends Fragment implements ViewPagerHandler
     @Override
     public void pageActivated() {
         trackLifecycleEvent("pageActivated");
+        isActivePage = true;
     }
 
     @Override
     public void pageDeactivated() {
         trackLifecycleEvent("pageDeactivated");
+        isActivePage = false;
     }
 
 }

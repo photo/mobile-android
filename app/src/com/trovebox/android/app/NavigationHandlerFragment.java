@@ -185,7 +185,8 @@ public class NavigationHandlerFragment extends org.holoeverywhere.app.Fragment {
         for (int position = 0, size = adapter.getCount(); position < size; position++)
         {
             FragmentWrapper<?> wrapper = adapter.wrappers.get(position);
-            SliderNavigationItem view = FontLoader.apply(new SliderNavigationItem(getSupportActivity()));
+            SliderNavigationItem view = FontLoader.apply(new SliderNavigationItem(
+                    getSupportActivity()));
             view.setLabel(wrapper.mTitleId);
             view.setOnClickListener(wrapper);
             view.setSelectionHandlerVisiblity(position == mCurrentPage);
@@ -340,6 +341,21 @@ public class NavigationHandlerFragment extends org.holoeverywhere.app.Fragment {
     }
 
     /**
+     * Get the account fragment if present
+     * 
+     * @return
+     */
+    public AccountFragment getAccountFragment()
+    {
+        Fragment result = adapter.getItem(ACCOUNT_INDEX);
+        if (!(result instanceof AccountFragment))
+        {
+            result = null;
+        }
+        return (AccountFragment) result;
+    }
+
+    /**
      * Custom fragment pager adapter
      */
     public class FragmentAdapter extends FragmentPagerAdapter {
@@ -391,13 +407,13 @@ public class NavigationHandlerFragment extends org.holoeverywhere.app.Fragment {
         public void setPrimaryItem(final ViewGroup container, final int position,
                 final Object object) {
             Fragment newFragment = getItem(position);
-            if (activeFragment != null && newFragment != activeFragment)
+            if (newFragment != activeFragment)
             {
-                if (activeFragment instanceof ViewPagerHandler)
+                if (activeFragment != null && activeFragment instanceof ViewPagerHandler)
                 {
                     ((ViewPagerHandler) activeFragment).pageDeactivated();
                 }
-                if (newFragment instanceof ViewPagerHandler)
+                if (newFragment != null && newFragment instanceof ViewPagerHandler)
                 {
                     ((ViewPagerHandler) newFragment).pageActivated();
                 }

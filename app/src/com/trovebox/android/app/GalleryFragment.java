@@ -24,6 +24,7 @@ import com.trovebox.android.app.model.utils.PhotoUtils;
 import com.trovebox.android.app.model.utils.PhotoUtils.PhotoDeletedHandler;
 import com.trovebox.android.app.model.utils.PhotoUtils.PhotoUpdatedHandler;
 import com.trovebox.android.app.net.ReturnSizes;
+import com.trovebox.android.app.service.UploaderServiceUtils.PhotoUploadedHandler;
 import com.trovebox.android.app.ui.adapter.PhotosEndlessAdapter;
 import com.trovebox.android.app.util.CommonUtils;
 import com.trovebox.android.app.util.GuiUtils;
@@ -35,7 +36,7 @@ import com.trovebox.android.app.util.TrackerUtils;
 import com.trovebox.android.app.util.Utils;
 
 public class GalleryFragment extends CommonRefreshableFragmentWithImageWorker
-        implements PhotoDeletedHandler, PhotoUpdatedHandler
+        implements PhotoDeletedHandler, PhotoUpdatedHandler, PhotoUploadedHandler
 {
     public static final String TAG = GalleryFragment.class.getSimpleName();
 
@@ -56,8 +57,6 @@ public class GalleryFragment extends CommonRefreshableFragmentWithImageWorker
     private int mImageThumbBorder;
     private int pageSize;
 
-    boolean refreshOnPageActivated = false;
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -77,6 +76,7 @@ public class GalleryFragment extends CommonRefreshableFragmentWithImageWorker
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState)
     {
+        super.onCreateView(inflater, container, savedInstanceState);
         View v = inflater.inflate(R.layout.fragment_gallery, container, false);
         if (savedInstanceState != null)
         {
@@ -87,9 +87,13 @@ public class GalleryFragment extends CommonRefreshableFragmentWithImageWorker
             mTags = null;
             mAlbum = null;
         }
-        refreshOnPageActivated = false;
-        refresh(v);
         return v;
+    }
+
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        refresh();
     }
 
     @Override
@@ -205,7 +209,10 @@ public class GalleryFragment extends CommonRefreshableFragmentWithImageWorker
     public void onDestroyView()
     {
         super.onDestroyView();
-        mAdapter.forceStopLoadingIfNecessary();
+        if (mAdapter != null)
+        {
+            mAdapter.forceStopLoadingIfNecessary();
+        }
     }
 
     @Override
@@ -446,12 +453,8 @@ public class GalleryFragment extends CommonRefreshableFragmentWithImageWorker
         {
             return;
         }
-        // if refresh is scheduled
-        if (refreshOnPageActivated)
-        {
-            refreshOnPageActivated = false;
-            refresh();
-        } else
+        // if filtering is requested
+        if (!refreshOnPageActivated)
         {
             Intent intent = getActivity().getIntent();
             if (intent != null)
@@ -476,4 +479,9 @@ public class GalleryFragment extends CommonRefreshableFragmentWithImageWorker
             refreshOnPageActivated = true;
         }
     };
+
+    @Override
+    public void photoUploaded() {
+        refreshImmediatelyOrScheduleIfNecessary();
+    }
 }
