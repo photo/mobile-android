@@ -2,5 +2,7 @@
 <resources>
 
     <dimen name="profile_label_width">70dip</dimen>
+    <dimen name="start_now_small_text">13sp</dimen>
+    <dimen name="start_now_big_text">20sp</dimen>
 
 </resources>

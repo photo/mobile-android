@@ -118,8 +118,8 @@
     <!-- Newest Home -->
     <string name="newest_this_photo_was_taken">Эта фотография была сделана %1$d %2$s тому назад.</string>
     <string name="newest_this_photo_was_taken_less_one_hour">Эта фотография была сделана менее часа назад</string>
-    <string name="havent_uploaded_any_photos">Похоже, что Вы еще не загрузили ни одной фотографии</string>
-    <string name="use_sync_to_start">Используйте вкладку синхронизации чтобы начать!</string>
+    <string name="havent_uploaded_any_photos">Нет загруженных фотографий</string>
+    <string name="use_sync_to_start">Начните синхронизацию!</string>
 
     <!-- general -->
     <string name="day">дн.</string>
