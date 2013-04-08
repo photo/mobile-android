@@ -24,6 +24,7 @@ import com.trovebox.android.app.model.utils.PhotoUtils;
 import com.trovebox.android.app.model.utils.PhotoUtils.PhotoDeletedHandler;
 import com.trovebox.android.app.model.utils.PhotoUtils.PhotoUpdatedHandler;
 import com.trovebox.android.app.net.ReturnSizes;
+import com.trovebox.android.app.service.UploaderServiceUtils.PhotoUploadedHandler;
 import com.trovebox.android.app.ui.adapter.PhotosEndlessAdapter;
 import com.trovebox.android.app.util.CommonUtils;
 import com.trovebox.android.app.util.GuiUtils;
@@ -35,7 +36,7 @@ import com.trovebox.android.app.util.TrackerUtils;
 import com.trovebox.android.app.util.Utils;
 
 public class GalleryFragment extends CommonRefreshableFragmentWithImageWorker
-        implements PhotoDeletedHandler, PhotoUpdatedHandler
+        implements PhotoDeletedHandler, PhotoUpdatedHandler, PhotoUploadedHandler
 {
     public static final String TAG = GalleryFragment.class.getSimpleName();
 
@@ -75,6 +76,7 @@ public class GalleryFragment extends CommonRefreshableFragmentWithImageWorker
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState)
     {
+        super.onCreateView(inflater, container, savedInstanceState);
         View v = inflater.inflate(R.layout.fragment_gallery, container, false);
         if (savedInstanceState != null)
         {
@@ -85,8 +87,13 @@ public class GalleryFragment extends CommonRefreshableFragmentWithImageWorker
             mTags = null;
             mAlbum = null;
         }
-        refresh(v);
         return v;
+    }
+
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        refresh();
     }
 
     @Override
@@ -202,7 +209,10 @@ public class GalleryFragment extends CommonRefreshableFragmentWithImageWorker
     public void onDestroyView()
     {
         super.onDestroyView();
-        mAdapter.forceStopLoadingIfNecessary();
+        if (mAdapter != null)
+        {
+            mAdapter.forceStopLoadingIfNecessary();
+        }
     }
 
     @Override
@@ -434,5 +444,44 @@ public class GalleryFragment extends CommonRefreshableFragmentWithImageWorker
     @Override
     protected boolean isRefreshMenuVisible() {
         return !loadingControl.isLoading();
+    }
+
+    @Override
+    public void pageActivated() {
+        super.pageActivated();
+        if (!isVisible())
+        {
+            return;
+        }
+        // if filtering is requested
+        if (!refreshOnPageActivated)
+        {
+            Intent intent = getActivity().getIntent();
+            if (intent != null)
+            {
+                if (intent.hasExtra(EXTRA_ALBUM) || intent.hasExtra(EXTRA_TAG))
+                {
+                    refresh();
+                }
+            }
+        }
+    }
+
+    @Override
+    public void pageDeactivated() {
+        super.pageDeactivated();
+        if (mTags != null || mAlbum != null)
+        {
+            mTags = null;
+            mAlbum = null;
+            // we need to schedule refresh when the page will be activated in
+            // viewpager to clear filters
+            refreshOnPageActivated = true;
+        }
+    };
+
+    @Override
+    public void photoUploaded() {
+        refreshImmediatelyOrScheduleIfNecessary();
     }
 }

@@ -13,6 +13,7 @@ import com.trovebox.android.app.AlbumsFragment;
 import com.trovebox.android.app.GalleryFragment;
 import com.trovebox.android.app.HomeFragment;
 import com.trovebox.android.app.MainActivity;
+import com.trovebox.android.app.NavigationHandlerFragment;
 import com.trovebox.android.app.SyncFragment;
 import com.trovebox.android.app.TagsFragment;
 
@@ -26,7 +27,7 @@ public class MainActivityTest extends
 
     public MainActivityTest()
     {
-        super("com.trovebox.android.app", MainActivity.class);
+        super(MainActivity.class);
     }
 
     /**
@@ -40,10 +41,9 @@ public class MainActivityTest extends
         instrumentation = getInstrumentation();
     }
 
-    public void testPreconditions()
+    public void testPreconditions() throws InterruptedException
     {
-        fragment = activity.getSupportFragmentManager().findFragmentById(
-                android.R.id.content);
+        fragment = activity.getCurrentFragment();
         assertNotNull(fragment);
         assertTrue(fragment instanceof HomeFragment);
     }
@@ -51,15 +51,15 @@ public class MainActivityTest extends
     public void testTabSelection() throws InterruptedException
     {
 
-        testSingleTabSelection(MainActivity.GALLERY_INDEX,
+        testSingleTabSelection(NavigationHandlerFragment.GALLERY_INDEX,
                 GalleryFragment.class);
-        testSingleTabSelection(MainActivity.SYNC_INDEX,
+        testSingleTabSelection(NavigationHandlerFragment.SYNC_INDEX,
                 SyncFragment.class);
-        testSingleTabSelection(MainActivity.ALBUMS_INDEX,
+        testSingleTabSelection(NavigationHandlerFragment.ALBUMS_INDEX,
                 AlbumsFragment.class);
-        testSingleTabSelection(MainActivity.TAGS_INDEX,
+        testSingleTabSelection(NavigationHandlerFragment.TAGS_INDEX,
                 TagsFragment.class);
-        testSingleTabSelection(MainActivity.HOME_INDEX,
+        testSingleTabSelection(NavigationHandlerFragment.HOME_INDEX,
                 HomeFragment.class);
 
     }
@@ -77,17 +77,15 @@ public class MainActivityTest extends
             @Override
             public void run()
             {
-                actionBar.selectTab(actionBar
-                        .getTabAt(index));
+                activity.selectTab(index);
             }
         });
         instrumentation.waitForIdleSync();
         CountDownLatch signal = new CountDownLatch(1);
         signal.await(2, TimeUnit.SECONDS);
 
-        fragment = activity.getSupportFragmentManager()
-                .findFragmentById(
-                        android.R.id.content);
+        fragment = getActivity().getCurrentFragment();
+        assertNotNull(fragment);
         assertTrue(fragmentClass.isInstance(fragment));
     }
 }

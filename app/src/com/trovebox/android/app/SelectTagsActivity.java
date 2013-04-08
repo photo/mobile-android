@@ -6,18 +6,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-
 import org.holoeverywhere.LayoutInflater;
-
-import com.trovebox.android.app.R;
-import com.trovebox.android.app.common.CommonActivity;
-import com.trovebox.android.app.common.CommonFragment;
-import com.trovebox.android.app.model.Tag;
-import com.trovebox.android.app.model.utils.TagUtils;
-import com.trovebox.android.app.ui.adapter.MultiSelectTagsAdapter;
-import com.trovebox.android.app.util.LoadingControl;
-import com.trovebox.android.app.util.TrackerUtils;
-import com.trovebox.android.app.util.compare.ToStringComparator;
 
 import android.content.Context;
 import android.content.Intent;
@@ -30,6 +19,15 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ListView;
+
+import com.trovebox.android.app.common.CommonActivity;
+import com.trovebox.android.app.common.CommonFragment;
+import com.trovebox.android.app.model.Tag;
+import com.trovebox.android.app.model.utils.TagUtils;
+import com.trovebox.android.app.ui.adapter.MultiSelectTagsAdapter;
+import com.trovebox.android.app.util.LoadingControl;
+import com.trovebox.android.app.util.TrackerUtils;
+import com.trovebox.android.app.util.compare.ToStringComparator;
 
 public class SelectTagsActivity extends CommonActivity {
 
@@ -65,8 +63,8 @@ public class SelectTagsActivity extends CommonActivity {
         }
 
         @Override
-        public void onViewCreated(View view) {
-            super.onViewCreated(view);
+        public void onViewCreated(View view, Bundle savedInstanceState) {
+            super.onViewCreated(view, savedInstanceState);
             init(view);
         }
         void init(View v)

@@ -45,7 +45,7 @@ import com.trovebox.android.app.bitmapfun.util.ImageCacheUtils;
 import com.trovebox.android.app.bitmapfun.util.ImageFetcher;
 import com.trovebox.android.app.bitmapfun.util.ImageWorker;
 import com.trovebox.android.app.common.CommonActivity;
-import com.trovebox.android.app.common.CommonFrargmentWithImageWorker;
+import com.trovebox.android.app.common.CommonFragmentWithImageWorker;
 import com.trovebox.android.app.facebook.FacebookProvider;
 import com.trovebox.android.app.facebook.FacebookUtils;
 import com.trovebox.android.app.model.Photo;
@@ -182,7 +182,7 @@ public class PhotoDetailsActivity extends CommonActivity implements TwitterLoadi
     public void photoUpdated(Photo photo) {
         getContentFragment().photoUpdated(photo);
     }
-    public static class PhotoDetailsUiFragment extends CommonFrargmentWithImageWorker
+    public static class PhotoDetailsUiFragment extends CommonFragmentWithImageWorker
     {
         static PhotoDetailsUiFragment currentInstance;
         static FragmentAccessor<PhotoDetailsUiFragment> currentInstanceAccessor = new FragmentAccessor<PhotoDetailsUiFragment>() {

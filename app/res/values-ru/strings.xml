@@ -7,7 +7,7 @@
 
     <!-- Menu -->
     <string name="menu_refresh">Обновить</string>
-    <string name="menu_preferences">Настройка</string>
+    <string name="menu_preferences">Настройки</string>
     <string name="menu_exit">Выход</string>
 
     <!-- Share Menu -->
@@ -71,6 +71,7 @@
     <string name="tab_albums">Альбомы</string>
     <string name="tab_sync">Синхронизация</string>
     <string name="tab_account">Учетная запись</string>
+    <string name="tab_preferences">Настройки</string>
 
     <!-- UploadActivity -->
     <string name="uploading_in_background">Загрузка начата</string>
@@ -82,7 +83,7 @@
     <string name="upload_select_tags">Выберите теги</string>
     <string name="upload_select_tags_finish">Завершить</string>
     <string name="upload_description">Описание</string>
-    <string name="upload_private">Приватный доступ</string>
+    <string name="upload_private">Приватная фотография</string>
     <string name="upload_share_facebook">Публикация в Facebook</string>
     <string name="upload_share_twitter">Публикация в Twitter</string>
     <string name="upload_upload_original">Загрузить оригинал</string>
@@ -117,8 +118,8 @@
     <!-- Newest Home -->
     <string name="newest_this_photo_was_taken">Эта фотография была сделана %1$d %2$s тому назад.</string>
     <string name="newest_this_photo_was_taken_less_one_hour">Эта фотография была сделана менее часа назад</string>
-    <string name="havent_uploaded_any_photos">Похоже, что Вы еще не загрузили ни одной фотографии</string>
-    <string name="use_sync_to_start">Используйте вкладку синхронизации чтобы начать!</string>
+    <string name="havent_uploaded_any_photos">Нет загруженных фотографий</string>
+    <string name="use_sync_to_start">Начните синхронизацию!</string>
 
     <!-- general -->
     <string name="day">дн.</string>
@@ -188,7 +189,7 @@
     <string name="setting_account_facebook_loggedin_logout">Выход из Facebook</string>
     <string name="setting_account_server_title">URL</string>
     <string name="setting_set_tag_dialog_title">Выберите тег для загружаемых фотографий</string>
-    <string name="setting_set_tag_hint">Включая эти теги</string>
+    <string name="setting_set_tag_hint">Добавить эти теги</string>
     <string name="cache_preference_category">Кэш</string>
     <string name="disk_cache_clear">Очистить дисковый кэш</string>
     <string name="disk_cache_clear_comment">Это удалит загруженные в кэш фотографии.</string>
@@ -243,7 +244,7 @@
     <!-- Photo details edit -->
     <string name="photo_edit_save_button">Сохранить</string>
     <string name="updating_photo_message">Обновление фотографии…</string>
-    <string name="photo_edit_dialog_title">Редактировать эту фотографию</string>
+    <string name="photo_edit_dialog_title">Редактирование фотографии</string>
 
     <!-- Profile details -->
     <string name="profile_counter_photos">фотографий</string>

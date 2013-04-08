@@ -8,7 +8,7 @@ import oauth.signpost.OAuthProvider;
 import oauth.signpost.basic.DefaultOAuthProvider;
 import oauth.signpost.commonshttp.CommonsHttpOAuthConsumer;
 
-import org.holoeverywhere.preference.PreferenceManager;
+import org.holoeverywhere.preference.PreferenceManagerHelper;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -27,7 +27,7 @@ public class Preferences {
 
     public static SharedPreferences getDefaultSharedPreferences(Context context)
     {
-        return PreferenceManager.wrap(TroveboxApplication.getContext() == null ? context
+        return PreferenceManagerHelper.wrap(TroveboxApplication.getContext() == null ? context
                 : TroveboxApplication.getContext(),
                 PREFERENCES_NAME,
                 PREFERENCES_MODE);
@@ -35,7 +35,7 @@ public class Preferences {
 
     public static SharedPreferences getSharedPreferences(String name)
     {
-        return PreferenceManager.wrap(TroveboxApplication.getContext(),
+        return PreferenceManagerHelper.wrap(TroveboxApplication.getContext(),
                 name,
                 PREFERENCES_MODE);
     }
