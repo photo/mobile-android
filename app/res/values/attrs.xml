@@ -5,5 +5,22 @@
         <attr name="icon" />
         <attr name="title" />
     </declare-styleable>
+    <!-- Start attrs definition block -->
+    <attr name="sliderNavigationItemStyle" format="reference" />
+    <attr name="selectionHandler" format="color|reference" />
+    <attr name="selectionHandlerVisiblity" format="enum">
+        <enum name="invisible" value="1" />
+        <enum name="visible" value="0" />
+    </attr>
+    <attr name="titleLayout" format="reference" />
+    <!-- Start styleable definition block -->
+    <declare-styleable name="SliderNavigationItem">
+        <attr name="android:background" />
+        <attr name="android:gravity" />
+        <attr name="android:text" />
+        <attr name="android:textColor" />
+        <attr name="selectionHandler" />
+        <attr name="selectionHandlerVisiblity" />
+    </declare-styleable>
 
 </resources>

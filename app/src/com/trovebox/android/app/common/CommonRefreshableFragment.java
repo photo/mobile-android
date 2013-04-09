@@ -1,11 +1,7 @@
 
 package com.trovebox.android.app.common;
 
-import org.holoeverywhere.LayoutInflater;
-
 import android.os.Bundle;
-import android.view.View;
-import android.view.ViewGroup;
 
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
@@ -17,27 +13,19 @@ import com.trovebox.android.app.R;
  * 
  * @author Eugene Popovich
  */
-public abstract class CommonRefreshableFragmentWithImageWorker extends
-        CommonFragmentWithImageWorker implements
+public abstract class CommonRefreshableFragment extends
+        CommonFragment implements
         Refreshable {
-    protected boolean refreshOnPageActivated = false;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
     }
-
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.refreshable, menu);
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        refreshOnPageActivated = false;
-        return super.onCreateView(inflater, container, savedInstanceState);
     }
 
     @Override
@@ -65,39 +53,5 @@ public abstract class CommonRefreshableFragmentWithImageWorker extends
     }
 
     protected abstract boolean isRefreshMenuVisible();
-
-    @Override
-    public void pageActivated() {
-        super.pageActivated();
-        if (!isVisible())
-        {
-            return;
-        }
-        // if refresh is scheduled
-        if (refreshOnPageActivated)
-        {
-            refreshOnPageActivated = false;
-            refresh();
-        }
-    }
-
-    /**
-     * Refresh immediately or schedule depend on isActivePage field. Also
-     * refresh may be skipped if isVisible is false
-     */
-    protected void refreshImmediatelyOrScheduleIfNecessary()
-    {
-        if (!isVisible())
-        {
-            return;
-        }
-        if (isActivePage)
-        {
-            refresh();
-        } else
-        {
-            refreshOnPageActivated = true;
-        }
-    }
 
 }

@@ -18,7 +18,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 
-import com.trovebox.android.app.common.CommonFragment;
+import com.trovebox.android.app.common.CommonRefreshableFragment;
 import com.trovebox.android.app.model.Tag;
 import com.trovebox.android.app.ui.adapter.MultiSelectTagsAdapter;
 import com.trovebox.android.app.util.CommonUtils;
@@ -26,7 +26,7 @@ import com.trovebox.android.app.util.GalleryOpenControl;
 import com.trovebox.android.app.util.LoadingControl;
 import com.trovebox.android.app.util.TrackerUtils;
 
-public class TagsFragment extends CommonFragment
+public class TagsFragment extends CommonRefreshableFragment
 {
     public static final String TAG = TagsFragment.class.getSimpleName();
 
@@ -47,10 +47,6 @@ public class TagsFragment extends CommonFragment
     }
 
     public void init(View v) {
-        mAdapter = new TagsAdapter();
-        ListView list = (ListView) v.findViewById(R.id.list_tags);
-        list.setAdapter(mAdapter);
-
         final EditText search = (EditText) v.findViewById(R.id.edit_search);
         search.setOnEditorActionListener(new OnEditorActionListener()
         {
@@ -93,8 +89,15 @@ public class TagsFragment extends CommonFragment
                 galleryOpenControl.openGallery(mAdapter.getSelectedTags(), null);
             }
         });
+        refresh(v);
     }
 
+    void refresh(View v)
+    {
+        ListView list = (ListView) v.findViewById(R.id.list_tags);
+        mAdapter = new TagsAdapter();
+        list.setAdapter(mAdapter);
+    }
     @Override
     public void onAttach(Activity activity)
     {
@@ -150,6 +153,16 @@ public class TagsFragment extends CommonFragment
             galleryOpenControl.openGallery(tag.getTag(), null);
         }
 
+    }
+
+    @Override
+    public void refresh() {
+        refresh(getView());
+    }
+
+    @Override
+    protected boolean isRefreshMenuVisible() {
+        return !loadingControl.isLoading();
     }
 
 }

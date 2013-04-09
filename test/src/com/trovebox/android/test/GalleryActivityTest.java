@@ -16,10 +16,10 @@ import org.powermock.api.easymock.PowerMock;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 
-import com.actionbarsherlock.app.ActionBar;
 import com.jayway.android.robotium.solo.Solo;
 import com.trovebox.android.app.GalleryFragment.GalleryAdapterExt;
 import com.trovebox.android.app.MainActivity;
+import com.trovebox.android.app.NavigationHandlerFragment;
 import com.trovebox.android.app.net.Paging;
 import com.trovebox.android.app.net.PhotoResponse;
 import com.trovebox.android.app.net.PhotosResponse;
@@ -73,9 +73,7 @@ public class GalleryActivityTest extends
             @Override
             public void run()
             {
-                ActionBar actionBar = getActivity().getSupportActionBar();
-                actionBar.selectTab(actionBar
-                        .getTabAt(MainActivity.GALLERY_INDEX));
+                getActivity().selectTab(NavigationHandlerFragment.GALLERY_INDEX);
             }
         });
         getInstrumentation().waitForIdleSync();

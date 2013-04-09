@@ -2,8 +2,9 @@
 package com.trovebox.android.app;
 
 
+import org.holoeverywhere.HoloEverywhere;
+import org.holoeverywhere.HoloEverywhere.PreferenceImpl;
 import org.holoeverywhere.app.Application;
-import org.holoeverywhere.app.Application.Config.PreferenceImpl;
 
 import android.content.Context;
 
@@ -44,8 +45,8 @@ public class TroveboxApplication extends Application
                 Preferences.setServer(this, lowerCaseServerName);
             }
         }
+        HoloEverywhere.PREFERENCE_IMPL = PreferenceImpl.XML;
         GuiUtils.setup();
-        getConfig().setPreferenceImpl(PreferenceImpl.XML);
         
         FacebookProvider.init(getString(R.string.facebook_app_id),
                 getApplicationContext());

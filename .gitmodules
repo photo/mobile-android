@@ -3,7 +3,7 @@
 	url = git://github.com/photo/facebook-android-sdk.git
 [submodule "submodules/HoloEverywhere"]
 	path = submodules/HoloEverywhere
-	url = git://github.com/ChristopheVersieux/HoloEverywhere.git
+	url = git://github.com/Prototik/HoloEverywhere.git
 [submodule "submodules/PhotoView"]
 	path = submodules/PhotoView
 	url = https://github.com/chrisbanes/PhotoView.git
