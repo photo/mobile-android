@@ -2,8 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.trovebox.android.app"
     android:installLocation="auto"
-    android:versionCode="6"
-    android:versionName="1.5" >
+    android:versionCode="8"
+    android:versionName="1.7" >
 
 
     <uses-sdk
