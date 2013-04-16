@@ -7,9 +7,6 @@ import org.holoeverywhere.app.Activity;
 import org.holoeverywhere.app.Dialog;
 import org.holoeverywhere.app.DialogFragment;
 
-import com.trovebox.android.app.util.CommonUtils;
-import com.trovebox.android.app.util.TrackerUtils;
-
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
@@ -17,6 +14,9 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.trovebox.android.app.util.CommonUtils;
+import com.trovebox.android.app.util.TrackerUtils;
 
 /**
  * Common parent dialog fragment
@@ -129,9 +129,9 @@ public class CommonDialogFragment extends DialogFragment
     }
 
     @Override
-    public void onViewCreated(View view)
+    public void onViewCreated(View view, Bundle savedInstanceState)
     {
-        super.onViewCreated(view);
+        super.onViewCreated(view, savedInstanceState);
         trackLifecycleEvent("onViewCreated");
     }
 

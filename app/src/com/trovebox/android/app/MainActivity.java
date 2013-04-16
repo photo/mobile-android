@@ -6,19 +6,19 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.holoeverywhere.addon.AddonSlider;
+import org.holoeverywhere.addon.AddonSlider.AddonSliderA;
+import org.holoeverywhere.app.Activity;
+import org.holoeverywhere.app.Activity.Addons;
+
 import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
-import android.view.View;
-import android.view.inputmethod.InputMethodManager;
 
 import com.actionbarsherlock.app.ActionBar;
-import com.actionbarsherlock.app.ActionBar.Tab;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
@@ -29,19 +29,18 @@ import com.trovebox.android.app.SyncFragment.SyncHandler;
 import com.trovebox.android.app.TwitterFragment.TwitterLoadingControlAccessor;
 import com.trovebox.android.app.bitmapfun.util.ImageCacheUtils;
 import com.trovebox.android.app.common.CommonActivity;
-import com.trovebox.android.app.common.Refreshable;
 import com.trovebox.android.app.facebook.FacebookProvider;
 import com.trovebox.android.app.model.Photo;
 import com.trovebox.android.app.model.utils.PhotoUtils;
 import com.trovebox.android.app.model.utils.PhotoUtils.PhotoDeletedHandler;
 import com.trovebox.android.app.model.utils.PhotoUtils.PhotoUpdatedHandler;
-import com.trovebox.android.app.net.SystemVersionResponseUtils;
 import com.trovebox.android.app.net.account.AccountLimitUtils;
 import com.trovebox.android.app.provider.UploadsUtils;
 import com.trovebox.android.app.provider.UploadsUtils.UploadsClearedHandler;
 import com.trovebox.android.app.purchase.PurchaseController;
 import com.trovebox.android.app.purchase.PurchaseController.PurchaseHandler;
-import com.trovebox.android.app.service.UploaderService;
+import com.trovebox.android.app.purchase.PurchaseControllerUtils;
+import com.trovebox.android.app.purchase.PurchaseControllerUtils.SubscriptionPurchasedHandler;
 import com.trovebox.android.app.service.UploaderServiceUtils;
 import com.trovebox.android.app.service.UploaderServiceUtils.PhotoUploadedHandler;
 import com.trovebox.android.app.twitter.TwitterUtils;
@@ -55,25 +54,18 @@ import com.trovebox.android.app.util.SyncUtils.SyncStartedHandler;
 import com.trovebox.android.app.util.TrackerUtils;
 import com.trovebox.android.app.util.Utils;
 
+@Addons(Activity.ADDON_SLIDER)
 public class MainActivity extends CommonActivity
         implements LoadingControl, GalleryOpenControl, SyncHandler,
         UploadsClearedHandler, PhotoUploadedHandler, TwitterLoadingControlAccessor,
         FacebookLoadingControlAccessor, SyncStartedHandler,
         PhotoDeletedHandler, PhotoUpdatedHandler, StartNowHandler,
-        PurchaseHandler
+        PurchaseHandler, SubscriptionPurchasedHandler
 {
-    public static final int HOME_INDEX = 0;
-    public static final int GALLERY_INDEX = 1;
-    public static final int SYNC_INDEX = 2;
-    public static final int ALBUMS_INDEX = 3;
-    public static final int TAGS_INDEX = 4;
-    public static final int ACCOUNT_INDEX = 4;
-    private static final String HOME_TAG = "home";
-    private static final String GALLERY_TAG = "gallery";
-    private static final String SYNC_TAG = "sync";
-    private static final String ACCOUNT_TAG = "account";
+    private static final String NAVIGATION_HANDLER_FRAGMENT_TAG = "NavigationHandlerFragment";
+
     public static final String TAG = MainActivity.class.getSimpleName();
-    public static final String ACTIVE_TAB = "ActiveTab";
+
     public final static int AUTHORIZE_ACTIVITY_REQUEST_CODE = 0;
     public final static int PURCHASE_FLOW_REQUEST_CODE = 1;
 
@@ -83,7 +75,6 @@ public class MainActivity extends CommonActivity
 
     private List<BroadcastReceiver> receivers = new ArrayList<BroadcastReceiver>();
     boolean instanceSaved = false;
-    boolean actionbBarNavigationModeInitiated = false;
 
     final Handler handler = new Handler();
     PurchaseController purchaseController;
@@ -120,22 +111,14 @@ public class MainActivity extends CommonActivity
         requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
         mActionBar = getSupportActionBar();
         mActionBar.setDisplayUseLogoEnabled(true);
-        mActionBar.setDisplayShowTitleEnabled(false);
-        if (!UploaderServiceUtils.isServiceRunning())
+        mActionBar.setDisplayShowTitleEnabled(true);
+        if (loaders.get() == 0)
         {
-            TrackerUtils.trackBackgroundEvent(
-                    "uploader_service_start",
-                    "starting_not_running_service_from_main");
-            CommonUtils.debug(TAG, "Uploader service is not run. Starting...");
-            // To make sure the service is initialized
-            startService(new Intent(this, UploaderService.class));
+            setSupportProgressBarIndeterminateVisibility(false);
         }
 
-        // This has to be called before setContentView and you must use the
-        // class in com.actionbarsherlock.view and NOT android.view
+        setContentView(R.layout.content);
 
-        setUpTabs(savedInstanceState == null ? 0 : savedInstanceState.getInt(
-                ACTIVE_TAB, 1), savedInstanceState);
         receivers.add(UploadsUtils
                 .getAndRegisterOnUploadClearedActionBroadcastReceiver(TAG,
                         this, this));
@@ -149,6 +132,39 @@ public class MainActivity extends CommonActivity
                 TAG, this, this));
         receivers.add(ImageCacheUtils.getAndRegisterOnDiskCacheClearedBroadcastReceiver(TAG,
                 this));
+        receivers.add(PurchaseControllerUtils
+                .getAndRegisterOnSubscriptionPurchasedActionBroadcastReceiver(TAG, this, this));
+    }
+
+    @Override
+    protected void onPostCreate(Bundle sSavedInstanceState) {
+        super.onPostCreate(sSavedInstanceState);
+        // //TODO hack which refreshes indeterminate progress state on
+        // // orientation change
+        // handler.postDelayed(new Runnable() {
+        //
+        // @Override
+        // public void run() {
+        // startLoading();
+        // stopLoading();
+        // }
+        // }, 100);
+
+        final AddonSliderA slider = addonSlider();
+        mActionBar.setDisplayHomeAsUpEnabled(true);
+        slider.setLeftViewWidth(computeMenuWidth());
+        slider.setDragWithActionBar(true);
+        navigationHandlerFragment = (NavigationHandlerFragment) getSupportFragmentManager()
+                .findFragmentByTag(NAVIGATION_HANDLER_FRAGMENT_TAG);
+        if (navigationHandlerFragment == null)
+        {
+            navigationHandlerFragment = (NavigationHandlerFragment) Fragment.instantiate(
+                    MainActivity.this,
+                    NavigationHandlerFragment.class.getName());
+            getSupportFragmentManager().beginTransaction()
+                    .add(R.id.leftView, navigationHandlerFragment,
+                            NAVIGATION_HANDLER_FRAGMENT_TAG).commit();
+        }
         if (CommonUtils.checkLoggedIn(true))
         {
             AccountLimitUtils.updateLimitInformationCacheAsync(this);
@@ -170,114 +186,17 @@ public class MainActivity extends CommonActivity
         }
     }
 
-    private void setUpTabs(final int activeTab, Bundle savedInstanceState)
-    {
-        addTab(R.drawable.tab_home_2states,
-                R.string.tab_home,
-                new TabListener<HomeFragment>(HOME_TAG, HomeFragment.class,
-                        null));
-        addTab(R.drawable.tab_gallery_2states,
-                R.string.tab_gallery,
-                new TabListener<GalleryFragment>(GALLERY_TAG,
-                        GalleryFragment.class, null, false,
-                        new Runnable() {
-                            @Override
-                            public void run() {
-                                GalleryFragment gf = (GalleryFragment) getSupportFragmentManager()
-                                        .findFragmentByTag(GALLERY_TAG);
-                                if (gf != null)
-                                {
-                                    gf.cleanRefreshIfFiltered();
-                                }
-                            }
-                        }));
-        addTab(View.NO_ID,
-                R.string.tab_sync,
-                new TabListener<SyncFragment>(SYNC_TAG,
-                        SyncFragment.class, null));
-        addTab(View.NO_ID,
-                R.string.tab_albums,
-                new TabListener<AlbumsFragment>("albums",
-                        AlbumsFragment.class, null));
-        addTab(R.drawable.tab_tags_2states,
-                R.string.tab_tags,
-                new TabListener<TagsFragment>("tags",
-                        TagsFragment.class, null));
-        // the account tab should appear only for hosted installation such
-        // as profile api is absent on self-hosted
-        if (CommonUtils.checkLoggedIn(true))
-        {
-            SystemVersionResponseUtils
-                    .tryToUpdateSystemVersionCacheIfNecessaryAndRunInContextAsync(
-                            new Runnable() {
-
-                                @Override
-                                public void run() {
-                                    if (!isFinishing())
-                                    {
-                                        if (Preferences.isHosted())
-                                        {
-                                            addTab(View.NO_ID,
-                                                    R.string.tab_account,
-                                                    new TabListener<AccountFragment>(ACCOUNT_TAG,
-                                                            AccountFragment.class, null));
-                                            if (activeTab == ACCOUNT_INDEX)
-                                            {
-                                                mActionBar.selectTab(mActionBar.getTabAt(activeTab));
-                                            }
-                                        }
-                                    }
-                                }
-                            }, this);
-        }
-        // sych as account tab may be absent at this step
-        // we need to exclute tab selection in case actibeTab
-        // is account
-        if (activeTab != ACCOUNT_INDEX)
-        {
-            mActionBar.selectTab(mActionBar.getTabAt(activeTab));
-        }
-        // hack which refreshes indeterminate progress state on
-        // orientation change
-        handler.postDelayed(new Runnable() {
-
-            @Override
-            public void run() {
-                startLoading();
-                stopLoading();
-            }
-        }, 100);
-    }
-
     @Override
     protected void onSaveInstanceState(Bundle outState)
     {
         super.onSaveInstanceState(outState);
         instanceSaved = true;
-        outState.putInt(ACTIVE_TAB, mActionBar.getSelectedNavigationIndex());
-    }
-
-    private <T extends Fragment> void addTab(int drawableResId,
-            int textResId,
-            TabListener<T> tabListener)
-    {
-        Tab tab = mActionBar
-                .newTab()
-                .setText(textResId)
-                // .setIcon(drawableResId)
-                .setTabListener(tabListener);
-        mActionBar.addTab(tab);
     }
 
     @Override
     protected void onResume()
     {
         super.onResume();
-        if (!actionbBarNavigationModeInitiated)
-        {
-            mActionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
-            actionbBarNavigationModeInitiated = true;
-        }
         instanceSaved = false;
         reinitMenu();
 
@@ -360,6 +279,14 @@ public class MainActivity extends CommonActivity
         // Handle item selection
         switch (item.getItemId())
         {
+            case android.R.id.home:
+                TrackerUtils.trackOptionsMenuClickEvent("menu_home", MainActivity.this);
+                if (getSupportFragmentManager().getBackStackEntryCount() == 0) {
+                    addonSlider().toggle();
+                } else {
+                    onBackPressed();
+                }
+                return true;
             case R.id.menu_settings: {
                 TrackerUtils.trackOptionsMenuClickEvent("menu_settings", MainActivity.this);
                 Intent i = new Intent(this, SettingsActivity.class);
@@ -401,10 +328,14 @@ public class MainActivity extends CommonActivity
         }
     }
 
-    Fragment getCurrentFragment()
+    /**
+     * Get the currently selected fragment
+     * 
+     * @return
+     */
+    public Fragment getCurrentFragment()
     {
-        return getSupportFragmentManager().findFragmentById(
-                android.R.id.content);
+        return navigationHandlerFragment.getCurrentFragment();
     }
 
     @Override
@@ -418,7 +349,7 @@ public class MainActivity extends CommonActivity
         }
         intent.putExtra(GalleryFragment.EXTRA_TAG, tag);
         intent.putExtra(GalleryFragment.EXTRA_ALBUM, album);
-        mActionBar.selectTab(mActionBar.getTabAt(GALLERY_INDEX));
+        selectTab(NavigationHandlerFragment.GALLERY_INDEX);
     }
 
     @Override
@@ -457,107 +388,15 @@ public class MainActivity extends CommonActivity
         });
     }
 
-    public class TabListener<T extends Fragment> implements
-            ActionBar.TabListener
-    {
-        private final String mTag;
-        private final Class<T> mClass;
-        private final Bundle mArgs;
-        private Fragment mFragment;
-        private Runnable runOnReselect;
-
-        public TabListener(String tag, Class<T> clz,
-                Bundle args)
-        {
-            this(tag, clz, args, false, null);
-        }
-
-        public TabListener(String tag, Class<T> clz,
-                Bundle args, boolean removeIfExists,
-                Runnable runOnReselect)
-        {
-            mTag = tag;
-            mClass = clz;
-            mArgs = args;
-            this.runOnReselect = runOnReselect;
-            FragmentTransaction ft = getSupportFragmentManager()
-                    .beginTransaction();
-
-            // Check to see if we already have a fragment for this tab, probably
-            // from a previously saved state. If so, deactivate it, because our
-            // initial state is that a tab isn't shown.
-            mFragment = getSupportFragmentManager()
-                    .findFragmentByTag(mTag);
-            if (mFragment != null && !mFragment.isDetached())
-            {
-                ft.detach(mFragment);
-            }
-            if (removeIfExists && mFragment != null)
-            {
-                ft.remove(mFragment);
-            }
-        }
-
-        @Override
-        public void onTabSelected(Tab tab, FragmentTransaction ft)
-        {
-            CommonUtils.debug(TAG, "onTabSelected");
-            TrackerUtils.trackTabSelectedEvent(mTag, MainActivity.this);
-            if (mFragment == null)
-            {
-                mFragment = Fragment.instantiate(MainActivity.this,
-                        mClass.getName(),
-                        mArgs);
-                ft.replace(android.R.id.content, mFragment, mTag);
-            } else
-            {
-                ft.attach(mFragment);
-            }
-            reinitMenu();
-        }
-
-        @Override
-        public void onTabUnselected(Tab tab, FragmentTransaction ft)
-        {
-            CommonUtils.debug(TAG, "onTabUnselected");
-            if (mFragment != null)
-            {
-                if (mFragment.getView() != null)
-                {
-                    View target = mFragment.getView().findFocus();
-
-                    if (target != null)
-                    {
-                        InputMethodManager mgr = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                        mgr.hideSoftInputFromWindow(target.getWindowToken(), 0);
-                    }
-                }
-                ft.detach(mFragment);
-            }
-
-        }
-
-        @Override
-        public void onTabReselected(Tab tab, FragmentTransaction ft)
-        {
-            TrackerUtils.trackTabReselectedEvent(mTag, MainActivity.this);
-            CommonUtils.debug(TAG, "onTabReselected");
-            if (runOnReselect != null)
-            {
-                runOnReselect.run();
-            }
-        }
-    }
-
     @Override
     public void syncStarted()
     {
         CommonUtils.debug(TAG, "Sync started");
-        if (mActionBar.getSelectedNavigationIndex() == SYNC_INDEX)
+        if (navigationHandlerFragment.getSelectedNavigationIndex() == NavigationHandlerFragment.SYNC_INDEX)
         {
             if (!instanceSaved)
             {
-                mActionBar.selectTab(mActionBar.getTabAt(HOME_INDEX));
+                selectTab(NavigationHandlerFragment.HOME_INDEX);
             }
         }
     }
@@ -565,8 +404,8 @@ public class MainActivity extends CommonActivity
     @Override
     public void uploadsCleared()
     {
-        SyncFragment fragment = (SyncFragment) getSupportFragmentManager()
-                .findFragmentByTag(SYNC_TAG);
+        SyncFragment fragment = navigationHandlerFragment
+                .getFragment(NavigationHandlerFragment.SYNC_INDEX);
         if (fragment != null)
         {
             fragment.uploadsCleared();
@@ -575,16 +414,16 @@ public class MainActivity extends CommonActivity
 
     @Override
     public void photoUploaded() {
-        switch (mActionBar.getSelectedNavigationIndex())
+        HomeFragment homeFragment = navigationHandlerFragment.getHomeFragment();
+        if (homeFragment != null)
         {
-            case HOME_INDEX:
-            case GALLERY_INDEX:
-                Fragment fragment = getCurrentFragment();
-                if (fragment != null)
-                {
-                    ((Refreshable) fragment).refresh();
-                }
-                break;
+            homeFragment.photoUploaded();
+        }
+
+        GalleryFragment galleryFragment = navigationHandlerFragment.getGalleryFragment();
+        if (galleryFragment != null)
+        {
+            galleryFragment.photoUploaded();
         }
     }
 
@@ -615,8 +454,7 @@ public class MainActivity extends CommonActivity
     @Override
     public void syncStarted(List<String> processedFileNames) {
         CommonUtils.debug(TAG, "Sync started call");
-        SyncFragment syncFragment = (SyncFragment) getSupportFragmentManager().findFragmentByTag(
-                SYNC_TAG);
+        SyncFragment syncFragment = navigationHandlerFragment.getSyncFragment();
         if (syncFragment != null)
         {
             syncFragment.syncStarted(processedFileNames);
@@ -626,15 +464,13 @@ public class MainActivity extends CommonActivity
     @Override
     public void photoDeleted(Photo photo)
     {
-        HomeFragment homeFragment = (HomeFragment) getSupportFragmentManager().findFragmentByTag(
-                HOME_TAG);
+        HomeFragment homeFragment = navigationHandlerFragment.getHomeFragment();
         if (homeFragment != null)
         {
             homeFragment.photoDeleted(photo);
         }
 
-        GalleryFragment galleryFragment = (GalleryFragment) getSupportFragmentManager()
-                .findFragmentByTag(GALLERY_TAG);
+        GalleryFragment galleryFragment = navigationHandlerFragment.getGalleryFragment();
         if (galleryFragment != null)
         {
             galleryFragment.photoDeleted(photo);
@@ -644,15 +480,13 @@ public class MainActivity extends CommonActivity
     @Override
     public void photoUpdated(Photo photo)
     {
-        HomeFragment homeFragment = (HomeFragment) getSupportFragmentManager().findFragmentByTag(
-                HOME_TAG);
+        HomeFragment homeFragment = navigationHandlerFragment.getHomeFragment();
         if (homeFragment != null)
         {
             homeFragment.photoUpdated(photo);
         }
 
-        GalleryFragment galleryFragment = (GalleryFragment) getSupportFragmentManager()
-                .findFragmentByTag(GALLERY_TAG);
+        GalleryFragment galleryFragment = navigationHandlerFragment.getGalleryFragment();
         if (galleryFragment != null)
         {
             galleryFragment.photoUpdated(photo);
@@ -662,11 +496,11 @@ public class MainActivity extends CommonActivity
     @Override
     public void startNow() {
         CommonUtils.debug(TAG, "Start now");
-        if (mActionBar.getSelectedNavigationIndex() != SYNC_INDEX)
+        if (navigationHandlerFragment.getSelectedNavigationIndex() != NavigationHandlerFragment.SYNC_INDEX)
         {
             if (!instanceSaved)
             {
-                mActionBar.selectTab(mActionBar.getTabAt(SYNC_INDEX));
+                selectTab(NavigationHandlerFragment.SYNC_INDEX);
             }
         }
     }
@@ -675,5 +509,44 @@ public class MainActivity extends CommonActivity
     public void purchaseMonthlySubscription() {
         purchaseController.purchaseMonthlySubscription(this, PURCHASE_FLOW_REQUEST_CODE,
                 currentInstanceAccessor);
+    }
+
+    private NavigationHandlerFragment navigationHandlerFragment;
+
+    /**
+     * Get the slider addon
+     * 
+     * @return
+     */
+    public AddonSliderA addonSlider() {
+        return addon(AddonSlider.class);
+    }
+
+    private int computeMenuWidth() {
+        return (int) getResources().getDimensionPixelSize(R.dimen.slider_menu_width);
+    }
+
+    /**
+     * Set the action bar title
+     * 
+     * @param title
+     */
+    public void setActionBarTitle(String title)
+    {
+        mActionBar.setTitle(title);
+    }
+
+    public void selectTab(int index)
+    {
+        navigationHandlerFragment.selectTab(index);
+    }
+
+    @Override
+    public void subscriptionPurchased() {
+        AccountFragment accountFragment = navigationHandlerFragment.getAccountFragment();
+        if (accountFragment != null)
+        {
+            accountFragment.subscriptionPurchased();
+        }
     }
 }

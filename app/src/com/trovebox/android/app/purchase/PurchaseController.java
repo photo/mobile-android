@@ -77,7 +77,6 @@ public class PurchaseController {
         return context.getString(R.string.application_public_key);
     }
 
-
     /**
      * Get the already configured instance of {@link PurchaseController}
      * 
@@ -132,8 +131,18 @@ public class PurchaseController {
                 // Hooray, IAB is fully set up. Now, let's get an inventory of
                 // stuff we own.
                 CommonUtils.debug(TAG, "Setup successful. Querying inventory.");
-                mHelper.queryInventoryAsync(new GotInventoryListener(loadingControl),
-                        loadingControl);
+                // need to check whether mHelper is not null. It may be null in
+                // case parent activity was destroyed such as action is async.
+                // Issue #382
+                if (mHelper != null)
+                {
+                    mHelper.queryInventoryAsync(new GotInventoryListener(loadingControl),
+                            loadingControl);
+                } else
+                {
+                    TrackerUtils.trackInAppBillingEvent("setup_result",
+                            "fail: helper is null");
+                }
             }
         });
     }
@@ -207,7 +216,6 @@ public class PurchaseController {
 
         return true;
     }
-
 
     /**
      * Start purchase monthly subscription flow
@@ -391,6 +399,7 @@ public class PurchaseController {
                         {
                             AccountLimitUtils.updateLimitInformationCacheAsync(getLoadingControl());
                         }
+                        PurchaseControllerUtils.sendSubscriptionPurchasedBroadcast();
                     }
                 }, new Runnable() {
 

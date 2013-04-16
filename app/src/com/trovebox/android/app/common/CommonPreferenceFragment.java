@@ -6,13 +6,13 @@ import org.holoeverywhere.LayoutInflater;
 import org.holoeverywhere.app.Activity;
 import org.holoeverywhere.preference.PreferenceFragment;
 
-import com.trovebox.android.app.util.CommonUtils;
-import com.trovebox.android.app.util.TrackerUtils;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.trovebox.android.app.util.CommonUtils;
+import com.trovebox.android.app.util.TrackerUtils;
 
 /**
  * Common preference fragment with lifecycle tracking
@@ -106,9 +106,8 @@ public class CommonPreferenceFragment extends PreferenceFragment
     }
 
     @Override
-    public void onViewCreated(View view)
-    {
-        super.onViewCreated(view);
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
         trackLifecycleEvent("onViewCreated");
     }
 

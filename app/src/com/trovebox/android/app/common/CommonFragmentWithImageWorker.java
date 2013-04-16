@@ -11,7 +11,8 @@ import com.trovebox.android.app.bitmapfun.util.ImageWorker;
 /**
  * @author Eugene Popovich
  */
-public abstract class CommonFrargmentWithImageWorker extends CommonFragment {
+public abstract class CommonFragmentWithImageWorker extends CommonFragment {
+
     protected ImageWorker mImageWorker;
     protected List<ImageWorker> imageWorkers = new ArrayList<ImageWorker>();
 
@@ -62,5 +63,12 @@ public abstract class CommonFrargmentWithImageWorker extends CommonFragment {
                 mImageWorker.setExitTasksEarly(exitTaskEarly);
             }
         }
+    }
+
+
+    @Override
+    public void pageDeactivated() {
+        super.pageDeactivated();
+        clearImageWorkerCaches(true);
     }
 }

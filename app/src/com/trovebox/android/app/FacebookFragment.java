@@ -66,8 +66,8 @@ public class FacebookFragment extends CommonStyledDialogFragment
     }
 
     @Override
-    public void onViewCreated(View view) {
-        super.onViewCreated(view);
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
         init(view);
     }
     @Override

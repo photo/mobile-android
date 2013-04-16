@@ -17,7 +17,7 @@ import android.widget.TextView;
 
 import com.trovebox.android.app.bitmapfun.util.ImageCache;
 import com.trovebox.android.app.bitmapfun.util.ImageFetcher;
-import com.trovebox.android.app.common.CommonFrargmentWithImageWorker;
+import com.trovebox.android.app.common.CommonRefreshableFragmentWithImageWorker;
 import com.trovebox.android.app.model.Album;
 import com.trovebox.android.app.net.AlbumsResponse;
 import com.trovebox.android.app.net.ITroveboxApi;
@@ -36,7 +36,7 @@ import com.trovebox.android.app.util.TrackerUtils;
  * 
  * @author Eugene Popovich
  */
-public class AlbumsFragment extends CommonFrargmentWithImageWorker implements
+public class AlbumsFragment extends CommonRefreshableFragmentWithImageWorker implements
         OnItemClickListener
 {
     public static final String TAG = AlbumsFragment.class.getSimpleName();
@@ -54,12 +54,16 @@ public class AlbumsFragment extends CommonFrargmentWithImageWorker implements
     {
         View v = inflater.inflate(R.layout.fragment_albums, container, false);
 
+        refresh(v);
+        return v;
+    }
+
+    void refresh(View v)
+    {
         mAdapter = new AlbumsAdapter();
         ListView list = (ListView) v.findViewById(R.id.list_albums);
         list.setAdapter(mAdapter);
         list.setOnItemClickListener(this);
-
-        return v;
     }
     @Override
     public void onAttach(Activity activity)
@@ -97,6 +101,15 @@ public class AlbumsFragment extends CommonFrargmentWithImageWorker implements
         mAdapter.forceStopLoadingIfNecessary();
     }
 
+    @Override
+    public void refresh() {
+        refresh(getView());
+    }
+
+    @Override
+    protected boolean isRefreshMenuVisible() {
+        return !loadingControl.isLoading();
+    }
     private class AlbumsAdapter extends EndlessAdapter<Album>
     {
         public static final int DEFAULT_PAGE_SIZE = 20;

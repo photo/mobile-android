@@ -215,6 +215,11 @@ public class IabHelper {
                 public void onServiceConnected(ComponentName name, IBinder service) {
                     logDebug("Billing service connected.");
                     mService = IInAppBillingService.Stub.asInterface(service);
+                    if (mSetupDone)
+                    {
+                        logDebug("IabHelper was already setup, skipping further initialization");
+                        return;
+                    }
                     String packageName = mContext.getPackageName();
                     try {
                         logDebug("Checking for in-app billing 3 support.");

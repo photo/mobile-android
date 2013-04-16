@@ -38,6 +38,7 @@ import com.trovebox.android.app.model.utils.PhotoUtils.PhotoDeletedHandler;
 import com.trovebox.android.app.model.utils.PhotoUtils.PhotoUpdatedHandler;
 import com.trovebox.android.app.net.ReturnSizes;
 import com.trovebox.android.app.net.TroveboxApi;
+import com.trovebox.android.app.service.UploaderServiceUtils.PhotoUploadedHandler;
 import com.trovebox.android.app.share.ShareUtils;
 import com.trovebox.android.app.share.ShareUtils.FacebookShareRunnable;
 import com.trovebox.android.app.share.ShareUtils.TwitterShareRunnable;
@@ -52,7 +53,7 @@ import com.trovebox.android.app.util.RunnableWithParameter;
 import com.trovebox.android.app.util.TrackerUtils;
 
 public class HomeFragment extends CommonRefreshableFragmentWithImageWorker
-        implements PhotoDeletedHandler, PhotoUpdatedHandler
+        implements PhotoDeletedHandler, PhotoUpdatedHandler, PhotoUploadedHandler
 {
     public static final String TAG = HomeFragment.class.getSimpleName();
 
@@ -96,11 +97,17 @@ public class HomeFragment extends CommonRefreshableFragmentWithImageWorker
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState)
     {
+        super.onCreateView(inflater, container, savedInstanceState);
         View v = inflater.inflate(R.layout.fragment_home, container, false);
         mInflater = inflater;
 
-        refresh(v);
         return v;
+    }
+
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        refresh();
     }
 
     @Override
@@ -154,7 +161,10 @@ public class HomeFragment extends CommonRefreshableFragmentWithImageWorker
     public void onDestroyView()
     {
         super.onDestroyView();
-        mAdapter.forceStopLoadingIfNecessary();
+        if (mAdapter != null)
+        {
+            mAdapter.forceStopLoadingIfNecessary();
+        }
     }
 
     @Override
@@ -581,5 +591,10 @@ public class HomeFragment extends CommonRefreshableFragmentWithImageWorker
     public static interface StartNowHandler
     {
         void startNow();
+    }
+
+    @Override
+    public void photoUploaded() {
+        refreshImmediatelyOrScheduleIfNecessary();
     }
 }

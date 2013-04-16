@@ -22,7 +22,7 @@
         android:text="@string/havent_uploaded_any_photos"
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:textColor="@color/ab_fg_white"
-        android:textSize="13sp" />
+        android:textSize="@dimen/start_now_small_text" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -33,7 +33,7 @@
         android:text="@string/use_sync_to_start"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:textColor="@color/ab_fg_white"
-        android:textSize="20sp"
+        android:textSize="@dimen/start_now_big_text"
         android:textStyle="bold|italic" />
 
 </FrameLayout>

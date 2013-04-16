@@ -16,6 +16,7 @@ import android.view.ViewGroup;
 import com.trovebox.android.app.SyncImageSelectionFragment.NextStepFlow;
 import com.trovebox.android.app.SyncUploadFragment.PreviousStepFlow;
 import com.trovebox.android.app.common.CommonFragment;
+import com.trovebox.android.app.common.lifecycle.ViewPagerHandler;
 import com.trovebox.android.app.provider.UploadsUtils.UploadsClearedHandler;
 import com.trovebox.android.app.util.BackKeyControl;
 import com.trovebox.android.app.util.CommonUtils;
@@ -83,6 +84,28 @@ public class SyncFragment extends CommonFragment implements NextStepFlow,
     @Override
     public void onDetach() {
         super.onDetach();
+    }
+
+    boolean mMenuVisible = true;
+    @Override
+    public void setMenuVisibility(boolean menuVisible) {
+        mMenuVisible = menuVisible;
+        super.setMenuVisibility(menuVisible);
+        if (activeFragment != null)
+        {
+            activeFragment.setMenuVisibility(menuVisible);
+        }
+    }
+
+    boolean mUserVisibleHint = true;
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        mUserVisibleHint = isVisibleToUser;
+        super.setUserVisibleHint(isVisibleToUser);
+        if (activeFragment != null)
+        {
+            activeFragment.setUserVisibleHint(isVisibleToUser);
+        }
     }
 
     @Override
@@ -153,6 +176,8 @@ public class SyncFragment extends CommonFragment implements NextStepFlow,
         }
         transaction.commit();
         activeFragment = fragment;
+        activeFragment.setMenuVisibility(mMenuVisible);
+        activeFragment.setUserVisibleHint(mUserVisibleHint);
     }
 
     String getTagForFragment(Fragment fragment)
@@ -294,5 +319,21 @@ public class SyncFragment extends CommonFragment implements NextStepFlow,
             return true;
         }
         return false;
+    }
+
+    @Override
+    public void pageActivated() {
+        if (activeFragment != null && activeFragment instanceof ViewPagerHandler)
+        {
+            ((ViewPagerHandler) activeFragment).pageActivated();
+        }
+    }
+
+    @Override
+    public void pageDeactivated() {
+        if (activeFragment != null && activeFragment instanceof ViewPagerHandler)
+        {
+            ((ViewPagerHandler) activeFragment).pageDeactivated();
+        }
     }
 }
