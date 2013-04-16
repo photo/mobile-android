@@ -35,6 +35,17 @@ public class GuiUtils
 
 
     /**
+     * Post action to handler
+     * 
+     * @param action
+     */
+    public static final void post(Runnable action)
+    {
+        CommonUtils.debug(TAG, "post");
+        mHandler.post(action);
+    }
+
+    /**
      * Run action in UI thread
      * 
      * @param action

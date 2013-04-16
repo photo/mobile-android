@@ -63,6 +63,16 @@
                         android:inputType="textCapWords" />
 
                     <EditText
+                        android:id="@+id/edit_albums"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:ems="10"
+                        android:focusable="false"
+                        android:focusableInTouchMode="false"
+                        android:hint="@string/upload_albums"
+                        android:inputType="none" />
+
+                    <EditText
                         android:id="@+id/edit_tags"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"

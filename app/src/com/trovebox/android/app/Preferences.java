@@ -237,12 +237,14 @@ public class Preferences {
 
     /**
      * Check whether currently used server is self-hosted
+     * 
      * @return true if server is self-hosted, otherwise return false
      */
     public static boolean isSelfHosted()
     {
         return !isHosted();
     }
+
     /**
      * Check whether currently used server is hosted or self-hosted
      * 
@@ -271,6 +273,7 @@ public class Preferences {
 
     /**
      * Check whether the purchase was already verified by the application
+     * 
      * @param purchase purchase to verify
      * @return true if purchase was successfully verified
      */
@@ -282,6 +285,7 @@ public class Preferences {
 
     /**
      * Set purchase verified state to the cache
+     * 
      * @param purchase related purchase
      * @param verified whether the verification was successful
      */
@@ -290,6 +294,7 @@ public class Preferences {
         getVerifiedPaymentsPreferences().edit().putBoolean(
                 purchase.getDeveloperPayload() + ":" + purchase.getToken(), verified);
     }
+
     /**
      * Check whether necessary system version information already retrieved and
      * stored in the cache
@@ -304,8 +309,8 @@ public class Preferences {
     }
 
     /**
-     * Set whether necessary system version information retrieved
-     * and cached properly
+     * Set whether necessary system version information retrieved and cached
+     * properly
      * 
      * @param value true if information retrieved and saved, false othwerwise
      */
@@ -318,6 +323,7 @@ public class Preferences {
                         value)
                 .commit();
     }
+
     public static void logout(Context context) {
         getDefaultSharedPreferences(context)
                 .edit()
@@ -392,6 +398,14 @@ public class Preferences {
                 prefs.getString(context.getString(R.string.setting_oauth_token), null),
                 prefs.getString(context.getString(R.string.setting_oauth_token_secret), null));
         return consumer;
+    }
+
+    /**
+     * Get the ITroveboxApi implementation
+     * @return
+     */
+    public static ITroveboxApi getApi() {
+        return getApi(TroveboxApplication.getContext());
     }
 
     public static ITroveboxApi getApi(Context context) {

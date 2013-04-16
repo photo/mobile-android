@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.Map;
 import java.util.Set;
 
 import org.holoeverywhere.LayoutInflater;
@@ -20,6 +21,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.provider.MediaStore;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -38,6 +40,7 @@ import com.trovebox.android.app.common.CommonFragment;
 import com.trovebox.android.app.facebook.FacebookProvider;
 import com.trovebox.android.app.facebook.FacebookUtils;
 import com.trovebox.android.app.feather.FeatherFragment;
+import com.trovebox.android.app.model.utils.AlbumUtils;
 import com.trovebox.android.app.model.utils.TagUtils;
 import com.trovebox.android.app.net.UploadMetaData;
 import com.trovebox.android.app.net.account.AccountLimitUtils;
@@ -51,6 +54,7 @@ import com.trovebox.android.app.util.GuiUtils;
 import com.trovebox.android.app.util.ImageUtils;
 import com.trovebox.android.app.util.ProgressDialogLoadingControl;
 import com.trovebox.android.app.util.TrackerUtils;
+import com.trovebox.android.app.util.data.StringMapParcelableWrapper;
 
 /**
  * This activity handles uploading pictures to Trovebox.
@@ -65,6 +69,7 @@ public class UploadActivity extends CommonActivity {
     private static final int REQUEST_GALLERY = 0;
     private static final int REQUEST_CAMERA = 1;
     private static final int REQUEST_TAGS = 2;
+    private static final int REQUEST_ALBUMS = 3;
     private static final int ACTION_REQUEST_FEATHER = 100;
     public final static int AUTHORIZE_ACTIVITY_REQUEST_CODE = 10;
 
@@ -125,6 +130,7 @@ public class UploadActivity extends CommonActivity {
         static final String UPLOAD_IMAGE_FILE = "UploadActivityFile";
         static final String UPLOAD_IMAGE_FILE_ORIGINAL = "UploadActivityFileOriginal";
         static final String UPLOAD_IMAGE_FILE_URI = "UploadActivityFileUri";
+        static final String SELECTED_ALBUMS = "SELECTED_ALBUMS";
 
         private File mUploadImageFile;
         private File mUploadImageFileOriginal;
@@ -137,6 +143,7 @@ public class UploadActivity extends CommonActivity {
 
         FeatherFragment featherFragment;
         EditText tagsText;
+        EditText albumsText;
         private SelectImageDialogFragment imageSelectionFragment;
         /**
          * This variable controls whether the dialog should be shown in the
@@ -203,7 +210,7 @@ public class UploadActivity extends CommonActivity {
         @Override
         public void onViewCreated(View view, Bundle savedInstanceState) {
             super.onViewCreated(view, savedInstanceState);
-            init(view);
+            init(view, savedInstanceState);
         }
 
         @Override
@@ -211,13 +218,14 @@ public class UploadActivity extends CommonActivity {
             super.onSaveInstanceState(outState);
             outState.putSerializable(UPLOAD_IMAGE_FILE, mUploadImageFile);
             outState.putSerializable(UPLOAD_IMAGE_FILE_ORIGINAL, mUploadImageFileOriginal);
+            outState.putParcelable(SELECTED_ALBUMS, (Parcelable) albumsText.getTag());
             if (fileUri != null)
             {
                 outState.putString(UPLOAD_IMAGE_FILE_URI, fileUri.toString());
             }
         }
 
-        void init(View v)
+        void init(View v, Bundle savedInstanceState)
         {
             final Button buttonUpload = (Button) v.findViewById(R.id.button_upload);
             buttonUpload.setOnClickListener(this);
@@ -226,6 +234,11 @@ public class UploadActivity extends CommonActivity {
             v.findViewById(R.id.image_upload).setOnClickListener(this);
             v.findViewById(R.id.button_edit).setOnClickListener(this);
             tagsText = ((EditText) v.findViewById(R.id.edit_tags));
+            albumsText = ((EditText) v.findViewById(R.id.edit_albums));
+            if (savedInstanceState != null)
+            {
+                albumsText.setTag(savedInstanceState.getParcelable(SELECTED_ALBUMS));
+            }
 
             uploadOriginalSwitch = (Switch) v.findViewById(R.id.upload_original_switch);
             privateSwitch = (Switch) v.findViewById(R.id.private_switch);
@@ -240,6 +253,8 @@ public class UploadActivity extends CommonActivity {
                 }
             });
             reinitShareSwitches();
+
+            albumsText.setOnClickListener(this);
 
             Intent intent = getActivity().getIntent();
             boolean showOptions = true;
@@ -271,6 +286,10 @@ public class UploadActivity extends CommonActivity {
                             .getDescription());
                     ((EditText) v.findViewById(R.id.edit_tags))
                             .setText(pendingUpload.getMetaData().getTags());
+                    Map<String, String> albums = pendingUpload.getMetaData().getAlbums();
+                    albumsText.setText(AlbumUtils.getAlbumsString(albums));
+                    albumsText.setTag(albums == null ? null
+                            : new StringMapParcelableWrapper(albums));
                     privateSwitch.setChecked(pendingUpload.getMetaData().isPrivate());
                     twitterSwitch.setChecked(pendingUpload.isShareOnTwitter());
                     facebookSwitch.setChecked(pendingUpload.isShareOnFacebook());
@@ -320,6 +339,7 @@ public class UploadActivity extends CommonActivity {
             twitterSwitch.setEnabled(enabled);
             facebookSwitch.setEnabled(enabled);
         }
+
         @Override
         public void onActivityResult(int requestCode, int resultCode, Intent data) {
             super.onActivityResult(requestCode, resultCode, data);
@@ -339,6 +359,15 @@ public class UploadActivity extends CommonActivity {
                         String selectedTags = data.getExtras().getString(
                                 SelectTagsActivity.SELECTED_TAGS);
                         tagsText.setText(selectedTags);
+                    }
+                    break;
+                case REQUEST_ALBUMS:
+                    if (resultCode == RESULT_OK && data.getExtras() != null) {
+                        StringMapParcelableWrapper albumsWrapper = data.getExtras().getParcelable(
+                                SelectAlbumsActivity.SELECTED_ALBUMS);
+                        Map<String, String> albums = albumsWrapper.getMap();
+                        albumsText.setText(AlbumUtils.getAlbumsString(albums));
+                        albumsText.setTag(albumsWrapper);
                     }
                     break;
                 case REQUEST_GALLERY:
@@ -519,11 +548,20 @@ public class UploadActivity extends CommonActivity {
         @Override
         public void onClick(View v) {
             switch (v.getId()) {
-                case R.id.select_tags:
+                case R.id.select_tags: {
                     TrackerUtils.trackButtonClickEvent("select_tags", getActivity());
                     Intent i = new Intent(getActivity(), SelectTagsActivity.class);
                     i.putExtra(SelectTagsActivity.SELECTED_TAGS, tagsText.getText().toString());
                     startActivityForResult(i, REQUEST_TAGS);
+                }
+                    break;
+                case R.id.edit_albums: {
+                    TrackerUtils.trackButtonClickEvent("select_albums", getActivity());
+                    Intent i = new Intent(getActivity(), SelectAlbumsActivity.class);
+                    i.putExtra(SelectAlbumsActivity.SELECTED_ALBUMS,
+                            (Parcelable) albumsText.getTag());
+                    startActivityForResult(i, REQUEST_ALBUMS);
+                }
                     break;
                 case R.id.button_upload:
                     TrackerUtils.trackButtonClickEvent("button_upload", getActivity());
@@ -682,6 +720,12 @@ public class UploadActivity extends CommonActivity {
                 tags = TagUtils.getTagsString(tagsSet);
             }
             metaData.setTags(tags);
+            StringMapParcelableWrapper albumsWrapper = (StringMapParcelableWrapper) albumsText
+                    .getTag();
+            if (albumsWrapper != null)
+            {
+                metaData.setAlbums(albumsWrapper.getMap());
+            }
             metaData.setPrivate(isPrivate);
             return metaData;
         }
