@@ -24,9 +24,12 @@ import com.trovebox.android.app.bitmapfun.util.ImageFetcher;
 import com.trovebox.android.app.common.CommonActivity;
 import com.trovebox.android.app.common.CommonFragmentWithImageWorker;
 import com.trovebox.android.app.model.Album;
+import com.trovebox.android.app.model.Photo;
+import com.trovebox.android.app.model.utils.PhotoUtils;
 import com.trovebox.android.app.net.ReturnSizes;
 import com.trovebox.android.app.ui.adapter.MultiSelectAlbumsAdapter;
 import com.trovebox.android.app.util.LoadingControl;
+import com.trovebox.android.app.util.RunnableWithParameter;
 import com.trovebox.android.app.util.TrackerUtils;
 import com.trovebox.android.app.util.data.StringMapParcelableWrapper;
 
@@ -154,13 +157,21 @@ public class SelectAlbumsActivity
                     convertView = layoutInflater.inflate(
                             R.layout.list_item_album_checkbox, null);
                 }
-                ViewHolder vh = getViewHolder(convertView);
+                final ViewHolder vh = getViewHolder(convertView);
                 initAlbumCheckbox(album, vh.checkBox);
                 vh.name.setText(album.getName());
                 if (album.getCover() != null)
                 {
-                    mImageWorker
-                            .loadImage(album.getCover().getUrl(thumbSize.toString()), vh.cover);
+                    PhotoUtils.validateUrlForSizeExistAsyncAndRun(album.getCover(), thumbSize,
+                            new RunnableWithParameter<Photo>() {
+
+                                @Override
+                                public void run(Photo photo) {
+                                    mImageWorker
+                                            .loadImage(photo.getUrl(thumbSize.toString()), vh.cover);
+
+                                }
+                            }, SelectAlbumsUiFragment.this);
                 } else
                 {
                     mImageWorker

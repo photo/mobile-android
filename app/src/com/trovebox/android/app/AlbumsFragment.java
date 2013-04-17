@@ -18,10 +18,13 @@ import com.trovebox.android.app.bitmapfun.util.ImageCache;
 import com.trovebox.android.app.bitmapfun.util.ImageFetcher;
 import com.trovebox.android.app.common.CommonRefreshableFragmentWithImageWorker;
 import com.trovebox.android.app.model.Album;
+import com.trovebox.android.app.model.Photo;
+import com.trovebox.android.app.model.utils.PhotoUtils;
 import com.trovebox.android.app.net.ReturnSizes;
 import com.trovebox.android.app.ui.adapter.AlbumsEndlessAdapter;
 import com.trovebox.android.app.util.GalleryOpenControl;
 import com.trovebox.android.app.util.LoadingControl;
+import com.trovebox.android.app.util.RunnableWithParameter;
 import com.trovebox.android.app.util.TrackerUtils;
 
 /**
@@ -128,11 +131,19 @@ public class AlbumsFragment extends CommonRefreshableFragmentWithImageWorker imp
             ((TextView) convertView.findViewById(R.id.text_count))
                     .setText(Integer.toString(album
                             .getCount()));
-            ImageView image = (ImageView) convertView.findViewById(R.id.cover);
+            final ImageView image = (ImageView) convertView.findViewById(R.id.cover);
             if (album.getCover() != null)
             {
-                mImageWorker
-                        .loadImage(album.getCover().getUrl(thumbSize.toString()), image);
+                PhotoUtils.validateUrlForSizeExistAsyncAndRun(album.getCover(), thumbSize,
+                        new RunnableWithParameter<Photo>() {
+
+                            @Override
+                            public void run(Photo photo) {
+                                mImageWorker
+                                        .loadImage(photo.getUrl(thumbSize.toString()), image);
+
+                            }
+                        }, loadingControl);
             } else
             {
                 mImageWorker
