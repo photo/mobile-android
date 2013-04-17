@@ -46,7 +46,7 @@ public class ApiBase {
     public final static String TAG = ApiBase.class.getSimpleName();
 
     private Context context;
-    static int NetworkConnectionTimeout_ms = 10000;
+    public static int NetworkConnectionTimeout_ms = 10000;
 
     public ApiBase(Context context) {
         this.context = context;
@@ -85,12 +85,48 @@ public class ApiBase {
      * 
      * @param request request to perform
      * @param listener Progress Listener with callback on progress
+     * @param connectionTimeout the connection and socket timeout
+     * @return the response from the API
+     * @throws ClientProtocolException
+     * @throws IOException
+     */
+    public ApiResponse execute(ApiRequest request, ProgressListener listener, int connectionTimeout)
+            throws ClientProtocolException, IOException {
+        return execute(request, Preferences.getServer(this.context),
+                Preferences.getOAuthConsumer(context), listener, connectionTimeout);
+    }
+
+    /**
+     * Execute a request to the API.
+     * 
+     * @param request request to perform
+     * @param baseUrl the base server url
+     * @param consumer the oauth consumer key to sign request
+     * @param listener Progress Listener with callback on progress
      * @return the response from the API
      * @throws ClientProtocolException
      * @throws IOException
      */
     public ApiResponse execute(ApiRequest request, String baseUrl, OAuthConsumer consumer,
             ProgressListener listener)
+            throws ClientProtocolException, IOException {
+        return execute(request, baseUrl, consumer, listener, NetworkConnectionTimeout_ms);
+    }
+
+    /**
+     * Execute a request to the API.
+     * 
+     * @param request request to perform
+     * @param baseUrl the base server url
+     * @param consumer the oauth consumer key to sign request
+     * @param listener Progress Listener with callback on progress
+     * @param connectionTimeout the connection and socket timeout
+     * @return the response from the API
+     * @throws ClientProtocolException
+     * @throws IOException
+     */
+    public ApiResponse execute(ApiRequest request, String baseUrl, OAuthConsumer consumer,
+            ProgressListener listener, int connectionTimeout)
             throws ClientProtocolException, IOException {
         // PoolingClientConnectionManager();
         HttpParams params = new BasicHttpParams();
@@ -99,9 +135,9 @@ public class ApiBase {
         HttpConnectionParams.setStaleCheckingEnabled(
                 params, false);
         HttpConnectionParams.setConnectionTimeout(params,
-                NetworkConnectionTimeout_ms);
+                connectionTimeout);
         HttpConnectionParams.setSoTimeout(params,
-                NetworkConnectionTimeout_ms);
+                connectionTimeout);
         HttpProtocolParams.setVersion(params, HttpVersion.HTTP_1_1);
 
         DefaultHttpClient httpClient = new DefaultHttpClient(params);

@@ -68,6 +68,7 @@ public class MainActivity extends CommonActivity
 
     public final static int AUTHORIZE_ACTIVITY_REQUEST_CODE = 0;
     public final static int PURCHASE_FLOW_REQUEST_CODE = 1;
+    public static final int REQUEST_ALBUMS = 2;
 
     private ActionBar mActionBar;
     private AtomicInteger loaders = new AtomicInteger(0);

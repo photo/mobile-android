@@ -4,12 +4,15 @@ package com.trovebox.android.app.model;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 /**
  * Class representing a Album on Trovebox.
  * 
  * @author Eugene Popovich
  */
-public class Album
+public class Album implements Parcelable
 {
     public static final int VISIBILITY_VISIBLE = 1;
     public static final int VISIBILITY_INVISIBLE = 0;
@@ -19,6 +22,11 @@ public class Album
     protected int mVisible;
     protected int mCount;
     protected Photo mCover;
+
+    private Album()
+    {
+
+    }
 
     /**
      * Creates a Album object from json.
@@ -70,5 +78,45 @@ public class Album
     public Photo getCover()
     {
         return mCover;
+    }
+
+    /*****************************
+     * PARCELABLE IMPLEMENTATION *
+     *****************************/
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel out, int flags) {
+        out.writeString(mId);
+        out.writeString(mOwner);
+        out.writeString(mName);
+        out.writeInt(mVisible);
+        out.writeInt(mCount);
+        out.writeParcelable(mCover, flags);
+    }
+
+    public static final Parcelable.Creator<Album> CREATOR = new Parcelable.Creator<Album>() {
+        @Override
+        public Album createFromParcel(Parcel in) {
+            return new Album(in);
+        }
+
+        @Override
+        public Album[] newArray(int size) {
+            return new Album[size];
+        }
+    };
+
+    private Album(Parcel in) {
+        this();
+        mId = in.readString();
+        mOwner = in.readString();
+        mName = in.readString();
+        mVisible = in.readInt();
+        mCount = in.readInt();
+        mCover = in.readParcelable(Album.class.getClassLoader());
     }
 }

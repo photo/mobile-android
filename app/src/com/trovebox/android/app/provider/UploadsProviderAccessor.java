@@ -3,7 +3,11 @@ package com.trovebox.android.app.provider;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -26,6 +30,7 @@ public class UploadsProviderAccessor {
     private static final String JSON_TITLE = "title";
     private static final String JSON_DESCRIPTION = "description";
     private static final String JSON_TAGS = "tags";
+    private static final String JSON_ALBUMS = "albums";
     private static final String JSON_PERMISSION = "permission";
 
     private final Context mContext;
@@ -52,6 +57,15 @@ public class UploadsProviderAccessor {
             }
             if (metaData.getTags() != null) {
                 data.put(JSON_TAGS, metaData.getTags());
+            }
+            if (metaData.getAlbums() != null)
+            {
+                JSONObject albums = new JSONObject();
+                for (Entry<String, String> album : metaData.getAlbums().entrySet())
+                {
+                    albums.put(album.getKey(), album.getValue());
+                }
+                data.put(JSON_ALBUMS, albums);
             }
             data.put(JSON_PERMISSION, metaData.getPermission());
             values.put(UploadsProvider.KEY_METADATA_JSON, data.toString());
@@ -196,6 +210,21 @@ public class UploadsProviderAccessor {
                 JSONObject jsonMeta = new JSONObject(metaJson);
                 if (jsonMeta.has(JSON_TAGS)) {
                     metaData.setTags(jsonMeta.optString(JSON_TAGS));
+                }
+                if (jsonMeta.has(JSON_ALBUMS))
+                {
+                    JSONObject jsonAlbums = jsonMeta.optJSONObject(JSON_ALBUMS);
+                    if (jsonAlbums != null)
+                    {
+                        Iterator<?> albumIdsIterator = jsonAlbums.keys();
+                        Map<String, String> albums = new HashMap<String, String>();
+                        while (albumIdsIterator.hasNext())
+                        {
+                            String albumId = (String) albumIdsIterator.next();
+                            albums.put(albumId, jsonAlbums.optString(albumId));
+                        }
+                        metaData.setAlbums(albums);
+                    }
                 }
                 if (jsonMeta.has(JSON_TITLE)) {
                     metaData.setTitle(jsonMeta.optString(JSON_TITLE));

@@ -4,10 +4,11 @@ package com.trovebox.android.app.model.utils;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
 
 import android.text.TextUtils;
+
+import com.trovebox.android.app.net.UploadMetaDataUtils;
 
 /**
  * @author Eugene Popovich
@@ -39,19 +40,7 @@ public class TagUtils {
      */
     public static String getTagsString(Collection<String> tags)
     {
-        if (tags != null && !tags.isEmpty())
-        {
-            Iterator<String> it = tags.iterator();
-            StringBuilder sb = new StringBuilder(it.next());
-            while (it.hasNext())
-            {
-                sb.append("," + it.next());
-            }
-            return sb.toString();
-        } else
-        {
-            return null;
-        }
+        return UploadMetaDataUtils.getCommaSeparatedString(tags);
     }
 
 }
