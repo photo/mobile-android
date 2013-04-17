@@ -212,6 +212,10 @@ public class TroveboxApi extends ApiBase implements ITroveboxApi {
         if (metaData.getTags() != null) {
             request.addParameter("tags", metaData.getTags());
         }
+        if (metaData.getAlbums() != null)
+        {
+            request.addParameter("albums", UploadMetaDataUtils.getAlbumIds(metaData));
+        }
         if (metaData.getTitle() != null) {
             request.addParameter("title", metaData.getTitle());
         }
@@ -222,7 +226,7 @@ public class TroveboxApi extends ApiBase implements ITroveboxApi {
                 Integer.toString(metaData.getPermission()));
 
         request.addFileParameter("photo", imageFile);
-        ApiResponse response = execute(request, progressListener);
+        ApiResponse response = execute(request, progressListener, NetworkConnectionTimeout_ms * 12);
         return new UploadResponse(response.getJSONObject());
     }
 

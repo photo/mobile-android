@@ -6,27 +6,28 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
-
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.http.client.ClientProtocolException;
 import org.json.JSONException;
-
-import com.trovebox.android.app.TroveboxApplication;
-import com.trovebox.android.app.model.Photo;
-import com.trovebox.android.app.net.ITroveboxApi;
-import com.trovebox.android.app.net.TroveboxApi;
-import com.trovebox.android.app.net.PhotoResponse;
-import com.trovebox.android.app.net.PhotosResponse;
-import com.trovebox.android.app.net.TagsResponse;
-import com.trovebox.android.app.net.UploadMetaData;
-import com.trovebox.android.app.net.UploadResponse;
-import com.trovebox.android.app.util.TrackerUtils;
-import com.trovebox.android.test.util.FileUtils;
 
 import android.content.Context;
 import android.content.res.AssetManager;
 import android.os.Environment;
 import android.test.ApplicationTestCase;
+
+import com.trovebox.android.app.TroveboxApplication;
+import com.trovebox.android.app.model.Photo;
+import com.trovebox.android.app.net.ITroveboxApi;
+import com.trovebox.android.app.net.PhotoResponse;
+import com.trovebox.android.app.net.PhotosResponse;
+import com.trovebox.android.app.net.TagsResponse;
+import com.trovebox.android.app.net.TroveboxApi;
+import com.trovebox.android.app.net.UploadMetaData;
+import com.trovebox.android.app.net.UploadResponse;
+import com.trovebox.android.app.util.TrackerUtils;
+import com.trovebox.android.test.util.FileUtils;
 
 public class TroveboxApiTest extends ApplicationTestCase<TroveboxApplication>
 {
@@ -94,6 +95,10 @@ public class TroveboxApiTest extends ApplicationTestCase<TroveboxApplication>
         settings.setTitle("Android");
         settings.setDescription("Nice picture of an android");
         settings.setTags("test");
+        Map<String, String> albums = new HashMap<String, String>();
+        albums.put("1", "test");
+        albums.put("2", "test2");
+        settings.setAlbums(albums);
         settings.setPrivate(false);
         try {
             UploadResponse resp = mApi.uploadPhoto(file, settings, null);

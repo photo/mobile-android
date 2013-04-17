@@ -327,6 +327,10 @@ public abstract class ImageWorker {
             try
             {
                 data = params[0];
+                if (data == null)
+                {
+                    return null;
+                }
                 final String dataString = String.valueOf(data);
                 Bitmap bitmap = null;
 

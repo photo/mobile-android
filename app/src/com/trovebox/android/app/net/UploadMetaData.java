@@ -1,6 +1,8 @@
 
 package com.trovebox.android.app.net;
 
+import java.util.Map;
+
 import com.trovebox.android.app.model.Photo;
 
 public class UploadMetaData {
@@ -8,6 +10,7 @@ public class UploadMetaData {
     private String mDescription;
     private String mTags;
     private int mPermission;
+    private Map<String, String> mAlbums;
 
     public void setTitle(String title) {
         mTitle = title;
@@ -47,5 +50,13 @@ public class UploadMetaData {
 
     public boolean isPrivate() {
         return getPermission() == Photo.PERMISSION_PRIVATE;
+    }
+
+    public Map<String, String> getAlbums() {
+        return mAlbums;
+    }
+
+    public void setAlbums(Map<String, String> albums) {
+        this.mAlbums = albums;
     }
 }

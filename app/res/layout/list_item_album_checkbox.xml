@@ -5,14 +5,23 @@
     android:gravity="center_vertical"
     android:orientation="horizontal"
     android:paddingBottom="@dimen/site_padding_half"
-    android:paddingLeft="@dimen/site_padding"
-    android:paddingRight="@dimen/site_padding"
+    android:paddingLeft="@dimen/site_padding_half"
+    android:paddingRight="@dimen/site_padding_half"
     android:paddingTop="@dimen/site_padding_half" >
+
+    <CheckBox
+        android:id="@+id/album_checkbox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="@dimen/site_padding_half"
+        android:clickable="false"
+        android:focusable="false"
+        android:focusableInTouchMode="false" />
 
     <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginRight="5dip"
+        android:layout_marginRight="@dimen/site_padding_half"
         android:adjustViewBounds="true"
         android:background="@drawable/shadow_border"
         android:paddingBottom="2dp"
@@ -32,22 +41,8 @@
         android:id="@+id/text_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginRight="5dip"
         android:layout_weight="1"
         android:text="very very very very very very very very very very very very long name"
         android:textAppearance="?android:attr/textAppearanceMedium" />
-
-    <TextView
-        android:id="@+id/text_count"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginRight="5dp"
-        android:text="5"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
-
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/button_right" />
 
 </LinearLayout>

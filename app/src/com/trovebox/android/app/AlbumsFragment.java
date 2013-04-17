@@ -1,7 +1,6 @@
 
 package com.trovebox.android.app;
 
-
 import org.holoeverywhere.LayoutInflater;
 import org.holoeverywhere.app.Activity;
 
@@ -19,16 +18,13 @@ import com.trovebox.android.app.bitmapfun.util.ImageCache;
 import com.trovebox.android.app.bitmapfun.util.ImageFetcher;
 import com.trovebox.android.app.common.CommonRefreshableFragmentWithImageWorker;
 import com.trovebox.android.app.model.Album;
-import com.trovebox.android.app.net.AlbumsResponse;
-import com.trovebox.android.app.net.ITroveboxApi;
-import com.trovebox.android.app.net.Paging;
+import com.trovebox.android.app.model.Photo;
+import com.trovebox.android.app.model.utils.PhotoUtils;
 import com.trovebox.android.app.net.ReturnSizes;
-import com.trovebox.android.app.net.TroveboxResponseUtils;
-import com.trovebox.android.app.ui.adapter.EndlessAdapter;
-import com.trovebox.android.app.util.CommonUtils;
+import com.trovebox.android.app.ui.adapter.AlbumsEndlessAdapter;
 import com.trovebox.android.app.util.GalleryOpenControl;
-import com.trovebox.android.app.util.GuiUtils;
 import com.trovebox.android.app.util.LoadingControl;
+import com.trovebox.android.app.util.RunnableWithParameter;
 import com.trovebox.android.app.util.TrackerUtils;
 
 /**
@@ -65,6 +61,7 @@ public class AlbumsFragment extends CommonRefreshableFragmentWithImageWorker imp
         list.setAdapter(mAdapter);
         list.setOnItemClickListener(this);
     }
+
     @Override
     public void onAttach(Activity activity)
     {
@@ -81,6 +78,7 @@ public class AlbumsFragment extends CommonRefreshableFragmentWithImageWorker imp
         thumbSize = new ReturnSizes(mImageThumbSize, mImageThumbSize, true);
         mImageWorker = new ImageFetcher(getActivity(), loadingControl, thumbSize.getWidth(),
                 thumbSize.getHeight());
+        mImageWorker.setLoadingImage(R.drawable.empty_photo);
         mImageWorker.setImageCache(ImageCache.findOrCreateCache(getActivity(),
                 ImageCache.THUMBS_CACHE_DIR));
     }
@@ -110,28 +108,11 @@ public class AlbumsFragment extends CommonRefreshableFragmentWithImageWorker imp
     protected boolean isRefreshMenuVisible() {
         return !loadingControl.isLoading();
     }
-    private class AlbumsAdapter extends EndlessAdapter<Album>
+
+    private class AlbumsAdapter extends AlbumsEndlessAdapter
     {
-        public static final int DEFAULT_PAGE_SIZE = 20;
-        private final ITroveboxApi mTroveboxApi;
-
-        public AlbumsAdapter()
-        {
-            this(DEFAULT_PAGE_SIZE);
-        }
-
-        public AlbumsAdapter(int pageSize)
-        {
-            super(pageSize);
-            mTroveboxApi = Preferences.getApi(getActivity());
-            loadFirstPage();
-        }
-
-        @Override
-        public long getItemId(int position)
-        {
-            // return ((Album) getItem(position)).getAlbum().hashCode();
-            return position;
+        public AlbumsAdapter() {
+            super(loadingControl);
         }
 
         @Override
@@ -150,52 +131,25 @@ public class AlbumsFragment extends CommonRefreshableFragmentWithImageWorker imp
             ((TextView) convertView.findViewById(R.id.text_count))
                     .setText(Integer.toString(album
                             .getCount()));
-            ImageView image = (ImageView) convertView.findViewById(R.id.cover);
+            final ImageView image = (ImageView) convertView.findViewById(R.id.cover);
             if (album.getCover() != null)
             {
-                mImageWorker
-                        .loadImage(album.getCover().getUrl(thumbSize.toString()), image);
+                PhotoUtils.validateUrlForSizeExistAsyncAndRun(album.getCover(), thumbSize,
+                        new RunnableWithParameter<Photo>() {
+
+                            @Override
+                            public void run(Photo photo) {
+                                mImageWorker
+                                        .loadImage(photo.getUrl(thumbSize.toString()), image);
+
+                            }
+                        }, loadingControl);
             } else
             {
-                image.setImageBitmap(null);
+                mImageWorker
+                        .loadImage(null, image);
             }
             return convertView;
-        }
-
-        @Override
-        public LoadResponse loadItems(int page)
-        {
-            if (CommonUtils.checkLoggedInAndOnline())
-            {
-                try
-                {
-                    AlbumsResponse response = mTroveboxApi.getAlbums(new Paging(page,
-                            getPageSize()));
-                    if (TroveboxResponseUtils.checkResponseValid(response))
-                    {
-                        return new LoadResponse(response.getAlbums(), response.hasNextPage());
-                    }
-                } catch (Exception e)
-                {
-                    GuiUtils.error(
-                            TAG,
-                            R.string.errorCouldNotLoadNextAlbumsInList,
-                            e);
-                }
-            }
-            return new LoadResponse(null, false);
-        }
-
-        @Override
-        protected void onStartLoading()
-        {
-            loadingControl.startLoading();
-        }
-
-        @Override
-        protected void onStoppedLoading()
-        {
-            loadingControl.stopLoading();
         }
     }
 

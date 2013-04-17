@@ -3,6 +3,7 @@ package com.trovebox.android.app;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Map;
 
 import org.holoeverywhere.LayoutInflater;
 import org.holoeverywhere.app.Activity;
@@ -11,6 +12,7 @@ import org.holoeverywhere.widget.Switch;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -24,6 +26,7 @@ import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 import com.trovebox.android.app.common.CommonFragment;
 import com.trovebox.android.app.facebook.FacebookUtils;
+import com.trovebox.android.app.model.utils.AlbumUtils;
 import com.trovebox.android.app.net.UploadMetaData;
 import com.trovebox.android.app.net.account.AccountLimitUtils;
 import com.trovebox.android.app.provider.UploadsProviderAccessor;
@@ -36,17 +39,22 @@ import com.trovebox.android.app.util.ProgressDialogLoadingControl;
 import com.trovebox.android.app.util.SyncUtils;
 import com.trovebox.android.app.util.TrackerUtils;
 import com.trovebox.android.app.util.concurrent.AsyncTaskEx;
+import com.trovebox.android.app.util.data.StringMapParcelableWrapper;
 
-public class SyncUploadFragment extends CommonFragment
+public class SyncUploadFragment extends CommonFragment implements OnClickListener
 {
     static final String TAG = SyncUploadFragment.class.getSimpleName();
+    static final String SELECTED_ALBUMS = "SELECTED_ALBUMS";
+    public static final int REQUEST_ALBUMS = MainActivity.REQUEST_ALBUMS;
     PreviousStepFlow previousStepFlow;
     private LoadingControl loadingControl;
     EditText editTitle;
     EditText editTags;
+    EditText albumsText;
     Switch privateSwitch;
     Switch twitterSwitch;
     Switch facebookSwitch;
+    StringMapParcelableWrapper albumsWrapper;
 
     static SyncUploadFragment instance;
 
@@ -56,6 +64,7 @@ public class SyncUploadFragment extends CommonFragment
         setHasOptionsMenu(true);
         instance = this;
     }
+
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
@@ -81,6 +90,12 @@ public class SyncUploadFragment extends CommonFragment
     }
 
     @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelable(SELECTED_ALBUMS, (Parcelable) albumsText.getTag());
+    }
+
+    @Override
     public void onDestroy() {
         super.onDestroy();
         instance = null;
@@ -101,11 +116,16 @@ public class SyncUploadFragment extends CommonFragment
         super.onCreateView(inflater, container, savedInstanceState);
         View v = inflater.inflate(R.layout.fragment_sync_upload_settings,
                 container, false);
-        init(v);
         return v;
     }
 
-    public void init(View v)
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        init(view, savedInstanceState);
+    }
+
+    public void init(View v, Bundle savedInstanceState)
     {
         final Button uploadBtn = (Button) v.findViewById(R.id.uploadBtn);
         uploadBtn.setOnClickListener(new OnClickListener()
@@ -123,10 +143,20 @@ public class SyncUploadFragment extends CommonFragment
                 R.id.edit_title);
         editTags = (EditText) v.findViewById(
                 R.id.edit_tags);
+        albumsText = ((EditText) v.findViewById(R.id.edit_albums));
+        if (savedInstanceState != null)
+        {
+            albumsWrapper = savedInstanceState.getParcelable(SELECTED_ALBUMS);
+        }
+        if (albumsWrapper != null)
+        {
+            albumsText.setTag(albumsWrapper);
+        }
         privateSwitch = (Switch) v.findViewById(R.id.private_switch);
         twitterSwitch = (Switch) v.findViewById(R.id.twitter_switch);
         facebookSwitch = (Switch) v.findViewById(R.id.facebook_switch);
 
+        albumsText.setOnClickListener(this);
         privateSwitch.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 
             @Override
@@ -166,6 +196,39 @@ public class SyncUploadFragment extends CommonFragment
     {
         twitterSwitch.setEnabled(enabled);
         facebookSwitch.setEnabled(enabled);
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.edit_albums: {
+                TrackerUtils.trackButtonClickEvent("select_albums", SyncUploadFragment.this);
+                Intent i = new Intent(getActivity(), SelectAlbumsActivity.class);
+                i.putExtra(SelectAlbumsActivity.SELECTED_ALBUMS,
+                        (Parcelable) albumsText.getTag());
+                startActivityForResult(i, REQUEST_ALBUMS);
+            }
+                break;
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode) {
+            case REQUEST_ALBUMS:
+                if (resultCode == Activity.RESULT_OK && data.getExtras() != null) {
+                    StringMapParcelableWrapper albumsWrapper = data.getExtras().getParcelable(
+                            SelectAlbumsActivity.SELECTED_ALBUMS);
+                    Map<String, String> albums = albumsWrapper.getMap();
+                    albumsText.setText(AlbumUtils.getAlbumsString(albums));
+                    albumsText.setTag(albumsWrapper);
+                    this.albumsWrapper = albumsWrapper;
+                }
+                break;
+            default:
+                break;
+        }
     }
 
     void uploadSelectedFiles(
@@ -259,6 +322,13 @@ public class SyncUploadFragment extends CommonFragment
                         .getText().toString());
                 metaData.setTags(editTags
                         .getText().toString());
+                StringMapParcelableWrapper albumsWrapper = (StringMapParcelableWrapper) albumsText
+                        .getTag();
+                if (albumsWrapper != null)
+                {
+                    metaData.setAlbums(albumsWrapper.getMap());
+                }
+
                 metaData.setPrivate(privateSwitch.isChecked());
                 boolean shareOnFacebook = facebookSwitch.isChecked();
                 boolean shareOnTwitter = twitterSwitch.isChecked();

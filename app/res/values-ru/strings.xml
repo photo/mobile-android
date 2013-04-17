@@ -80,6 +80,7 @@
     <string name="upload_title">Загрузка</string>
     <string name="upload_title_hint">Название</string>
     <string name="upload_tags">Теги</string>
+    <string name="upload_albums">Альбомы</string>
     <string name="upload_select_tags">Выберите теги</string>
     <string name="upload_select_tags_finish">Завершить</string>
     <string name="upload_description">Описание</string>
@@ -97,6 +98,9 @@
 
     <!-- SelectTagsActivity -->
     <string name="title_activity_select_tags">Выбор тегов</string>
+
+    <!-- SelectAlbumsActivity -->
+    <string name="title_activity_select_albums">Выбор альбомов</string>
 
     <!-- Sync screen -->
     <string name="sync_next_button">Следующий шаг</string>
