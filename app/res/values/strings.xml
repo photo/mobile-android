@@ -174,8 +174,8 @@
     <string name="errorCouldNotRetrieveProfileInfo">Could not retrieve profile information.</string>
     <string name="errorCouldNotRetrieveSystemVersionInfo">Could not retrieve system version information.</string>
     <string name="errorNotLoggedIn">You are not yet logged in.</string>
-    <string name="errorSubscriptionNotSupported">Subscriptions are not supported by your device. Sorry!</string>
-    <string name="errorIabNotSupported">Billing operations are not supported by your device. Sorry!</string>
+    <string name="errorSubscriptionNotSupported">Subscriptions are not supported by your device!</string>
+    <string name="errorIabNotSupported">Billing operations are not supported by your device!</string>
     <string name="errorPurchasing">Error purchasing: %1$s</string>
     <string name="errorPurchasingAuthVerificationFailed">Error purchasing. Authenticity verification failed.</string>
     <string name="errorCouldNotQueryInventory">Could not query purchased inventory</string>

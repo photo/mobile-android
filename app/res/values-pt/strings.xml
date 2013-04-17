@@ -32,7 +32,7 @@
     <string name="share_twitter_requesting_authentication">Requisição autenticação Twitter…</string>
     <string name="share_twitter_verifying_authentication">Verificação autenticação Twitter…</string>
     <string name="share_twitter_authorise_ask">Por favor, autorize a app!</string>
-    <string name="share_twitter_authorisation_question">Você não configurou o Trovebox à accessar sua conta do Twitter. Quer autorizar agora?</string>
+    <string name="share_twitter_authorisation_question">Twitter não está autorizado. Quer autorizar agora?</string>
     <string name="share_twitter_logged_in_as">Conectado como %1$s</string>
     <string name="share_twitter_send_tweet">Tweetar</string>
     <string name="share_twitter_dialog_title">Compartilhar no Twitter</string>
@@ -44,7 +44,7 @@
 
     <!-- Share Facebook -->
     <string name="share_facebook_authorise_ask">Por favor, autorize a app!</string>
-    <string name="share_facbook_authorisation_question">Você não configurou o Trovebox à acessar sua conta to Facebook ou acesso expirou. Quer autorizar agora?</string>
+    <string name="share_facbook_authorisation_question">Facebook não está autorizado ou acesso expirou. Quer autorizar agora?</string>
     <string name="share_facbook_action_canceled">Ação cancelada</string>
     <string name="share_facebook_success_setup_message">Facebook configurado</string>
     <string name="share_facebook_photo">Compartilhar foto</string>
@@ -73,7 +73,7 @@
     <string name="tab_account">Conta</string>
 
     <!-- UploadActivity -->
-    <string name="uploading_in_background">Envioando suas fotos</string>
+    <string name="uploading_in_background">Enviando suas fotos</string>
     <string name="upload_camera_option">Câmera</string>
     <string name="upload_gallery_option">Fotos</string>
     <string name="upload_title">Enviar</string>
@@ -117,8 +117,8 @@
     <!-- Newest Home -->
     <string name="newest_this_photo_was_taken">Foto tirada há %1$d %2$s.</string>
     <string name="newest_this_photo_was_taken_less_one_hour">Foto tirada há menos de uma hora.</string>
-    <string name="havent_uploaded_any_photos">Hmm, você não enviou nenhuma foto ainda.</string>
-    <string name="use_sync_to_start">Use a tab Sync para começar!</string>
+    <string name="havent_uploaded_any_photos">Hmm, você não enviou nenhuma foto.</string>
+    <string name="use_sync_to_start">Use o Sync para começar!</string>
 
     <!-- general -->
     <string name="day">dia</string>
@@ -140,129 +140,129 @@
     <string name="autoupload_ignored">Envio automático ignorado.</string>
 
     <!-- Errors -->
-    <string name="errorWithAuthentication">Error with authentication</string>
-    <string name="errorSimple">Error: %1$s</string>
-    <string name="errorCouldNotUploadTakenPhoto">Could not upload the photo taken</string>
-    <string name="errorVerifyingTheResponse">Error while verifying the response</string>
-    <string name="errorWithTwitterAuthentication">Error with twitter authentication</string>
-    <string name="errorCouldNotLoadNextPhotosInList">Could not load next photos in list</string>
-    <string name="errorCouldNotLogin">Could not login</string>
-    <string name="errorCouldNotSignup">Could not signup</string>
-    <string name="errorCouldNotLoadNextAlbumsInList">Could not load next albums in list</string>
-    <string name="errorCouldNotUseIntentsToOpenMaps">Could not use Intent to open maps</string>
-    <string name="errorCouldNotLoadNextPhotosInList">Could not load next photos in list</string>
-    <string name="errorCouldNotGetPhoto">Could not get photo</string>
-    <string name="errorCouldNotDeletePhoto">Could not delete photo</string>
-    <string name="errorCouldNotUpdatePhoto">Could not update photo details</string>
-    <string name="errorOccured">Error occurred</string>
-    <string name="errorCouldNotLoadNextTagsInList">Could not load next tags in list</string>
-    <string name="errorCouldNotInitTwitterFragment">Could not init twitter fragment</string>
-    <string name="errorCouldNotRetrieveTwitterScreenName">Could not retrieve twitter screen name</string>
-    <string name="errorCouldNotSendTweet">Could not send tweet</string>
-    <string name="errorCanNotFindExternalStorageForTakingPicture">Can not find external storage for taking a picture</string>
-    <string name="errorCouldNotInitFacebookFragment">Could not init facebook fragment</string>
-    <string name="errorCouldNotRetrieveFacebookScreenName">Could not retrieve facebook user name</string>
-    <string name="errorCouldNotSendFacebookPhoto">Could not post facebook message</string>
-    <string name="errorSpecifiedUrlIsInvalid">The specified URL is invalid</string>
-    <string name="errorCantFindPendingUploadInformation">Can\'t find pending upload information</string>
-    <string name="errorCouldNotStoreDownloadablePhotoNotEnoughSpace">Couldn\'t store downloadable photo on disk. Not enough free space.</string>
-    <string name="errorCouldNotRetrieveProfileInfo">Could not retrieve profile information.</string>
-    <string name="errorCouldNotRetrieveSystemVersionInfo">Could not retrieve system version information.</string>
-    <string name="errorNotLoggedIn">You are not yet logged in.</string>
-    <string name="errorSubscriptionNotSupported">Subscriptions are not supported by your device. Sorry!</string>
-    <string name="errorIabNotSupported">Billing operations are not supported by your device. Sorry!</string>
-    <string name="errorPurchasing">Error purchasing: %1$s</string>
-    <string name="errorPurchasingAuthVerificationFailed">Error purchasing. Authenticity verification failed.</string>
-    <string name="errorCouldNotQueryInventory">Could not query purchased inventory</string>
-    <string name="errorCouldNotVerifyPayment">Could not verify payment</string>
-    <string name="errorIabUserCanceled">User canceled</string>
+    <string name="errorWithAuthentication">Erro com autenticação</string>
+    <string name="errorSimple">Erro: %1$s</string>
+    <string name="errorCouldNotUploadTakenPhoto">Foto não enviada</string>
+    <string name="errorVerifyingTheResponse">Erro ao verificar o resultado</string>
+    <string name="errorWithTwitterAuthentication">Erro com autenticação do Twitter</string>
+    <string name="errorCouldNotLoadNextPhotosInList">Não foi possível carregar próximas fotos</string>
+    <string name="errorCouldNotLogin">Erro ao logar</string>
+    <string name="errorCouldNotSignup">Erro ao criar conta</string>
+    <string name="errorCouldNotLoadNextAlbumsInList">Não foi possível carregar próximos álbuns</string>
+    <string name="errorCouldNotUseIntentsToOpenMaps">Erro ao abrir o mapa com Intent</string>
+    <string name="errorCouldNotLoadNextPhotosInList">Não foi possível carregar fotos</string>
+    <string name="errorCouldNotGetPhoto">Não foi possível carregar foto</string>
+    <string name="errorCouldNotDeletePhoto">Erro ao remover foto</string>
+    <string name="errorCouldNotUpdatePhoto">Erro ao atualizar a foto</string>
+    <string name="errorOccured">Occorreu um erro</string>
+    <string name="errorCouldNotLoadNextTagsInList">Não foi possível carregar lista de tags</string>
+    <string name="errorCouldNotInitTwitterFragment">Erro ao iniciar fragment Twitter</string>
+    <string name="errorCouldNotRetrieveTwitterScreenName">Erro ao ler o nome do usuário no Twitter</string>
+    <string name="errorCouldNotSendTweet">Erro ao enviar o tweet</string>
+    <string name="errorCanNotFindExternalStorageForTakingPicture">Armazenamento externo não encontrado para tirar fotos</string>
+    <string name="errorCouldNotInitFacebookFragment">Erro ao iniciar fragment Facebook</string>
+    <string name="errorCouldNotRetrieveFacebookScreenName">Erro ao ler o nome do usuário no Twitter.</string>
+    <string name="errorCouldNotSendFacebookPhoto">Erro ao postar no Facebook</string>
+    <string name="errorSpecifiedUrlIsInvalid">URL não é válida</string>
+    <string name="errorCantFindPendingUploadInformation">Não foi possível encontrar informações dos uploads pendentes</string>
+    <string name="errorCouldNotStoreDownloadablePhotoNotEnoughSpace">Sem espaço em disco. Não é possível salvar fotos.</string>
+    <string name="errorCouldNotRetrieveProfileInfo">Não foi possível carregar detalhes do Profile.</string>
+    <string name="errorCouldNotRetrieveSystemVersionInfo">Não foi possível carregar detalhes do sistema.</string>
+    <string name="errorNotLoggedIn">Você não está logado.</string>
+    <string name="errorSubscriptionNotSupported">Subscription não é suportável no seu aparelho!</string>
+    <string name="errorIabNotSupported">Operação de pagamento não é suportável no seu aparelho!</string>
+    <string name="errorPurchasing">Erro na compra: %1$s</string>
+    <string name="errorPurchasingAuthVerificationFailed">Erro na compra. Verificação falhou.</string>
+    <string name="errorCouldNotQueryInventory">Erro ao carregar inventório</string>
+    <string name="errorCouldNotVerifyPayment">Verficação de pagamento invalido</string>
+    <string name="errorIabUserCanceled">Cancelado pelo usuário</string>
 
     <!-- Preferences -->
-    <string name="upload_preference_category">Camera upload</string>
-    <string name="wifi_only_upload">Upload only if WiFi network used</string>
-    <string name="auto_upload_preference_category">Automatically upload photos (Experimental)</string>
-    <string name="auto_upload_preference">Auto upload taken pictures</string>
+    <string name="upload_preference_category">Câmera upload</string>
+    <string name="wifi_only_upload">Upload somente em WiFi</string>
+    <string name="auto_upload_preference_category">Upload automático (Experimental)</string>
+    <string name="auto_upload_preference">Upload automático fotos</string>
     <string name="sync_preference_category">Sync</string>
-    <string name="sync_clear">Clear sync information</string>
-    <string name="sync_clear_comment">This doesn\'t touch your images. Only uploaded markers are removed.</string>
-    <string name="sync_cleared_message">The sync information has been cleared</string>
-    <string name="setting_account_facebook_loggedin_logout">Facebook Log out</string>
+    <string name="sync_clear">Limpar informações do Sync</string>
+    <string name="sync_clear_comment">Suas fotos não serão afetadas, somente o marcadores serão removidos.</string>
+    <string name="sync_cleared_message">Informações do Sync removidas</string>
+    <string name="setting_account_facebook_loggedin_logout">Sair do Facebook</string>
     <string name="setting_account_server_title">URL</string>
-    <string name="setting_set_tag_dialog_title">Set tag for uploaded pictures</string>
-    <string name="setting_set_tag_hint">Include these tags</string>
+    <string name="setting_set_tag_dialog_title">Define tag para fotos enviadas</string>
+    <string name="setting_set_tag_hint">Inclue essas tags</string>
     <string name="cache_preference_category">Cache</string>
-    <string name="disk_cache_clear">Clear disk cache</string>
-    <string name="disk_cache_clear_comment">This will clear downloaded images cache.</string>
-    <string name="disk_caches_cleared_message">The disk caches has been cleared</string>
-    <string name="setting_account_edit_account_title">Edit account</string>
-    <string name="setting_account_change_profile_picture_title">Change profile picture</string>
-    <string name="setting_account_title">Account</string>
-    <string name="setting_account_loggedin_logout">Log out</string>
-    <string name="setting_account_loggedin_login">Log in</string>
+    <string name="disk_cache_clear">Limpar cache do disco</string>
+    <string name="disk_cache_clear_comment">Ação vai remover as fotos no cache.</string>
+    <string name="disk_caches_cleared_message">Cache do disco limpo</string>
+    <string name="setting_account_edit_account_title">Editar conta</string>
+    <string name="setting_account_change_profile_picture_title">Trocar foto do Profile</string>
+    <string name="setting_account_title">Conta</string>
+    <string name="setting_account_loggedin_logout">Sair</string>
+    <string name="setting_account_loggedin_login">Logar</string>
 
     <!-- Screens for Create/Login/Own domain: Account -->
-    <string name="account_signup_button">Sign up with your email</string>
-    <string name="account_login_button">Sign in with your email</string>
-    <string name="account_own_server_button">Using your own domain?</string>
-    <string name="account_facebook">Connect using Facebook login</string>
-    <string name="account_create_button">Create Account</string>
+    <string name="account_signup_button">Crie uma conta com seu email</string>
+    <string name="account_login_button">Conectar com seu email</string>
+    <string name="account_own_server_button">Usando próprio domínio?</string>
+    <string name="account_facebook">Conectar com Facebook</string>
+    <string name="account_create_button">Criar conta</string>
     <string name="title_activity_account_facebook">AccountFacebook</string>
     <string name="title_activity_account_login">AccountLogin</string>
     <string name="title_activity_account_signup">AccountSignup</string>
-    <string name="invalid_credentials">Invalid username or password</string>
-    <string name="unknown_error">Unknown error</string>
-    <string name="unknown_error_with_code">Unknown error with code %1$d</string>
-    <string name="sign_in_instructions"><![CDATA[<b>Enter</b> an email, password and hit <b>Login</b>]]></string>
+    <string name="invalid_credentials">Inválido usuário ou senha</string>
+    <string name="unknown_error">Erro desconhecido</string>
+    <string name="unknown_error_with_code">Erro desconhecido com código %1$d</string>
+    <string name="sign_in_instructions"><![CDATA[<b>Forneça</b> um email, senha e selecione <b>Conectar</b>]]></string>
     <!-- Hints -->
     <string name="hint_email">email</string>
-    <string name="hint_password">password</string>
-    <string name="hint_username">username</string>
+    <string name="hint_password">senha</string>
+    <string name="hint_username">usuário</string>
 
     <!-- missing fields names -->
     <string name="field_email">email</string>
-    <string name="field_password">password</string>
-    <string name="field_username">username</string>
+    <string name="field_password">senha</string>
+    <string name="field_username">usuário</string>
 
     <!-- Feather -->
-    <string name="feather_failed_to_retrieve_the_list_of_acitions">Failed to retrieve the list of actions!</string>
-    <string name="feather_failed_to_retrieve_the_session_information">Failed to retrieve the session informations</string>
-    <string name="feather_processing_hi_res_image">Processing Hi-res image</string>
-    <string name="feather_loading_image">Loading image…</string>
-    <string name="feather_saving_image">Saving image…</string>
-    <string name="feather_applying_action">Applying action %1$s from %2$s</string>
-    <string name="feather_error_occurred">There was an error: %1$s</string>
-    <string name="feather_failed_to_load_image">Failed to load image %1$s</string>
+    <string name="feather_failed_to_retrieve_the_list_of_acitions">Erro busca lista de ações!</string>
+    <string name="feather_failed_to_retrieve_the_session_information">Erro busca informações da sessão</string>
+    <string name="feather_processing_hi_res_image">Processando foto alta resolução</string>
+    <string name="feather_loading_image">Carregando foto…</string>
+    <string name="feather_saving_image">Salvando foto…</string>
+    <string name="feather_applying_action">Aplicando ação %1$s de %2$s</string>
+    <string name="feather_error_occurred">Erro encontrado: %1$s</string>
+    <string name="feather_failed_to_load_image">Erro para carregar foto %1$s</string>
 
     <!-- Photo details -->
-    <string name="details_title_and_date_header">%1$s taken at %2$s</string>
-    <string name="delete_photo_confirmation_question">Are you sure you want to delete this photo?</string>
-    <string name="menu_edit">Edit</string>
-    <string name="menu_delete">Delete</string>
-    <string name="menu_cancel">Cancel</string>
-    <string name="deleting_photo_message">Deleting photo…</string>
+    <string name="details_title_and_date_header">%1$s tirada em %2$s</string>
+    <string name="delete_photo_confirmation_question">Deseja remover essa foto?</string>
+    <string name="menu_edit">Editar</string>
+    <string name="menu_delete">Remover</string>
+    <string name="menu_cancel">Cancelar</string>
+    <string name="deleting_photo_message">Removendo foto…</string>
 
     <!-- Photo details edit -->
-    <string name="photo_edit_save_button">Save</string>
-    <string name="updating_photo_message">Updating photo…</string>
-    <string name="photo_edit_dialog_title">Edit this photo</string>
+    <string name="photo_edit_save_button">Salvar</string>
+    <string name="updating_photo_message">Enviando foto…</string>
+    <string name="photo_edit_dialog_title">Editar foto</string>
 
     <!-- Profile details -->
-    <string name="profile_counter_photos">photos</string>
-    <string name="profile_counter_albums">albums</string>
+    <string name="profile_counter_photos">fotos</string>
+    <string name="profile_counter_albums">álbuns</string>
     <string name="profile_counter_tags">tags</string>
-    <string name="profile_counter_storage_kb_used">KB used</string>
-    <string name="profile_counter_storage_mb_used">MB used</string>
-    <string name="profile_counter_storage_gb_used">GB used</string>
+    <string name="profile_counter_storage_kb_used">KB usado</string>
+    <string name="profile_counter_storage_mb_used">MB usado</string>
+    <string name="profile_counter_storage_gb_used">GB usado</string>
     <string name="profile_email">E-Mail</string>
-    <string name="profile_account">Account</string>
+    <string name="profile_account">Conta</string>
     <string name="profile_account_type_free">Free</string>
     <string name="profile_account_type_pro">Pro</string>
-    <string name="profile_button_upgrade">Upgrade to Pro account</string>
-    <string name="profile_upgrade_offer">Upgrade for just $29.99 / year</string>
-    <string name="profile_upgrade_offer_details"><a href="https://trovebox.com/plans">See a full list of benefits</a></string>
+    <string name="profile_button_upgrade">Atualizar para uma conta Pro</string>
+    <string name="profile_upgrade_offer">Atualizar por somente $29.99/ano</string>
+    <string name="profile_upgrade_offer_details"><a href="https://trovebox.com/plans">Veja lista de benefícios</a></string>
 
     <!-- In-App Billing -->
-    <string name="iabMonthlySubscriptionSuccess">Thank you for subscribing to premium!</string>
-    <string name="iabNoNeedToUpgrade">You are already a premium member and don\'t need to upgrade!</string>
+    <string name="iabMonthlySubscriptionSuccess">Obrigado por atualizar para o serviço!</string>
+    <string name="iabNoNeedToUpgrade">Você já é um usuário Pro, não precisar atualizar!</string>
 
 </resources>
