@@ -262,8 +262,8 @@
     <string name="profile_account_type_free">Бесплатный</string>
     <string name="profile_account_type_pro">Про</string>
     <string name="profile_button_upgrade">Улучшить учетную запись до Про</string>
-    <string name="profile_upgrade_offer">Улучшить всего за $29.99 / год</string>
-    <string name="profile_upgrade_offer_details"><a href="https://trovebox.com/plans">Смотрите полный список преимуществ</a></string>
+    <string name="profile_upgrade_offer">Улучшить всего за $2.99 в месяц</string>
+    <string name="profile_upgrade_offer_details"><a href="https://trovebox.com/plans/mobile">Смотрите полный список преимуществ</a></string>
 
     <!-- In-App Billing -->
     <string name="iabMonthlySubscriptionSuccess">Спасибо за подписку на премиум!</string>
