@@ -259,7 +259,7 @@
     <string name="profile_account_type_pro">Pro</string>
     <string name="profile_button_upgrade">Atualizar para uma conta Pro</string>
     <string name="profile_upgrade_offer">Atualizar por somente $29.99/ano</string>
-    <string name="profile_upgrade_offer_details"><a href="https://trovebox.com/plans">Veja lista de benefícios</a></string>
+    <string name="profile_upgrade_offer_details"><a href="https://trovebox.com/plans/mobile">Veja lista de benefícios</a></string>
 
     <!-- In-App Billing -->
     <string name="iabMonthlySubscriptionSuccess">Obrigado por atualizar para o serviço!</string>
