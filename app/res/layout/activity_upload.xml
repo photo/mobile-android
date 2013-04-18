@@ -96,7 +96,8 @@
                 android:gravity="left|top"
                 android:hint="@string/upload_description"
                 android:inputType="textMultiLine|textCapSentences|textLongMessage"
-                android:minLines="3" />
+                android:minLines="3"
+                android:visibility="gone" />
 
             <View
                 android:layout_width="match_parent"

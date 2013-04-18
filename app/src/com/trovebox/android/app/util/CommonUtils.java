@@ -174,6 +174,16 @@ public class CommonUtils
     }
 
     /**
+     * Checks whether the running platform version is 4.1 or higher
+     * 
+     * @return
+     */
+    public static boolean isJellyBeanOrHigher()
+    {
+        return android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.JELLY_BEAN;
+    }
+
+    /**
      * Checks whether the running platform version is 2.2 or higher
      * 
      * @return
