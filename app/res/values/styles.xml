@@ -181,7 +181,6 @@
     </style>
 
     <style name="trovebox_SliderNavigationItem">
-        <item name="android:background">?selectableItemBackground</item>
         <item name="selectionHandler">@drawable/selection_handler_drawable</item>
         <item name="android:background">@drawable/selectable_background_trovebox</item>
         <item name="android:textColor">@color/ab_fg_white</item>
