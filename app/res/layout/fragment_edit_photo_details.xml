@@ -49,7 +49,8 @@
                 android:gravity="top"
                 android:hint="@string/upload_description"
                 android:inputType="textMultiLine|textCapSentences|textLongMessage"
-                android:minLines="3" />
+                android:minLines="3"
+                android:visibility="gone" />
 
             <org.holoeverywhere.widget.Switch
                 android:id="@+id/private_switch"

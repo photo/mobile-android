@@ -5,6 +5,7 @@ import org.holoeverywhere.LayoutInflater;
 import org.holoeverywhere.widget.LinearLayout;
 import org.holoeverywhere.widget.TextView;
 
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.drawable.ColorDrawable;
@@ -14,6 +15,7 @@ import android.view.Gravity;
 import android.view.View;
 
 import com.trovebox.android.app.R;
+import com.trovebox.android.app.util.CommonUtils;
 
 public class SliderNavigationItem extends LinearLayout {
     private final TextView label;
@@ -27,7 +29,6 @@ public class SliderNavigationItem extends LinearLayout {
         this(context, attrs, R.attr.sliderNavigationItemStyle);
     }
 
-    @SuppressWarnings("deprecation")
     public SliderNavigationItem(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.SliderNavigationItem,
@@ -57,10 +58,30 @@ public class SliderNavigationItem extends LinearLayout {
                     R.styleable.SliderNavigationItem_selectionHandlerVisiblity, 0) == 0);
         }
         if (a.hasValue(R.styleable.SliderNavigationItem_android_background)) {
-            setBackgroundDrawable(a
-                    .getDrawable(R.styleable.SliderNavigationItem_android_background));
+            Drawable bg = a
+                    .getDrawable(R.styleable.SliderNavigationItem_android_background);
+            if (CommonUtils.isJellyBeanOrHigher())
+            {
+                setBackgroundJB(bg);
+            }
+            else
+            {
+                setBackgroundPriorJB(bg);
+            }
         }
         a.recycle();
+    }
+
+    @TargetApi(16)
+    void setBackgroundJB(Drawable drawable)
+    {
+        setBackground(drawable);
+    }
+
+    @SuppressWarnings("deprecation")
+    void setBackgroundPriorJB(Drawable drawable)
+    {
+        setBackgroundDrawable(drawable);
     }
 
     public void setLabel(CharSequence label) {
