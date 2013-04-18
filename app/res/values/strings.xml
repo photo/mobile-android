@@ -98,7 +98,7 @@
 
     <!-- SelectTagsActivity -->
     <string name="title_activity_select_tags">Select Tags</string>
-    
+
     <!-- SelectAlbumsActivity -->
     <string name="title_activity_select_albums">Select Albums</string>
 
@@ -263,8 +263,8 @@
     <string name="profile_account_type_free">Free</string>
     <string name="profile_account_type_pro">Pro</string>
     <string name="profile_button_upgrade">Upgrade to Pro account</string>
-    <string name="profile_upgrade_offer">Upgrade for just $29.99 / year</string>
-    <string name="profile_upgrade_offer_details"><a href="https://trovebox.com/plans">See a full list of benefits</a></string>
+    <string name="profile_upgrade_offer">Upgrade for just $2.99 / month</string>
+    <string name="profile_upgrade_offer_details"><a href="https://trovebox.com/plans/mobile">See a full list of benefits</a></string>
 
     <!-- In-App Billing -->
     <string name="iabMonthlySubscriptionSuccess">Thank you for subscribing to premium!</string>
