@@ -7,12 +7,14 @@ import org.holoeverywhere.widget.TextView;
 
 import android.annotation.TargetApi;
 import android.content.Context;
+import android.content.res.ColorStateList;
 import android.content.res.TypedArray;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.View;
+import android.widget.ImageView;
 
 import com.trovebox.android.app.R;
 import com.trovebox.android.app.util.CommonUtils;
@@ -20,6 +22,7 @@ import com.trovebox.android.app.util.CommonUtils;
 public class SliderNavigationItem extends LinearLayout {
     private final TextView label;
     private final View selectionHandler;
+    private final ImageView icon;
 
     public SliderNavigationItem(Context context) {
         this(context, null);
@@ -43,11 +46,12 @@ public class SliderNavigationItem extends LinearLayout {
         LayoutInflater.inflate(context, layout, this, true);
         selectionHandler = findViewById(R.id.selectionHandler);
         label = (TextView) findViewById(android.R.id.text1);
+        icon = (ImageView) findViewById(R.id.icon);
         if (a.hasValue(R.styleable.SliderNavigationItem_android_text)) {
             setLabel(a.getText(R.styleable.SliderNavigationItem_android_text));
         }
         if (a.hasValue(R.styleable.SliderNavigationItem_android_textColor)) {
-            setTextColor(a.getColor(R.styleable.SliderNavigationItem_android_textColor, 0));
+            setTextColor(a.getColorStateList(R.styleable.SliderNavigationItem_android_textColor));
         }
         if (a.hasValue(R.styleable.SliderNavigationItem_selectionHandler)) {
             setSelectionHandlerDrawable(a
@@ -88,9 +92,34 @@ public class SliderNavigationItem extends LinearLayout {
         this.label.setText(label);
     }
 
+    /**
+     * Set the text color
+     * 
+     * @param color
+     */
     public void setTextColor(int color)
     {
         this.label.setTextColor(color);
+    }
+
+    /**
+     * Set the text color
+     * 
+     * @param color
+     */
+    public void setTextColor(ColorStateList color)
+    {
+        this.label.setTextColor(color);
+    }
+
+    /**
+     * Set the navigation item icon
+     * 
+     * @param drawable
+     */
+    public void setIcon(Drawable drawable)
+    {
+        this.icon.setImageDrawable(drawable);
     }
 
     public void setLabel(int resId) {
@@ -120,5 +149,11 @@ public class SliderNavigationItem extends LinearLayout {
 
     public void setSelectionHandlerVisiblity(int visiblity) {
         selectionHandler.setVisibility(visiblity);
+    }
+
+    @Override
+    public void setSelected(boolean selected) {
+        super.setSelected(selected);
+        setSelectionHandlerVisiblity(selected);
     }
 }

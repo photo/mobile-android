@@ -71,7 +71,8 @@
     <string name="tab_albums">Альбомы</string>
     <string name="tab_sync">Синхронизация</string>
     <string name="tab_account">Учетная запись</string>
-    <string name="tab_preferences">Настройки</string>
+    <string name="tab_settings">Настройки</string>
+    <string name="tab_preferences">Параметры</string>
 
     <!-- UploadActivity -->
     <string name="uploading_in_background">Загрузка начата</string>
