@@ -20,6 +20,7 @@ import android.view.ViewGroup;
 import com.trovebox.android.app.common.lifecycle.ViewPagerHandler;
 import com.trovebox.android.app.net.SystemVersionResponseUtils;
 import com.trovebox.android.app.ui.adapter.FragmentPagerAdapter;
+import com.trovebox.android.app.ui.widget.SliderCategorySeparator;
 import com.trovebox.android.app.ui.widget.SliderNavigationItem;
 import com.trovebox.android.app.util.CommonUtils;
 import com.trovebox.android.app.util.LoadingControl;
@@ -51,15 +52,18 @@ public class NavigationHandlerFragment extends org.holoeverywhere.app.Fragment {
     private final class FragmentWrapper<T extends Fragment> implements OnClickListener {
         private Class<? extends Fragment> mClass;
         private int mTitleId;
+        private int mSeparatorTitleId = View.NO_ID;
         private int mPosition;
+        private int mIconId;
         private final Bundle mArgs;
         private Fragment mFragment;
         private Runnable runOnReselect;
 
-        public FragmentWrapper(int title, Class<T> clz,
+        public FragmentWrapper(int title, int icon, Class<T> clz,
                 Bundle args,
                 Runnable runOnReselect, int position) {
             mTitleId = title;
+            mIconId = icon;
             mClass = clz;
             mPosition = position;
             mClass = clz;
@@ -172,26 +176,46 @@ public class NavigationHandlerFragment extends org.holoeverywhere.app.Fragment {
     /**
      * Refresh the left view
      */
+    @SuppressWarnings("unchecked")
     private void refreshLeftView() {
-        for (int position = 0, size = mMenuList.getChildCount(); position < size; position++)
+        List<SliderNavigationItem> navigationItems = (List<SliderNavigationItem>) mMenuList
+                .getTag();
+        if (navigationItems != null)
         {
-            SliderNavigationItem view = (SliderNavigationItem) mMenuList.getChildAt(position);
-            view.setSelectionHandlerVisiblity(position == mCurrentPage);
+            for (int position = 0, size = navigationItems.size(); position < size; position++)
+            {
+                SliderNavigationItem view = navigationItems.get(position);
+                view.setSelected(position == mCurrentPage);
+            }
         }
     }
 
     private void rebuildLeftView() {
         mMenuList.removeAllViews();
+        List<SliderNavigationItem> navigationItems = new ArrayList<SliderNavigationItem>();
         for (int position = 0, size = adapter.getCount(); position < size; position++)
         {
             FragmentWrapper<?> wrapper = adapter.wrappers.get(position);
+            if (wrapper.mSeparatorTitleId != View.NO_ID)
+            {
+                SliderCategorySeparator view = FontLoader.apply(new SliderCategorySeparator(
+                        getSupportActivity()));
+                view.setLabel(wrapper.mSeparatorTitleId);
+                mMenuList.addView(view);
+            }
             SliderNavigationItem view = FontLoader.apply(new SliderNavigationItem(
                     getSupportActivity()));
             view.setLabel(wrapper.mTitleId);
+            if (wrapper.mIconId != View.NO_ID)
+            {
+                view.setIcon(getResources().getDrawable(wrapper.mIconId));
+            }
             view.setOnClickListener(wrapper);
-            view.setSelectionHandlerVisiblity(position == mCurrentPage);
+            view.setSelected(position == mCurrentPage);
             mMenuList.addView(view);
+            navigationItems.add(view);
         }
+        mMenuList.setTag(navigationItems);
     }
 
     /**
@@ -201,10 +225,12 @@ public class NavigationHandlerFragment extends org.holoeverywhere.app.Fragment {
     {
         adapter.add(
                 R.string.tab_home,
+                R.drawable.menu_latest_2states,
                 HomeFragment.class,
                 null);
         adapter.add(
                 R.string.tab_gallery,
+                R.drawable.menu_gallery_2states,
                 GalleryFragment.class, null,
                 new Runnable() {
                     @Override
@@ -218,16 +244,22 @@ public class NavigationHandlerFragment extends org.holoeverywhere.app.Fragment {
                 });
         adapter.add(
                 R.string.tab_albums,
+                R.drawable.menu_album_2states,
                 AlbumsFragment.class, null);
         adapter.add(
                 R.string.tab_tags,
+                R.drawable.menu_tags_2states,
                 TagsFragment.class, null);
         adapter.add(
                 R.string.tab_sync,
+                R.drawable.menu_upload_2states,
                 SyncFragment.class, null);
-        adapter.add(
-                R.string.tab_preferences,
+        FragmentWrapper<?> wrapper = adapter.add(
+                R.string.tab_settings,
+                R.drawable.menu_settings_2states,
                 SettingsFragment.class, null);
+        wrapper.mSeparatorTitleId = R.string.tab_preferences;
+
         adapter.notifyDataSetChanged();
 
         // the account tab should appear only for hosted installation such
@@ -244,15 +276,20 @@ public class NavigationHandlerFragment extends org.holoeverywhere.app.Fragment {
                                     {
                                         if (Preferences.isHosted())
                                         {
-                                            adapter.add(R.string.tab_account,
+                                            FragmentWrapper<?> wrapper;
+
+                                            wrapper = adapter.add(R.string.tab_account,
+                                                    R.drawable.menu_profile_2states,
                                                     AccountFragment.class, null, null,
                                                     ACCOUNT_INDEX);
+                                            wrapper.mSeparatorTitleId = R.string.tab_preferences;
                                             for (int position = ACCOUNT_INDEX + 1, size = adapter
                                                     .getCount(); position < size; position++)
                                             {
-                                                FragmentWrapper<?> wrapper = adapter.wrappers
+                                                wrapper = adapter.wrappers
                                                         .get(position);
                                                 wrapper.mPosition = position;
+                                                wrapper.mSeparatorTitleId = View.NO_ID;
                                             }
                                         }
                                         rebuildLeftView();
@@ -375,23 +412,25 @@ public class NavigationHandlerFragment extends org.holoeverywhere.app.Fragment {
             return wrappers.get(position).getFragment();
         }
 
-        public <T extends Fragment> void add(int title, Class<T> clz,
+        public <T extends Fragment> FragmentWrapper<?> add(int title, int icon, Class<T> clz,
                 Bundle args) {
-            add(title, clz, args, null);
+            return add(title, icon, clz, args, null);
         }
 
-        public <T extends Fragment> void add(int title, Class<T> clz,
+        public <T extends Fragment> FragmentWrapper<?> add(int title, int icon, Class<T> clz,
                 Bundle args,
                 Runnable runOnReselect) {
             final int position = getCount();
-            add(title, clz, args, runOnReselect, position);
+            return add(title, icon, clz, args, runOnReselect, position);
         }
 
-        public <T extends Fragment> void add(int title, Class<T> clz, Bundle args,
+        public <T extends Fragment> FragmentWrapper<?> add(int title, int icon, Class<T> clz,
+                Bundle args,
                 Runnable runOnReselect, final int position) {
-            FragmentWrapper<?> listener = new FragmentWrapper<T>(title, clz, args,
+            FragmentWrapper<?> listener = new FragmentWrapper<T>(title, icon, clz, args,
                     runOnReselect, position);
             wrappers.add(position, listener);
+            return listener;
         }
 
         void superSetPrimaryItem(ViewGroup container, final int position, Object object) {
