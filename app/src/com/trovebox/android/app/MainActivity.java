@@ -52,7 +52,6 @@ import com.trovebox.android.app.util.ObjectAccessor;
 import com.trovebox.android.app.util.SyncUtils;
 import com.trovebox.android.app.util.SyncUtils.SyncStartedHandler;
 import com.trovebox.android.app.util.TrackerUtils;
-import com.trovebox.android.app.util.Utils;
 
 @Addons(Activity.ADDON_SLIDER)
 public class MainActivity extends CommonActivity
@@ -99,13 +98,6 @@ public class MainActivity extends CommonActivity
     @Override
     public void onCreate(Bundle savedInstanceState)
     {
-        // we need to use different theme for embed tabs because of where
-        // are no over way to use different tab text colors for embed and
-        // split states
-        if (Utils.isActionBarTabsEmbeded(TroveboxApplication.getContext()))
-        {
-            setTheme(R.style.Theme_Trovebox_Light_Stacked);
-        }
         super.onCreate(savedInstanceState);
         currentInstance = this;
         instanceSaved = false;

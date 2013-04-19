@@ -7,6 +7,7 @@
     </declare-styleable>
     <!-- Start attrs definition block -->
     <attr name="sliderNavigationItemStyle" format="reference" />
+    <attr name="sliderCategorySeparatorStyle" format="reference" />
     <attr name="selectionHandler" format="color|reference" />
     <attr name="selectionHandlerVisiblity" format="enum">
         <enum name="invisible" value="1" />
@@ -21,6 +22,11 @@
         <attr name="android:textColor" />
         <attr name="selectionHandler" />
         <attr name="selectionHandlerVisiblity" />
+    </declare-styleable>
+    <declare-styleable name="SliderCategorySeparator">
+        <attr name="android:background" />
+        <attr name="android:text" />
+        <attr name="android:textColor" />
     </declare-styleable>
 
 </resources>
