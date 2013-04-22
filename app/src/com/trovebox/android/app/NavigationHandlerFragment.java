@@ -17,6 +17,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 
+import com.trovebox.android.app.common.CommonFragment;
 import com.trovebox.android.app.common.lifecycle.ViewPagerHandler;
 import com.trovebox.android.app.net.SystemVersionResponseUtils;
 import com.trovebox.android.app.ui.adapter.FragmentPagerAdapter;
@@ -32,7 +33,7 @@ import com.trovebox.android.app.util.TrackerUtils;
  * 
  * @author Eugene Popovich
  */
-public class NavigationHandlerFragment extends org.holoeverywhere.app.Fragment {
+public class NavigationHandlerFragment extends CommonFragment {
     static final String TAG = NavigationHandlerFragment.class.getSimpleName();
     public static final int HOME_INDEX = 0;
     public static final int GALLERY_INDEX = 1;
@@ -98,7 +99,7 @@ public class NavigationHandlerFragment extends org.holoeverywhere.app.Fragment {
             }
         }
 
-        public Fragment getFragment() {
+        public Fragment getInstantiatedFragment() {
             if (mFragment == null)
             {
                 mFragment = Fragment.instantiate(getSupportActivity(),
@@ -139,6 +140,7 @@ public class NavigationHandlerFragment extends org.holoeverywhere.app.Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
+        super.onCreateView(inflater, container, savedInstanceState);
         return inflater.inflate(R.layout.menu, container, false);
     }
 
@@ -334,7 +336,12 @@ public class NavigationHandlerFragment extends org.holoeverywhere.app.Fragment {
     @SuppressWarnings("unchecked")
     public <T extends Fragment> T getFragment(int index)
     {
-        return (T) adapter.getItem(index);
+        T result = null;
+        if (isAdded() && getSupportFragmentManager() != null)
+        {
+            result = (T) adapter.getActiveFragment(pager, getSupportFragmentManager(), index);
+        }
+        return result;
     }
 
     /**
@@ -384,7 +391,7 @@ public class NavigationHandlerFragment extends org.holoeverywhere.app.Fragment {
      */
     public AccountFragment getAccountFragment()
     {
-        Fragment result = adapter.getItem(ACCOUNT_INDEX);
+        Fragment result = getFragment(ACCOUNT_INDEX);
         if (!(result instanceof AccountFragment))
         {
             result = null;
@@ -409,7 +416,7 @@ public class NavigationHandlerFragment extends org.holoeverywhere.app.Fragment {
 
         @Override
         public Fragment getItem(int position) {
-            return wrappers.get(position).getFragment();
+            return wrappers.get(position).getInstantiatedFragment();
         }
 
         public <T extends Fragment> FragmentWrapper<?> add(int title, int icon, Class<T> clz,
@@ -445,7 +452,7 @@ public class NavigationHandlerFragment extends org.holoeverywhere.app.Fragment {
         @Override
         public void setPrimaryItem(final ViewGroup container, final int position,
                 final Object object) {
-            Fragment newFragment = getItem(position);
+            Fragment newFragment = (Fragment) object;
             if (newFragment != activeFragment)
             {
                 if (activeFragment != null && activeFragment instanceof ViewPagerHandler)
@@ -472,6 +479,31 @@ public class NavigationHandlerFragment extends org.holoeverywhere.app.Fragment {
                     }
                 }
             });
+        }
+
+        /**
+         * http://stackoverflow.com/a/9293207/527759
+         * 
+         * @param container
+         * @param fragmentManager
+         * @param position
+         * @return
+         */
+        public Fragment getActiveFragment(ViewPager container, FragmentManager fragmentManager,
+                int position) {
+            String name = makeFragmentName(container.getId(), getItemId(position));
+            return fragmentManager.findFragmentByTag(name);
+        }
+
+        /**
+         * Copy of makeFragmentName from parent FragmentPagerAdapter class
+         * 
+         * @param viewId
+         * @param id
+         * @return
+         */
+        private String makeFragmentName(int viewId, long id) {
+            return "android:switcher:" + viewId + ":" + id;
         }
     }
 
