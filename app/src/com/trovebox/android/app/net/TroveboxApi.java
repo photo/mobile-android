@@ -323,4 +323,14 @@ public class TroveboxApi extends ApiBase implements ITroveboxApi {
         ApiResponse response = execute(request);
         return new SystemVersionResponse(response.getJSONObject());
     }
+
+    @Override
+    public AlbumResponse createAlbum(String name) throws ClientProtocolException, IOException,
+            IllegalStateException, JSONException {
+        ApiRequest request = new ApiRequest(ApiRequest.POST,
+                "/album/create.json");
+        request.addParameter("name", name);
+        ApiResponse response = execute(request);
+        return new AlbumResponse(RequestType.CREATE_ALBUM, response.getJSONObject());
+    }
 }

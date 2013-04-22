@@ -3,7 +3,6 @@ package com.trovebox.android.app;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.holoeverywhere.LayoutInflater;
@@ -13,7 +12,6 @@ import org.holoeverywhere.widget.AdapterView.OnItemClickListener;
 
 import uk.co.senab.photoview.PhotoView;
 import uk.co.senab.photoview.PhotoViewAttacher.OnViewTapListener;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -88,8 +86,6 @@ public class PhotoDetailsActivity extends CommonActivity implements TwitterLoadi
 
     public final static int AUTHORIZE_ACTIVITY_REQUEST_CODE = 0;
 
-    private List<BroadcastReceiver> receivers = new ArrayList<BroadcastReceiver>();
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -102,23 +98,14 @@ public class PhotoDetailsActivity extends CommonActivity implements TwitterLoadi
                     .replace(android.R.id.content, new PhotoDetailsUiFragment())
                     .commit();
         }
-        receivers.add(PhotoUtils.getAndRegisterOnPhotoDeletedActionBroadcastReceiver(
+        addRegisteredReceiver(PhotoUtils.getAndRegisterOnPhotoDeletedActionBroadcastReceiver(
                 TAG, this, this));
-        receivers.add(PhotoUtils.getAndRegisterOnPhotoUpdatedActionBroadcastReceiver(
+        addRegisteredReceiver(PhotoUtils.getAndRegisterOnPhotoUpdatedActionBroadcastReceiver(
                 TAG, this, this));
-        receivers.add(ImageCacheUtils.getAndRegisterOnDiskCacheClearedBroadcastReceiver(TAG,
+        addRegisteredReceiver(ImageCacheUtils.getAndRegisterOnDiskCacheClearedBroadcastReceiver(TAG,
                 this));
     }
 
-    @Override
-    protected void onDestroy()
-    {
-        super.onDestroy();
-        for (BroadcastReceiver br : receivers)
-        {
-            unregisterReceiver(br);
-        }
-    }
     PhotoDetailsUiFragment getContentFragment()
     {
         return (PhotoDetailsUiFragment) getSupportFragmentManager().findFragmentById(android.R.id.content);

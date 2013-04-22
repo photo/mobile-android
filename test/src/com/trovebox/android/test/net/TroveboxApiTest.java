@@ -18,7 +18,9 @@ import android.os.Environment;
 import android.test.ApplicationTestCase;
 
 import com.trovebox.android.app.TroveboxApplication;
+import com.trovebox.android.app.model.Album;
 import com.trovebox.android.app.model.Photo;
+import com.trovebox.android.app.net.AlbumResponse;
 import com.trovebox.android.app.net.ITroveboxApi;
 import com.trovebox.android.app.net.PhotoResponse;
 import com.trovebox.android.app.net.PhotosResponse;
@@ -194,6 +196,19 @@ public class TroveboxApiTest extends ApplicationTestCase<TroveboxApplication>
         file.delete();
     }
 
+    public void testAlbumCreate() throws ClientProtocolException, IllegalStateException,
+            IOException, JSONException
+    {
+        String albumName = "api_test";
+        AlbumResponse resp = mApi.createAlbum(albumName);
+        assertNotNull(resp);
+        Album album = resp.getAlbum();
+        assertNotNull(album);
+        assertEquals(album.getName(), albumName);
+        assertTrue(album.getId() != null && !album.getId().isEmpty());
+        assertTrue(resp.isSuccess());
+        assertEquals(201, resp.getCode());
+    }
     private Context getTestContext() throws Exception
     {
         return (Context) getClass().getMethod("getTestContext").invoke(this);

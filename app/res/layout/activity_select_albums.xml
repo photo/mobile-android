@@ -28,9 +28,15 @@
     </RelativeLayout>
 
     <Button
+        android:id="@+id/createBtn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/select_albums_create" />
+
+    <Button
         android:id="@+id/finishBtn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/upload_select_tags_finish" />
+        android:text="@string/select_albums_finish" />
 
 </LinearLayout>

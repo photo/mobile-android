@@ -267,4 +267,16 @@ public interface ITroveboxApi {
     SystemVersionResponse getSystemVersion() throws ClientProtocolException, IOException,
             IllegalStateException, JSONException;
 
+    /**
+     * Create an album
+     * 
+     * @param name the album name
+     * @return the created album information
+     * @throws ClientProtocolException
+     * @throws IOException
+     * @throws IllegalStateException
+     * @throws JSONException
+     */
+    AlbumResponse createAlbum(String name) throws ClientProtocolException, IOException,
+            IllegalStateException, JSONException;
 }

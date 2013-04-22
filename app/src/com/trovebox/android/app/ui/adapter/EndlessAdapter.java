@@ -67,6 +67,7 @@ public abstract class EndlessAdapter<T> extends BaseAdapter {
     {
         return mItems.indexOf(item);
     }
+
     @Override
     public Object getItem(int position) {
         return mItems.get(position);
@@ -123,6 +124,21 @@ public abstract class EndlessAdapter<T> extends BaseAdapter {
         notifyDataSetChanged();
     }
 
+    public void addItem(T item)
+    {
+        insertItemAt(getCount(), item);
+    }
+
+    public void insertItemAt(int index, T item)
+    {
+        item = filterItemBeforeAdd(item);
+        if (item != null)
+        {
+            mItems.add(index, item);
+            notifyDataSetChanged();
+        }
+    }
+
     public void deleteItemAtAndLoadOneMoreItem(int index)
     {
         deleteItemAt(index);
@@ -135,6 +151,7 @@ public abstract class EndlessAdapter<T> extends BaseAdapter {
         mItems.add(index, object);
         notifyDataSetChanged();
     }
+
     public int getPageSize() {
         return mPageSize;
     }
@@ -148,6 +165,20 @@ public abstract class EndlessAdapter<T> extends BaseAdapter {
                 onStoppedLoading();
             }
         }
+    }
+
+    public T filterItemBeforeAdd(T item)
+    {
+        List<T> itemsToFilter = new ArrayList<T>();
+        itemsToFilter.add(item);
+        itemsToFilter = filterItemsBeforeAdd(itemsToFilter);
+        item = itemsToFilter.isEmpty() ? null : itemsToFilter.get(0);
+        return item;
+    }
+
+    public List<T> filterItemsBeforeAdd(List<T> items)
+    {
+        return items;
     }
 
     private class LoadNextTask extends AsyncTaskEx<Void, Void, List<T>> {
@@ -169,6 +200,7 @@ public abstract class EndlessAdapter<T> extends BaseAdapter {
             loadNextTask = null;
             onStoppedLoading();
             if (result != null) {
+                result = filterItemsBeforeAdd(result);
                 mItems.addAll(result);
             }
             notifyDataSetChanged();
