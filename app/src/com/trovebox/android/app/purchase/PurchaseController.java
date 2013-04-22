@@ -111,7 +111,7 @@ public class PurchaseController {
     {
         // enable debug logging (for a production application, you should set
         // this to false).
-        mHelper.enableDebugLogging(true);
+        mHelper.enableDebugLogging(false);
 
         // Start setup. This is asynchronous and the specified listener
         // will be called once setup completes.
