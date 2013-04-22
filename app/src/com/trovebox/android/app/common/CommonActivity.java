@@ -1,8 +1,12 @@
 package com.trovebox.android.app.common;
 
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.holoeverywhere.app.Activity;
 
+import android.content.BroadcastReceiver;
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -21,6 +25,7 @@ public class CommonActivity extends Activity implements HasLifecycleEventHandler
     static final String CATEGORY = "Activity Lifecycle";
 
     private LifecycleEventHandler lifecycleEventHandler = new LifecycleEventHandler(this);
+    private List<BroadcastReceiver> receivers = new ArrayList<BroadcastReceiver>();
 
     void trackLifecycleEvent(String event)
     {
@@ -58,6 +63,10 @@ public class CommonActivity extends Activity implements HasLifecycleEventHandler
         super.onDestroy();
         trackLifecycleEvent("onDestroy");
         lifecycleEventHandler.fireOnDestroyEvent();
+        for (BroadcastReceiver br : receivers)
+        {
+            unregisterReceiver(br);
+        }
     }
 
     @Override
@@ -94,5 +103,10 @@ public class CommonActivity extends Activity implements HasLifecycleEventHandler
     @Override
     public LifecycleEventHandler getLifecycleEventHandler() {
         return lifecycleEventHandler;
+    }
+
+    public void addRegisteredReceiver(BroadcastReceiver receiver)
+    {
+        receivers.add(receiver);
     }
 }

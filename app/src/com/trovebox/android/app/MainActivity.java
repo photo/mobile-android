@@ -1,7 +1,6 @@
 
 package com.trovebox.android.app;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -11,7 +10,6 @@ import org.holoeverywhere.addon.AddonSlider.AddonSliderA;
 import org.holoeverywhere.app.Activity;
 import org.holoeverywhere.app.Activity.Addons;
 
-import android.content.BroadcastReceiver;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -73,7 +71,6 @@ public class MainActivity extends CommonActivity
     private AtomicInteger loaders = new AtomicInteger(0);
     private AtomicBoolean cameraActionProcessing = new AtomicBoolean(false);
 
-    private List<BroadcastReceiver> receivers = new ArrayList<BroadcastReceiver>();
     boolean instanceSaved = false;
 
     final Handler handler = new Handler();
@@ -112,20 +109,22 @@ public class MainActivity extends CommonActivity
 
         setContentView(R.layout.content);
 
-        receivers.add(UploadsUtils
+        addRegisteredReceiver(UploadsUtils
                 .getAndRegisterOnUploadClearedActionBroadcastReceiver(TAG,
                         this, this));
-        receivers.add(UploaderServiceUtils.getAndRegisterOnPhotoUploadedActionBroadcastReceiver(
+        addRegisteredReceiver(UploaderServiceUtils
+                .getAndRegisterOnPhotoUploadedActionBroadcastReceiver(
+                        TAG, this, this));
+        addRegisteredReceiver(SyncUtils.getAndRegisterOnSyncStartedActionBroadcastReceiver(
                 TAG, this, this));
-        receivers.add(SyncUtils.getAndRegisterOnSyncStartedActionBroadcastReceiver(
+        addRegisteredReceiver(PhotoUtils.getAndRegisterOnPhotoDeletedActionBroadcastReceiver(
                 TAG, this, this));
-        receivers.add(PhotoUtils.getAndRegisterOnPhotoDeletedActionBroadcastReceiver(
+        addRegisteredReceiver(PhotoUtils.getAndRegisterOnPhotoUpdatedActionBroadcastReceiver(
                 TAG, this, this));
-        receivers.add(PhotoUtils.getAndRegisterOnPhotoUpdatedActionBroadcastReceiver(
-                TAG, this, this));
-        receivers.add(ImageCacheUtils.getAndRegisterOnDiskCacheClearedBroadcastReceiver(TAG,
+        addRegisteredReceiver(ImageCacheUtils.getAndRegisterOnDiskCacheClearedBroadcastReceiver(
+                TAG,
                 this));
-        receivers.add(PurchaseControllerUtils
+        addRegisteredReceiver(PurchaseControllerUtils
                 .getAndRegisterOnSubscriptionPurchasedActionBroadcastReceiver(TAG, this, this));
     }
 
@@ -173,10 +172,6 @@ public class MainActivity extends CommonActivity
         if (purchaseController != null)
             purchaseController.dispose();
         purchaseController = null;
-        for (BroadcastReceiver br : receivers)
-        {
-            unregisterReceiver(br);
-        }
     }
 
     @Override

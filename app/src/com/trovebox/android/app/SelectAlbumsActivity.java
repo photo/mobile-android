@@ -1,6 +1,9 @@
 
 package com.trovebox.android.app;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 import org.holoeverywhere.LayoutInflater;
@@ -25,9 +28,13 @@ import com.trovebox.android.app.common.CommonActivity;
 import com.trovebox.android.app.common.CommonFragmentWithImageWorker;
 import com.trovebox.android.app.model.Album;
 import com.trovebox.android.app.model.Photo;
+import com.trovebox.android.app.model.utils.AlbumUtils;
+import com.trovebox.android.app.model.utils.AlbumUtils.AlbumCreatedHandler;
+import com.trovebox.android.app.model.utils.AlbumUtils.AlbumsByIdComparator;
 import com.trovebox.android.app.model.utils.PhotoUtils;
 import com.trovebox.android.app.net.ReturnSizes;
 import com.trovebox.android.app.ui.adapter.MultiSelectAlbumsAdapter;
+import com.trovebox.android.app.util.CommonUtils;
 import com.trovebox.android.app.util.LoadingControl;
 import com.trovebox.android.app.util.RunnableWithParameter;
 import com.trovebox.android.app.util.TrackerUtils;
@@ -39,7 +46,7 @@ import com.trovebox.android.app.util.data.StringMapParcelableWrapper;
  * @author Eugene Popovich
  */
 public class SelectAlbumsActivity
-        extends CommonActivity {
+        extends CommonActivity implements AlbumCreatedHandler {
 
     public static final String TAG =
             SelectAlbumsActivity.class.getSimpleName();
@@ -54,10 +61,28 @@ public class SelectAlbumsActivity
                     .replace(android.R.id.content, new SelectAlbumsUiFragment())
                     .commit();
         }
+        addRegisteredReceiver(AlbumUtils.getAndRegisterOnAlbumCreatedActionBroadcastReceiver(TAG,
+                this, this));
+    }
+
+    @Override
+    public void albumCreated(Album album) {
+        getContentFragment().albumCreated(album);
+    }
+
+    /**
+     * Get the current content fragment of the SelectAlbumsUiFragment type
+     * 
+     * @return
+     */
+    SelectAlbumsUiFragment getContentFragment()
+    {
+        return (SelectAlbumsUiFragment) getSupportFragmentManager().findFragmentById(
+                android.R.id.content);
     }
 
     public static class SelectAlbumsUiFragment extends CommonFragmentWithImageWorker
-            implements LoadingControl, OnItemClickListener
+            implements LoadingControl, OnItemClickListener, AlbumCreatedHandler
     {
         private int mLoaders = 0;
 
@@ -104,6 +129,16 @@ public class SelectAlbumsActivity
             list.setAdapter(mAdapter);
             list.setOnItemClickListener(this);
 
+            Button createAlbumBtn = (Button) v.findViewById(R.id.createBtn);
+            createAlbumBtn.setOnClickListener(new OnClickListener() {
+
+                @Override
+                public void onClick(View v) {
+                    TrackerUtils.trackButtonClickEvent("createAlbumBtn",
+                            SelectAlbumsUiFragment.this);
+                    createAlbumClicked(v);
+                }
+            });
             Button finishBtn = (Button) v.findViewById(R.id.finishBtn);
             finishBtn.setOnClickListener(new OnClickListener() {
 
@@ -139,7 +174,31 @@ public class SelectAlbumsActivity
 
         }
 
+        /**
+         * Open create new album dialog
+         * 
+         * @param v
+         */
+        public void createAlbumClicked(View v) {
+            AlbumCreateFragment albumCreateFragment = new AlbumCreateFragment();
+            albumCreateFragment.show(getSupportActivity());
+        }
+
+        @Override
+        public void albumCreated(Album album) {
+            mAdapter.addItem(album);
+        }
+
         private class AlbumsAdapter extends MultiSelectAlbumsAdapter {
+            boolean needToFilter = false;
+            /**
+             * This stores already filtered items
+             */
+            List<Album> sortedItems;
+            /**
+             * The comparator to sort sortedItems list
+             */
+            AlbumsByIdComparator comparator;
 
             public AlbumsAdapter(Map<String, String> alreadySelectedAlbums) {
                 super(SelectAlbumsUiFragment.this);
@@ -197,6 +256,57 @@ public class SelectAlbumsActivity
 
             public StringMapParcelableWrapper getSelectedAlbumsParceble() {
                 return new StringMapParcelableWrapper(checkedAlbums);
+            }
+
+            @Override
+            public void addItem(Album item) {
+                needToFilter = true;
+                super.addItem(item);
+            }
+
+            @Override
+            public Album filterItemBeforeAdd(Album item) {
+                if (needToFilter)
+                {
+                    return super.filterItemBeforeAdd(item);
+                } else
+                {
+                    return item;
+                }
+            }
+
+            @Override
+            public List<Album> filterItemsBeforeAdd(List<Album> items) {
+                try
+                {
+                    if (needToFilter)
+                    {
+                        if (sortedItems == null)
+                        {
+                            comparator = new AlbumsByIdComparator();
+                            sortedItems = new ArrayList<Album>(getItems());
+                            Collections.sort(sortedItems, comparator);
+                        }
+                        List<Album> filteredItems = new ArrayList<Album>();
+                        for (Album album : items)
+                        {
+                            int ix = Collections.binarySearch(sortedItems, album, comparator);
+                            // if item is absent in sortedItems list we need to
+                            // add it there and to the filteredItems
+                            if (ix < 0)
+                            {
+                                filteredItems.add(album);
+                                sortedItems.add(-ix - 1, album);
+                            }
+
+                        }
+                        return filteredItems;
+                    }
+                } catch (Exception ex)
+                {
+                    CommonUtils.error(TAG, null, ex);
+                }
+                return super.filterItemsBeforeAdd(items);
             }
         }
 

@@ -159,6 +159,7 @@
     <string name="errorCouldNotGetPhoto">Не удалось прянить фотографию</string>
     <string name="errorCouldNotDeletePhoto">Удалить фотографию не удалось</string>
     <string name="errorCouldNotUpdatePhoto">Не удалось обновить детали фотографии</string>
+    <string name="errorCouldNotCreateAlbum">Не удалось создать альбом</string>
     <string name="errorOccured">Возникла ошибка</string>
     <string name="errorCouldNotLoadNextTagsInList">Не удалось загрузить следующие теги в списке</string>
     <string name="errorCouldNotInitTwitterFragment">Не удалось инициализировать twitter фрагмент</string>
@@ -250,6 +251,16 @@
     <string name="photo_edit_save_button">Сохранить</string>
     <string name="updating_photo_message">Обновление фотографии…</string>
     <string name="photo_edit_dialog_title">Редактирование фотографии</string>
+
+    <!-- Albums select -->
+    <string name="select_albums_finish">@string/upload_select_tags_finish</string>
+    <string name="select_albums_create">Создать альбом</string>
+
+    <!-- Album create -->
+    <string name="create_album_save_button">@string/photo_edit_save_button</string>
+    <string name="album_title_hint">Название</string>
+    <string name="creating_album_message">Создание альбома…</string>
+    <string name="album_create_dialog_title">Создание альбома</string>
 
     <!-- Profile details -->
     <string name="profile_counter_photos">фотографий</string>
