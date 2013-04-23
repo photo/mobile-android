@@ -1,7 +1,6 @@
 
 package com.trovebox.android.app;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -17,6 +16,8 @@ import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.provider.MediaStore;
 import android.util.TypedValue;
 import android.view.View;
@@ -79,9 +80,9 @@ public class SyncImageSelectionFragment extends CommonRefreshableFragmentWithIma
         mImageThumbBorder = getResources().getDimensionPixelSize(
                 R.dimen.image_thumbnail_border);
 
-        customImageWorkerAdapter = CommonUtils.getSerializableFromBundleIfNotNull(
+        customImageWorkerAdapter = CommonUtils.getParcelableFromBundleIfNotNull(
                 IMAGE_WORKER_ADAPTER, savedInstanceState);
-        selectionController = CommonUtils.getSerializableFromBundleIfNotNull(SELECTED_IMAGES,
+        selectionController = CommonUtils.getParcelableFromBundleIfNotNull(SELECTED_IMAGES,
                 savedInstanceState);
         if (selectionController == null)
         {
@@ -94,18 +95,21 @@ public class SyncImageSelectionFragment extends CommonRefreshableFragmentWithIma
         mAdapter = new CustomImageAdapter(getActivity(), (ImageResizer) mImageWorker,
                 selectionController);
     }
+
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.sync_image_selection, menu);
     }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId())
         {
             case R.id.menu_select_all: {
                 TrackerUtils
-                        .trackOptionsMenuClickEvent("menu_select_all", SyncImageSelectionFragment.this);
+                        .trackOptionsMenuClickEvent("menu_select_all",
+                                SyncImageSelectionFragment.this);
                 selectAll();
                 return true;
             }
@@ -148,8 +152,8 @@ public class SyncImageSelectionFragment extends CommonRefreshableFragmentWithIma
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putSerializable(SELECTED_IMAGES, selectionController);
-        outState.putSerializable(IMAGE_WORKER_ADAPTER, customImageWorkerAdapter);
+        outState.putParcelable(SELECTED_IMAGES, selectionController);
+        outState.putParcelable(IMAGE_WORKER_ADAPTER, customImageWorkerAdapter);
     }
 
     public void init(View v)
@@ -368,6 +372,7 @@ public class SyncImageSelectionFragment extends CommonRefreshableFragmentWithIma
         }
         return selectionController.selectedIds.size();
     }
+
     public ArrayList<String> getSelectedFileNames()
     {
         long start = System.currentTimeMillis();
@@ -414,11 +419,10 @@ public class SyncImageSelectionFragment extends CommonRefreshableFragmentWithIma
         }
     }
 
-    static class ImageData implements Serializable
+    public static class ImageData implements Parcelable
     {
-        private static final long serialVersionUID = 1L;
-        long id;
-        String data;
+        public long id;
+        public String data;
 
         public ImageData(long id, String data)
         {
@@ -431,6 +435,37 @@ public class SyncImageSelectionFragment extends CommonRefreshableFragmentWithIma
         public String toString()
         {
             return data;
+        }
+
+        /*****************************
+         * PARCELABLE IMPLEMENTATION *
+         *****************************/
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        @Override
+        public void writeToParcel(Parcel out, int flags) {
+            out.writeLong(id);
+            out.writeString(data);
+        }
+
+        public static final Parcelable.Creator<ImageData> CREATOR = new Parcelable.Creator<ImageData>() {
+            @Override
+            public ImageData createFromParcel(Parcel in) {
+                return new ImageData(in);
+            }
+
+            @Override
+            public ImageData[] newArray(int size) {
+                return new ImageData[size];
+            }
+        };
+
+        private ImageData(Parcel in) {
+            id = in.readLong();
+            data = in.readString();
         }
     }
 
@@ -495,10 +530,14 @@ public class SyncImageSelectionFragment extends CommonRefreshableFragmentWithIma
 
     }
 
-    private static class SelectionController implements Serializable
+    public static class SelectionController implements Parcelable
     {
-        private static final long serialVersionUID = 1L;
         Set<Long> selectedIds = new TreeSet<Long>();
+
+        public SelectionController()
+        {
+
+        }
 
         public boolean isSelected(final long id)
         {
@@ -523,6 +562,43 @@ public class SyncImageSelectionFragment extends CommonRefreshableFragmentWithIma
         boolean hasSelected()
         {
             return !selectedIds.isEmpty();
+        }
+
+        /*****************************
+         * PARCELABLE IMPLEMENTATION *
+         *****************************/
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        @Override
+        public void writeToParcel(Parcel out, int flags) {
+            out.writeInt(selectedIds.size());
+            for (Long id : selectedIds)
+            {
+                out.writeLong(id);
+            }
+        }
+
+        public static final Parcelable.Creator<SelectionController> CREATOR = new Parcelable.Creator<SelectionController>() {
+            @Override
+            public SelectionController createFromParcel(Parcel in) {
+                return new SelectionController(in);
+            }
+
+            @Override
+            public SelectionController[] newArray(int size) {
+                return new SelectionController[size];
+            }
+        };
+
+        private SelectionController(Parcel in) {
+            int size = in.readInt();
+            for (int i = 0; i < size; i++)
+            {
+                selectedIds.add(in.readLong());
+            }
         }
     }
 
@@ -796,23 +872,33 @@ public class SyncImageSelectionFragment extends CommonRefreshableFragmentWithIma
         }
     }
 
-    private static class CustomImageWorkerAdapter extends
-            ImageWorkerAdapter implements Serializable
+    public static class CustomImageWorkerAdapter extends
+            ImageWorkerAdapter implements Parcelable
     {
-        private static final long serialVersionUID = 1L;
+        public List<ImageData> all;
+        public Set<String> processedValues;
 
-        List<ImageData> all;
-        Set<String> processedValues;
+        public List<Integer> filteredIndexes;
 
-        List<Integer> filteredIndexes;
-
-        boolean filtered = false;
+        public boolean filtered = false;
 
         public CustomImageWorkerAdapter()
         {
             loadGallery();
             loadProcessedValues();
             sort();
+        }
+
+        public CustomImageWorkerAdapter(
+                List<ImageData> all,
+                Set<String> processedValues,
+                List<Integer> filteredIndexes,
+                boolean filtered)
+        {
+            this.all = all;
+            this.processedValues = processedValues;
+            this.filteredIndexes = filteredIndexes;
+            this.filtered = filtered;
         }
 
         public void loadGallery()
@@ -846,7 +932,7 @@ public class SyncImageSelectionFragment extends CommonRefreshableFragmentWithIma
 
                     cursor.close();
                 }
-            }else
+            } else
             {
                 all = new ArrayList<ImageData>();
             }
@@ -936,6 +1022,51 @@ public class SyncImageSelectionFragment extends CommonRefreshableFragmentWithIma
                     return leftProcessed ? -1 : 1;
                 }
             });
+        }
+
+        /*****************************
+         * PARCELABLE IMPLEMENTATION *
+         *****************************/
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        @Override
+        public void writeToParcel(Parcel out, int flags) {
+            out.writeList(all);
+            out.writeInt(processedValues.size());
+            for (String value : processedValues)
+            {
+                out.writeString(value);
+            }
+            out.writeList(filteredIndexes);
+            out.writeByte((byte) (filtered ? 1 : 0));
+        }
+
+        public static final Parcelable.Creator<CustomImageWorkerAdapter> CREATOR = new Parcelable.Creator<CustomImageWorkerAdapter>() {
+            @Override
+            public CustomImageWorkerAdapter createFromParcel(Parcel in) {
+                return new CustomImageWorkerAdapter(in);
+            }
+
+            @Override
+            public CustomImageWorkerAdapter[] newArray(int size) {
+                return new CustomImageWorkerAdapter[size];
+            }
+        };
+
+        @SuppressWarnings("unchecked")
+        private CustomImageWorkerAdapter(Parcel in) {
+            all = in.readArrayList(getClass().getClassLoader());
+            int size = in.readInt();
+            processedValues = new TreeSet<String>();
+            for (int i = 0; i < size; i++)
+            {
+                processedValues.add(in.readString());
+            }
+            filteredIndexes = in.readArrayList(getClass().getClassLoader());
+            filtered = in.readByte() == 1;
         }
     }
 

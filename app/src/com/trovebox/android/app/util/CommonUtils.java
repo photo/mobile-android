@@ -151,6 +151,19 @@ public class CommonUtils
     }
 
     /**
+     * Get parcelable object from bundle if it is not null
+     * 
+     * @param key
+     * @param bundle
+     * @return
+     */
+    @SuppressWarnings("unchecked")
+    public static <T> T getParcelableFromBundleIfNotNull(String key, Bundle bundle)
+    {
+        return (T) (bundle == null ? null : bundle.getParcelable(key));
+    }
+
+    /**
      * Check the external storage status
      * 
      * @return
