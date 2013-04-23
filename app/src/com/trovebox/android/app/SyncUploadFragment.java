@@ -12,7 +12,6 @@ import org.holoeverywhere.widget.Switch;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -63,6 +62,10 @@ public class SyncUploadFragment extends CommonFragment implements OnClickListene
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
         instance = this;
+        if (savedInstanceState != null)
+        {
+            albumsWrapper = savedInstanceState.getParcelable(SELECTED_ALBUMS);
+        }
     }
 
     @Override
@@ -92,7 +95,7 @@ public class SyncUploadFragment extends CommonFragment implements OnClickListene
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putParcelable(SELECTED_ALBUMS, (Parcelable) albumsText.getTag());
+        outState.putParcelable(SELECTED_ALBUMS, albumsWrapper);
     }
 
     @Override
@@ -144,14 +147,6 @@ public class SyncUploadFragment extends CommonFragment implements OnClickListene
         editTags = (EditText) v.findViewById(
                 R.id.edit_tags);
         albumsText = ((EditText) v.findViewById(R.id.edit_albums));
-        if (savedInstanceState != null)
-        {
-            albumsWrapper = savedInstanceState.getParcelable(SELECTED_ALBUMS);
-        }
-        if (albumsWrapper != null)
-        {
-            albumsText.setTag(albumsWrapper);
-        }
         privateSwitch = (Switch) v.findViewById(R.id.private_switch);
         twitterSwitch = (Switch) v.findViewById(R.id.twitter_switch);
         facebookSwitch = (Switch) v.findViewById(R.id.facebook_switch);
@@ -205,7 +200,7 @@ public class SyncUploadFragment extends CommonFragment implements OnClickListene
                 TrackerUtils.trackButtonClickEvent("select_albums", SyncUploadFragment.this);
                 Intent i = new Intent(getActivity(), SelectAlbumsActivity.class);
                 i.putExtra(SelectAlbumsActivity.SELECTED_ALBUMS,
-                        (Parcelable) albumsText.getTag());
+                        albumsWrapper);
                 startActivityForResult(i, REQUEST_ALBUMS);
             }
                 break;
@@ -222,7 +217,6 @@ public class SyncUploadFragment extends CommonFragment implements OnClickListene
                             SelectAlbumsActivity.SELECTED_ALBUMS);
                     Map<String, String> albums = albumsWrapper.getMap();
                     albumsText.setText(AlbumUtils.getAlbumsString(albums));
-                    albumsText.setTag(albumsWrapper);
                     this.albumsWrapper = albumsWrapper;
                 }
                 break;
