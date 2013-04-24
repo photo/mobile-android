@@ -6,6 +6,8 @@ import org.holoeverywhere.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 
+import com.google.analytics.tracking.android.Transaction;
+import com.google.analytics.tracking.android.Transaction.Item;
 import com.trovebox.android.app.Preferences;
 import com.trovebox.android.app.R;
 import com.trovebox.android.app.net.ProfileResponse;
@@ -297,6 +299,49 @@ public class PurchaseController {
     }
 
     /**
+     * Ecommerce GA tracking for subscription purchase
+     * 
+     * @param purchase
+     */
+    static void trackMonthlySubscriptionPurchaseIfNecessary(Purchase purchase)
+    {
+        try
+        {
+            if (purchase != null && purchase.isInPurchasedState()
+                    && !Preferences.isPurchaseVerified(purchase))
+            {
+                Transaction myTrans = new Transaction.Builder(
+                        purchase.getOrderId(), // (String) Transaction Id,
+                                               // should be unique.
+                        (long) (2.99 * 1000000)) // (long) Order total (in
+                                                 // micros)
+                        .setAffiliation("In-App Store") // (String) Affiliation
+                        .setTotalTaxInMicros((long) (0.0 * 1000000)) // (long)
+                                                                     // Total
+                                                                     // tax (in
+                                                                     // micros)
+                        .setShippingCostInMicros(0) // (long) Total shipping
+                                                    // cost (in micros)
+                        .build();
+
+                myTrans.addItem(new Item.Builder(
+                        purchase.getSku(), // (String) Product SKU
+                        "Monthly subscription to Pro", // (String) Product name
+                        (long) (2.99 * 1000000), // (long) Product price (in
+                                                 // micros)
+                        (long) 1) // (long) Product quantity
+                        .setProductCategory("Subscriptions") // (String) Product
+                                                             // category
+                        .build());
+                TrackerUtils.sendTransaction(myTrans);
+            }
+        } catch (Exception ex)
+        {
+            GuiUtils.noAlertError(TAG, ex);
+        }
+    }
+
+    /**
      * Listener for the query inventory result
      */
     static class GotInventoryListener implements IabHelper.QueryInventoryFinishedListener {
@@ -336,6 +381,7 @@ public class PurchaseController {
             if (monthlySubscriptionPurchase != null
                     && monthlySubscriptionPurchase.isInPurchasedState())
             {
+                trackMonthlySubscriptionPurchaseIfNecessary(monthlySubscriptionPurchase);
                 CommonUtils.debug(TAG, "Monthly subscription inventory found.");
                 PaymentVerificationResponseUtil.verifyPurchaseAndRunAsync(new Runnable() {
 
@@ -389,6 +435,7 @@ public class PurchaseController {
             if (purchase.getSku().equals(SKU_MONTHLY_SUBSCRIPTION)) {
                 // bought the monthly subscription
                 CommonUtils.debug(TAG, "Monthly subscription purchased.");
+                trackMonthlySubscriptionPurchaseIfNecessary(purchase);
                 PaymentVerificationResponseUtil.verifyPurchaseAndRunAsync(new Runnable() {
 
                     @Override

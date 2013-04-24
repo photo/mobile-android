@@ -1,3 +1,4 @@
+
 package com.trovebox.android.app.util;
 
 import java.io.PrintWriter;
@@ -11,6 +12,7 @@ import com.google.analytics.tracking.android.EasyTracker;
 import com.google.analytics.tracking.android.ExceptionParser;
 import com.google.analytics.tracking.android.ExceptionReporter;
 import com.google.analytics.tracking.android.GAServiceManager;
+import com.google.analytics.tracking.android.Transaction;
 import com.trovebox.android.app.Preferences;
 import com.trovebox.android.app.TroveboxApplication;
 
@@ -273,7 +275,6 @@ public class TrackerUtils {
         trackEvent("background_event", action, eventHolder.getClass().getSimpleName());
     }
 
-
     /**
      * Track an event
      * 
@@ -345,11 +346,23 @@ public class TrackerUtils {
 
     /**
      * Track message as exception
+     * 
      * @param message
      */
     public static void trackException(String message)
     {
         EasyTracker.getTracker().sendException(message, false);
+    }
+
+    /**
+     * Send transaction details (Ecommerce tracking)
+     * 
+     * @param transaction
+     */
+    public static void sendTransaction(Transaction transaction)
+    {
+        EasyTracker.getTracker().sendTransaction(transaction); // Send the
+                                                               // transaction.
     }
 
     /**
