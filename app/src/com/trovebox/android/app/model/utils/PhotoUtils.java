@@ -19,6 +19,7 @@ import com.trovebox.android.app.TroveboxApplication;
 import com.trovebox.android.app.model.Photo;
 import com.trovebox.android.app.net.PhotoResponse;
 import com.trovebox.android.app.net.ReturnSizes;
+import com.trovebox.android.app.net.TokenResponse;
 import com.trovebox.android.app.net.TroveboxResponse;
 import com.trovebox.android.app.net.TroveboxResponseUtils;
 import com.trovebox.android.app.util.CommonUtils;
@@ -88,13 +89,68 @@ public class PhotoUtils {
         String size = photoSize.toString();
         if (photo.getUrl(size) != null)
         {
-            CommonUtils.debug(TAG, "Url for the size " + size + " exists. Running action.");
+            CommonUtils.debug(TAG, "Url for the size " + size + " exists");
         } else
         {
             CommonUtils.debug(TAG, "Url for the size " + size
                     + " doesn't exist. Running size retrieval method.");
             Photo photo2 = getThePhotoWithReturnSize(photo, photoSize);
             photo.putUrl(size, photo2.getUrl(size));
+        }
+        return photo;
+    }
+
+    /**
+     * Validate whether getShareToken for the photo is not null. Runs share
+     * token retrieval task if it is null
+     * 
+     * @param photo the photo to check
+     * @param runnable the runnable which will run with the validated photo
+     * @param runnableOnFailure the runnable which will run in case of share
+     *            token retrieval failure
+     * @param loadingControl the loading control to display loading indicator
+     */
+    public static void validateShareTokenExistsAsyncAndRunAsync(
+            Photo photo,
+            RunnableWithParameter<Photo> runnable,
+            Runnable runnableOnFailure,
+            LoadingControl loadingControl
+            )
+    {
+        if (photo.getShareToken() != null)
+        {
+            CommonUtils.debug(TAG, "Share token exists. Running action.");
+            runnable.run(photo);
+        } else
+        {
+            CommonUtils.debug(TAG, "Share token doesn't exist. Running token retrieval task.");
+            new RetrieveShareTokenTask(photo, runnable, runnableOnFailure, loadingControl)
+                    .execute();
+        }
+    }
+
+    /**
+     * Validate whether the photo has retrieved share token. If not then
+     * retrieve the share token
+     * 
+     * @param photo
+     * @return
+     * @throws ClientProtocolException
+     * @throws IOException
+     * @throws JSONException
+     */
+    public static Photo validateShareTokenExistsAndReturn(
+            Photo photo
+            ) throws ClientProtocolException, IOException, JSONException
+    {
+        if (photo.getShareToken() != null)
+        {
+            CommonUtils.debug(TAG, "Share token exists");
+        } else
+        {
+            CommonUtils.debug(TAG, "Share token doesn't exist. Running size retrieval method.");
+            TokenResponse response = TokenUtils.getPhotoShareTokenResponse(photo);
+            photo.setShareToken(response.getToken());
         }
         return photo;
     }
@@ -149,6 +205,22 @@ public class PhotoUtils {
                 loadingControl).execute();
     }
 
+    /**
+     * Get the photo share url
+     * 
+     * @param photo the photo to get the share url for
+     * @param appendToken whether to append share token at the end of url
+     * @return
+     */
+    public static String getShareUrl(Photo photo, boolean appendToken) {
+        String result = photo.getUrl(Photo.URL);
+        if (appendToken)
+        {
+            result += TokenUtils.getTokenUrlSuffix(photo.getShareToken());
+        }
+        return result;
+    }
+
     private static class RetrieveThumbUrlTask extends SimpleAsyncTaskEx {
         private Photo mPhoto;
         private ReturnSizes photoSize;
@@ -180,6 +252,55 @@ public class PhotoUtils {
         @Override
         protected void onSuccessPostExecute() {
             runnable.run(mPhoto);
+        }
+
+    }
+
+    /**
+     * Share token retrieval task
+     */
+    private static class RetrieveShareTokenTask extends SimpleAsyncTaskEx {
+        private Photo photo;
+        private RunnableWithParameter<Photo> runnable;
+        private Runnable runnableOnFailure;
+
+        public RetrieveShareTokenTask(Photo photo,
+                RunnableWithParameter<Photo> runnable,
+                Runnable runnableOnFailure,
+                LoadingControl loadingControl) {
+            super(loadingControl);
+            this.photo = photo;
+            this.runnable = runnable;
+            this.runnableOnFailure = runnableOnFailure;
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... params) {
+            try {
+                TokenResponse response = TokenUtils.getPhotoShareTokenResponse(photo);
+                if (TroveboxResponseUtils.checkResponseValid(response))
+                {
+                    photo.setShareToken(response.getToken());
+                    return true;
+                }
+            } catch (Exception e) {
+                GuiUtils.error(TAG, R.string.errorCouldNotGetShareToken, e);
+            }
+            return false;
+        }
+
+        @Override
+        protected void onSuccessPostExecute() {
+            runnable.run(photo);
+        }
+
+        @Override
+        protected void onFailedPostExecute() {
+            super.onFailedPostExecute();
+            if (runnableOnFailure != null)
+            {
+                runnableOnFailure.run();
+            }
         }
 
     }

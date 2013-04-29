@@ -1,19 +1,29 @@
+
 package com.trovebox.android.app.share;
 
 import java.io.Serializable;
+
+import org.holoeverywhere.app.Activity;
+
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.net.Uri;
+import android.text.Html;
 
 import com.trovebox.android.app.FacebookFragment;
 import com.trovebox.android.app.R;
 import com.trovebox.android.app.TwitterFragment;
 import com.trovebox.android.app.common.CommonFragment;
 import com.trovebox.android.app.model.Photo;
+import com.trovebox.android.app.model.utils.PhotoUtils;
+import com.trovebox.android.app.ui.widget.YesNoDialogFragment;
+import com.trovebox.android.app.ui.widget.YesNoDialogFragment.YesNoButtonPressedHandler;
+import com.trovebox.android.app.util.CommonUtils;
 import com.trovebox.android.app.util.GuiUtils;
+import com.trovebox.android.app.util.LoadingControl;
+import com.trovebox.android.app.util.RunnableWithParameter;
 import com.trovebox.android.app.util.RunnableWithResult;
-
-import android.content.Context;
-import android.content.Intent;
-import android.net.Uri;
-import android.text.Html;
 
 /**
  * Sharing functionality utils
@@ -22,32 +32,93 @@ import android.text.Html;
  */
 public class ShareUtils {
     static final String TAG = ShareUtils.class.getSimpleName();
-    
+
+    /**
+     * Show confirmation dialog to confirm sharing of private photo
+     * 
+     * @param photo the photo to share
+     * @param runnable action to run in case of photo is public or user
+     *            confirmed share of private photo
+     * @param activity
+     */
+    public static void confirmPrivatePhotoSharingAndRun(Photo photo, final Runnable runnable,
+            Activity activity)
+    {
+        if (photo != null)
+        {
+            if (photo.isPrivate())
+            {
+                YesNoDialogFragment dialogFragment = YesNoDialogFragment
+                        .newInstance(R.string.share_private_photo_confirmation_question,
+                                new YesNoButtonPressedHandler()
+                                {
+                                    @Override
+                                    public void yesButtonPressed(
+                                            DialogInterface dialog)
+                                    {
+                                        runnable.run();
+                                    }
+
+                                    @Override
+                                    public void noButtonPressed(
+                                            DialogInterface dialog)
+                                    {
+                                        // DO NOTHING
+                                    }
+                                });
+                dialogFragment.show(activity);
+            } else
+            {
+                runnable.run();
+            }
+        }
+    }
+
     /**
      * Shares the specified photo via email. The email application should be
      * installed on the user device
      * 
      * @param photo
      * @param context
+     * @param loadingControl the loading control for token retrieval operation
      */
-    public static void shareViaEMail(Photo photo, Context context)
+    public static void shareViaEMail(Photo photo, final Context context,
+            LoadingControl loadingControl)
     {
-        String mailId = "";
-        Intent emailIntent = new Intent(Intent.ACTION_SENDTO,
-                Uri.fromParts("mailto", mailId, null));
-        emailIntent.putExtra(android.content.Intent.EXTRA_SUBJECT,
-                context.getString(R.string.share_email_default_title));
-        String url = photo.getUrl(Photo.URL);
-        String bodyText = String.format(context.getString(R.string.share_email_default_body),
-                url, url);
-        emailIntent.putExtra(
-                Intent.EXTRA_TEXT,
-                Html.fromHtml(bodyText)
-                );
-        context.startActivity(Intent.createChooser(emailIntent,
-                context.getString(R.string.share_email_send_title)));
+        RunnableWithParameter<Photo> runnable = new RunnableWithParameter<Photo>() {
+
+            @Override
+            public void run(Photo photo) {
+                String mailId = "";
+                Intent emailIntent = new Intent(Intent.ACTION_SENDTO,
+                        Uri.fromParts("mailto", mailId, null));
+                emailIntent.putExtra(android.content.Intent.EXTRA_SUBJECT,
+                        CommonUtils.getStringResource(R.string.share_email_default_title));
+                String url = PhotoUtils.getShareUrl(photo, photo.isPrivate());
+                String bodyText = CommonUtils.getStringResource(
+                        R.string.share_email_default_body,
+                        url, url);
+                emailIntent.putExtra(
+                        Intent.EXTRA_TEXT,
+                        Html.fromHtml(bodyText)
+                        );
+                context.startActivity(Intent.createChooser(emailIntent,
+                        CommonUtils.getStringResource(R.string.share_email_send_title)));
+            }
+        };
+        if (photo.isPrivate())
+        {
+            PhotoUtils.validateShareTokenExistsAsyncAndRunAsync(photo,
+                    runnable,
+                    null,
+                    loadingControl);
+        } else
+        {
+            runnable.run(photo);
+        }
+
     }
-    
+
     /**
      * The runnable which opens twitter share dialog
      */

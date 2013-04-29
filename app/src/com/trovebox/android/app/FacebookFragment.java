@@ -70,6 +70,7 @@ public class FacebookFragment extends CommonStyledDialogFragment
         super.onViewCreated(view, savedInstanceState);
         init(view);
     }
+
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
@@ -119,6 +120,27 @@ public class FacebookFragment extends CommonStyledDialogFragment
                     }
                 }
             });
+            if (photo.isPrivate())
+            {
+                sendButton.setEnabled(false);
+                PhotoUtils.validateShareTokenExistsAsyncAndRunAsync(photo,
+                        new RunnableWithParameter<Photo>() {
+
+                            @Override
+                            public void run(Photo parameter) {
+                                sendButton.setEnabled(true);
+                            }
+                        },
+
+                        new Runnable() {
+
+                            @Override
+                            public void run() {
+                                sendButton.setEnabled(false);
+                            }
+                        },
+                        new FBLoadingControl(view));
+            }
         } catch (Exception ex)
         {
             GuiUtils.error(TAG, R.string.errorCouldNotInitFacebookFragment, ex,
@@ -151,6 +173,32 @@ public class FacebookFragment extends CommonStyledDialogFragment
         Dialog result = super.onCreateDialog(savedInstanceState);
         result.setTitle(R.string.share_facebook_dialog_title);
         return result;
+    }
+
+    private class FBLoadingControl extends LoadingControlWithCounter
+    {
+        ProgressBar progressBar;
+        EditText editText;
+
+        FBLoadingControl(View view)
+        {
+            progressBar = (ProgressBar) view.findViewById(R.id.progressBar2);
+            editText = (EditText) view.findViewById(R.id.message);
+        }
+
+        @Override
+        public void stopLoadingEx() {
+            editText.setFocusable(true);
+            editText.setFocusableInTouchMode(true);
+            progressBar.setVisibility(View.GONE);
+        }
+
+        @Override
+        public void startLoadingEx() {
+            progressBar.setVisibility(View.VISIBLE);
+            editText.setFocusable(false);
+            editText.setFocusableInTouchMode(false);
+        }
     }
 
     private class ShowCurrentlyLoggedInUserTask extends
@@ -212,10 +260,9 @@ public class FacebookFragment extends CommonStyledDialogFragment
 
         @Override
         protected void onSuccessPostExecute() {
-                loggedInAsText.setText(String
-                        .format(
-                                activity.getString(R.string.share_facebook_logged_in_as),
-                                name));
+            loggedInAsText.setText(CommonUtils.getStringResource(
+                            R.string.share_facebook_logged_in_as,
+                            name));
         }
     }
 
@@ -228,6 +275,7 @@ public class FacebookFragment extends CommonStyledDialogFragment
         {
             this.photo = photo;
         }
+
         @Override
         protected void onPreExecute()
         {
@@ -265,7 +313,7 @@ public class FacebookFragment extends CommonStyledDialogFragment
         try
         {
             sharePhoto(messageEt.getText().toString(), photo, thumbSize,
-                    TroveboxApplication.getContext());
+                    photo.isPrivate());
             return true;
         } catch (Exception ex)
         {
@@ -275,11 +323,37 @@ public class FacebookFragment extends CommonStyledDialogFragment
         }
         return false;
     }
+    /**
+     * @param message the sharing message
+     * @param photo the photo to share
+     * @param thumbSize the thumb image size
+     * @throws FileNotFoundException
+     * @throws MalformedURLException
+     * @throws IOException
+     */
+    public static void sharePhoto(
+            String message,
+            Photo photo,
+            ReturnSizes thumbSize) throws FileNotFoundException,
+            MalformedURLException, IOException
+    {
+        sharePhoto(message, photo, thumbSize, false);
+    }
+
+    /**
+     * @param message the sharing message
+     * @param photo the photo to share
+     * @param thumbSize the thumb image size
+     * @param appendToken whether to append share token to the photo url
+     * @throws FileNotFoundException
+     * @throws MalformedURLException
+     * @throws IOException
+     */
     public static void sharePhoto(
             String message,
             Photo photo,
             ReturnSizes thumbSize,
-            Context context) throws FileNotFoundException,
+            boolean appendToken) throws FileNotFoundException,
             MalformedURLException, IOException
     {
         Facebook facebook = FacebookProvider.getFacebook();
@@ -293,10 +367,10 @@ public class FacebookFragment extends CommonStyledDialogFragment
         bparams.putString(
                 "caption",
                 photo.getTitle());
-        bparams.putString("description", context
-                .getString(R.string.share_facebook_default_description));
+        bparams.putString("description", CommonUtils
+                .getStringResource(R.string.share_facebook_default_description));
         bparams.putString("picture", photo.getUrl(thumbSize.toString()));
-        bparams.putString("link", photo.getUrl(Photo.URL));
+        bparams.putString("link", PhotoUtils.getShareUrl(photo, appendToken));
         TrackerUtils.trackSocial("facebook", "feed",
                 message + " | " + photo.getUrl(Photo.URL));
         facebook.request("feed", bparams, "POST");

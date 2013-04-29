@@ -22,6 +22,7 @@
 
     <!-- Share -->
     <string name="share_private_photo_forbidden">Вы не можете делиться частными фотографиями</string>
+    <string name="share_private_photo_confirmation_question">Эта фотография является приватной. Вы уверены, что хотите опубликовать её?</string>
 
     <!-- Share E-Mail -->
     <string name="share_email_default_title">Я использую Trovebox, чтобы поделиться мгновением</string>
@@ -32,7 +33,7 @@
     <string name="share_twitter_requesting_authentication">Запрос аутентификации в twitter…</string>
     <string name="share_twitter_verifying_authentication">Проверка аутентификации в twitter …</string>
     <string name="share_twitter_authorise_ask">Пожалуйста, предоставьте доступ этому приложению!</string>
-    <string name="share_twitter_authorisation_question">Вы еще не предоставили доступ к своей учетной записи Twitter программе Trovebox. Хотите сделать это сейчас?</string>
+    <string name="share_twitter_authorisation_question">Вы еще не предоставили доступ к своей учетной записи Twitter приложению Trovebox. Хотите сделать это сейчас?</string>
     <string name="share_twitter_logged_in_as">Вы вошли как %1$s</string>
     <string name="share_twitter_send_tweet">Отправить твит</string>
     <string name="share_twitter_dialog_title">Опубликовать в Twitter</string>
@@ -44,7 +45,7 @@
 
     <!-- Share Facebook -->
     <string name="share_facebook_authorise_ask">Пожалуйста, предоставьте доступ этому приложению!</string>
-    <string name="share_facbook_authorisation_question">Вы еще не предоставили доступ к своей учетной записи Facebook программе Trovebox или авторизация устарела. Хотите предоставить доступ сейчас?</string>
+    <string name="share_facbook_authorisation_question">Вы еще не предоставили доступ к своей учетной записи Facebook приложению Trovebox или авторизация устарела. Хотите предоставить доступ сейчас?</string>
     <string name="share_facbook_action_canceled">Действие отменено</string>
     <string name="share_facebook_success_setup_message">Настройка Facebook прошла успешно</string>
     <string name="share_facebook_photo">Опубликовать фото</string>
@@ -160,6 +161,7 @@
     <string name="errorCouldNotDeletePhoto">Удалить фотографию не удалось</string>
     <string name="errorCouldNotUpdatePhoto">Не удалось обновить детали фотографии</string>
     <string name="errorCouldNotCreateAlbum">Не удалось создать альбом</string>
+    <string name="errorCouldNotGetShareToken">Не удалось создать маркер публикации</string>
     <string name="errorOccured">Возникла ошибка</string>
     <string name="errorCouldNotLoadNextTagsInList">Не удалось загрузить следующие теги в списке</string>
     <string name="errorCouldNotInitTwitterFragment">Не удалось инициализировать twitter фрагмент</string>
