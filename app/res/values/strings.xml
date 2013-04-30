@@ -22,6 +22,7 @@
 
     <!-- Share -->
     <string name="share_private_photo_forbidden">You can\'t share private photos</string>
+    <string name="share_private_photo_confirmation_question">This photo is private. Are you sure want to share it?</string>
 
     <!-- Share E-Mail -->
     <string name="share_email_default_title">I\'m using Trovebox to share my moments</string>
@@ -161,6 +162,7 @@
     <string name="errorCouldNotDeletePhoto">Could not delete photo</string>
     <string name="errorCouldNotUpdatePhoto">Could not update photo details</string>
     <string name="errorCouldNotCreateAlbum">Could not create album</string>
+    <string name="errorCouldNotGetShareToken">Could not get share token</string>
     <string name="errorOccured">Error occurred</string>
     <string name="errorCouldNotLoadNextTagsInList">Could not load next tags in list</string>
     <string name="errorCouldNotInitTwitterFragment">Could not init twitter fragment</string>

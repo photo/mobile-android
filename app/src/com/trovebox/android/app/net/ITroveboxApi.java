@@ -33,7 +33,7 @@ public interface ITroveboxApi {
      */
     AlbumsResponse getAlbums() throws ClientProtocolException, IOException,
             IllegalStateException, JSONException;
-    
+
     /**
      * Get albums.
      * 
@@ -279,4 +279,18 @@ public interface ITroveboxApi {
      */
     AlbumResponse createAlbum(String name) throws ClientProtocolException, IOException,
             IllegalStateException, JSONException;
+
+    /**
+     * Create a share token for the photo
+     * 
+     * @param photoId an id of a photo the token should be created for
+     * @return the created token information
+     * @throws ClientProtocolException
+     * @throws IOException
+     * @throws IllegalStateException
+     * @throws JSONException
+     */
+    TokenResponse createTokenForPhoto(String photoId) throws ClientProtocolException, IOException,
+            IllegalStateException, JSONException;
+
 }

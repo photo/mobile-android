@@ -190,13 +190,31 @@ public class HomeFragment extends CommonRefreshableFragmentWithImageWorker
         switch (menuItemIndex)
         {
             case R.id.menu_share_email:
-                shareViaEMail(activePhoto);
+                confirmPrivatePhotoSharingAndRun(new Runnable() {
+
+                    @Override
+                    public void run() {
+                        shareViaEMail(activePhoto);
+                    }
+                });
                 break;
             case R.id.menu_share_twitter:
-                shareActivePhotoViaTwitter();
+                confirmPrivatePhotoSharingAndRun(new Runnable() {
+
+                    @Override
+                    public void run() {
+                        shareActivePhotoViaTwitter();
+                    }
+                });
                 break;
             case R.id.menu_share_facebook:
-                shareActivePhotoViaFacebook();
+                confirmPrivatePhotoSharingAndRun(new Runnable() {
+
+                    @Override
+                    public void run() {
+                        shareActivePhotoViaFacebook();
+                    }
+                });
                 break;
         }
         return true;
@@ -211,7 +229,7 @@ public class HomeFragment extends CommonRefreshableFragmentWithImageWorker
 
     private void shareViaEMail(Photo photo)
     {
-        ShareUtils.shareViaEMail(photo, getActivity());
+        ShareUtils.shareViaEMail(photo, getActivity(), loadingControl);
     }
 
     public void shareActivePhotoViaTwitter()
@@ -236,6 +254,16 @@ public class HomeFragment extends CommonRefreshableFragmentWithImageWorker
                             activePhoto, currentInstanceAccessor));
         }
     }
+
+    /**
+     * Run runnable in case user confirmed private photo sharing
+     * @param runnable
+     */
+    public void confirmPrivatePhotoSharingAndRun(final Runnable runnable)
+    {
+        ShareUtils.confirmPrivatePhotoSharingAndRun(activePhoto, runnable, getSupportActivity());
+    }
+
 
     @Override
     public void photoDeleted(Photo photo)
@@ -456,19 +484,17 @@ public class HomeFragment extends CommonRefreshableFragmentWithImageWorker
             shareButton.setOnClickListener(new OnClickListener()
             {
                 @Override
-                public void onClick(View v)
+                public void onClick(final View v)
                 {
                     TrackerUtils.trackButtonClickEvent("share_button", HomeFragment.this);
                     activePhoto = photo;
-                    if (photo.isPrivate())
-                    {
-                        GuiUtils.alert(R.string.share_private_photo_forbidden);
-                    } else
-                    {
-                        registerForContextMenu(v);
-                        v.showContextMenu();
-                        unregisterForContextMenu(v);
-                    }
+                    showShareOptions(v);
+                }
+
+                public void showShareOptions(View v) {
+                    registerForContextMenu(v);
+                    v.showContextMenu();
+                    unregisterForContextMenu(v);
                 }
             });
             return convertView;

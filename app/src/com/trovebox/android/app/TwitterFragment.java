@@ -1,7 +1,6 @@
 
 package com.trovebox.android.app;
 
-
 import org.holoeverywhere.LayoutInflater;
 import org.holoeverywhere.app.Activity;
 import org.holoeverywhere.app.Dialog;
@@ -12,7 +11,9 @@ import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import android.content.Context;
 import android.os.Bundle;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -22,12 +23,14 @@ import android.widget.TextView;
 
 import com.trovebox.android.app.common.CommonStyledDialogFragment;
 import com.trovebox.android.app.model.Photo;
+import com.trovebox.android.app.model.utils.PhotoUtils;
 import com.trovebox.android.app.twitter.TwitterProvider;
 import com.trovebox.android.app.twitter.TwitterUtils;
 import com.trovebox.android.app.util.CommonUtils;
 import com.trovebox.android.app.util.GuiUtils;
 import com.trovebox.android.app.util.LoadingControl;
 import com.trovebox.android.app.util.LoadingControlWithCounter;
+import com.trovebox.android.app.util.RunnableWithParameter;
 import com.trovebox.android.app.util.SimpleAsyncTaskEx;
 import com.trovebox.android.app.util.TrackerUtils;
 import com.trovebox.android.app.util.concurrent.AsyncTaskEx;
@@ -39,6 +42,8 @@ public class TwitterFragment extends CommonStyledDialogFragment
 {
     public static final String TAG = TwitterFragment.class.getSimpleName();
     static final String TWEET = "TwitterFragmentTweet";
+    static final String TEXT_MODIFIED = "TwitterFragmentTextModified";
+    static final String PHOTO = "TwitterFragmentPhoto";
 
     Photo photo;
 
@@ -46,6 +51,8 @@ public class TwitterFragment extends CommonStyledDialogFragment
     private LoadingControl loadingControl;
 
     private Button sendButton;
+
+    private boolean textModified = false;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -60,6 +67,8 @@ public class TwitterFragment extends CommonStyledDialogFragment
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putString(TWEET, messageEt.getText().toString());
+        outState.putBoolean(TEXT_MODIFIED, textModified);
+        outState.putParcelable(PHOTO, photo);
     }
 
     @Override
@@ -83,11 +92,29 @@ public class TwitterFragment extends CommonStyledDialogFragment
             if (savedInstanceState != null)
             {
                 messageEt.setText(savedInstanceState.getString(TWEET));
+                textModified = savedInstanceState.getBoolean(TEXT_MODIFIED);
+                photo = savedInstanceState.getParcelable(PHOTO);
             } else
             {
-                String message = getDefaultTweetMessage(getActivity(), photo);
+                String message = getDefaultTweetMessage(photo);
                 messageEt.setText(message);
             }
+            messageEt.addTextChangedListener(new TextWatcher() {
+
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
+                    textModified = true;
+                }
+
+                @Override
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                }
+
+                @Override
+                public void afterTextChanged(Editable s) {
+                }
+            });
             Button logOutButton = (Button) view.findViewById(R.id.logoutBtn);
             logOutButton.setOnClickListener(new OnClickListener()
             {
@@ -112,6 +139,30 @@ public class TwitterFragment extends CommonStyledDialogFragment
                     }
                 }
             });
+            if (!textModified && photo.isPrivate())
+            {
+                sendButton.setEnabled(false);
+                PhotoUtils.validateShareTokenExistsAsyncAndRunAsync(photo,
+                        new RunnableWithParameter<Photo>() {
+
+                            @Override
+                            public void run(Photo parameter) {
+                                sendButton.setEnabled(true);
+                                String message = getDefaultTweetMessage(photo,
+                                        true);
+                                messageEt.setText(message);
+                            }
+                        },
+
+                        new Runnable() {
+
+                            @Override
+                            public void run() {
+                                sendButton.setEnabled(false);
+                            }
+                        },
+                        new TweetLoadingControl(view));
+            }
         } catch (Exception ex)
         {
             GuiUtils.error(TAG, R.string.errorCouldNotInitTwitterFragment, ex,
@@ -137,6 +188,32 @@ public class TwitterFragment extends CommonStyledDialogFragment
         Dialog result = super.onCreateDialog(savedInstanceState);
         result.setTitle(R.string.share_twitter_dialog_title);
         return result;
+    }
+
+    private class TweetLoadingControl extends LoadingControlWithCounter
+    {
+        ProgressBar progressBar;
+        EditText editText;
+
+        TweetLoadingControl(View view)
+        {
+            progressBar = (ProgressBar) view.findViewById(R.id.progressBar2);
+            editText = (EditText) view.findViewById(R.id.message);
+        }
+
+        @Override
+        public void stopLoadingEx() {
+            editText.setFocusable(true);
+            editText.setFocusableInTouchMode(true);
+            progressBar.setVisibility(View.GONE);
+        }
+
+        @Override
+        public void startLoadingEx() {
+            progressBar.setVisibility(View.VISIBLE);
+            editText.setFocusable(false);
+            editText.setFocusableInTouchMode(false);
+        }
     }
 
     private class ShowCurrentlyLoggedInUserTask extends
@@ -267,26 +344,41 @@ public class TwitterFragment extends CommonStyledDialogFragment
     }
 
     /**
-     * Generate default tweet message. It may be different
-     * depend on whether photo has title or no
-     * @param context
+     * Generate default tweet message. It may be different depend on whether
+     * photo has title or no
+     * 
      * @param photo
      * @return
      */
-    public static String getDefaultTweetMessage(Context context, Photo photo) {
+    public static String getDefaultTweetMessage(Photo photo)
+    {
+        return getDefaultTweetMessage(photo, false);
+    }
+
+    /**
+     * Generate default tweet message. It may be different depend on whether
+     * photo has title or no
+     * 
+     * @param photo
+     * @param appendToken whether to append share token to the photo url
+     * @return
+     */
+    public static String getDefaultTweetMessage(Photo photo, boolean appendToken) {
         String message;
         if (TextUtils.isEmpty(photo.getTitle()))
         {
-            message = context.getString(R.string.share_twitter_default_msg,
-                    photo.getUrl(Photo.URL));
+            message = CommonUtils.getStringResource(R.string.share_twitter_default_msg,
+                    PhotoUtils.getShareUrl(photo, appendToken));
         } else
         {
-            message = context.getString(R.string.share_twitter_default_with_title_msg,
+            message = CommonUtils.getStringResource(
+                    R.string.share_twitter_default_with_title_msg,
                     photo.getTitle(),
-                    photo.getUrl(Photo.URL));
+                    PhotoUtils.getShareUrl(photo, appendToken));
         }
         return message;
     }
+
     public static interface TwitterLoadingControlAccessor
     {
         LoadingControl getTwitterLoadingControl();

@@ -20,14 +20,17 @@ import android.test.ApplicationTestCase;
 import com.trovebox.android.app.TroveboxApplication;
 import com.trovebox.android.app.model.Album;
 import com.trovebox.android.app.model.Photo;
+import com.trovebox.android.app.model.Token;
 import com.trovebox.android.app.net.AlbumResponse;
 import com.trovebox.android.app.net.ITroveboxApi;
 import com.trovebox.android.app.net.PhotoResponse;
 import com.trovebox.android.app.net.PhotosResponse;
 import com.trovebox.android.app.net.TagsResponse;
+import com.trovebox.android.app.net.TokenResponse;
 import com.trovebox.android.app.net.TroveboxApi;
 import com.trovebox.android.app.net.UploadMetaData;
 import com.trovebox.android.app.net.UploadResponse;
+import com.trovebox.android.app.util.SHA1Utils;
 import com.trovebox.android.app.util.TrackerUtils;
 import com.trovebox.android.test.util.FileUtils;
 
@@ -77,21 +80,7 @@ public class TroveboxApiTest extends ApplicationTestCase<TroveboxApplication>
 
     public void testPhotoUpload() throws Exception
     {
-        AssetManager assetMgr = getTestContext().getAssets();
-        InputStream imageStream = assetMgr.open("android.jpg");
-        // InputStream imageStream = TroveboxApplication.getContext()
-        // .getResources()
-        // .openRawResource(R.raw.android);
-        File dir = new File(Environment.getExternalStorageDirectory().getAbsolutePath()
-                + "/data/com.trovebox.android");
-        if (!dir.exists()) {
-            assertTrue(dir.mkdirs());
-        }
-        File file = new File(dir, "test-android.jpg");
-        // if (!file.exists()) {
-        // file.createNewFile();
-        // }
-        FileUtils.writeToFile(imageStream, file);
+        File file = createTestFileForUpload();
 
         UploadMetaData settings = new UploadMetaData();
         settings.setTitle("Android");
@@ -129,15 +118,7 @@ public class TroveboxApiTest extends ApplicationTestCase<TroveboxApplication>
 
     public void testPhotoUploadAndDetailsEdit() throws Exception
     {
-        AssetManager assetMgr = getTestContext().getAssets();
-        InputStream imageStream = assetMgr.open("android.jpg");
-        File dir = new File(Environment.getExternalStorageDirectory().getAbsolutePath()
-                + "/data/com.trovebox.android");
-        if (!dir.exists()) {
-            assertTrue(dir.mkdirs());
-        }
-        File file = new File(dir, "test-android.jpg");
-        FileUtils.writeToFile(imageStream, file);
+        File file = createTestFileForUpload();
 
         UploadMetaData settings = new UploadMetaData();
         String title = "Android";
@@ -196,6 +177,86 @@ public class TroveboxApiTest extends ApplicationTestCase<TroveboxApplication>
         file.delete();
     }
 
+    public void testCreateTokenForPhoto() throws Exception
+    {
+        File file = createTestFileForUpload();
+
+        boolean priv = true;
+        UploadMetaData settings = new UploadMetaData();
+        String title = "Android";
+        String description = "Nice picture of an android";
+        String tags = "test";
+        settings.setTitle(title);
+        settings.setDescription(description);
+        settings.setTags(tags);
+        settings.setPrivate(priv);
+        try {
+            String hash = SHA1Utils.computeSha1ForFile(file.getAbsolutePath());
+            PhotosResponse photos = mApi.getPhotos(hash);
+            assertTrue(photos.isSuccess());
+            boolean created = false;
+            Photo photo;
+            if (photos.getPhotos().size() > 0)
+            {
+                photo = photos.getPhotos().get(0);
+            } else
+            {
+                UploadResponse resp = mApi.uploadPhoto(file, settings, null);
+                assertTrue(resp.isSuccess());
+                assertNotNull(resp.getPhoto());
+                photo = resp.getPhoto();
+                created = true;
+            }
+            try
+            {
+                assertNotNull(photo);
+                assertTrue(photo.getTags().size() >= 1);
+                // assertEquals("test", resp.getPhoto().getTags().get(0));
+                assertEquals(title, photo.getTitle());
+                assertEquals(description, photo
+                        .getDescription());
+                assertEquals(priv, photo.isPrivate());
+
+                TokenResponse tokenResponse = mApi.createTokenForPhoto(photo.getId());
+                assertEquals(tokenResponse.getCode(), 201);
+                Token token = tokenResponse.getToken();
+                assertNotNull(token);
+                assertEquals(token.getType(), "photo");
+                assertEquals(token.getData(), photo.getId());
+                assertNotNull(token.getId());
+                assertFalse(token.getId().isEmpty());
+                System.out.println(token.getDateExpires());
+                assertNotNull(token.getDateExpires());
+
+            } finally
+            {
+                if (created)
+                {
+                    // remove uploaded photo
+                    mApi.deletePhoto(photo.getId());
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            fail("Exception should not happen: " + e.getClass().getSimpleName() + " - "
+                    + e.getMessage());
+        }
+        file.delete();
+    }
+
+    public File createTestFileForUpload() throws Exception, IOException {
+        AssetManager assetMgr = getTestContext().getAssets();
+        InputStream imageStream = assetMgr.open("android.jpg");
+        File dir = new File(Environment.getExternalStorageDirectory().getAbsolutePath()
+                + "/data/com.trovebox.android");
+        if (!dir.exists()) {
+            assertTrue(dir.mkdirs());
+        }
+        File file = new File(dir, "test-android.jpg");
+        FileUtils.writeToFile(imageStream, file);
+        return file;
+    }
+
     public void testAlbumCreate() throws ClientProtocolException, IllegalStateException,
             IOException, JSONException
     {
@@ -209,6 +270,7 @@ public class TroveboxApiTest extends ApplicationTestCase<TroveboxApplication>
         assertTrue(resp.isSuccess());
         assertEquals(201, resp.getCode());
     }
+
     private Context getTestContext() throws Exception
     {
         return (Context) getClass().getMethod("getTestContext").invoke(this);

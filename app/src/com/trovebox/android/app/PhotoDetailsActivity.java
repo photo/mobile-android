@@ -102,13 +102,14 @@ public class PhotoDetailsActivity extends CommonActivity implements TwitterLoadi
                 TAG, this, this));
         addRegisteredReceiver(PhotoUtils.getAndRegisterOnPhotoUpdatedActionBroadcastReceiver(
                 TAG, this, this));
-        addRegisteredReceiver(ImageCacheUtils.getAndRegisterOnDiskCacheClearedBroadcastReceiver(TAG,
-                this));
+        addRegisteredReceiver(ImageCacheUtils.getAndRegisterOnDiskCacheClearedBroadcastReceiver(
+                TAG, this));
     }
 
     PhotoDetailsUiFragment getContentFragment()
     {
-        return (PhotoDetailsUiFragment) getSupportFragmentManager().findFragmentById(android.R.id.content);
+        return (PhotoDetailsUiFragment) getSupportFragmentManager().findFragmentById(
+                android.R.id.content);
     }
 
     @Override
@@ -169,6 +170,7 @@ public class PhotoDetailsActivity extends CommonActivity implements TwitterLoadi
     public void photoUpdated(Photo photo) {
         getContentFragment().photoUpdated(photo);
     }
+
     public static class PhotoDetailsUiFragment extends CommonFragmentWithImageWorker
     {
         static PhotoDetailsUiFragment currentInstance;
@@ -241,29 +243,39 @@ public class PhotoDetailsActivity extends CommonActivity implements TwitterLoadi
                     break;
                 case R.id.menu_share:
                     TrackerUtils.trackOptionsMenuClickEvent("menu_share", getSupportActivity());
-                    Photo photo = getActivePhoto();
-                    boolean isPrivate = photo == null || photo.isPrivate();
-                    item.getSubMenu().setGroupVisible(R.id.share_group, !isPrivate);
-                    if (isPrivate)
-                    {
-                        GuiUtils.alert(R.string.share_private_photo_forbidden);
-                        result = false;
-                    }
                     break;
                 case R.id.menu_share_email:
                     TrackerUtils.trackOptionsMenuClickEvent("menu_share_email",
                             getSupportActivity());
-                    shareActivePhotoViaEMail();
+                    confirmPrivatePhotoSharingAndRun(new Runnable() {
+
+                        @Override
+                        public void run() {
+                            shareActivePhotoViaEMail();
+                        }
+                    });
                     break;
                 case R.id.menu_share_twitter:
                     TrackerUtils.trackOptionsMenuClickEvent("menu_share_twitter",
                             getSupportActivity());
-                    shareActivePhotoViaTwitter();
+                    confirmPrivatePhotoSharingAndRun(new Runnable() {
+
+                        @Override
+                        public void run() {
+                            shareActivePhotoViaTwitter();
+                        }
+                    });
                     break;
                 case R.id.menu_share_facebook:
                     TrackerUtils.trackOptionsMenuClickEvent("menu_share_facebook",
                             getSupportActivity());
-                    shareActivePhotoViaFacebook();
+                    confirmPrivatePhotoSharingAndRun(new Runnable() {
+
+                        @Override
+                        public void run() {
+                            shareActivePhotoViaFacebook();
+                        }
+                    });
                     break;
                 case R.id.menu_edit:
                     TrackerUtils.trackOptionsMenuClickEvent("menu_edit", getSupportActivity());
@@ -276,6 +288,7 @@ public class PhotoDetailsActivity extends CommonActivity implements TwitterLoadi
             }
             return result;
         }
+
         public void shareActivePhotoViaFacebook() {
             Photo photo = getActivePhoto();
             if (photo != null)
@@ -304,13 +317,22 @@ public class PhotoDetailsActivity extends CommonActivity implements TwitterLoadi
             Photo photo = getActivePhoto();
             if (photo != null)
             {
-                ShareUtils.shareViaEMail(photo, getActivity());
+                ShareUtils.shareViaEMail(photo, getActivity(),
+                        new ProgressDialogLoadingControl(
+                                getSupportActivity(), true, false,
+                                getString(R.string.loading)));
             }
         }
 
         Photo getActivePhoto()
         {
             return mAdapter.currentPhoto;
+        }
+
+        public void confirmPrivatePhotoSharingAndRun(final Runnable runnable)
+        {
+            ShareUtils.confirmPrivatePhotoSharingAndRun(getActivePhoto(), runnable,
+                    getSupportActivity());
         }
 
         @Override
@@ -742,7 +764,10 @@ public class PhotoDetailsActivity extends CommonActivity implements TwitterLoadi
                 View theView = (View) view;
                 ImageView imageView = (ImageView) theView.findViewById(R.id.image);
                 ImageWorker.cancelWork(imageView);
-                imageView.setImageBitmap(null);
+                if (isAdded())
+                {
+                    imageView.setImageBitmap(null);
+                }
                 ((ViewPager) collection).removeView(theView);
             }
 
@@ -781,7 +806,6 @@ public class PhotoDetailsActivity extends CommonActivity implements TwitterLoadi
                     }
                 }
             }
-
 
             /**
              * Hack to refresh ViewPager when data set notification event is

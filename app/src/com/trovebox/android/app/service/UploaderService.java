@@ -296,8 +296,7 @@ public class UploaderService extends Service {
             {
                 ReturnSizes thumbSize = FacebookFragment.thumbSize;
                 photo = PhotoUtils.validateUrlForSizeExistAndReturn(photo, thumbSize);
-                FacebookFragment.sharePhoto(null, photo, thumbSize,
-                        getApplicationContext());
+                FacebookFragment.sharePhoto(null, photo, thumbSize);
             }
         } catch (Exception ex)
         {
@@ -316,8 +315,7 @@ public class UploaderService extends Service {
                     .getTwitter(getApplicationContext());
             if (twitter != null)
             {
-                String message = TwitterFragment.getDefaultTweetMessage(getApplicationContext(),
-                        photo);
+                String message = TwitterFragment.getDefaultTweetMessage(photo);
                 TwitterFragment.sendTweet(message, twitter);
             }
         } catch (Exception ex)
