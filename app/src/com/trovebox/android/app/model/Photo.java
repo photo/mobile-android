@@ -7,16 +7,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.trovebox.android.app.util.CommonUtils;
-import com.trovebox.android.app.util.TrackerUtils;
-
 import android.os.Parcel;
 import android.os.Parcelable;
+
+import com.trovebox.android.app.util.CommonUtils;
+import com.trovebox.android.app.util.TrackerUtils;
 
 /**
  * Class representing a Photo on Trovebox.
@@ -47,6 +46,7 @@ public class Photo implements Parcelable {
     private String mFilenameOriginal;
     private int width;
     private int height;
+    private Token shareToken;
 
     /**
      * Constructor which will not be used externally. Everything should be done
@@ -207,6 +207,32 @@ public class Photo implements Parcelable {
         return mLongitude;
     }
 
+    /**
+     * Get the photo width
+     * 
+     * @return
+     */
+    public int getWidth() {
+        return width;
+    }
+
+    /**
+     * Get the photo height
+     * 
+     * @return
+     */
+    public int getHeight() {
+        return height;
+    }
+
+    public Token getShareToken() {
+        return shareToken;
+    }
+
+    public void setShareToken(Token shareToken) {
+        this.shareToken = shareToken;
+    }
+
     /*****************************
      * PARCELABLE IMPLEMENTATION *
      *****************************/
@@ -232,6 +258,7 @@ public class Photo implements Parcelable {
         out.writeString(mFilenameOriginal);
         out.writeString(mLatitude);
         out.writeString(mLongitude);
+        out.writeParcelable(shareToken, flags);
 
         List<String> urls = new ArrayList<String>(mUrls.size());
         for (Map.Entry<String, String> e : mUrls.entrySet()) {
@@ -267,6 +294,7 @@ public class Photo implements Parcelable {
         mFilenameOriginal = in.readString();
         mLatitude = in.readString();
         mLongitude = in.readString();
+        shareToken = in.readParcelable(getClass().getClassLoader());
 
         List<String> urls = new ArrayList<String>();
         in.readStringList(urls);
@@ -281,23 +309,5 @@ public class Photo implements Parcelable {
                 TrackerUtils.trackBackgroundEvent("invalidUrlParcelableString", url);
             }
         }
-    }
-
-    /**
-     * Get the photo width
-     * 
-     * @return
-     */
-    public int getWidth() {
-        return width;
-    }
-
-    /**
-     * Get the photo height
-     * 
-     * @return
-     */
-    public int getHeight() {
-        return height;
     }
 }

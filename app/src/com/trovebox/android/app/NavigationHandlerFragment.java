@@ -9,6 +9,7 @@ import org.holoeverywhere.LayoutInflater;
 import org.holoeverywhere.addon.AddonSlider.AddonSliderA;
 import org.holoeverywhere.widget.LinearLayout;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -16,6 +17,7 @@ import android.support.v4.view.ViewPager;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 
 import com.trovebox.android.app.common.CommonFragment;
 import com.trovebox.android.app.common.lifecycle.ViewPagerHandler;
@@ -24,6 +26,7 @@ import com.trovebox.android.app.ui.adapter.FragmentPagerAdapter;
 import com.trovebox.android.app.ui.widget.SliderCategorySeparator;
 import com.trovebox.android.app.ui.widget.SliderNavigationItem;
 import com.trovebox.android.app.util.CommonUtils;
+import com.trovebox.android.app.util.GuiUtils;
 import com.trovebox.android.app.util.LoadingControl;
 import com.trovebox.android.app.util.TrackerUtils;
 
@@ -458,6 +461,8 @@ public class NavigationHandlerFragment extends CommonFragment {
                 if (activeFragment != null && activeFragment instanceof ViewPagerHandler)
                 {
                     ((ViewPagerHandler) activeFragment).pageDeactivated();
+                    // #244
+                    hideSoftKeyboardForActiveFragment();
                 }
                 if (newFragment != null && newFragment instanceof ViewPagerHandler)
                 {
@@ -479,6 +484,25 @@ public class NavigationHandlerFragment extends CommonFragment {
                     }
                 }
             });
+        }
+
+        /**
+         * Hhide soft keyboard from window for active fragment
+         */
+        public void hideSoftKeyboardForActiveFragment() {
+            try
+            {
+                View target = activeFragment.getView().findFocus();
+
+                if (target != null)
+                {
+                    InputMethodManager mgr = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                    mgr.hideSoftInputFromWindow(target.getWindowToken(), 0);
+                }
+            } catch (Exception ex)
+            {
+                GuiUtils.error(TAG, ex);
+            }
         }
 
         /**

@@ -6,13 +6,13 @@ import java.util.List;
 import java.util.Stack;
 
 import org.holoeverywhere.LayoutInflater;
+import org.holoeverywhere.widget.LinearLayout;
 
 import android.content.Context;
 import android.util.FloatMath;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 
 import com.trovebox.android.app.bitmapfun.util.ImageWorker;
 

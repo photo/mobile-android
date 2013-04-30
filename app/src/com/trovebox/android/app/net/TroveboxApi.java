@@ -172,7 +172,6 @@ public class TroveboxApi extends ApiBase implements ITroveboxApi {
         }
         addPagingRestrictions(paging, request);
         ApiResponse response = execute(request);
-        // TODO: Fix null pointer exception at this place.
         return new PhotosResponse(response.getJSONObject());
     }
 
@@ -332,5 +331,16 @@ public class TroveboxApi extends ApiBase implements ITroveboxApi {
         request.addParameter("name", name);
         ApiResponse response = execute(request);
         return new AlbumResponse(RequestType.CREATE_ALBUM, response.getJSONObject());
+    }
+
+    @Override
+    public TokenResponse createTokenForPhoto(String photoId) throws ClientProtocolException,
+            IOException, IllegalStateException, JSONException {
+
+        ApiRequest request = new ApiRequest(ApiRequest.POST,
+                "/token/photo/" + photoId + "/create.json");
+        ApiResponse response = execute(request);
+        return new TokenResponse(RequestType.CREATE_PHOTO_TOKEN,
+                response.getJSONObject());
     }
 }
