@@ -1,13 +1,7 @@
 
 package com.trovebox.android.app.oauth;
 
-import com.trovebox.android.app.Preferences;
-import com.trovebox.android.app.R;
-import com.trovebox.android.app.net.ITroveboxApi;
-import com.trovebox.android.app.util.GuiUtils;
-import com.trovebox.android.app.util.LoadingControl;
-import com.trovebox.android.app.util.LoginUtils;
-import com.trovebox.android.app.util.concurrent.AsyncTaskEx;
+import java.net.URLEncoder;
 
 import oauth.signpost.OAuthConsumer;
 import oauth.signpost.OAuthProvider;
@@ -16,6 +10,14 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+
+import com.trovebox.android.app.Preferences;
+import com.trovebox.android.app.R;
+import com.trovebox.android.app.net.ITroveboxApi;
+import com.trovebox.android.app.util.GuiUtils;
+import com.trovebox.android.app.util.LoadingControl;
+import com.trovebox.android.app.util.LoginUtils;
+import com.trovebox.android.app.util.concurrent.AsyncTaskEx;
 
 public class OAuthUtils
 {
@@ -37,8 +39,9 @@ public class OAuthUtils
         try
         {
             ITroveboxApi mTrovebox = Preferences.getApi(activity);
-            String url = mTrovebox.getOAuthUrl("Trovebox Android App",
-                    getCallbackUrl(activity),
+            String url = mTrovebox.getOAuthUrl(
+                    URLEncoder.encode("Trovebox Android App", "UTF-8"),
+                    URLEncoder.encode(getCallbackUrl(activity), "UTF-8"),
                     activity);
             activity.startActivity(new Intent(Intent.ACTION_VIEW, Uri
                     .parse(url)));
