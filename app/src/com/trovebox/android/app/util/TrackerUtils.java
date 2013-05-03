@@ -351,7 +351,7 @@ public class TrackerUtils {
      */
     public static void trackException(String message)
     {
-        EasyTracker.getTracker().sendException(message, false);
+        EasyTracker.getTracker().sendException(message + getTrackingSuffix(), false);
     }
 
     /**
