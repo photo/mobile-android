@@ -6,11 +6,13 @@
     <string name="take_photo">Take Photo</string>
 
     <!-- Menu -->
+    <string name="menu_camera">Take a photo</string>
     <string name="menu_refresh">Refresh</string>
     <string name="menu_preferences">Preferences</string>
     <string name="menu_exit">Exit</string>
 
     <!-- Share Menu -->
+    <string name="menu_share">Share</string>
     <string name="menu_share_email">E-Mail</string>
     <string name="menu_share_twitter">Twitter</string>
     <string name="menu_share_facebook">Facebook</string>
