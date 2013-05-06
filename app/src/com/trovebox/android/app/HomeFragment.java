@@ -8,6 +8,7 @@ import java.util.Stack;
 import org.holoeverywhere.LayoutInflater;
 import org.holoeverywhere.app.Activity;
 import org.holoeverywhere.app.Fragment;
+import org.holoeverywhere.widget.PopupMenu;
 
 import android.content.Context;
 import android.content.Intent;
@@ -15,7 +16,6 @@ import android.content.res.Resources;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
-import android.view.ContextMenu.ContextMenuInfo;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -24,9 +24,10 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.actionbarsherlock.view.ContextMenu;
+import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
+import com.actionbarsherlock.view.MenuItem.OnMenuItemClickListener;
 import com.trovebox.android.app.bitmapfun.util.ImageCache;
 import com.trovebox.android.app.bitmapfun.util.ImageFetcher;
 import com.trovebox.android.app.common.CommonRefreshableFragmentWithImageWorker;
@@ -168,59 +169,6 @@ public class HomeFragment extends CommonRefreshableFragmentWithImageWorker
     }
 
     @Override
-    public void onCreateContextMenu(ContextMenu menu, View v,
-            ContextMenuInfo menuInfo)
-    {
-        if (v.getId() == R.id.share_button)
-        {
-            MenuInflater inflater = getSupportActivity()
-                    .getSupportMenuInflater();
-            inflater.inflate(R.menu.share, menu);
-            super.onCreateContextMenu(menu, v, menuInfo);
-        } else
-        {
-            super.onCreateContextMenu(menu, v, menuInfo);
-        }
-    }
-
-    @Override
-    public boolean onContextItemSelected(MenuItem item)
-    {
-        int menuItemIndex = item.getItemId();
-        switch (menuItemIndex)
-        {
-            case R.id.menu_share_email:
-                confirmPrivatePhotoSharingAndRun(new Runnable() {
-
-                    @Override
-                    public void run() {
-                        shareViaEMail(activePhoto);
-                    }
-                });
-                break;
-            case R.id.menu_share_twitter:
-                confirmPrivatePhotoSharingAndRun(new Runnable() {
-
-                    @Override
-                    public void run() {
-                        shareActivePhotoViaTwitter();
-                    }
-                });
-                break;
-            case R.id.menu_share_facebook:
-                confirmPrivatePhotoSharingAndRun(new Runnable() {
-
-                    @Override
-                    public void run() {
-                        shareActivePhotoViaFacebook();
-                    }
-                });
-                break;
-        }
-        return true;
-    }
-
-    @Override
     public void onResume()
     {
         super.onResume();
@@ -257,13 +205,13 @@ public class HomeFragment extends CommonRefreshableFragmentWithImageWorker
 
     /**
      * Run runnable in case user confirmed private photo sharing
+     * 
      * @param runnable
      */
     public void confirmPrivatePhotoSharingAndRun(final Runnable runnable)
     {
         ShareUtils.confirmPrivatePhotoSharingAndRun(activePhoto, runnable, getSupportActivity());
     }
-
 
     @Override
     public void photoDeleted(Photo photo)
@@ -492,9 +440,19 @@ public class HomeFragment extends CommonRefreshableFragmentWithImageWorker
                 }
 
                 public void showShareOptions(View v) {
-                    registerForContextMenu(v);
-                    v.showContextMenu();
-                    unregisterForContextMenu(v);
+                    PopupMenu menu = new PopupMenu(getSupportActivity(), v);
+                    buildMenu(menu.getMenu());
+                    menu.show();
+                }
+
+                public void buildMenu(Menu menu) {
+                    menu.clear();
+                    MenuInflater inflater = getSupportActivity()
+                            .getSupportMenuInflater();
+                    inflater.inflate(R.menu.share, menu);
+                    for (int i = 0; i < menu.size(); i++) {
+                        menu.getItem(i).setOnMenuItemClickListener(mOnMenuItemClickListener);
+                    }
                 }
             });
             return convertView;
@@ -623,4 +581,48 @@ public class HomeFragment extends CommonRefreshableFragmentWithImageWorker
     public void photoUploaded() {
         refreshImmediatelyOrScheduleIfNecessary();
     }
+
+    private final OnMenuItemClickListener mOnMenuItemClickListener = new OnMenuItemClickListener() {
+        @Override
+        public boolean onMenuItemClick(MenuItem menuItem) {
+            int menuItemIndex = menuItem.getItemId();
+            switch (menuItemIndex)
+            {
+                case R.id.menu_share_email:
+                    TrackerUtils.trackPopupMenuClickEvent("menu_share_email",
+                            getSupportActivity());
+                    confirmPrivatePhotoSharingAndRun(new Runnable() {
+
+                        @Override
+                        public void run() {
+                            shareViaEMail(activePhoto);
+                        }
+                    });
+                    break;
+                case R.id.menu_share_twitter:
+                    TrackerUtils.trackPopupMenuClickEvent("menu_share_twitter",
+                            getSupportActivity());
+                    confirmPrivatePhotoSharingAndRun(new Runnable() {
+
+                        @Override
+                        public void run() {
+                            shareActivePhotoViaTwitter();
+                        }
+                    });
+                    break;
+                case R.id.menu_share_facebook:
+                    TrackerUtils.trackPopupMenuClickEvent("menu_share_facebook",
+                            getSupportActivity());
+                    confirmPrivatePhotoSharingAndRun(new Runnable() {
+
+                        @Override
+                        public void run() {
+                            shareActivePhotoViaFacebook();
+                        }
+                    });
+                    break;
+            }
+            return true;
+        }
+    };
 }
