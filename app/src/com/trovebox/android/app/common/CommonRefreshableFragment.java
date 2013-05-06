@@ -7,6 +7,7 @@ import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 import com.trovebox.android.app.R;
+import com.trovebox.android.app.util.GuiUtils;
 
 /**
  * Abstract fragment with the refresh menu available
@@ -22,6 +23,7 @@ public abstract class CommonRefreshableFragment extends
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
     }
+
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
@@ -49,7 +51,14 @@ public abstract class CommonRefreshableFragment extends
 
     protected void reinitMenu(Menu menu)
     {
-        menu.findItem(R.id.menu_refresh).setVisible(isRefreshMenuVisible());
+        try
+        {
+            MenuItem refreshItem = menu.findItem(R.id.menu_refresh);
+            refreshItem.setVisible(isRefreshMenuVisible());
+        } catch (Exception ex)
+        {
+            GuiUtils.noAlertError(TAG, ex);
+        }
     }
 
     protected abstract boolean isRefreshMenuVisible();
