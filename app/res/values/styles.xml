@@ -61,6 +61,15 @@
         <item name="android:actionBarStyle">@style/transparent_ActionBar</item>
         <item name="android:windowBackground">@drawable/bg</item>
         <item name="android:buttonStyle">@style/Trovebox.BeigeButton</item>
+        <item name="actionBarItemBackground">@drawable/selectable_background_trovebox</item>
+        <item name="android:actionBarItemBackground">@drawable/selectable_background_trovebox</item>
+        <item name="selectableItemBackground">@drawable/selectable_background_trovebox</item>
+        <item name="popupMenuStyle">@style/trovebox_PopupMenu</item>
+        <item name="android:popupMenuStyle">@style/trovebox_PopupMenu</item>
+        <item name="dropDownListViewStyle">@style/trovebox_DropDownListView</item>
+        <item name="android:dropDownListViewStyle">@style/trovebox_DropDownListView</item>
+        <item name="textAppearanceLargePopupMenu">@style/trovebox_PopupMenuTextLarge</item>
+        <item name="android:textAppearanceLargePopupMenu">@style/trovebox_PopupMenuTextLarge</item>
     </style>
 
     <style name="Theme.Trovebox.Login" parent="Holo.Theme.NoActionBar">
@@ -77,8 +86,8 @@
     </style>
 
     <style name="transparent_ActionBar" parent="@style/Widget.Sherlock.Light.ActionBar">
-        <item name="background">@drawable/ab_bg_black</item>
-        <item name="android:background">@drawable/ab_bg_black</item>
+        <item name="background">@drawable/bg_transparent_actionbar</item>
+        <item name="android:background">@drawable/bg_transparent_actionbar</item>
         <item name="titleTextStyle">@style/transparent_ActionBar_TitleTextStyle</item>
         <item name="android:titleTextStyle">@style/transparent_ActionBar_TitleTextStyle</item>
     </style>
