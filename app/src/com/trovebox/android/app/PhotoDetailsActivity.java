@@ -732,7 +732,11 @@ public class PhotoDetailsActivity extends CommonActivity implements TwitterLoadi
                             @Override
                             public void run(Photo photo) {
                                 String url = photo.getUrl(bigPhotoSize.toString());
-                                mImageWorker.loadImage(url, imageView, loadingControl);
+                                // #417 workaround
+                                if (getView() != null)
+                                {
+                                    mImageWorker.loadImage(url, imageView, loadingControl);
+                                }
                             }
                         }, loadingControl);
 
