@@ -677,7 +677,6 @@ public class SyncImageSelectionFragment extends CommonRefreshableFragmentWithIma
                 });
             }
             ImageView imageView = (ImageView) view.findViewById(R.id.image);
-            imageView.setTag(value);
             // Finally load the image asynchronously into the ImageView, this
             // also takes care of
             // setting a placeholder image while the background thread runs

@@ -65,7 +65,7 @@ public class ImageResizer extends ImageWorker {
     {
         this(context, loadingControl, imageWidth, imageHeight, -1);
     }
-    
+
     /**
      * Initialize providing a single target image size (used for both width and
      * height);
@@ -243,6 +243,18 @@ public class ImageResizer extends ImageWorker {
 
         // Decode bitmap with inSampleSize set
         options.inJustDecodeBounds = false;
+
+        // #302 added to reduce amount of OutOfMemory errors
+        options.inDither = false; // Disable Dithering mode
+        options.inPurgeable = true; // Tell to gc that whether it needs
+                                    // free memory, the Bitmap can be
+                                    // cleared
+        options.inInputShareable = true; // Which kind of reference will
+                                         // be used to recover the Bitmap
+                                         // data after being clear, when
+                                         // it will be used in the future
+        options.inTempStorage = new byte[32 * 1024];
+
         Bitmap result = decodeBitmap(filename, options);
         TrackerUtils.trackDataProcessingTiming(System.currentTimeMillis() - start,
                 "decodeSampledBitmapFromFile", TAG);
@@ -362,8 +374,8 @@ public class ImageResizer extends ImageWorker {
     }
 
     /**
-     * Get the bitmap with rounded corners.
-     * Taken from here http://stackoverflow.com/a/3292810/527759
+     * Get the bitmap with rounded corners. Taken from here
+     * http://stackoverflow.com/a/3292810/527759
      * 
      * @param bitmap - bitmap to add corners to
      * @param pixels - corner radius

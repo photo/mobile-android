@@ -462,12 +462,14 @@ public class PhotoDetailsActivity extends CommonActivity implements TwitterLoadi
             mImageWorker = new ImageFetcher(getActivity(), null, bigPhotoSize.getWidth(),
                     bigPhotoSize.getHeight());
             mImageWorker.setImageCache(ImageCache.findOrCreateCache(getActivity(),
-                    ImageCache.LARGE_IMAGES_CACHE_DIR, false));
+                    ImageCache.LARGE_IMAGES_CACHE_DIR, false,
+                    ImageCache.DEFAULT_MEM_CACHE_SIZE_RATIO * 2));
             mImageWorker.setImageFadeIn(false);
             mImageWorker2 = new ImageFetcher(getActivity(), null, thumbSize.getWidth(),
                     thumbSize.getHeight());
             mImageWorker2.setImageCache(ImageCache.findOrCreateCache(getActivity(),
-                    ImageCache.THUMBS_CACHE_DIR, false));
+                            ImageCache.THUMBS_CACHE_DIR, false,
+                    ImageCache.DEFAULT_MEM_CACHE_SIZE_RATIO * 2));
             mImageWorker2.setLoadingImage(R.drawable.empty_photo);
             imageWorkers.add(mImageWorker2);
         }

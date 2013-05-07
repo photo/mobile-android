@@ -280,7 +280,6 @@ public class HomeFragment extends CommonRefreshableFragmentWithImageWorker
             final AspectRatioImageView photoView =
                     (AspectRatioImageView) convertView.findViewById(R.id.newest_image);
             photoView.setAspectRatio(aspectRatio);
-            photoView.setTag(photo);
             photoView.setOnClickListener(new OnClickListener() {
 
                 @Override
