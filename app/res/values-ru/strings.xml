@@ -6,11 +6,13 @@
     <string name="take_photo">Сделать снимок</string>
 
     <!-- Menu -->
+    <string name="menu_camera">Добавить фотографию</string>
     <string name="menu_refresh">Обновить</string>
     <string name="menu_preferences">Настройки</string>
     <string name="menu_exit">Выход</string>
 
     <!-- Share Menu -->
+    <string name="menu_share">Поделиться</string>
     <string name="menu_share_email">Электронная почта</string>
     <string name="menu_share_twitter">Twitter</string>
     <string name="menu_share_facebook">Facebook</string>
@@ -157,7 +159,7 @@
     <string name="errorCouldNotSignup">Не удалось зарегистрироваться</string>
     <string name="errorCouldNotLoadNextAlbumsInList">Не удалось загрузить следующие альбомы в списке</string>
     <string name="errorCouldNotUseIntentsToOpenMaps">Не удалось использовать Intent для открытия карт</string>
-    <string name="errorCouldNotGetPhoto">Не удалось прянить фотографию</string>
+    <string name="errorCouldNotGetPhoto">Не удалось принять фотографию</string>
     <string name="errorCouldNotDeletePhoto">Удалить фотографию не удалось</string>
     <string name="errorCouldNotUpdatePhoto">Не удалось обновить детали фотографии</string>
     <string name="errorCouldNotCreateAlbum">Не удалось создать альбом</string>

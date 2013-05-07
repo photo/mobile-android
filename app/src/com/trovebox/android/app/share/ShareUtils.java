@@ -24,6 +24,7 @@ import com.trovebox.android.app.util.GuiUtils;
 import com.trovebox.android.app.util.LoadingControl;
 import com.trovebox.android.app.util.RunnableWithParameter;
 import com.trovebox.android.app.util.RunnableWithResult;
+import com.trovebox.android.app.util.TrackerUtils;
 
 /**
  * Sharing functionality utils
@@ -31,6 +32,7 @@ import com.trovebox.android.app.util.RunnableWithResult;
  * @author Eugene Popovich
  */
 public class ShareUtils {
+    private static final String PRIVATE_SHARE_CONFIRMATION = "PrivateShareConfirmation";
     static final String TAG = ShareUtils.class.getSimpleName();
 
     /**
@@ -48,6 +50,8 @@ public class ShareUtils {
         {
             if (photo.isPrivate())
             {
+                TrackerUtils.trackUiEvent(PRIVATE_SHARE_CONFIRMATION,
+                        "Asked");
                 YesNoDialogFragment dialogFragment = YesNoDialogFragment
                         .newInstance(R.string.share_private_photo_confirmation_question,
                                 new YesNoButtonPressedHandler()
@@ -56,6 +60,8 @@ public class ShareUtils {
                                     public void yesButtonPressed(
                                             DialogInterface dialog)
                                     {
+                                        TrackerUtils.trackUiEvent(PRIVATE_SHARE_CONFIRMATION,
+                                                "Confirmed");
                                         runnable.run();
                                     }
 
@@ -63,7 +69,8 @@ public class ShareUtils {
                                     public void noButtonPressed(
                                             DialogInterface dialog)
                                     {
-                                        // DO NOTHING
+                                        TrackerUtils.trackUiEvent(PRIVATE_SHARE_CONFIRMATION,
+                                                "Discarded");
                                     }
                                 });
                 dialogFragment.show(activity);

@@ -17,6 +17,7 @@
 package com.trovebox.android.app.bitmapfun.util;
 
 import java.io.File;
+import java.util.Map;
 
 import android.app.ActivityManager;
 import android.content.Context;
@@ -41,6 +42,9 @@ public class ImageCache {
 
     // Default memory cache size
     private static final int DEFAULT_MEM_CACHE_SIZE = 1024 * 1024 * 5; // 5MB
+
+    // Default memory cache size
+    public static final int DEFAULT_MEM_CACHE_SIZE_RATIO = 8; // 5MB
 
     // Default disk cache size
     private static final int DEFAULT_DISK_CACHE_SIZE = 1024 * 1024 * 10; // 10MB
@@ -94,7 +98,7 @@ public class ImageCache {
     public static ImageCache findOrCreateCache(
             final FragmentActivity activity, final String uniqueName) {
         return findOrCreateCache(activity, uniqueName, DEFAULT_DISK_CACHE_MAX_ITEM_SIZE,
-                DEFAULT_CLEAR_DISK_CACHE_ON_START);
+                DEFAULT_CLEAR_DISK_CACHE_ON_START, DEFAULT_MEM_CACHE_SIZE_RATIO);
     }
 
     /**
@@ -112,8 +116,30 @@ public class ImageCache {
     public static ImageCache findOrCreateCache(
             final FragmentActivity activity, final String uniqueName,
             boolean clearDiskCacheOnStart) {
+        return findOrCreateCache(activity, uniqueName, clearDiskCacheOnStart,
+                DEFAULT_MEM_CACHE_SIZE_RATIO);
+    }
+
+    /**
+     * Find and return an existing ImageCache stored in a {@link RetainFragment}
+     * , if not found a new one is created with defaults and saved to a
+     * {@link RetainFragment}.
+     * 
+     * @param activity The calling {@link FragmentActivity}
+     * @param uniqueName A unique name to append to the cache directory
+     * @param clearDiskCacheOnStart whether to clear disk cache on start
+     * @param memCacheSizeRatio what part of memory will be available for cache
+     *            (memory class/memCacheSizeRatio)
+     * @return An existing retained ImageCache object or a new one if one did
+     *         not exist.
+     * @return
+     */
+    public static ImageCache findOrCreateCache(
+            final FragmentActivity activity, final String uniqueName,
+            boolean clearDiskCacheOnStart,
+            int memCacheSizeRatio) {
         return findOrCreateCache(activity, uniqueName, DEFAULT_DISK_CACHE_MAX_ITEM_SIZE,
-                clearDiskCacheOnStart);
+                clearDiskCacheOnStart, memCacheSizeRatio);
     }
 
     /**
@@ -133,6 +159,30 @@ public class ImageCache {
             final FragmentActivity activity, final String uniqueName,
             final int diskCacheMaxItemSize,
             boolean clearDiskCacheOnStart) {
+        return findOrCreateCache(activity, uniqueName, diskCacheMaxItemSize, clearDiskCacheOnStart,
+                DEFAULT_MEM_CACHE_SIZE_RATIO);
+    }
+
+    /**
+     * Find and return an existing ImageCache stored in a {@link RetainFragment}
+     * , if not found a new one is created with defaults and saved to a
+     * {@link RetainFragment}.
+     * 
+     * @param activity The calling {@link FragmentActivity}
+     * @param uniqueName A unique name to append to the cache directory
+     * @param diskCacheMaxItemSize max item size for the disk cache
+     * @param clearDiskCacheOnStart whether to clear disk cache on start
+     * @param memCacheSizeRatio what part of memory will be available for cache
+     *            (memory class/memCacheSizeRatio)
+     * @return An existing retained ImageCache object or a new one if one did
+     *         not exist.
+     * @return
+     */
+    public static ImageCache findOrCreateCache(
+            final FragmentActivity activity, final String uniqueName,
+            final int diskCacheMaxItemSize,
+            boolean clearDiskCacheOnStart,
+            int memCacheSizeRatio) {
         ImageCacheParams params = new ImageCacheParams(uniqueName);
         // Get memory class of this device, exceeding this amount will throw an
         // OutOfMemory exception.
@@ -140,7 +190,7 @@ public class ImageCache {
                 Context.ACTIVITY_SERVICE)).getMemoryClass();
 
         // Use 1/8th of the available memory for this memory cache.
-        params.memCacheSize = 1024 * 1024 * memClass / 8;
+        params.memCacheSize = 1024 * 1024 * memClass / memCacheSizeRatio;
         params.clearDiskCacheOnStart = clearDiskCacheOnStart;
         params.diskCacheMaxItemSize = diskCacheMaxItemSize;
         CommonUtils.debug(TAG, "Calculated memory cache size: " + params.memCacheSize);
@@ -300,6 +350,31 @@ public class ImageCache {
             CommonUtils.debug(TAG, "Requested memory cache cleaning");
             mMemoryCache.evictAll();
         }
+    }
+
+    /**
+     * Check whether bitmap is present in memory cache
+     * 
+     * @param bitmap
+     * @return
+     */
+    public boolean hasInMemoryCache(Bitmap bitmap)
+    {
+        boolean result = false;
+        if (mMemoryCache != null)
+        {
+            Map<String, Bitmap> snapshot = mMemoryCache.snapshot();
+            for (Bitmap b : snapshot.values())
+            {
+                if (b == bitmap)
+                {
+                    result = true;
+                    break;
+                }
+            }
+        }
+        CommonUtils.debug(TAG, "hasInMemoryCache: %1$b", result);
+        return result;
     }
 
     /**

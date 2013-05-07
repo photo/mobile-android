@@ -181,6 +181,17 @@ public class TrackerUtils {
     }
 
     /**
+     * Track popup menu clicked event
+     * 
+     * @param menuName
+     * @param menuHolder
+     */
+    public static void trackPopupMenuClickEvent(String menuName, Object menuHolder)
+    {
+        trackUiEvent(menuHolder.getClass().getSimpleName() + ".PopupMenuClick", menuName);
+    }
+
+    /**
      * Track context menu click event
      * 
      * @param menuName
