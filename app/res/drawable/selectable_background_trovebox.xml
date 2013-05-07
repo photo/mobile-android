@@ -20,7 +20,8 @@
 <selector xmlns:android="http://schemas.android.com/apk/res/android" android:exitFadeDuration="@android:integer/config_mediumAnimTime">
 
     <item android:drawable="@drawable/list_focused_trovebox" android:state_focused="true" android:state_pressed="false"/>
-    <item android:drawable="@drawable/pressed_background_trovebox" android:state_pressed="true"/>
+    <item android:drawable="@drawable/pressed_background_trovebox" android:state_focused="true" android:state_pressed="true"/>
+    <item android:drawable="@drawable/pressed_background_trovebox" android:state_focused="false" android:state_pressed="true"/>
     <item android:drawable="@android:color/transparent"/>
 
 </selector>

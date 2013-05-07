@@ -54,7 +54,6 @@ public abstract class ImageWorker {
     public static final Executor SERIAL_EXECUTOR = new SerialExecutor(
             AsyncTaskEx.THREAD_POOL_EXECUTOR);
 
-
     /**
      * An {@link Executor} that can be used to execute tasks in parallel.
      */
@@ -127,21 +126,83 @@ public abstract class ImageWorker {
         }
     }
 
-    public void recycleOldBitmap(Object data, ImageView imageView) {
+    public void recycleBitmapIfNecessary(ImageView imageView)
+    {
+        if (imageView.getTag() == null)
+        {
+            CommonUtils.debug(TAG,
+                    "recycleBitmapIfNecessary: skipping, tag is null");
+            return;
+        }
+        Drawable drawable = imageView.getDrawable();
+        if (drawable != null)
+        {
+            if (drawable instanceof BitmapDrawable && !(drawable instanceof AsyncDrawable))
+            {
+                CommonUtils.debug(TAG,
+                        "recycleBitmapIfNecessary: drawable is instance of BitmapDrawable");
+                Bitmap bitmap = ((BitmapDrawable) drawable).getBitmap();
+                if (mImageCache.hasInMemoryCache(bitmap))
+                {
+                    CommonUtils.debug(TAG, "recycleBitmapIfNecessary: bitmap is in cache");
+                } else
+                {
+                    CommonUtils.debug(TAG,
+                            "recycleBitmapIfNecessary: bitmap is not in cache.");
+                    imageView.setImageDrawable(null);
+                    if (!bitmap.isRecycled())
+                    {
+                        CommonUtils
+                                .debug(TAG,
+                                        "recycleBitmapIfNecessary: bitmap is not yet recycled. Recycling...");
+                        bitmap.recycle();
+                    } else
+                    {
+                        CommonUtils.debug(TAG,
+                                "recycleBitmapIfNecessary: bitmap is already recycled.");
+                    }
+                }
+            } else
+            {
+                CommonUtils
+                        .debug(TAG,
+                                "recycleBitmapIfNecessary: drawable is not instance of BitmapDrawable or it is AsyncDrawable");
+            }
+        } else
+        {
+            CommonUtils.debug(TAG, "recycleBitmapIfNecessary: drawable is null");
+        }
+    }
+
+    public void recycleOldBitmap(ImageView imageView) {
+        Object data = imageView.getTag();
+        if (data == null)
+        {
+            CommonUtils.debug(TAG, "recycleOldBitmap: data is null");
+            return;
+        }
         Drawable drawable = imageView.getDrawable();
         if (drawable != null &&
                 drawable instanceof BitmapDrawable
                 && !(drawable instanceof AsyncDrawable))
         {
+            CommonUtils.debug(TAG, "recycleOldBitmap: drawable is not null and of valid type");
             if (mImageCache != null
                     && mImageCache.getBitmapFromMemCache(String.valueOf(data)) != null)
             {
+                CommonUtils.debug(TAG, "recycleOldBitmap: drawable is still in cache, skipping");
                 return;
             }
             Bitmap bitmapToRecycle = ((BitmapDrawable) drawable).getBitmap();
-            imageView.setImageDrawable(null);
-            CommonUtils.debug(TAG, "Recycling bitmap: " + bitmapToRecycle);
-            bitmapToRecycle.recycle();
+            imageView.setImageBitmap(null);
+            if (!bitmapToRecycle.isRecycled())
+            {
+                CommonUtils.debug(TAG, "recycleOldBitmap: Recycling bitmap: " + bitmapToRecycle);
+                bitmapToRecycle.recycle();
+            } else
+            {
+                CommonUtils.debug(TAG, "recycleOldBitmap: bitmap is already recycled, skipping");
+            }
         }
     }
 

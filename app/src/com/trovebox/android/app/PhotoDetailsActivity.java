@@ -243,6 +243,14 @@ public class PhotoDetailsActivity extends CommonActivity implements TwitterLoadi
                     break;
                 case R.id.menu_share:
                     TrackerUtils.trackOptionsMenuClickEvent("menu_share", getSupportActivity());
+                    Photo photo = getActivePhoto();
+                    boolean isPrivate = photo == null || photo.isPrivate();
+                    item.getSubMenu().setGroupVisible(R.id.share_group, !isPrivate);
+                    if (isPrivate)
+                    {
+                        GuiUtils.alert(R.string.share_private_photo_forbidden);
+                        result = false;
+                    }
                     break;
                 case R.id.menu_share_email:
                     TrackerUtils.trackOptionsMenuClickEvent("menu_share_email",
@@ -454,12 +462,14 @@ public class PhotoDetailsActivity extends CommonActivity implements TwitterLoadi
             mImageWorker = new ImageFetcher(getActivity(), null, bigPhotoSize.getWidth(),
                     bigPhotoSize.getHeight());
             mImageWorker.setImageCache(ImageCache.findOrCreateCache(getActivity(),
-                    ImageCache.LARGE_IMAGES_CACHE_DIR, false));
+                    ImageCache.LARGE_IMAGES_CACHE_DIR, false,
+                    ImageCache.DEFAULT_MEM_CACHE_SIZE_RATIO * 2));
             mImageWorker.setImageFadeIn(false);
             mImageWorker2 = new ImageFetcher(getActivity(), null, thumbSize.getWidth(),
                     thumbSize.getHeight());
             mImageWorker2.setImageCache(ImageCache.findOrCreateCache(getActivity(),
-                    ImageCache.THUMBS_CACHE_DIR, false));
+                            ImageCache.THUMBS_CACHE_DIR, false,
+                    ImageCache.DEFAULT_MEM_CACHE_SIZE_RATIO * 2));
             mImageWorker2.setLoadingImage(R.drawable.empty_photo);
             imageWorkers.add(mImageWorker2);
         }
@@ -732,7 +742,11 @@ public class PhotoDetailsActivity extends CommonActivity implements TwitterLoadi
                             @Override
                             public void run(Photo photo) {
                                 String url = photo.getUrl(bigPhotoSize.toString());
-                                mImageWorker.loadImage(url, imageView, loadingControl);
+                                // #417 workaround
+                                if (getView() != null)
+                                {
+                                    mImageWorker.loadImage(url, imageView, loadingControl);
+                                }
                             }
                         }, loadingControl);
 
