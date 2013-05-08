@@ -57,6 +57,9 @@ public class GalleryFragment extends CommonRefreshableFragmentWithImageWorker
     private int mImageThumbBorder;
     private int pageSize;
 
+    ListView photosGrid;
+    ViewTreeObserver.OnGlobalLayoutListener photosGridListener;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -147,30 +150,29 @@ public class GalleryFragment extends CommonRefreshableFragmentWithImageWorker
             mAdapter = new GalleryAdapterExt();
         }
 
-        final ListView photosGrid = (ListView) v.findViewById(R.id.list_photos);
-        photosGrid.getViewTreeObserver().addOnGlobalLayoutListener(
-                new ViewTreeObserver.OnGlobalLayoutListener()
+        photosGrid = (ListView) v.findViewById(R.id.list_photos);
+        photosGridListener = new ViewTreeObserver.OnGlobalLayoutListener()
+        {
+            int lastHeight = 0;
+
+            @Override
+            public void onGlobalLayout()
+            {
+                if (mAdapter != null && (mAdapter.imageFlowUtils.getTotalWidth() !=
+                        photosGrid.getWidth() || photosGrid.getHeight() != lastHeight))
                 {
-                    int lastHeight = 0;
-
-                    @Override
-                    public void onGlobalLayout()
-                    {
-                        if (mAdapter != null && (mAdapter.imageFlowUtils.getTotalWidth() !=
-                                photosGrid.getWidth() || photosGrid.getHeight() != lastHeight))
-                        {
-                            CommonUtils.debug(TAG, "Reinit grid groups");
-                            mAdapter.imageFlowUtils.buildGroups(photosGrid.getWidth(),
-                                    mImageThumbSize, photosGrid.getHeight() - 2
-                                            * (mImageThumbBorder
-                                            + mImageThumbSpacing), mImageThumbBorder
-                                            + mImageThumbSpacing);
-                            mAdapter.notifyDataSetChanged();
-                            lastHeight = photosGrid.getHeight();
-                        }
-                    }
-
-                });
+                    CommonUtils.debug(TAG, "Reinit grid groups");
+                    mAdapter.imageFlowUtils.buildGroups(photosGrid.getWidth(),
+                            mImageThumbSize, photosGrid.getHeight() - 2
+                                    * (mImageThumbBorder
+                                    + mImageThumbSpacing), mImageThumbBorder
+                                    + mImageThumbSpacing);
+                    mAdapter.notifyDataSetChanged();
+                    lastHeight = photosGrid.getHeight();
+                }
+            }
+        };
+        photosGrid.getViewTreeObserver().addOnGlobalLayoutListener(photosGridListener);
         photosGrid.setAdapter(mAdapter);
     }
 
@@ -213,7 +215,9 @@ public class GalleryFragment extends CommonRefreshableFragmentWithImageWorker
         {
             mAdapter.forceStopLoadingIfNecessary();
         }
+        GuiUtils.removeGlobalOnLayoutListener(photosGrid, photosGridListener);
     }
+
 
     @Override
     public void photoDeleted(Photo photo)
