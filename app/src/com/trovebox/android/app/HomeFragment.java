@@ -1,6 +1,7 @@
 
 package com.trovebox.android.app;
 
+import java.lang.ref.WeakReference;
 import java.util.Date;
 import java.util.List;
 import java.util.Stack;
@@ -49,6 +50,7 @@ import com.trovebox.android.app.ui.widget.AspectRatioImageView;
 import com.trovebox.android.app.util.CommonUtils;
 import com.trovebox.android.app.util.GuiUtils;
 import com.trovebox.android.app.util.LoadingControl;
+import com.trovebox.android.app.util.ObjectAccessor;
 import com.trovebox.android.app.util.ProgressDialogLoadingControl;
 import com.trovebox.android.app.util.RunnableWithParameter;
 import com.trovebox.android.app.util.TrackerUtils;
@@ -70,14 +72,14 @@ public class HomeFragment extends CommonRefreshableFragmentWithImageWorker
 
     float aspectRatio = 14f / 13f;
 
-    static HomeFragment currentInstance;
+    static WeakReference<HomeFragment> currentInstance;
 
-    static FragmentAccessor<HomeFragment> currentInstanceAccessor = new FragmentAccessor<HomeFragment>() {
+    static ObjectAccessor<HomeFragment> currentInstanceAccessor = new ObjectAccessor<HomeFragment>() {
         private static final long serialVersionUID = 1L;
 
         @Override
         public HomeFragment run() {
-            return currentInstance;
+            return currentInstance == null ? null : currentInstance.get();
         }
     };
 
@@ -85,7 +87,7 @@ public class HomeFragment extends CommonRefreshableFragmentWithImageWorker
     public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-        currentInstance = this;
+        currentInstance = new WeakReference<HomeFragment>(this);
     }
 
     @Override

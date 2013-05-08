@@ -1,6 +1,7 @@
 
 package com.trovebox.android.app;
 
+import java.lang.ref.WeakReference;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -76,14 +77,14 @@ public class MainActivity extends CommonActivity
     final Handler handler = new Handler();
     PurchaseController purchaseController;
 
-    static MainActivity currentInstance;
+    static WeakReference<MainActivity> currentInstance;
 
     static ObjectAccessor<MainActivity> currentInstanceAccessor = new ObjectAccessor<MainActivity>() {
         private static final long serialVersionUID = 1L;
 
         @Override
         public MainActivity run() {
-            return currentInstance;
+            return currentInstance == null ? null : currentInstance.get();
         }
     };
 
@@ -96,7 +97,7 @@ public class MainActivity extends CommonActivity
     public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-        currentInstance = this;
+        currentInstance = new WeakReference<MainActivity>(this);
         instanceSaved = false;
         requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
         mActionBar = getSupportActionBar();
