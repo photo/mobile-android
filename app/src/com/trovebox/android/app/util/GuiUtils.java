@@ -1,13 +1,14 @@
 
 package com.trovebox.android.app.util;
 
-
 import org.holoeverywhere.widget.Toast;
 
 import android.app.Activity;
 import android.content.Context;
 import android.os.Handler;
 import android.util.Log;
+import android.view.View;
+import android.view.ViewTreeObserver;
 
 import com.trovebox.android.app.R;
 import com.trovebox.android.app.TroveboxApplication;
@@ -32,7 +33,6 @@ public class GuiUtils
         mUiThread = Thread.currentThread();
         TrackerUtils.setupTrackerUncaughtExceptionHandler();
     }
-
 
     /**
      * Post action to handler
@@ -330,5 +330,39 @@ public class GuiUtils
             }
         }
         return true;
+    }
+
+    /**
+     * Remove the OnGlobalLayoutListener from the view
+     * 
+     * @param view
+     * @param listener
+     */
+    @SuppressWarnings("deprecation")
+    public static void removeGlobalOnLayoutListener(View view,
+            ViewTreeObserver.OnGlobalLayoutListener listener) {
+        if (view != null)
+        {
+            ViewTreeObserver observer = view.getViewTreeObserver();
+            if (null != observer && observer.isAlive()) {
+                CommonUtils
+                        .debug(TAG,
+                                "removeGlobalOnLayoutListener: Removing global on layout listener from view...");
+                if (CommonUtils.isJellyBeanOrHigher())
+                {
+                    observer.removeOnGlobalLayoutListener(listener);
+                } else
+                {
+                    observer.removeGlobalOnLayoutListener(listener);
+                }
+            } else
+            {
+                CommonUtils.debug(TAG,
+                        "removeGlobalOnLayoutListener: observer is null or not alive");
+            }
+        } else
+        {
+            CommonUtils.debug(TAG, "removeGlobalOnLayoutListener: view is null");
+        }
     }
 }

@@ -186,6 +186,7 @@
     <string name="errorCouldNotQueryInventory">Не удалось запросить список покупок</string>
     <string name="errorCouldNotVerifyPayment">Не удалось проверить оплату</string>
     <string name="errorIabUserCanceled">Отменено пользователем</string>
+    <string name="errorPicasaUploadsNotSupported">Фотографии загруженные в Picasa пока не поддерживаются. Пожалуйста выберите изображение размещенное локально.</string>
 
     <!-- Preferences -->
     <string name="upload_preference_category">Загрузка фотографий с камеры</string>

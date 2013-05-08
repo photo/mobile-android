@@ -61,6 +61,7 @@ public class SyncImageSelectionFragment extends CommonRefreshableFragmentWithIma
     private int mImageThumbSpacing;
     private int mImageThumbBorder;
     private GridView photosGrid;
+    ViewTreeObserver.OnGlobalLayoutListener photosGridListener;
     NextStepFlow nextStepFlow;
     InitTask initTask = null;
     Switch stateSwitch;
@@ -167,36 +168,36 @@ public class SyncImageSelectionFragment extends CommonRefreshableFragmentWithIma
         // as the GridView has stretchMode=columnWidth. The column width is used
         // to set the height
         // of each view so we get nice square thumbnails.
-        photosGrid.getViewTreeObserver().addOnGlobalLayoutListener(
-                new ViewTreeObserver.OnGlobalLayoutListener()
+        photosGridListener = new ViewTreeObserver.OnGlobalLayoutListener()
+        {
+            @Override
+            public void onGlobalLayout()
+            {
+                if (mAdapter.getNumColumns() == 0)
                 {
-                    @Override
-                    public void onGlobalLayout()
+                    final int numColumns = (int) Math.floor(
+                            photosGrid.getWidth()
+                                    / (mImageThumbSize
+                                            + mImageThumbSpacing + mImageThumbBorder));
+                    if (numColumns > 0)
                     {
-                        if (mAdapter.getNumColumns() == 0)
+                        final int columnWidth =
+                                (photosGrid.getWidth() / numColumns)
+                                        - mImageThumbSpacing;
+                        mAdapter.setNumColumns(numColumns);
+                        mAdapter.setItemHeight(columnWidth, columnWidth
+                                - 2 * mImageThumbBorder);
+                        if (BuildConfig.DEBUG)
                         {
-                            final int numColumns = (int) Math.floor(
-                                    photosGrid.getWidth()
-                                            / (mImageThumbSize
-                                                    + mImageThumbSpacing + mImageThumbBorder));
-                            if (numColumns > 0)
-                            {
-                                final int columnWidth =
-                                        (photosGrid.getWidth() / numColumns)
-                                                - mImageThumbSpacing;
-                                mAdapter.setNumColumns(numColumns);
-                                mAdapter.setItemHeight(columnWidth, columnWidth
-                                        - 2 * mImageThumbBorder);
-                                if (BuildConfig.DEBUG)
-                                {
-                                    CommonUtils.debug(TAG,
-                                            "onCreateView - numColumns set to "
-                                                    + numColumns);
-                                }
-                            }
+                            CommonUtils.debug(TAG,
+                                    "onCreateView - numColumns set to "
+                                            + numColumns);
                         }
                     }
-                });
+                }
+            }
+        };
+        photosGrid.getViewTreeObserver().addOnGlobalLayoutListener(photosGridListener);
         final Button nextStepBtn = (Button) v.findViewById(R.id.nextBtn);
         nextStepBtn.setOnClickListener(new OnClickListener()
         {
@@ -352,6 +353,7 @@ public class SyncImageSelectionFragment extends CommonRefreshableFragmentWithIma
         {
             initTask.cancel(true);
         }
+        GuiUtils.removeGlobalOnLayoutListener(photosGrid, photosGridListener);
 
     }
 

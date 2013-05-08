@@ -2,6 +2,7 @@
 package com.trovebox.android.app;
 
 import java.io.File;
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Map;
 
@@ -55,13 +56,13 @@ public class SyncUploadFragment extends CommonFragment implements OnClickListene
     Switch facebookSwitch;
     StringMapParcelableWrapper albumsWrapper;
 
-    static SyncUploadFragment instance;
+    static WeakReference<SyncUploadFragment> currentInstance;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-        instance = this;
+        currentInstance = new WeakReference<SyncUploadFragment>(this);
         if (savedInstanceState != null)
         {
             albumsWrapper = savedInstanceState.getParcelable(SELECTED_ALBUMS);
@@ -101,7 +102,7 @@ public class SyncUploadFragment extends CommonFragment implements OnClickListene
     @Override
     public void onDestroy() {
         super.onDestroy();
-        instance = null;
+        currentInstance = null;
     }
 
     @Override
@@ -237,7 +238,7 @@ public class SyncUploadFragment extends CommonFragment implements OnClickListene
                 @Override
                 public void run()
                 {
-                    instance.uploadSelectedFiles(false, checkFacebook);
+                    currentInstance.get().uploadSelectedFiles(false, checkFacebook);
                 }
             };
             TwitterUtils.runAfterTwitterAuthentication(
@@ -255,7 +256,7 @@ public class SyncUploadFragment extends CommonFragment implements OnClickListene
                 @Override
                 public void run()
                 {
-                    instance.uploadSelectedFiles(checkTwitter, false);
+                    currentInstance.get().uploadSelectedFiles(checkTwitter, false);
                 }
             };
             FacebookUtils.runAfterFacebookAuthentication(getSupportActivity(),

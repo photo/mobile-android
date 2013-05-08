@@ -187,6 +187,7 @@
     <string name="errorCouldNotQueryInventory">Could not query purchased inventory</string>
     <string name="errorCouldNotVerifyPayment">Could not verify payment</string>
     <string name="errorIabUserCanceled">User canceled</string>
+    <string name="errorPicasaUploadsNotSupported">Picasa uploads are not yet supported. Please select local image.</string>
 
     <!-- Preferences -->
     <string name="upload_preference_category">Camera upload</string>
