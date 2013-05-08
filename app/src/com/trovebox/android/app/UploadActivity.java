@@ -4,6 +4,7 @@ package com.trovebox.android.app;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
+import java.lang.ref.WeakReference;
 import java.util.Date;
 import java.util.Map;
 import java.util.Set;
@@ -151,12 +152,12 @@ public class UploadActivity extends CommonActivity {
          */
         private boolean showSelectionDialogOnResume = false;
 
-        static UploadUiFragment instance;
+        static WeakReference<UploadUiFragment> currentInstance;
 
         @Override
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
-            instance = this;
+            currentInstance = new WeakReference<UploadUiFragment>(this);
             if (savedInstanceState != null)
             {
                 mUploadImageFile = CommonUtils.getSerializableFromBundleIfNotNull(
@@ -174,7 +175,7 @@ public class UploadActivity extends CommonActivity {
         @Override
         public void onDestroy() {
             super.onDestroy();
-            instance = null;
+            currentInstance = null;
         }
 
         FeatherFragment getFeatherFragment()
@@ -615,7 +616,8 @@ public class UploadActivity extends CommonActivity {
                     @Override
                     public void run()
                     {
-                        instance.startUpload(uploadFile, originalUploadFile, false, checkFacebook);
+                        currentInstance.get().startUpload(uploadFile, originalUploadFile, false,
+                                checkFacebook);
                     }
                 };
                 TwitterUtils.runAfterTwitterAuthentication(
@@ -634,7 +636,8 @@ public class UploadActivity extends CommonActivity {
                     @Override
                     public void run()
                     {
-                        instance.startUpload(uploadFile, originalUploadFile, checkTwitter, false);
+                        currentInstance.get().startUpload(uploadFile, originalUploadFile,
+                                checkTwitter, false);
                     }
                 };
                 FacebookUtils.runAfterFacebookAuthentication(getSupportActivity(),

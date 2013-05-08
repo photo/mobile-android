@@ -1,6 +1,7 @@
 
 package com.trovebox.android.app;
 
+import java.lang.ref.WeakReference;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -66,6 +67,7 @@ import com.trovebox.android.app.util.CommonUtils;
 import com.trovebox.android.app.util.GuiUtils;
 import com.trovebox.android.app.util.LoadingControl;
 import com.trovebox.android.app.util.LoadingControlWithCounter;
+import com.trovebox.android.app.util.ObjectAccessor;
 import com.trovebox.android.app.util.ProgressDialogLoadingControl;
 import com.trovebox.android.app.util.RunnableWithParameter;
 import com.trovebox.android.app.util.TrackerUtils;
@@ -173,13 +175,13 @@ public class PhotoDetailsActivity extends CommonActivity implements TwitterLoadi
 
     public static class PhotoDetailsUiFragment extends CommonFragmentWithImageWorker
     {
-        static PhotoDetailsUiFragment currentInstance;
-        static FragmentAccessor<PhotoDetailsUiFragment> currentInstanceAccessor = new FragmentAccessor<PhotoDetailsUiFragment>() {
+        static WeakReference<PhotoDetailsUiFragment> currentInstance;
+        static ObjectAccessor<PhotoDetailsUiFragment> currentInstanceAccessor = new ObjectAccessor<PhotoDetailsUiFragment>() {
             private static final long serialVersionUID = 1L;
 
             @Override
             public PhotoDetailsUiFragment run() {
-                return currentInstance;
+                return currentInstance == null ? null : currentInstance.get();
             }
         };
 
@@ -207,7 +209,7 @@ public class PhotoDetailsActivity extends CommonActivity implements TwitterLoadi
         @Override
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
-            currentInstance = this;
+            currentInstance = new WeakReference<PhotoDetailsActivity.PhotoDetailsUiFragment>(this);
             setHasOptionsMenu(true);
             mImageThumbWithBorderSize = getResources().getDimensionPixelSize(
                     R.dimen.detail_thumbnail_with_border_size);
@@ -468,7 +470,7 @@ public class PhotoDetailsActivity extends CommonActivity implements TwitterLoadi
             mImageWorker2 = new ImageFetcher(getActivity(), null, thumbSize.getWidth(),
                     thumbSize.getHeight());
             mImageWorker2.setImageCache(ImageCache.findOrCreateCache(getActivity(),
-                            ImageCache.THUMBS_CACHE_DIR, false,
+                    ImageCache.THUMBS_CACHE_DIR, false,
                     ImageCache.DEFAULT_MEM_CACHE_SIZE_RATIO * 2));
             mImageWorker2.setLoadingImage(R.drawable.empty_photo);
             imageWorkers.add(mImageWorker2);
