@@ -344,7 +344,7 @@ public class UploadActivity extends CommonActivity {
         @Override
         public void onActivityResult(int requestCode, int resultCode, Intent data) {
             super.onActivityResult(requestCode, resultCode, data);
-            if (checkNoUploadImageSelectedResult(requestCode, resultCode)) {
+            if (checkNoUploadImageSelectedResult(requestCode, resultCode, data)) {
                 TrackerUtils.trackUiEvent("uploadNoImageSelectedResult",
                         requestCode == REQUEST_GALLERY ? "gallery" : "camera");
                 showSelectionDialogOnResume = true;
@@ -395,15 +395,32 @@ public class UploadActivity extends CommonActivity {
             }
         }
 
-        private boolean checkNoUploadImageSelectedResult(int requestCode, int resultCode) {
-            return resultCode != RESULT_OK && (requestCode == REQUEST_GALLERY
+        private boolean checkNoUploadImageSelectedResult(int requestCode, int resultCode,
+                Intent data) {
+            boolean result = resultCode != RESULT_OK && (requestCode == REQUEST_GALLERY
                     || requestCode == REQUEST_CAMERA);
+            if (!result && resultCode == RESULT_OK && requestCode == REQUEST_GALLERY)
+            {
+                Uri selectedImageUri = data.getData();
+                if (selectedImageUri != null)
+                {
+                    String selectedImage = selectedImageUri.toString();
+                    if (selectedImage.indexOf("content://com.android.gallery3d.provider)") != -1 ||
+                            selectedImage.indexOf("content://com.google.android.gallery3d") != -1)
+                    {
+                        TrackerUtils.trackErrorEvent("unsupported_gallery_upload", selectedImage);
+                        GuiUtils.alert(R.string.errorPicasaUploadsNotSupported);
+                        result = true;
+                    }
+                }
+            }
+            return result;
         }
 
         @Override
         public void onActivityResultUI(int requestCode, int resultCode, Intent data) {
             super.onActivityResultUI(requestCode, resultCode, data);
-            if (checkNoUploadImageSelectedResult(requestCode, resultCode)) {
+            if (checkNoUploadImageSelectedResult(requestCode, resultCode, data)) {
                 showSelectionDialog();
                 return;
             }
