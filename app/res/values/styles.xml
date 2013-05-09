@@ -202,7 +202,7 @@
         <item name="android:textColor">@color/ab_fg_white</item>
     </style>
 
-    <style name="trovebox_DropDownListView" parent="@style/Widget.Sherlock.ListView.DropDown">
+    <style name="trovebox_DropDownListView" parent="Holo.ListView.DropDown.Light">
         <item name="android:listSelector">@drawable/selectable_background_trovebox</item>
     </style>
     <!-- this style is only referenced in a Light.DarkActionBar based theme -->
