@@ -10,6 +10,7 @@ import org.json.JSONObject;
 import android.content.Context;
 
 import com.trovebox.android.app.net.ApiBase;
+import com.trovebox.android.app.net.TroveboxResponse;
 import com.trovebox.android.app.net.TroveboxResponse.RequestType;
 import com.trovebox.android.app.purchase.util.Purchase;
 
@@ -37,8 +38,20 @@ public class FakeAccountTroveboxApi extends ApiBase implements
     }
 
     @Override
-    public String recoverPassword(String email) {
-        return "Please, look your email";
+    public TroveboxResponse recoverPassword(String email) throws IllegalStateException,
+            IOException, NoSuchAlgorithmException, JSONException {
+        JSONObject jsonObjFake = new JSONObject(
+                "{\"message\" : \"Password reset, please check your email\"," +
+                        "\"code\" : 200" +
+                        "}");
+        try {
+            // emulate network latency
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return new TroveboxResponse(RequestType.RECOVER_PASSWORD, jsonObjFake);
     }
 
     private AccountTroveboxResponse createFakeAccountTroveboxResponse() throws JSONException {

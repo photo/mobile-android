@@ -188,6 +188,7 @@
     <string name="errorCouldNotVerifyPayment">Could not verify payment</string>
     <string name="errorIabUserCanceled">User canceled</string>
     <string name="errorPicasaUploadsNotSupported">Picasa uploads are not yet supported. Please select local image.</string>
+    <string name="errorCouldNotRecoverPassword">Could not recover password.</string>
 
     <!-- Preferences -->
     <string name="upload_preference_category">Camera upload</string>
@@ -218,6 +219,7 @@
     <string name="account_own_server_button">Using your own domain?</string>
     <string name="account_facebook">Connect using Facebook login</string>
     <string name="account_create_button">Create Account</string>
+    <string name="account_forgot_password_button">Forgot password?</string>
     <string name="title_activity_account_facebook">AccountFacebook</string>
     <string name="title_activity_account_login">AccountLogin</string>
     <string name="title_activity_account_signup">AccountSignup</string>
@@ -225,6 +227,7 @@
     <string name="unknown_error">Unknown error</string>
     <string name="unknown_error_with_code">Unknown error with code %1$d</string>
     <string name="sign_in_instructions"><![CDATA[<b>Enter</b> an email, password and hit <b>Login</b>]]></string>
+    <string name="password_recovery_instructions">Enter your email to recover your password</string>
     <!-- Hints -->
     <string name="hint_email">email</string>
     <string name="hint_password">password</string>
