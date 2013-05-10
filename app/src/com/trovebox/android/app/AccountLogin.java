@@ -1,7 +1,6 @@
 
 package com.trovebox.android.app;
 
-
 import org.holoeverywhere.app.Activity;
 import org.holoeverywhere.widget.TextView;
 
@@ -12,6 +11,7 @@ import android.view.View;
 import android.widget.EditText;
 
 import com.trovebox.android.app.common.CommonActivity;
+import com.trovebox.android.app.net.TroveboxResponse;
 import com.trovebox.android.app.net.TroveboxResponseUtils;
 import com.trovebox.android.app.net.account.AccountTroveboxResponse;
 import com.trovebox.android.app.net.account.IAccountTroveboxApi;
@@ -21,6 +21,7 @@ import com.trovebox.android.app.util.GuiUtils;
 import com.trovebox.android.app.util.LoadingControl;
 import com.trovebox.android.app.util.LoginUtils;
 import com.trovebox.android.app.util.ProgressDialogLoadingControl;
+import com.trovebox.android.app.util.SimpleAsyncTaskEx;
 import com.trovebox.android.app.util.TrackerUtils;
 import com.trovebox.android.app.util.concurrent.AsyncTaskEx;
 
@@ -41,6 +42,7 @@ public class AccountLogin extends CommonActivity
         TextView signInInstructions = (TextView) findViewById(R.id.sign_in_instructions);
         signInInstructions.setText(Html.fromHtml(getString(R.string.sign_in_instructions)));
     }
+
     public void loginButtonAction(View view)
     {
         CommonUtils.debug(TAG, "Login the user");
@@ -82,6 +84,67 @@ public class AccountLogin extends CommonActivity
         Intent intent = new Intent(this, SetupActivity.class);
         startActivity(intent);
         finish();
+    }
+
+    public void forgotPasswordButtonAction(View view)
+    {
+        CommonUtils.debug(TAG, "Recover user password");
+        TrackerUtils.trackButtonClickEvent("forgot_password_button", AccountLogin.this);
+
+        EditText editText = (EditText) findViewById(R.id.edit_email);
+        String email = editText.getText().toString();
+
+        if (!GuiUtils.validateBasicTextData(
+                new String[]
+                {
+                    email
+                }, new int[]
+                {
+                    R.string.field_email,
+                }, this))
+        {
+            return;
+        }
+
+        new RecoverPasswordTask(email,
+                new ProgressDialogLoadingControl(this, true, false,
+                        getString(R.string.loading)))
+                .execute();
+    }
+
+    /**
+     * Async task to recover user password
+     */
+    private static class RecoverPasswordTask extends SimpleAsyncTaskEx {
+        private String email;
+        private String message;
+
+        public RecoverPasswordTask(String email,
+                LoadingControl loadingControl) {
+            super(loadingControl);
+            this.email = email;
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... params) {
+            try {
+                if (CommonUtils.checkOnline())
+                {
+                    TroveboxResponse response = IAccountTroveboxApiFactory.getApi()
+                            .recoverPassword(email);
+                    message = response.getAlertMessage();
+                    return TroveboxResponseUtils.checkResponseValid(response);
+                }
+            } catch (Exception e) {
+                GuiUtils.error(TAG, R.string.errorCouldNotRecoverPassword, e);
+            }
+            return false;
+        }
+
+        @Override
+        protected void onSuccessPostExecute() {
+            GuiUtils.alert(message);
+        }
     }
 
     private class LogInUserTask extends

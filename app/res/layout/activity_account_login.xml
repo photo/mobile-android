@@ -9,72 +9,93 @@
         android:focusable="true"
         android:focusableInTouchMode="true" />
 
-    <LinearLayout
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_margin="@dimen/site_padding"
-        android:orientation="vertical" >
-
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1" >
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:src="@drawable/login_logo" />
-        </FrameLayout>
+        android:fillViewport="true" >
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical" >
 
-            <TextView
-                android:id="@+id/sign_in_instructions"
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1" >
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:src="@drawable/login_logo" />
+            </FrameLayout>
+
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="@string/sign_in_instructions"
-                android:textAppearance="?android:attr/textAppearanceSmall" />
+                android:orientation="vertical" >
 
-            <EditText
-                android:id="@+id/edit_email"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="@string/hint_email"
-                android:inputType="textEmailAddress" />
+                <TextView
+                    android:id="@+id/sign_in_instructions"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="@string/sign_in_instructions"
+                    android:textAppearance="?android:attr/textAppearanceSmall" />
 
-            <EditText
-                android:id="@+id/edit_password"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="@string/hint_password"
-                android:inputType="textPassword" />
+                <EditText
+                    android:id="@+id/edit_email"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/hint_email"
+                    android:inputType="textEmailAddress" />
 
-            <Button
-                android:id="@+id/button_login"
-                style="@style/Trovebox.YellowButton"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:onClick="loginButtonAction"
-                android:text="@string/login" />
+                <EditText
+                    android:id="@+id/edit_password"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/hint_password"
+                    android:inputType="textPassword" />
 
-            <View
-                android:layout_width="0dp"
-                android:layout_height="30dp" />
+                <Button
+                    android:id="@+id/button_login"
+                    style="@style/Trovebox.YellowButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:onClick="loginButtonAction"
+                    android:text="@string/login" />
 
-            <Button
-                android:id="@+id/account_own_server_button"
-                style="@style/Trovebox.OliveButton"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:onClick="accountOwnServerButtonAction"
-                android:text="@string/account_own_server_button"
-                android:visibility="visible" />
+                <Button
+                    android:id="@+id/button_forgot_password"
+                    style="@style/Trovebox.BeigeButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:onClick="forgotPasswordButtonAction"
+                    android:text="@string/account_forgot_password_button" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="@string/password_recovery_instructions"
+                    android:textAppearance="?android:attr/textAppearanceSmall" />
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="30dp" />
+
+                <Button
+                    android:id="@+id/account_own_server_button"
+                    style="@style/Trovebox.OliveButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:onClick="accountOwnServerButtonAction"
+                    android:text="@string/account_own_server_button"
+                    android:visibility="visible" />
+            </LinearLayout>
         </LinearLayout>
-    </LinearLayout>
+    </ScrollView>
 
 </RelativeLayout>
