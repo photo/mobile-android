@@ -6,6 +6,7 @@ import java.security.NoSuchAlgorithmException;
 
 import org.json.JSONException;
 
+import com.trovebox.android.app.net.TroveboxResponse;
 import com.trovebox.android.app.purchase.util.Purchase;
 
 /**
@@ -39,11 +40,12 @@ public interface IAccountTroveboxApi {
      * Recover password for user based on email
      * 
      * @param email user's email
-     * @return a message that we need to show to the user. this message could
+     * @return a TroveboxResponse with a message that we need to show to the user. this message could
      *         be, eg : password reset, please check your email or this email is
      *         not in our system
      */
-    public String recoverPassword(String email);
+    public TroveboxResponse recoverPassword(String email) throws IllegalStateException,
+            IOException, NoSuchAlgorithmException, JSONException;
 
     /**
      * Verify payment information
