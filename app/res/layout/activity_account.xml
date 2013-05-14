@@ -1,67 +1,87 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+    android:layout_height="match_parent"
+    android:layout_margin="@dimen/site_padding"
+    android:orientation="vertical" >
 
-    <LinearLayout
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_margin="@dimen/site_padding"
-        android:orientation="vertical" >
+        android:layout_height="0dp"
+        android:layout_weight="1" >
 
-        <FrameLayout
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:src="@drawable/login_logo" />
+    </FrameLayout>
+
+    <RelativeLayout
+        android:id="@+id/google_login_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.5"
+        android:visibility="gone" >
+
+        <Button
+            android:id="@+id/account_google_login_button"
+            style="@style/Trovebox.BeigeWithIconButton"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1" >
+            android:layout_height="wrap_content"
+            android:onClick="accountGoogleLoginButtonAction"
+            android:text="@string/account_google_login_button" />
 
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:src="@drawable/login_logo" />
-        </FrameLayout>
+        <TextView
+            android:id="@+id/instant_sign_in_instructions"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/account_google_login_button"
+            android:layout_centerHorizontal="true"
+            android:text="@string/instant_sign_in_instructions"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+    </RelativeLayout>
 
-        <RelativeLayout
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+        <Button
+            android:id="@+id/account_signup_button"
+            style="@style/Trovebox.BeigeWithIconButton"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" >
+            android:layout_height="wrap_content"
+            android:onClick="accountSignupButtonAction"
+            android:text="@string/account_signup_button" />
 
-            <Button
-                android:id="@+id/account_signup_button"
-                style="@style/Trovebox.BeigeWithIconButton"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:onClick="accountSignupButtonAction"
-                android:text="@string/account_signup_button" />
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="16dp"
+            android:src="@drawable/sign_plus" />
+    </RelativeLayout>
 
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
-                android:layout_centerVertical="true"
-                android:layout_marginLeft="16dp"
-                android:src="@drawable/sign_plus" />
-        </RelativeLayout>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
 
-        <RelativeLayout
+        <Button
+            android:id="@+id/account_login_button"
+            style="@style/Trovebox.BeigeWithIconButton"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" >
+            android:layout_height="wrap_content"
+            android:onClick="accountLoginButtonAction"
+            android:text="@string/account_login_button" />
 
-            <Button
-                android:id="@+id/account_login_button"
-                style="@style/Trovebox.BeigeWithIconButton"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:onClick="accountLoginButtonAction"
-                android:text="@string/account_login_button" />
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="14dp"
+            android:src="@drawable/login_icon" />
+    </RelativeLayout>
 
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
-                android:layout_centerVertical="true"
-                android:layout_marginLeft="14dp"
-                android:src="@drawable/login_icon" />
-        </RelativeLayout>
-    </LinearLayout>
-
-</RelativeLayout>
+</LinearLayout>
