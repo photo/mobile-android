@@ -1,0 +1,12 @@
+com.google.android.gms
+com.google.android.gms.auth
+com.google.android.gms.common
+com.google.android.gms.common.data
+com.google.android.gms.common.images
+com.google.android.gms.maps
+com.google.android.gms.maps.model
+com.google.android.gms.panorama
+com.google.android.gms.plus
+com.google.android.gms.plus.model.moments
+com.google.android.gms.plus.model.people
+

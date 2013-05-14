@@ -1,10 +1,13 @@
 
 package com.trovebox.android.app;
 
-import android.content.BroadcastReceiver;
+import org.holoeverywhere.widget.TextView;
+
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Html;
 import android.view.View;
+import android.widget.Button;
 
 import com.trovebox.android.app.common.CommonActivity;
 import com.trovebox.android.app.util.CommonUtils;
@@ -13,24 +16,29 @@ import com.trovebox.android.app.util.TrackerUtils;
 
 public class AccountActivity extends CommonActivity
 {
-
     private static final String TAG = AccountActivity.class.getSimpleName();
+    private static int GOOGLE_PLAY_SERVICES_REQUEST_CODE = 0;
 
-    BroadcastReceiver loginBroadcastReceiver;
+    GoogleLoginFragment googleLoginFragment;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_account);
-        loginBroadcastReceiver = LoginUtils
-                .getAndRegisterDestroyOnLoginActionBroadcastReceiver(TAG, this);
+        init();
+        addRegisteredReceiver(LoginUtils
+                .getAndRegisterDestroyOnLoginActionBroadcastReceiver(TAG, this));
     }
 
-    @Override
-    protected void onDestroy()
+    void init()
     {
-        super.onDestroy();
-        unregisterReceiver(loginBroadcastReceiver);
+        getGoogleLoginFragment();
+        Button googleLoginButton = (Button) findViewById(R.id.account_google_login_button);
+        googleLoginButton.setText(Html.fromHtml(getString(R.string.account_google_login_button)));
+        findViewById(R.id.google_login_view).setVisibility(
+                CommonUtils.isFroyoOrHigher() ? View.GONE : View.GONE);
+        TextView signInInstructions = (TextView) findViewById(R.id.instant_sign_in_instructions);
+        signInInstructions.setText(Html.fromHtml(getString(R.string.instant_sign_in_instructions)));
     }
 
     public void accountSignupButtonAction(View view) {
@@ -47,4 +55,29 @@ public class AccountActivity extends CommonActivity
         startActivity(intent);
     }
 
+    /**
+     * Used as account_google_login_button onClick handler
+     * 
+     * @param view
+     */
+    public void accountGoogleLoginButtonAction(View view) {
+        CommonUtils.debug(TAG, "Google login button action");
+        TrackerUtils.trackButtonClickEvent("account_google_login_button", AccountActivity.this);
+        getGoogleLoginFragment().doLogin(GOOGLE_PLAY_SERVICES_REQUEST_CODE);
+    }
+
+    /**
+     * Get the google login fragment. Create it if it is null
+     * 
+     * @return
+     */
+    GoogleLoginFragment getGoogleLoginFragment()
+    {
+        if (googleLoginFragment == null)
+        {
+            googleLoginFragment = GoogleLoginFragment.findOrCreateFeatherFragment(
+                    getSupportFragmentManager());
+        }
+        return googleLoginFragment;
+    }
 }

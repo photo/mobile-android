@@ -188,6 +188,9 @@
     <string name="errorIabUserCanceled">Отменено пользователем</string>
     <string name="errorPicasaUploadsNotSupported">Фотографии загруженные в Picasa пока не поддерживаются. Пожалуйста выберите изображение размещенное локально.</string>
     <string name="errorCouldNotRecoverPassword">Не удалось восстановить пароль.</string>
+    <string name="errorGooglePlayServicesNotAvailable">Извините, похоже сервисы Google Play не доступны на вашем устройстве.</string>
+    <string name="errorGoogleAccountsNotFound">Не удалось найти ни одного привязанного к устройству аккаунта Google.</string>
+    <string name="errorCouldNotFetchGoogleAccountToken">Не удалось получить метку доступа к аккаунту google: %1$s.</string>
 
     <!-- Preferences -->
     <string name="upload_preference_category">Загрузка фотографий с камеры</string>
@@ -213,6 +216,7 @@
     <string name="setting_account_loggedin_login">Вход</string>
 
     <!-- Screens for Create/Login/Own domain: Account -->
+    <string name="account_google_login_button"><![CDATA[Войти используя <b>Google</b> аккаунт]]></string>
     <string name="account_signup_button">Зарегистрироваться используя email</string>
     <string name="account_login_button">Войти используя email</string>
     <string name="account_own_server_button">Используете собственный домен?</string>
@@ -227,6 +231,8 @@
     <string name="unknown_error_with_code">Неизвестная ошибка с кодом %1$d</string>
     <string name="sign_in_instructions"><![CDATA[<b>Введите</b> адрес email, пароль и нажмите <b>Вход</b>]]></string>
     <string name="password_recovery_instructions">Введите email чтобы восстановить пароль</string>
+    <string name="instant_sign_in_instructions"><![CDATA[<b>Зарегистрируйтесь</b> или <b>войдите</b> в одно касание]]></string>
+    <string name="select_google_account">Пожалуйста выберите аккаунт google для входа</string>
     <!-- Hints -->
     <string name="hint_email">email</string>
     <string name="hint_password">пароль</string>

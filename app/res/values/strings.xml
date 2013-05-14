@@ -189,6 +189,9 @@
     <string name="errorIabUserCanceled">User canceled</string>
     <string name="errorPicasaUploadsNotSupported">Picasa uploads are not yet supported. Please select local image.</string>
     <string name="errorCouldNotRecoverPassword">Could not recover password.</string>
+    <string name="errorGooglePlayServicesNotAvailable">Sorry, looks like Google Play Services are not available on your device.</string>
+    <string name="errorGoogleAccountsNotFound">Could not find any google account associated with the device.</string>
+    <string name="errorCouldNotFetchGoogleAccountToken">Could not obtain google account access token: %1$s.</string>
 
     <!-- Preferences -->
     <string name="upload_preference_category">Camera upload</string>
@@ -214,6 +217,7 @@
     <string name="setting_account_loggedin_login">Log in</string>
 
     <!-- Screens for Create/Login/Own domain: Account -->
+    <string name="account_google_login_button"><![CDATA[Connect using <b>Google</b> login]]></string>
     <string name="account_signup_button">Sign up with your email</string>
     <string name="account_login_button">Sign in with your email</string>
     <string name="account_own_server_button">Using your own domain?</string>
@@ -228,6 +232,8 @@
     <string name="unknown_error_with_code">Unknown error with code %1$d</string>
     <string name="sign_in_instructions"><![CDATA[<b>Enter</b> an email, password and hit <b>Login</b>]]></string>
     <string name="password_recovery_instructions">Enter your email to recover your password</string>
+    <string name="instant_sign_in_instructions"><![CDATA[<b>Sign up</b> or <b>sign in</b> with a single tap]]></string>
+    <string name="select_google_account">Please select google account to login with</string>
     <!-- Hints -->
     <string name="hint_email">email</string>
     <string name="hint_password">password</string>

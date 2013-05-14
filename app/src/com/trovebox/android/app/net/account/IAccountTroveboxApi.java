@@ -37,12 +37,21 @@ public interface IAccountTroveboxApi {
             throws IllegalStateException, IOException, NoSuchAlgorithmException, JSONException;
 
     /**
+     * Sign in the user in the application via google login
+     * 
+     * @param token google play services access token
+     * @return response with all details on it (credentials)
+     */
+    public AccountTroveboxResponse signInViaGoogle(String token)
+            throws IllegalStateException, IOException, NoSuchAlgorithmException, JSONException;
+
+    /**
      * Recover password for user based on email
      * 
      * @param email user's email
-     * @return a TroveboxResponse with a message that we need to show to the user. this message could
-     *         be, eg : password reset, please check your email or this email is
-     *         not in our system
+     * @return a TroveboxResponse with a message that we need to show to the
+     *         user. this message could be, eg : password reset, please check
+     *         your email or this email is not in our system
      */
     public TroveboxResponse recoverPassword(String email) throws IllegalStateException,
             IOException, NoSuchAlgorithmException, JSONException;
