@@ -109,4 +109,10 @@ public class FakeAccountTroveboxApi extends ApiBase implements
         }
         return new PaymentVerificationResponse(jsonObjFake);
     }
+
+    @Override
+    public AccountTroveboxResponse signInViaGoogle(String token)
+            throws IllegalStateException, IOException, NoSuchAlgorithmException, JSONException {
+        return createFakeAccountTroveboxResponse();
+    }
 }
