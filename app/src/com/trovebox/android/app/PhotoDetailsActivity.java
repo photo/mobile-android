@@ -245,14 +245,6 @@ public class PhotoDetailsActivity extends CommonActivity implements TwitterLoadi
                     break;
                 case R.id.menu_share:
                     TrackerUtils.trackOptionsMenuClickEvent("menu_share", getSupportActivity());
-                    Photo photo = getActivePhoto();
-                    boolean isPrivate = photo == null || photo.isPrivate();
-                    item.getSubMenu().setGroupVisible(R.id.share_group, !isPrivate);
-                    if (isPrivate)
-                    {
-                        GuiUtils.alert(R.string.share_private_photo_forbidden);
-                        result = false;
-                    }
                     break;
                 case R.id.menu_share_email:
                     TrackerUtils.trackOptionsMenuClickEvent("menu_share_email",

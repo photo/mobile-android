@@ -437,13 +437,7 @@ public class HomeFragment extends CommonRefreshableFragmentWithImageWorker
                 {
                     TrackerUtils.trackButtonClickEvent("share_button", HomeFragment.this);
                     activePhoto = photo;
-                    if (photo.isPrivate())
-                    {
-                        GuiUtils.alert(R.string.share_private_photo_forbidden);
-                    } else
-                    {
-                        showShareOptions(v);
-                    }
+                    showShareOptions(v);
                 }
 
                 public void showShareOptions(View v) {
