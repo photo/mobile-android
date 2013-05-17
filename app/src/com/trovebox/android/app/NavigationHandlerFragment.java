@@ -296,6 +296,7 @@ public class NavigationHandlerFragment extends CommonFragment {
                                                 wrapper.mPosition = position;
                                                 wrapper.mSeparatorTitleId = View.NO_ID;
                                             }
+                                            adapter.notifyDataSetChanged();
                                         }
                                         rebuildLeftView();
                                         if (mCurrentPage >= ACCOUNT_INDEX)
