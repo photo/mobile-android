@@ -137,16 +137,16 @@ public class FacebookUtils
     /**
      * Request the logout for the current facebook session
      * 
-     * @param activity
+     * @param context
      */
-    public static void logoutRequest(Activity activity)
+    public static void logoutRequest(Context context)
     {
         Facebook mFb = FacebookProvider.getFacebook();
         if (mFb.isSessionValid())
         {
             FacebookSessionEvents.onLogoutBegin();
             AsyncFacebookRunner asyncRunner = new AsyncFacebookRunner(mFb);
-            asyncRunner.logout(activity, new LogoutRequestListener(activity));
+            asyncRunner.logout(context, new LogoutRequestListener(context));
         }
     }
 

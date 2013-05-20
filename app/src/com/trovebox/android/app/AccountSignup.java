@@ -1,9 +1,7 @@
 
 package com.trovebox.android.app;
 
-
 import org.holoeverywhere.app.Activity;
-import org.holoeverywhere.app.ProgressDialog;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -11,38 +9,33 @@ import android.view.View;
 import android.widget.EditText;
 
 import com.trovebox.android.app.common.CommonActivity;
+import com.trovebox.android.app.common.CommonFragmentUtils;
+import com.trovebox.android.app.common.CommonRetainedFragmentWithTaskAndProgress;
 import com.trovebox.android.app.net.TroveboxResponseUtils;
 import com.trovebox.android.app.net.account.AccountTroveboxResponse;
-import com.trovebox.android.app.net.account.IAccountTroveboxApi;
 import com.trovebox.android.app.net.account.IAccountTroveboxApiFactory;
 import com.trovebox.android.app.util.CommonUtils;
 import com.trovebox.android.app.util.GuiUtils;
-import com.trovebox.android.app.util.LoadingControl;
 import com.trovebox.android.app.util.LoginUtils;
-import com.trovebox.android.app.util.ProgressDialogLoadingControl;
 import com.trovebox.android.app.util.TrackerUtils;
-import com.trovebox.android.app.util.concurrent.AsyncTaskEx;
 
 /**
  * Class to create new accounts on Trovebox
  * 
  * @author Patrick Santana <patrick@trovebox.com>
  */
-public class AccountSignup extends CommonActivity
-{
+public class AccountSignup extends CommonActivity {
 
     private static final String TAG = AccountSignup.class.getSimpleName();
-    ProgressDialog progress;
 
     @Override
-    public void onCreate(Bundle savedInstanceState)
-    {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_account_signup);
+        getNewUserFragment();
     }
 
-    public void createAccountButtonAction(View view)
-    {
+    public void createAccountButtonAction(View view) {
         CommonUtils.debug(TAG, "Create an account");
         TrackerUtils.trackButtonClickEvent("create_account_button", AccountSignup.this);
 
@@ -72,78 +65,79 @@ public class AccountSignup extends CommonActivity
         // clean up login information
         Preferences.logout(this);
 
-        new NewUserTask(username, email, password, new ProgressDialogLoadingControl(this, true,
-                false,
-                getString(R.string.signup_message)), this).execute();
+        getNewUserFragment().createNewUser(username, email, password);
     }
 
-    private class NewUserTask extends
-            AsyncTaskEx<Void, Void, AccountTroveboxResponse>
-    {
-        String username, password, email;
-        Activity activity;
-        LoadingControl loadingControl;
+    /**
+     * Get the NewUserFragment.
+     * 
+     * @return
+     */
+    NewUserFragment getNewUserFragment() {
+        return CommonFragmentUtils.findOrCreateFragment(
+                NewUserFragment.class,
+                getSupportFragmentManager());
+    }
 
-        public NewUserTask(String username, String email, String password,
-                LoadingControl loadingControl, Activity activity)
-        {
-            super();
-            this.username = username;
-            this.email = email;
-            this.password = password;
-            this.activity = activity;
-            this.loadingControl = loadingControl;
-        }
+    /**
+     * The create new user fragment with the retained instance across
+     * configuration change
+     */
+    public static class NewUserFragment extends CommonRetainedFragmentWithTaskAndProgress {
+        private static final String TAG = NewUserFragment.class.getSimpleName();
 
         @Override
-        protected AccountTroveboxResponse doInBackground(Void... params)
-        {
-            IAccountTroveboxApi api = IAccountTroveboxApiFactory.getApi(
-                    activity);
-            try
-            {
-                return api.createNewUser(username,
-                        email, password);
-            } catch (Exception e)
-            {
-                GuiUtils.error(TAG,
-                        R.string.errorCouldNotSignup,
-                        e,
-                        activity);
+        public String getLoadingMessage() {
+            return CommonUtils.getStringResource(R.string.signup_message);
+        }
+
+        public void createNewUser(String username, String email, String password) {
+            startRetainedTask(new NewUserTask(username, email, password));
+        }
+
+        class NewUserTask extends RetainedTask {
+            String username, password, email;
+            AccountTroveboxResponse result;
+
+            public NewUserTask(String username, String email, String password) {
+                this.username = username;
+                this.email = email;
+                this.password = password;
             }
-            return null;
-        }
 
-        @Override
-        protected void onPreExecute()
-        {
-            super.onPreExecute();
-            loadingControl.startLoading();
-        }
-
-        @Override
-        protected void onPostExecute(AccountTroveboxResponse result)
-        {
-            try
-            {
-                super.onPostExecute(result);
-                loadingControl.stopLoading();
-                if (result != null)
-                {
-                    if (TroveboxResponseUtils.checkResponseValid(result))
+            @Override
+            protected Boolean doInBackground(Void... params) {
+                try {
+                    if (CommonUtils.checkOnline())
                     {
-                        result.saveCredentials(this.activity);
-                        activity.setResult(RESULT_OK);
-                        LoginUtils.sendLoggedInBroadcast(activity);
-                        startActivity(new Intent(activity, MainActivity.class));
-                        activity.finish();
+                        result = IAccountTroveboxApiFactory.getApi()
+                                .createNewUser(username, email, password);
+                        return TroveboxResponseUtils.checkResponseValid(result);
                     }
+                } catch (Exception e) {
+                    GuiUtils.error(TAG, R.string.errorCouldNotSignup, e);
                 }
-            } catch (Exception e)
-            {
-                GuiUtils.error(TAG, null, e, activity);
+                return false;
+            }
+
+            @Override
+            protected void onSuccessPostExecuteAdditional() {
+                try
+                {
+                    Activity activity = getSupportActivity();
+                    // save credentials.
+                    result.saveCredentials(activity);
+
+                    // start new activity
+                    startActivity(new Intent(activity,
+                            MainActivity.class));
+                    LoginUtils.sendLoggedInBroadcast(activity);
+                    activity.finish();
+                } catch (Exception e)
+                {
+                    GuiUtils.error(TAG, e);
+                }
             }
         }
-
     }
 }

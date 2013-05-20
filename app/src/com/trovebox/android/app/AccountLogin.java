@@ -11,40 +11,35 @@ import android.view.View;
 import android.widget.EditText;
 
 import com.trovebox.android.app.common.CommonActivity;
+import com.trovebox.android.app.common.CommonFragmentUtils;
+import com.trovebox.android.app.common.CommonRetainedFragmentWithTaskAndProgress;
 import com.trovebox.android.app.net.TroveboxResponse;
 import com.trovebox.android.app.net.TroveboxResponseUtils;
 import com.trovebox.android.app.net.account.AccountTroveboxResponse;
-import com.trovebox.android.app.net.account.IAccountTroveboxApi;
 import com.trovebox.android.app.net.account.IAccountTroveboxApiFactory;
 import com.trovebox.android.app.util.CommonUtils;
 import com.trovebox.android.app.util.GuiUtils;
-import com.trovebox.android.app.util.LoadingControl;
 import com.trovebox.android.app.util.LoginUtils;
-import com.trovebox.android.app.util.ProgressDialogLoadingControl;
-import com.trovebox.android.app.util.SimpleAsyncTaskEx;
 import com.trovebox.android.app.util.TrackerUtils;
-import com.trovebox.android.app.util.concurrent.AsyncTaskEx;
 
-public class AccountLogin extends CommonActivity
-{
+public class AccountLogin extends CommonActivity {
     private static final String TAG = AccountLogin.class.getSimpleName();
 
     @Override
-    public void onCreate(Bundle savedInstanceState)
-    {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_account_login);
         init();
     }
 
-    void init()
-    {
+    void init() {
+        getLoginFragment();
+        getRecoverPasswordFragment();
         TextView signInInstructions = (TextView) findViewById(R.id.sign_in_instructions);
         signInInstructions.setText(Html.fromHtml(getString(R.string.sign_in_instructions)));
     }
 
-    public void loginButtonAction(View view)
-    {
+    public void loginButtonAction(View view) {
         CommonUtils.debug(TAG, "Login the user");
         TrackerUtils.trackButtonClickEvent("login_button", AccountLogin.this);
 
@@ -70,15 +65,11 @@ public class AccountLogin extends CommonActivity
         // clean up login information
         Preferences.logout(this);
 
-        new LogInUserTask(new Credentials(email, password),
-                new ProgressDialogLoadingControl(this, true, false,
-                        getString(R.string.logging_in_message)), this)
-                .execute();
+        getLoginFragment().doLogin(email, password);
 
     }
 
-    public void accountOwnServerButtonAction(View view)
-    {
+    public void accountOwnServerButtonAction(View view) {
         CommonUtils.debug(TAG, "Start own server button action");
         TrackerUtils.trackButtonClickEvent("own_server_login_button", AccountLogin.this);
         Intent intent = new Intent(this, SetupActivity.class);
@@ -86,8 +77,7 @@ public class AccountLogin extends CommonActivity
         finish();
     }
 
-    public void forgotPasswordButtonAction(View view)
-    {
+    public void forgotPasswordButtonAction(View view) {
         CommonUtils.debug(TAG, "Recover user password");
         TrackerUtils.trackButtonClickEvent("forgot_password_button", AccountLogin.this);
 
@@ -105,149 +95,155 @@ public class AccountLogin extends CommonActivity
         {
             return;
         }
-
-        new RecoverPasswordTask(email,
-                new ProgressDialogLoadingControl(this, true, false,
-                        getString(R.string.loading)))
-                .execute();
+        getRecoverPasswordFragment().recoverPassword(email);
     }
 
     /**
-     * Async task to recover user password
+     * Get the login fragment
+     * 
+     * @return
      */
-    private static class RecoverPasswordTask extends SimpleAsyncTaskEx {
-        private String email;
-        private String message;
-
-        public RecoverPasswordTask(String email,
-                LoadingControl loadingControl) {
-            super(loadingControl);
-            this.email = email;
-        }
-
-        @Override
-        protected Boolean doInBackground(Void... params) {
-            try {
-                if (CommonUtils.checkOnline())
-                {
-                    TroveboxResponse response = IAccountTroveboxApiFactory.getApi()
-                            .recoverPassword(email);
-                    message = response.getAlertMessage();
-                    return TroveboxResponseUtils.checkResponseValid(response);
-                }
-            } catch (Exception e) {
-                GuiUtils.error(TAG, R.string.errorCouldNotRecoverPassword, e);
-            }
-            return false;
-        }
-
-        @Override
-        protected void onSuccessPostExecute() {
-            GuiUtils.alert(message);
-        }
+    public LogInFragment getLoginFragment() {
+        return CommonFragmentUtils
+                .findOrCreateFragment(LogInFragment.class, getSupportFragmentManager());
     }
 
-    private class LogInUserTask extends
-            AsyncTaskEx<Void, Void, AccountTroveboxResponse>
-    {
-        private Credentials credentials;
-        private Activity activity;
-        LoadingControl loadingControl;
+    /**
+     * Get the recover password fragment
+     * 
+     * @return
+     */
+    public RecoverPasswordFragment getRecoverPasswordFragment() {
+        return CommonFragmentUtils
+                .findOrCreateFragment(RecoverPasswordFragment.class, getSupportFragmentManager());
+    }
 
-        public LogInUserTask(Credentials credentials,
-                LoadingControl loadingControl, Activity activity)
-        {
-            this.credentials = credentials;
-            this.activity = activity;
-            this.loadingControl = loadingControl;
-        }
+    /**
+     * The log in fragment with the retained instance across configuration
+     * change
+     */
+    public static class LogInFragment extends CommonRetainedFragmentWithTaskAndProgress {
+        private static final String TAG = LogInFragment.class.getSimpleName();
 
         @Override
-        protected AccountTroveboxResponse doInBackground(Void... params)
-        {
-            IAccountTroveboxApi api = IAccountTroveboxApiFactory.getApi(
-                    this.activity);
-            try
-            {
-                return api.signIn(credentials.getUser(),
-                        credentials.getPwd());
-            } catch (Exception e)
-            {
-                GuiUtils.error(TAG,
-                        R.string.errorCouldNotLogin,
-                        e,
-                        this.activity);
+        public String getLoadingMessage() {
+            return CommonUtils.getStringResource(R.string.logging_in_message);
+        }
+
+        public void doLogin(String user, String pwd) {
+            startRetainedTask(new LogInUserTask(new Credentials(user, pwd)));
+        }
+
+        class LogInUserTask extends RetainedTask {
+            private Credentials credentials;
+            AccountTroveboxResponse result;
+
+            public LogInUserTask(Credentials credentials) {
+                this.credentials = credentials;
             }
-            return null;
-        }
 
-        @Override
-        protected void onPreExecute()
-        {
-            super.onPreExecute();
-            loadingControl.startLoading();
-        }
-
-        @Override
-        protected void onPostExecute(AccountTroveboxResponse result)
-        {
-            try
-            {
-                super.onPostExecute(result);
-                loadingControl.stopLoading();
-
-                if (result != null)
-                {
-                    if (TroveboxResponseUtils.checkResponseValid(result))
+            @Override
+            protected Boolean doInBackground(Void... params) {
+                try {
+                    if (CommonUtils.checkOnline())
                     {
-                        // save credentials.
-                        result.saveCredentials(this.activity);
-
-                        // start new activity
-                        setResult(RESULT_OK);
-                        startActivity(new Intent(this.activity,
-                                MainActivity.class));
-                        LoginUtils.sendLoggedInBroadcast(activity);
-                        this.activity.finish();
+                        result = IAccountTroveboxApiFactory.getApi()
+                                .signIn(credentials.getUser(), credentials.getPwd());
+                        return TroveboxResponseUtils.checkResponseValid(result);
                     }
+                } catch (Exception e) {
+                    GuiUtils.error(TAG, R.string.errorCouldNotLogin, e);
                 }
-            } catch (Exception e)
-            {
-                GuiUtils.error(TAG, null, e, activity);
+                return false;
+            }
+
+            @Override
+            protected void onSuccessPostExecuteAdditional() {
+                try
+                {
+                    Activity activity = getSupportActivity();
+                    // save credentials.
+                    result.saveCredentials(activity);
+
+                    // start new activity
+                    startActivity(new Intent(activity,
+                            MainActivity.class));
+                    LoginUtils.sendLoggedInBroadcast(activity);
+                    activity.finish();
+                } catch (Exception e)
+                {
+                    GuiUtils.error(TAG, e);
+                }
             }
         }
 
+        public class Credentials {
+            private String user;
+            private String pwd;
+
+            public Credentials(String user, String pwd) {
+                this.user = user;
+                this.pwd = pwd;
+            }
+
+            public String getUser() {
+                return user;
+            }
+
+            public void setUser(String user) {
+                this.user = user;
+            }
+
+            public String getPwd() {
+                return pwd;
+            }
+
+            public void setPwd(String pwd) {
+                this.pwd = pwd;
+            }
+        }
     }
 
-    public class Credentials
-    {
-        private String user;
-        private String pwd;
+    /**
+     * The recover password fragment with the retained instance across
+     * configuration change
+     */
+    public static class RecoverPasswordFragment extends CommonRetainedFragmentWithTaskAndProgress {
+        private static final String TAG = RecoverPasswordFragment.class.getSimpleName();
 
-        public Credentials(String user, String pwd)
-        {
-            this.user = user;
-            this.pwd = pwd;
+        public void recoverPassword(String email) {
+            startRetainedTask(new RecoverPasswordUserTask(email));
         }
 
-        public String getUser()
-        {
-            return user;
-        }
+        class RecoverPasswordUserTask extends RetainedTask {
+            String email;
+            String message;
+            AccountTroveboxResponse result;
 
-        public void setUser(String user)
-        {
-            this.user = user;
-        }
+            public RecoverPasswordUserTask(String email) {
+                this.email = email;
+            }
 
-        public String getPwd()
-        {
-            return pwd;
-        }
+            @Override
+            protected Boolean doInBackground(Void... params) {
+                try {
+                    if (CommonUtils.checkOnline())
+                    {
+                        TroveboxResponse response = IAccountTroveboxApiFactory.getApi()
+                                .recoverPassword(email);
+                        message = response.getAlertMessage();
+                        return TroveboxResponseUtils.checkResponseValid(response);
+                    }
+                } catch (Exception e) {
+                    GuiUtils.error(TAG, R.string.errorCouldNotRecoverPassword, e);
+                }
+                return false;
+            }
 
-        public void setPwd(String pwd)
-        {
-            this.pwd = pwd;
+            @Override
+            protected void onSuccessPostExecuteAdditional() {
+                GuiUtils.alert(message);
+            }
         }
     }
 }
