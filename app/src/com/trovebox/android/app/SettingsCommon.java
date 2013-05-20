@@ -1,7 +1,6 @@
 
 package com.trovebox.android.app;
 
-
 import org.holoeverywhere.app.Activity;
 import org.holoeverywhere.app.AlertDialog;
 import org.holoeverywhere.preference.EditTextPreference;
@@ -14,6 +13,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 
 import com.trovebox.android.app.bitmapfun.util.ImageCacheUtils;
+import com.trovebox.android.app.common.CommonFragmentUtils;
+import com.trovebox.android.app.common.CommonRetainedFragmentWithTaskAndProgress;
 import com.trovebox.android.app.facebook.FacebookProvider;
 import com.trovebox.android.app.facebook.FacebookSessionEvents;
 import com.trovebox.android.app.facebook.FacebookSessionEvents.LogoutListener;
@@ -21,13 +22,10 @@ import com.trovebox.android.app.facebook.FacebookUtils;
 import com.trovebox.android.app.provider.UploadsUtils;
 import com.trovebox.android.app.twitter.TwitterUtils;
 import com.trovebox.android.app.util.GuiUtils;
-import com.trovebox.android.app.util.ProgressDialogLoadingControl;
-import com.trovebox.android.app.util.SimpleAsyncTaskEx;
 import com.trovebox.android.app.util.TrackerUtils;
 
 public class SettingsCommon implements
-        OnPreferenceClickListener
-{
+        OnPreferenceClickListener {
     static final String TAG = SettingsCommon.class.getSimpleName();
     Activity activity;
     Preference mLoginPreference;
@@ -38,14 +36,14 @@ public class SettingsCommon implements
     Preference mServerUrl;
     Preference autoUploadTagPreference;
 
-    public SettingsCommon(Activity activity)
-    {
+    public SettingsCommon(Activity activity) {
         this.activity = activity;
+        getLogoutFragment();
+        getClearDiskCachesFragment();
     }
 
     @Override
-    public boolean onPreferenceClick(Preference preference)
-    {
+    public boolean onPreferenceClick(Preference preference) {
         if (activity.getString(R.string.setting_account_loggedin_key)
                 .equals(
                         preference.getKey()))
@@ -59,19 +57,15 @@ public class SettingsCommon implements
                         .setMessage(R.string.areYouSureQuestion)
                         .setIcon(android.R.drawable.ic_dialog_alert)
                         .setPositiveButton(R.string.yes,
-                                new DialogInterface.OnClickListener()
-                                {
+                                new DialogInterface.OnClickListener() {
 
                                     @Override
                                     public void onClick(
                                             DialogInterface dialog,
-                                            int whichButton)
-                                    {
+                                            int whichButton) {
                                         TrackerUtils.trackButtonClickEvent("setting_logout",
                                                 activity);
-                                        Preferences
-                                                .logout(activity);
-                                        new LogoutTask().execute();
+                                        getLogoutFragment().doLogout();
                                     }
                                 })
                         .setNegativeButton(R.string.no, null)
@@ -79,23 +73,20 @@ public class SettingsCommon implements
 
             } else
             {
-                finishActivity();
+                getLogoutFragment().finishActivity();
             }
         } else if (activity.getString(
                 R.string.setting_account_facebook_loggedin_key)
                 .equals(preference.getKey()))
         {
-            LogoutListener logoutListener = new LogoutListener()
-            {
+            LogoutListener logoutListener = new LogoutListener() {
 
                 @Override
-                public void onLogoutBegin()
-                {
+                public void onLogoutBegin() {
                 }
 
                 @Override
-                public void onLogoutFinish()
-                {
+                public void onLogoutFinish() {
                     FacebookSessionEvents.removeLogoutListener(this);
                     loginCategory
                             .removePreference(mFacebookLoginPreference);
@@ -109,32 +100,27 @@ public class SettingsCommon implements
         return false;
     }
 
-    public void refresh()
-    {
+    public void refresh() {
         mLoginPreference.setTitle(Preferences.isLoggedIn(activity) ?
                 R.string.setting_account_loggedin_logout
                 : R.string.setting_account_loggedin_login);
     }
 
-    public Preference getLoginPreference()
-    {
+    public Preference getLoginPreference() {
         return mLoginPreference;
     }
 
-    public void setLoginPreference(Preference mLoginPreference)
-    {
+    public void setLoginPreference(Preference mLoginPreference) {
         this.mLoginPreference = mLoginPreference;
         this.mLoginPreference.setOnPreferenceClickListener(this);
     }
 
-    public Preference getFacebookLoginPreference()
-    {
+    public Preference getFacebookLoginPreference() {
         return mFacebookLoginPreference;
     }
 
     public void setFacebookLoginPreference(
-            Preference mFacebookLoginPreference)
-    {
+            Preference mFacebookLoginPreference) {
         this.mFacebookLoginPreference = mFacebookLoginPreference;
         this.mFacebookLoginPreference.setOnPreferenceClickListener(this);
         if (FacebookProvider.getFacebook() == null
@@ -145,8 +131,7 @@ public class SettingsCommon implements
     }
 
     public void setAutoUploadTagPreference(
-            Preference autoUploadTagPreference)
-    {
+            Preference autoUploadTagPreference) {
         this.autoUploadTagPreference = autoUploadTagPreference;
         this.autoUploadTagPreference
                 .setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
@@ -163,8 +148,7 @@ public class SettingsCommon implements
     }
 
     public void setWiFiOnlyUploadPreference(
-            Preference wiFiOnlyUploadPreference)
-    {
+            Preference wiFiOnlyUploadPreference) {
         wiFiOnlyUploadPreference
                 .setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
 
@@ -179,8 +163,7 @@ public class SettingsCommon implements
     }
 
     public void setAutoUploadPreference(
-            Preference autoUploadPreference)
-    {
+            Preference autoUploadPreference) {
         autoUploadPreference
                 .setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
 
@@ -193,32 +176,26 @@ public class SettingsCommon implements
                 });
     }
 
-    public PreferenceCategory getLoginCategory()
-    {
+    public PreferenceCategory getLoginCategory() {
         return loginCategory;
     }
 
-    public void setLoginCategory(PreferenceCategory loginCategory)
-    {
+    public void setLoginCategory(PreferenceCategory loginCategory) {
         this.loginCategory = loginCategory;
     }
 
-    public Preference getServerUrl()
-    {
+    public Preference getServerUrl() {
         return mServerUrl;
     }
 
-    public void setServerUrl(Preference mServerUrl)
-    {
+    public void setServerUrl(Preference mServerUrl) {
         this.mServerUrl = mServerUrl;
         mServerUrl.setSummary(Preferences.getServer(activity));
         mServerUrl
-                .setOnPreferenceChangeListener(new OnPreferenceChangeListener()
-                {
+                .setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
                     @Override
                     public boolean onPreferenceChange(Preference preference,
-                            Object newValue)
-                    {
+                            Object newValue) {
                         String oldValue = ((EditTextPreference)
                                 preference).getText();
                         if (!oldValue.equals(newValue))
@@ -231,30 +208,25 @@ public class SettingsCommon implements
                 });
     }
 
-    public void setSyncClearPreference(Preference mSyncClearPreference)
-    {
+    public void setSyncClearPreference(Preference mSyncClearPreference) {
         this.mSyncClearPreference = mSyncClearPreference;
         mSyncClearPreference
-                .setOnPreferenceClickListener(new OnPreferenceClickListener()
-                {
+                .setOnPreferenceClickListener(new OnPreferenceClickListener() {
 
                     @Override
-                    public boolean onPreferenceClick(Preference preference)
-                    {
+                    public boolean onPreferenceClick(Preference preference) {
                         // confirm if user wants to clear sync information
                         new AlertDialog.Builder(activity, R.style.Theme_Trovebox_Dialog_Light)
                                 .setTitle(R.string.sync_clear)
                                 .setMessage(R.string.areYouSureQuestion)
                                 .setIcon(android.R.drawable.ic_dialog_alert)
                                 .setPositiveButton(R.string.yes,
-                                        new DialogInterface.OnClickListener()
-                                        {
+                                        new DialogInterface.OnClickListener() {
 
                                             @Override
                                             public void onClick(
                                                     DialogInterface dialog,
-                                                    int whichButton)
-                                            {
+                                                    int whichButton) {
                                                 TrackerUtils.trackButtonClickEvent(
                                                         "setting_sync_clear", activity);
                                                 UploadsUtils.clearUploadsAsync();
@@ -268,38 +240,28 @@ public class SettingsCommon implements
                 });
     }
 
-    public void setDiskCachClearPreference(Preference diskCacheClearPreference)
-    {
+    public void setDiskCachClearPreference(Preference diskCacheClearPreference) {
         this.diskCacheClearPreference = diskCacheClearPreference;
         diskCacheClearPreference
-                .setOnPreferenceClickListener(new OnPreferenceClickListener()
-                {
+                .setOnPreferenceClickListener(new OnPreferenceClickListener() {
 
                     @Override
-                    public boolean onPreferenceClick(Preference preference)
-                    {
+                    public boolean onPreferenceClick(Preference preference) {
                         // confirm if user wants to clear sync information
                         new AlertDialog.Builder(activity, R.style.Theme_Trovebox_Dialog_Light)
                                 .setTitle(R.string.disk_cache_clear)
                                 .setMessage(R.string.areYouSureQuestion)
                                 .setIcon(android.R.drawable.ic_dialog_alert)
                                 .setPositiveButton(R.string.yes,
-                                        new DialogInterface.OnClickListener()
-                                        {
+                                        new DialogInterface.OnClickListener() {
 
                                             @Override
                                             public void onClick(
                                                     DialogInterface dialog,
-                                                    int whichButton)
-                                            {
+                                                    int whichButton) {
                                                 TrackerUtils.trackButtonClickEvent(
                                                         "setting_disk_cache_clear", activity);
-                                                ImageCacheUtils
-                                                        .clearDiskCachesAsync(new ProgressDialogLoadingControl(
-                                                                activity,
-                                                                true,
-                                                                false,
-                                                                activity.getString(R.string.loading)));
+                                                getClearDiskCachesFragment().clearDiskCaches();
                                             }
                                         })
                                 .setNegativeButton(R.string.no, null)
@@ -310,47 +272,94 @@ public class SettingsCommon implements
                 });
     }
 
-    private void finishActivity()
-    {
-        if (activity != null)
-        {
-            activity.startActivity(new Intent(activity, AccountActivity.class));
-            activity.finish();
+    /**
+     * Get the logout fragment. Create it if it is null
+     * 
+     * @return
+     */
+    LogoutFragment getLogoutFragment() {
+        return CommonFragmentUtils.findOrCreateFragment(LogoutFragment.class,
+                activity.getSupportFragmentManager());
+    }
+
+    /**
+     * Get the clear disk caches fragment. Create it if it is null
+     * 
+     * @return
+     */
+    ClearDiskCachesFragment getClearDiskCachesFragment() {
+        return CommonFragmentUtils.findOrCreateFragment(ClearDiskCachesFragment.class,
+                activity.getSupportFragmentManager());
+    }
+
+    public static class LogoutFragment extends CommonRetainedFragmentWithTaskAndProgress {
+        private static final String TAG = LogoutFragment.class.getSimpleName();
+
+        public void doLogout() {
+            startRetainedTask(new LogoutUserTask());
+        }
+
+        public void finishActivity() {
+            Activity activity = getSupportActivity();
+            if (activity != null)
+            {
+                activity.startActivity(new Intent(activity, AccountActivity.class));
+                activity.finish();
+            } else
+            {
+                TrackerUtils.trackErrorEvent("activity_null", TAG);
+            }
+        }
+
+        class LogoutUserTask extends RetainedTask {
+            @Override
+            protected Boolean doInBackground(Void... params) {
+                try
+                {
+                    UploadsUtils.clearUploads();
+                    FacebookUtils.logoutRequest(TroveboxApplication.getContext());
+                    TwitterUtils.logout(TroveboxApplication.getContext());
+                    ImageCacheUtils.clearDiskCaches();
+                    return true;
+                } catch (Exception ex)
+                {
+                    GuiUtils.noAlertError(TAG, ex);
+                }
+                return false;
+            }
+
+            @Override
+            protected void onSuccessPostExecuteAdditional() {
+                try
+                {
+                    Preferences
+                            .logout(getSupportActivity());
+                    finishActivity();
+                } catch (Exception e)
+                {
+                    GuiUtils.error(TAG, e);
+                }
+            }
         }
     }
-    public class LogoutTask extends SimpleAsyncTaskEx
-    {
 
-        public LogoutTask() {
-            super(new ProgressDialogLoadingControl(activity, true, false,
-                    activity.getString(R.string.loading)));
+    public static class ClearDiskCachesFragment extends CommonRetainedFragmentWithTaskAndProgress {
+
+        public void clearDiskCaches() {
+            startRetainedTask(new ClearDiskCachesTask());
         }
 
-        @Override
-        protected void onSuccessPostExecute() {
-            finishActivity();
-        }
-
-        @Override
-        protected void onFailedPostExecute() {
-            finishActivity();
-        }
-
-        @Override
-        protected Boolean doInBackground(Void... params) {
-            try
-            {
-                UploadsUtils.clearUploads();
-                FacebookUtils.logoutRequest(activity);
-                TwitterUtils.logout(activity);
-                ImageCacheUtils.clearDiskCaches();
-                return true;
-            } catch (Exception ex)
-            {
-                GuiUtils.noAlertError(TAG, ex);
+        class ClearDiskCachesTask extends RetainedTask {
+            @Override
+            protected Boolean doInBackground(Void... params) {
+                return ImageCacheUtils.clearDiskCaches();
             }
-            return false;
-        }
 
+            @Override
+            protected void onSuccessPostExecuteAdditional() {
+                GuiUtils.info(R.string.disk_caches_cleared_message);
+                ImageCacheUtils.sendDiskCacheClearedBroadcast();
+            }
+        }
     }
 }

@@ -4,10 +4,8 @@ package com.trovebox.android.app;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
 
-import org.holoeverywhere.LayoutInflater;
 import org.holoeverywhere.app.AlertDialog;
 import org.holoeverywhere.app.Dialog;
-import org.holoeverywhere.app.ProgressDialog;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
@@ -15,9 +13,7 @@ import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.FragmentManager;
 import android.view.View;
-import android.view.ViewGroup;
 
 import com.google.android.gms.auth.GoogleAuthException;
 import com.google.android.gms.auth.GoogleAuthUtil;
@@ -26,14 +22,13 @@ import com.google.android.gms.auth.UserRecoverableAuthException;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.trovebox.android.app.common.CommonDialogFragment;
-import com.trovebox.android.app.common.CommonFragment;
+import com.trovebox.android.app.common.CommonRetainedFragmentWithTaskAndProgress;
 import com.trovebox.android.app.net.TroveboxResponseUtils;
 import com.trovebox.android.app.net.account.AccountTroveboxResponse;
 import com.trovebox.android.app.net.account.IAccountTroveboxApiFactory;
 import com.trovebox.android.app.util.CommonUtils;
 import com.trovebox.android.app.util.GuiUtils;
 import com.trovebox.android.app.util.LoginUtils;
-import com.trovebox.android.app.util.SimpleAsyncTaskEx;
 import com.trovebox.android.app.util.TrackerUtils;
 
 /**
@@ -41,13 +36,12 @@ import com.trovebox.android.app.util.TrackerUtils;
  * 
  * @author Eugene Popovich
  */
-public class GoogleLoginFragment extends CommonFragment {
+public class GoogleLoginFragment extends CommonRetainedFragmentWithTaskAndProgress {
 
     private static final String TAG = GoogleLoginFragment.class.getSimpleName();
     public static final String SCOPE =
             "audience:server:client_id:"
                     + CommonUtils.getStringResource(R.string.google_auth_server_client_id);
-    LogInUserTask logInTask;
     int requestCode;
     boolean delayedLoggedIn = false;
 
@@ -59,75 +53,17 @@ public class GoogleLoginFragment extends CommonFragment {
     public GoogleLoginFragment() {
     }
 
-    /**
-     * Locate an existing instance of this Fragment or if not found, create and
-     * add it using FragmentManager.
-     * 
-     * @param fm The FragmentManager manager to use.
-     * @return The existing instance of the Fragment or the new instance if just
-     *         created.
-     */
-    public static GoogleLoginFragment findOrCreateFeatherFragment(
-            FragmentManager fm) {
-        // Check to see if we have retained the worker fragment.
-        GoogleLoginFragment mRetainFragment = (GoogleLoginFragment) fm.findFragmentByTag(TAG);
-
-        // If not retained (or first time running), we need to create and add
-        // it.
-        if (mRetainFragment == null) {
-            mRetainFragment = new GoogleLoginFragment();
-            fm.beginTransaction().add(mRetainFragment, TAG).commit();
-        }
-        return mRetainFragment;
-    }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // Make sure this Fragment is retained over a configuration change
-        setRetainInstance(true);
-
         currentInstance = new WeakReference<GoogleLoginFragment>(this);
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        try
-        {
-            // if view is destroyed we need to hide progress dialog
-            if (logInTask != null)
-            {
-                logInTask.stopLoading();
-            }
-        } catch (Exception ex)
-        {
-            GuiUtils.noAlertError(TAG, ex);
-        }
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
         currentInstance = null;
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View result = super.onCreateView(inflater, container, savedInstanceState);
-        try
-        {
-            // if login task still working we need to show progress dialog
-            if (logInTask != null && !logInTask.finished)
-            {
-                logInTask.startLoading();
-            }
-        } catch (Exception ex)
-        {
-            GuiUtils.noAlertError(TAG, ex);
-        }
-        return result;
     }
 
     @Override
@@ -140,16 +76,14 @@ public class GoogleLoginFragment extends CommonFragment {
         }
     }
 
-    void onLoggedIn(Activity activity)
-    {
+    void onLoggedIn(Activity activity) {
         // start new activity
         startActivity(new Intent(activity,
                 MainActivity.class));
         LoginUtils.sendLoggedInBroadcast(activity);
     }
 
-    public void doLogin(int requestCode)
-    {
+    public void doLogin(int requestCode) {
         this.requestCode = requestCode;
         int availabilityResult = GooglePlayServicesUtil
                 .isGooglePlayServicesAvailable(getActivity());
@@ -196,8 +130,7 @@ public class GoogleLoginFragment extends CommonFragment {
         }
     }
 
-    void checkAccountNamesAndPerformLoginAction()
-    {
+    void checkAccountNamesAndPerformLoginAction() {
         String[] accountNames = getAccountNames();
         if (accountNames == null || accountNames.length == 0)
         {
@@ -217,17 +150,14 @@ public class GoogleLoginFragment extends CommonFragment {
         }
     }
 
-    void showAccountSelectionDialog(final String[] accountNames)
-    {
+    void showAccountSelectionDialog(final String[] accountNames) {
         SelectAccountDialogFragment fragment = SelectAccountDialogFragment
                 .newInstance(new SelectAccountSelectedActionHandler(accountNames));
         fragment.show(getSupportActivity());
     }
 
-    void performLoginAction(String accountName)
-    {
-        logInTask = new LogInUserTask(accountName);
-        logInTask.execute();
+    void performLoginAction(String accountName) {
+        startRetainedTask(new LogInUserTask(accountName));
     }
 
     private String[] getAccountNames() {
@@ -241,80 +171,34 @@ public class GoogleLoginFragment extends CommonFragment {
         return names;
     }
 
+    @Override
+    public String getLoadingMessage() {
+        return CommonUtils.getStringResource(R.string.logging_in_message);
+    }
+
     private class LogInUserTask extends
-            SimpleAsyncTaskEx
-    {
+            RetainedTask {
         AccountTroveboxResponse result;
-        ProgressDialog progress;
-        boolean finished = false;
         String accountName;
 
-        public LogInUserTask(String accountName)
-        {
-            super(null);
-            CommonUtils.debug(TAG, "accountName: " + accountName);
+        public LogInUserTask(String accountName) {
             this.accountName = accountName;
         }
 
         @Override
-        public void startLoading() {
-            super.startLoading();
-            progress = new ProgressDialog(getActivity());
-            progress.setIndeterminate(true);
-            progress.setMessage(CommonUtils.getStringResource(R.string.logging_in_message));
-            progress.setCancelable(false);
-            progress.show();
-        }
+        protected void onSuccessPostExecuteAdditional() {
+            // save credentials.
+            result.saveCredentials(TroveboxApplication.getContext());
 
-        @Override
-        public void stopLoading() {
-            super.stopLoading();
-            try
+            Activity activity = getActivity();
+            if (activity != null)
             {
-                if (progress != null && progress.getWindow() != null) {
-                    progress.dismiss();
-                }
-            } catch (Exception ex)
+                onLoggedIn(activity);
+            } else
             {
-                GuiUtils.noAlertError(TAG, ex);
+                TrackerUtils.trackErrorEvent("activity_null", TAG);
+                delayedLoggedIn = true;
             }
-            progress = null;
-        }
-
-        @Override
-        protected void onSuccessPostExecute() {
-            finished = true;
-            try
-            {
-                // save credentials.
-                result.saveCredentials(TroveboxApplication.getContext());
-
-                Activity activity = getActivity();
-                if (activity != null)
-                {
-                    onLoggedIn(activity);
-                } else
-                {
-                    delayedLoggedIn = true;
-                }
-            } finally
-            {
-                logInTask = null;
-            }
-        }
-
-        @Override
-        protected void onFailedPostExecute() {
-            super.onFailedPostExecute();
-            finished = true;
-            logInTask = null;
-        }
-
-        @Override
-        protected void onCancelled() {
-            super.onCancelled();
-            finished = true;
-            logInTask = null;
         }
 
         @Override
@@ -325,8 +209,6 @@ public class GoogleLoginFragment extends CommonFragment {
                     String token = fetchToken();
                     if (token != null)
                     {
-                        CommonUtils.debug(TAG, "Token: " + token);
-
                         result = IAccountTroveboxApiFactory.getApi().signInViaGoogle(token);
                         return TroveboxResponseUtils.checkResponseValid(result);
                     }
@@ -378,10 +260,11 @@ public class GoogleLoginFragment extends CommonFragment {
             SelectAccountDialogFragment.SelectedActionHandler {
 
         String[] accountNames;
-        public SelectAccountSelectedActionHandler(String[] accountNames)
-        {
+
+        public SelectAccountSelectedActionHandler(String[] accountNames) {
             this.accountNames = accountNames;
         }
+
         @Override
         public void itemSelected(int i) {
             currentInstance.get().performLoginAction(getItems()[i]);
@@ -392,12 +275,11 @@ public class GoogleLoginFragment extends CommonFragment {
             return accountNames;
         }
     }
-    public static class SelectAccountDialogFragment extends CommonDialogFragment
-    {
+
+    public static class SelectAccountDialogFragment extends CommonDialogFragment {
         public static final String HANDLER_ITEMS = "SelectAccountDialogFragment.handlerItems";
 
-        public static interface SelectedActionHandler
-        {
+        public static interface SelectedActionHandler {
             void itemSelected(int i);
 
             String[] getItems();
@@ -406,8 +288,7 @@ public class GoogleLoginFragment extends CommonFragment {
         private SelectedActionHandler handler;
 
         public static SelectAccountDialogFragment newInstance(
-                SelectedActionHandler handler)
-        {
+                SelectedActionHandler handler) {
             SelectAccountDialogFragment frag = new SelectAccountDialogFragment();
             frag.handler = handler;
             return frag;
@@ -421,9 +302,10 @@ public class GoogleLoginFragment extends CommonFragment {
 
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
-            if(savedInstanceState != null)
+            if (savedInstanceState != null)
             {
-                handler = new SelectAccountSelectedActionHandler(savedInstanceState.getStringArray(HANDLER_ITEMS));
+                handler = new SelectAccountSelectedActionHandler(
+                        savedInstanceState.getStringArray(HANDLER_ITEMS));
             }
 
             final CharSequence[] items = handler.getItems();

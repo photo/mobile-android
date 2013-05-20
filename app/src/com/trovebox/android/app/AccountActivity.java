@@ -10,16 +10,14 @@ import android.view.View;
 import android.widget.Button;
 
 import com.trovebox.android.app.common.CommonActivity;
+import com.trovebox.android.app.common.CommonFragmentUtils;
 import com.trovebox.android.app.util.CommonUtils;
 import com.trovebox.android.app.util.LoginUtils;
 import com.trovebox.android.app.util.TrackerUtils;
 
-public class AccountActivity extends CommonActivity
-{
+public class AccountActivity extends CommonActivity {
     private static final String TAG = AccountActivity.class.getSimpleName();
     private static int GOOGLE_PLAY_SERVICES_REQUEST_CODE = 0;
-
-    GoogleLoginFragment googleLoginFragment;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -30,8 +28,7 @@ public class AccountActivity extends CommonActivity
                 .getAndRegisterDestroyOnLoginActionBroadcastReceiver(TAG, this));
     }
 
-    void init()
-    {
+    void init() {
         getGoogleLoginFragment();
         Button googleLoginButton = (Button) findViewById(R.id.account_google_login_button);
         googleLoginButton.setText(Html.fromHtml(getString(R.string.account_google_login_button)));
@@ -71,13 +68,9 @@ public class AccountActivity extends CommonActivity
      * 
      * @return
      */
-    GoogleLoginFragment getGoogleLoginFragment()
-    {
-        if (googleLoginFragment == null)
-        {
-            googleLoginFragment = GoogleLoginFragment.findOrCreateFeatherFragment(
-                    getSupportFragmentManager());
-        }
-        return googleLoginFragment;
+    GoogleLoginFragment getGoogleLoginFragment() {
+        return CommonFragmentUtils.findOrCreateFragment(
+                GoogleLoginFragment.class,
+                getSupportFragmentManager());
     }
 }
