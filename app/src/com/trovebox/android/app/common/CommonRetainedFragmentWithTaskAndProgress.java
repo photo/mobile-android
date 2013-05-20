@@ -102,10 +102,18 @@ public abstract class CommonRetainedFragmentWithTaskAndProgress extends CommonFr
         return retainedTask != null && !retainedTask.isFinished();
     }
 
+    /**
+     * Get the loading message for indeterminate progress. Can be overridden
+     * 
+     * @return
+     */
     public String getLoadingMessage() {
         return CommonUtils.getStringResource(R.string.loading);
     }
 
+    /**
+     * The retained accross configuration changes task
+     */
     public abstract class RetainedTask extends SimpleAsyncTaskEx {
         boolean finished = false;
 
@@ -135,6 +143,9 @@ public abstract class CommonRetainedFragmentWithTaskAndProgress extends CommonFr
             }
         }
 
+        /**
+         * Executed on success post execute
+         */
         protected abstract void onSuccessPostExecuteAdditional();
 
         @Override
