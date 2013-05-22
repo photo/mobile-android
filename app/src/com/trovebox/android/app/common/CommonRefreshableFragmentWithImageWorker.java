@@ -11,7 +11,9 @@ import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 import com.trovebox.android.app.R;
+import com.trovebox.android.app.util.CommonUtils;
 import com.trovebox.android.app.util.GuiUtils;
+import com.trovebox.android.app.util.TrackerUtils;
 
 /**
  * Abstract fragment with the refresh menu available
@@ -69,6 +71,26 @@ public abstract class CommonRefreshableFragmentWithImageWorker extends
         } catch (Exception ex)
         {
             GuiUtils.noAlertError(TAG, ex);
+            try
+            {
+                TrackerUtils.trackErrorEvent("#409 situation",
+                        CommonUtils.format(
+                                "isAdded: %1$b; isDetached: %2$b; " +
+                                        "isHidden: %3$b; isRemoving: %4$b; " +
+                                        "isVisible: %1$b",
+                                isAdded(),
+                                isDetached(),
+                                isHidden(),
+                                isRemoving(),
+                                isVisible()
+                                )
+                        );
+            } catch (Exception ex2)
+            {
+                GuiUtils.noAlertError(TAG, ex2);
+                TrackerUtils.trackErrorEvent("#409 situation",
+                        "additinal details error");
+            }
         }
     }
 
