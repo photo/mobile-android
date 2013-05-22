@@ -268,7 +268,7 @@ public class SyncImageSelectionFragment extends CommonRefreshableFragmentWithIma
         mImageWorker.setLoadingImage(R.drawable.empty_photo);
 
         mImageWorker.setImageCache(ImageCache.findOrCreateCache(getActivity(),
-                ImageCache.LOCAL_THUMBS_CACHE_DIR, 500, false));
+                ImageCache.LOCAL_THUMBS_CACHE_DIR, 1500, true, false));
     }
 
     protected void switchUploadState(boolean isChecked)
