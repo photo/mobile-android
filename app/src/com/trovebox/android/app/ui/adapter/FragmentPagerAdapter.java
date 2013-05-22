@@ -12,6 +12,10 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.trovebox.android.app.util.CommonUtils;
+import com.trovebox.android.app.util.GuiUtils;
+import com.trovebox.android.app.util.TrackerUtils;
+
 /**
  * This is adjusted version of android.support.v4.view.FragmentPagerAdapter
  * which calls setMenuVisibility in the handler post to avoid and issue
@@ -140,8 +144,47 @@ public abstract class FragmentPagerAdapter extends PagerAdapter {
 
                     @Override
                     public void run() {
-                        fragment.setMenuVisibility(true);
-                        fragment.setUserVisibleHint(true);
+                        // #442 check to collect stat
+                        // TODO add return statement if stat will be rare and
+                        // equals to catched errors
+                        if (fragment.getFragmentManager() == null
+                                && !fragment.getUserVisibleHint())
+                        {
+                            CommonUtils.debug(TAG,
+                                    "setPrimaryItem post: fragment manager is null");
+                            TrackerUtils.trackErrorEvent("#442 situation", "initial_check");
+
+                        }
+                        // TODO remove try/catch if error will not appear
+                        // anymore and return statement will be added above
+                        try
+                        {
+                            fragment.setMenuVisibility(true);
+                            fragment.setUserVisibleHint(true);
+                        } catch (Exception ex)
+                        {
+                            GuiUtils.noAlertError(TAG, ex);
+                            try
+                            {
+                                TrackerUtils.trackErrorEvent("#442 situation",
+                                        CommonUtils.format(
+                                                "isAdded: %1$b; isDetached: %2$b; " +
+                                                        "isHidden: %3$b; isRemoving: %4$b; " +
+                                                        "isVisible: %1$b",
+                                                fragment.isAdded(),
+                                                fragment.isDetached(),
+                                                fragment.isHidden(),
+                                                fragment.isRemoving(),
+                                                fragment.isVisible()
+                                                )
+                                        );
+                            } catch (Exception ex2)
+                            {
+                                GuiUtils.noAlertError(TAG, ex2);
+                                TrackerUtils.trackErrorEvent("#442 situation",
+                                        "additinal details error");
+                            }
+                        }
                     }
                 });
             }
