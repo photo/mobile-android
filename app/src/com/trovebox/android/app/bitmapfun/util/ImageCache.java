@@ -57,7 +57,7 @@ public class ImageCache {
 
     // Constants to easily toggle various caches
     private static final boolean DEFAULT_MEM_CACHE_ENABLED = true;
-    private static final boolean DEFAULT_DISK_CACHE_ENABLED = true;
+    private static final boolean DEFAULT_DISK_CACHE_ENABLED = false;
     private static final boolean DEFAULT_CLEAR_DISK_CACHE_ON_START = true;
 
     private DiskLruCache mDiskCache;
@@ -97,8 +97,11 @@ public class ImageCache {
      */
     public static ImageCache findOrCreateCache(
             final FragmentActivity activity, final String uniqueName) {
-        return findOrCreateCache(activity, uniqueName, DEFAULT_DISK_CACHE_MAX_ITEM_SIZE,
-                DEFAULT_CLEAR_DISK_CACHE_ON_START, DEFAULT_MEM_CACHE_SIZE_RATIO);
+        return findOrCreateCache(activity, uniqueName, 
+        		DEFAULT_DISK_CACHE_MAX_ITEM_SIZE,
+                DEFAULT_DISK_CACHE_ENABLED,
+                DEFAULT_CLEAR_DISK_CACHE_ON_START, 
+                DEFAULT_MEM_CACHE_SIZE_RATIO);
     }
 
     /**
@@ -138,7 +141,9 @@ public class ImageCache {
             final FragmentActivity activity, final String uniqueName,
             boolean clearDiskCacheOnStart,
             int memCacheSizeRatio) {
-        return findOrCreateCache(activity, uniqueName, DEFAULT_DISK_CACHE_MAX_ITEM_SIZE,
+        return findOrCreateCache(activity, uniqueName,
+                DEFAULT_DISK_CACHE_MAX_ITEM_SIZE,
+                DEFAULT_DISK_CACHE_ENABLED,
                 clearDiskCacheOnStart, memCacheSizeRatio);
     }
 
@@ -150,6 +155,7 @@ public class ImageCache {
      * @param activity The calling {@link FragmentActivity}
      * @param uniqueName A unique name to append to the cache directory
      * @param diskCacheMaxItemSize max item size for the disk cache
+     * @param diskCacheEnabled whether to enable first level disk cache
      * @param clearDiskCacheOnStart whether to clear disk cache on start
      * @return An existing retained ImageCache object or a new one if one did
      *         not exist.
@@ -158,8 +164,11 @@ public class ImageCache {
     public static ImageCache findOrCreateCache(
             final FragmentActivity activity, final String uniqueName,
             final int diskCacheMaxItemSize,
+            boolean diskCacheEnabled,
             boolean clearDiskCacheOnStart) {
-        return findOrCreateCache(activity, uniqueName, diskCacheMaxItemSize, clearDiskCacheOnStart,
+        return findOrCreateCache(activity, uniqueName, diskCacheMaxItemSize,
+                diskCacheEnabled,
+                clearDiskCacheOnStart,
                 DEFAULT_MEM_CACHE_SIZE_RATIO);
     }
 
@@ -171,6 +180,7 @@ public class ImageCache {
      * @param activity The calling {@link FragmentActivity}
      * @param uniqueName A unique name to append to the cache directory
      * @param diskCacheMaxItemSize max item size for the disk cache
+     * @param diskCacheEnabled whether to enable first level disk cache
      * @param clearDiskCacheOnStart whether to clear disk cache on start
      * @param memCacheSizeRatio what part of memory will be available for cache
      *            (memory class/memCacheSizeRatio)
@@ -181,6 +191,7 @@ public class ImageCache {
     public static ImageCache findOrCreateCache(
             final FragmentActivity activity, final String uniqueName,
             final int diskCacheMaxItemSize,
+            boolean diskCacheEnabled,
             boolean clearDiskCacheOnStart,
             int memCacheSizeRatio) {
         ImageCacheParams params = new ImageCacheParams(uniqueName);
@@ -193,6 +204,7 @@ public class ImageCache {
         params.memCacheSize = 1024 * 1024 * memClass / memCacheSizeRatio;
         params.clearDiskCacheOnStart = clearDiskCacheOnStart;
         params.diskCacheMaxItemSize = diskCacheMaxItemSize;
+        params.diskCacheEnabled = diskCacheEnabled;
         CommonUtils.debug(TAG, "Calculated memory cache size: " + params.memCacheSize);
 
         return findOrCreateCache(activity, params);
