@@ -4,14 +4,19 @@
     android:layout_height="match_parent"
     android:orientation="vertical" >
 
-    <ListView
+    <GridView
         android:id="@+id/list_newest_photos"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:clickable="false"
-        android:longClickable="false" >
-    </ListView>
+        android:horizontalSpacing="@dimen/site_padding_half"
+        android:longClickable="false"
+        android:numColumns="@integer/home_number_of_columns"
+        android:paddingLeft="@dimen/site_padding_half"
+        android:paddingRight="@dimen/site_padding_half"
+        android:stretchMode="columnWidth"
+        android:verticalSpacing="0dip" />
 
     <include layout="@layout/start_now" />
 

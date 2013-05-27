@@ -5,10 +5,8 @@
     android:clickable="false"
     android:gravity="center_vertical"
     android:orientation="vertical"
-    android:paddingBottom="5dp"
-    android:paddingLeft="5dp"
-    android:paddingRight="5dp"
-    android:paddingTop="5dp" >
+    android:paddingBottom="@dimen/site_padding_half"
+    android:paddingTop="@dimen/site_padding_half" >
 
     <FrameLayout
         android:layout_width="wrap_content"
