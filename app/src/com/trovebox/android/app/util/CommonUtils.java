@@ -2,10 +2,12 @@
 package com.trovebox.android.app.util;
 
 import java.text.DecimalFormat;
+import java.util.Date;
 import java.util.Locale;
 
 import android.os.Bundle;
 import android.os.Environment;
+import android.text.format.DateUtils;
 import android.util.Log;
 
 import com.trovebox.android.app.BuildConfig;
@@ -75,6 +77,24 @@ public class CommonUtils
     public static String format(Number number)
     {
         return DecimalFormat.getInstance().format(number);
+    }
+
+    /**
+     * Format date time accordingly to specified user locale
+     * 
+     * @param date
+     * @return
+     */
+    public static String formatDateTime(Date date)
+    {
+        if(date == null)
+        {
+            return null;
+        }
+        return DateUtils.formatDateTime(TroveboxApplication.getContext(),
+                date.getTime(),
+                DateUtils.FORMAT_SHOW_YEAR | DateUtils.FORMAT_SHOW_DATE
+                        | DateUtils.FORMAT_SHOW_TIME);
     }
     /**
      * Write message to the verbose log

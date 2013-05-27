@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <item name="home_number_of_columns" format="integer" type="integer">1</item>
+    <item name="home_rotated_number_of_columns" format="integer" type="integer">2</item>
+
+</resources>

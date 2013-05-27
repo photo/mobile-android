@@ -2,7 +2,6 @@
 package com.trovebox.android.app;
 
 import java.lang.ref.WeakReference;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -217,7 +216,19 @@ public class PhotoDetailsActivity extends CommonActivity implements TwitterLoadi
 
         @Override
         public void onDestroy() {
-            currentInstance = null;
+            if (currentInstance != null)
+            {
+                if (currentInstance.get() == PhotoDetailsUiFragment.this
+                        || currentInstance.get() == null)
+                {
+                    CommonUtils.debug(TAG, "Nullify current instance");
+                    currentInstance = null;
+                } else
+                {
+                    CommonUtils.debug(TAG,
+                            "Skipped nullify of current instance, such as it is not the same");
+                }
+            }
             super.onDestroy();
         }
 
@@ -472,18 +483,17 @@ public class PhotoDetailsActivity extends CommonActivity implements TwitterLoadi
         {
             ActionBar actionBar = ((Activity) getSupportActivity())
                     .getSupportActionBar();
-            SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
             String title = photo.getTitle();
             if (TextUtils.isEmpty(title))
             {
                 title = photo.getFilenameOriginal();
             }
             actionBar.setTitle(getString(R.string.details_title_and_date_header, title,
-                    df.format(photo.getDateTaken())));
+                    CommonUtils.formatDateTime(photo.getDateTaken())));
 
             titleText.setText(title);
 
-            dateText.setText(df.format(photo.getDateTaken()));
+            dateText.setText(CommonUtils.formatDateTime(photo.getDateTaken()));
 
             privateBtn.setVisibility(photo.isPrivate() ? View.VISIBLE : View.GONE);
 
@@ -875,7 +885,7 @@ public class PhotoDetailsActivity extends CommonActivity implements TwitterLoadi
                             @Override
                             public void run(Photo photo) {
                                 String url = photo.getUrl(thumbSize.toString());
-                                mImageWorker2.loadImage(url, imageView, null);
+                                mImageWorker2.loadImage(url, imageView);
                             }
                         }, null);
                 return view;
