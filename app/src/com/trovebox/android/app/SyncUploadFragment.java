@@ -102,7 +102,19 @@ public class SyncUploadFragment extends CommonFragment implements OnClickListene
     @Override
     public void onDestroy() {
         super.onDestroy();
-        currentInstance = null;
+        if (currentInstance != null)
+        {
+            if (currentInstance.get() == SyncUploadFragment.this
+                    || currentInstance.get() == null)
+            {
+                CommonUtils.debug(TAG, "Nullify current instance");
+                currentInstance = null;
+            } else
+            {
+                CommonUtils.debug(TAG,
+                        "Skipped nullify of current instance, such as it is not the same");
+            }
+        }
     }
 
     @Override

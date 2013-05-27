@@ -9,6 +9,7 @@ import java.util.Stack;
 import org.holoeverywhere.LayoutInflater;
 import org.holoeverywhere.app.Activity;
 import org.holoeverywhere.app.Fragment;
+import org.holoeverywhere.widget.GridView;
 import org.holoeverywhere.widget.PopupMenu;
 
 import android.content.Context;
@@ -22,7 +23,6 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import com.actionbarsherlock.view.Menu;
@@ -66,7 +66,7 @@ public class HomeFragment extends CommonRefreshableFragmentWithImageWorker
     private LayoutInflater mInflater;
     private Photo activePhoto;
 
-    private ListView list;
+    private GridView list;
     private ReturnSizes photoSize;
     private ReturnSizes returnSizes;
 
@@ -92,7 +92,22 @@ public class HomeFragment extends CommonRefreshableFragmentWithImageWorker
 
     @Override
     public void onDestroy() {
-        currentInstance = null;
+        if (currentInstance != null)
+        {
+            // null only if current instance equals to destroying fragment, such
+            // as more than one instance of the fragment can be in memory at the
+            // time one is destroying and one is creating
+            if (currentInstance.get() == HomeFragment.this
+                    || currentInstance.get() == null)
+            {
+                CommonUtils.debug(TAG, "Nullify current instance");
+                currentInstance = null;
+            } else
+            {
+                CommonUtils.debug(TAG,
+                        "Skipped nullify of current instance, such as it is not the same");
+            }
+        }
         super.onDestroy();
     }
 
@@ -130,9 +145,11 @@ public class HomeFragment extends CommonRefreshableFragmentWithImageWorker
         final DisplayMetrics displaymetrics = new DisplayMetrics();
         getActivity().getWindowManager().getDefaultDisplay()
                 .getMetrics(displaymetrics);
-        final int height = displaymetrics.heightPixels;
-        final int width = displaymetrics.widthPixels;
-        final int longest = height > width ? height : width;
+        final int height = displaymetrics.heightPixels
+                / getResources().getInteger(R.integer.home_rotated_number_of_columns);
+        final int width = displaymetrics.widthPixels
+                / getResources().getInteger(R.integer.home_number_of_columns);
+        final int longest = (height > width ? height : width);
 
         photoSize = new ReturnSizes(longest, (int) (longest / aspectRatio), true);
 
@@ -156,7 +173,7 @@ public class HomeFragment extends CommonRefreshableFragmentWithImageWorker
     public void refresh(View view)
     {
         mAdapter = new NewestPhotosAdapter(getActivity());
-        list = (ListView) view.findViewById(R.id.list_newest_photos);
+        list = (GridView) view.findViewById(R.id.list_newest_photos);
         list.setAdapter(mAdapter);
     }
 
