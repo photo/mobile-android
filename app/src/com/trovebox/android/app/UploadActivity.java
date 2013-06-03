@@ -417,8 +417,10 @@ public class UploadActivity extends CommonActivity {
                 if (selectedImageUri != null)
                 {
                     String selectedImage = selectedImageUri.toString();
-                    if (selectedImage.indexOf("content://com.android.gallery3d.provider)") != -1 ||
-                            selectedImage.indexOf("content://com.google.android.gallery3d") != -1)
+                    if (selectedImage.indexOf("content://com.android.gallery3d.provider") != -1
+                            || selectedImage
+                                    .indexOf("content://com.android.sec.gallery3d.provider") != -1
+                            || selectedImage.indexOf("content://com.google.android.gallery3d") != -1)
                     {
                         TrackerUtils.trackErrorEvent("unsupported_gallery_upload", selectedImage);
                         GuiUtils.alert(R.string.errorPicasaUploadsNotSupported);
