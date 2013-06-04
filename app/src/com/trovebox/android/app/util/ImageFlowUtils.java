@@ -26,12 +26,14 @@ import com.trovebox.android.app.bitmapfun.util.ImageWorker;
 public abstract class ImageFlowUtils<T>
 {
     static final String TAG = ImageFlowUtils.class.getSimpleName();
-    List<List<T>> itemGroups;
+    List<ItemGroupWrapper<T>> itemGroups;
     int totalWidth;
     int imageHeight;
     int maxImageHeight;
     int borderSize;
     Stack<View> unusedViews = new Stack<View>();
+    int lastUsedWidth = 0;
+    int lastIndex = -1;
 
     protected ImageFlowUtils.ImageHeightResult calculateImageHeightResult(
             List<T> values
@@ -44,8 +46,7 @@ public abstract class ImageFlowUtils<T>
         float totalRatio = 0;
         for (T value : values)
         {
-            float ratio = getHeight(value) == 0 ? 1 : (float) getWidth(value)
-                    / (float) getHeight(value);
+            float ratio = getRatio(value);
             ratios.add(ratio);
             totalRatio += ratio;
             int width = (int) (ratio * imageHeight);
@@ -89,6 +90,16 @@ public abstract class ImageFlowUtils<T>
     public void rebuildGroups()
     {
         buildGroups(totalWidth, imageHeight, maxImageHeight, borderSize, true);
+    }
+
+    /**
+     * Should be called in case item is deleted from model or replaced by
+     * another item to clear optimization information used in buildGroups method
+     */
+    public void onGroupsStructureModified()
+    {
+        lastUsedWidth = 0;
+        lastIndex = -1;
     }
 
     /**
@@ -150,24 +161,31 @@ public abstract class ImageFlowUtils<T>
         this.totalWidth = totalWidth;
         this.imageHeight = imageHeight;
         this.borderSize = borderSize;
-        itemGroups = new ArrayList<List<T>>();
         if (totalWidth == 0)
         {
             return;
         }
+        if (lastIndex < 0)
+        {
+            itemGroups = new ArrayList<ItemGroupWrapper<T>>();
+        }
+        if (lastIndex + 1 == getSuperCount())
+        {
+            return;
+        }
 
-        List<T> itemGroup = new ArrayList<T>();
-        int usedWidth = 0;
-        for (int i = 0, size = getSuperCount(); i < size; i++)
+        List<T> itemGroup = itemGroups.isEmpty() ? new ArrayList<T>() :
+                itemGroups.remove(itemGroups.size() - 1).itemGroup;
+        int usedWidth = lastUsedWidth;
+        for (int i = lastIndex + 1, size = getSuperCount(); i < size; i++)
         {
             T photo = getSuperItem(i);
-            double ratio = getHeight(photo) == 0 ? 1 : (float) getWidth(photo)
-                    / (float) getHeight(photo);
+            double ratio = getRatio(photo);
             int requiredWidth = (int) (ratio * imageHeight) + 2 * borderSize;
             if (usedWidth > 0 &&
                     requiredWidth + usedWidth > totalWidth)
             {
-                itemGroups.add(itemGroup);
+                itemGroups.add(new ItemGroupWrapper<T>(itemGroup, i - 1));
                 itemGroup = new ArrayList<T>();
                 usedWidth = requiredWidth;
             } else
@@ -175,11 +193,24 @@ public abstract class ImageFlowUtils<T>
                 usedWidth += requiredWidth;
             }
             itemGroup.add(photo);
+            lastUsedWidth = usedWidth;
+            lastIndex = i;
         }
         if (!itemGroup.isEmpty())
         {
-            itemGroups.add(itemGroup);
+            itemGroups.add(new ItemGroupWrapper<T>(itemGroup, lastIndex));
         }
+    }
+
+    /**
+     * Get the ratio for photo dimensions
+     * 
+     * @param photo
+     * @return
+     */
+    public float getRatio(T photo) {
+        return getHeight(photo) == 0 ? 1 : (float) getWidth(photo)
+                / (float) getHeight(photo);
     }
 
     /**
@@ -229,9 +260,24 @@ public abstract class ImageFlowUtils<T>
      * @param position
      * @return
      */
-    public List<T> getGroupItem(int position)
-    {
-        return itemGroups.get(position);
+    public List<T> getGroupItem(int position) {
+        return itemGroups.get(position).itemGroup;
+    }
+
+    /**
+     * Get the last element in group super position for the group position
+     * 
+     * @param position group position
+     * @return position in super items container for the last element in the
+     *         group
+     */
+    public int getSuperItemPositionForGroupPosition(int position) {
+        ItemGroupWrapper<T> groupWrapper = itemGroups.get(position);
+        int result = groupWrapper.firstElementSuperIndex + groupWrapper.itemGroup.size() - 1;
+        CommonUtils.verbose(TAG,
+                "getSuperItemPositionForGroupPosition: position %1$d; super position %2$d",
+                position, result);
+        return result;
     }
 
     protected static class ImageHeightResult
@@ -383,8 +429,7 @@ public abstract class ImageFlowUtils<T>
             view = convertView;
         }
 
-        float ratio = getHeight(value) == 0 ? 1 : (float) getWidth(value)
-                / (float) getHeight(value);
+        float ratio = getRatio(value);
         int height = imageHeight;
         int width = (int) (ratio * height) + extraWidth;
 
@@ -450,6 +495,26 @@ public abstract class ImageFlowUtils<T>
         @Override
         public String toString() {
             return toStringValue;
+        }
+    }
+
+    /**
+     * Wrapper for item group which also stores starting index in the super
+     * items container
+     * 
+     * @param <T>
+     */
+    public static class ItemGroupWrapper<T> {
+        List<T> itemGroup;
+        /**
+         * index of the first element of the itemGroup in the super items
+         * container
+         */
+        int firstElementSuperIndex;
+
+        ItemGroupWrapper(List<T> itemGroup, int lastElementSuperIndex) {
+            this.itemGroup = itemGroup;
+            firstElementSuperIndex = lastElementSuperIndex - itemGroup.size() + 1;
         }
     }
 }

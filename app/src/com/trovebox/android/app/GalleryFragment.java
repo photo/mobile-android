@@ -218,7 +218,6 @@ public class GalleryFragment extends CommonRefreshableFragmentWithImageWorker
         GuiUtils.removeGlobalOnLayoutListener(photosGrid, photosGridListener);
     }
 
-
     @Override
     public void photoDeleted(Photo photo)
     {
@@ -373,6 +372,15 @@ public class GalleryFragment extends CommonRefreshableFragmentWithImageWorker
         }
 
         @Override
+        public boolean checkNeedToLoadNextPage(int position) {
+            // #449 we need to take into account super count and super item
+            // position for each group
+            return checkNeedToLoadNextPage(
+                    imageFlowUtils.getSuperItemPositionForGroupPosition(position),
+                    getSuperCount());
+        }
+
+        @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             if (checkNeedToLoadNextPage(position))
             {
@@ -400,6 +408,12 @@ public class GalleryFragment extends CommonRefreshableFragmentWithImageWorker
         public boolean isEnabled(int position)
         {
             return false;
+        }
+
+        @Override
+        public void deleteItemAt(int index) {
+            super.deleteItemAt(index);
+            imageFlowUtils.onGroupsStructureModified();
         }
     }
 
