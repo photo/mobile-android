@@ -28,7 +28,7 @@
                 android:layout_height="wrap_content"
                 android:ems="10"
                 android:hint="@string/upload_title_hint"
-                android:inputType="textCapWords" >
+                android:inputType="textCapSentences" >
             </EditText>
 
             <EditText
