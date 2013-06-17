@@ -16,6 +16,7 @@
     <string name="menu_share_email">Электронная почта</string>
     <string name="menu_share_twitter">Twitter</string>
     <string name="menu_share_facebook">Facebook</string>
+    <string name="menu_share_system">Другие системные приложения…</string>
 
     <!-- Selection Menu -->
     <string name="menu_select_all">Выбрать все</string>
@@ -28,8 +29,13 @@
 
     <!-- Share E-Mail -->
     <string name="share_email_default_title">Я использую Trovebox, чтобы поделиться мгновением</string>
-    <string name="share_email_default_body">Увидеть фотографию &lt;a href="%1$s">%1$s&lt;/a></string>
+    <string name="share_email_default_body">Посмотреть фотографию &lt;a href="%1$s">%1$s&lt;/a></string>
     <string name="share_email_send_title">Отправить по электронной почте…</string>
+
+    <!-- Share System -->
+    <string name="share_system_default_title">@string/share_email_default_title</string>
+    <string name="share_system_default_body">Посмотреть фотографию %1$s</string>
+    <string name="share_system_send_title">Поделиться ссылкой на фото</string>
 
     <!-- Share Twitter -->
     <string name="share_twitter_requesting_authentication">Запрос аутентификации в twitter…</string>

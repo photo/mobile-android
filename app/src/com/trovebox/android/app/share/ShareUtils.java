@@ -127,6 +127,49 @@ public class ShareUtils {
     }
 
     /**
+     * Shares the specified photo url via system share menu.
+     * 
+     * @param photo
+     * @param context
+     * @param loadingControl the loading control for token retrieval operation
+     */
+    public static void shareViaSystem(Photo photo, final Context context,
+            LoadingControl loadingControl)
+    {
+        RunnableWithParameter<Photo> runnable = new RunnableWithParameter<Photo>() {
+
+            @Override
+            public void run(Photo photo) {
+                Intent shareIntent = new Intent(Intent.ACTION_SEND);
+                shareIntent.setType("text/plain");
+                shareIntent.putExtra(android.content.Intent.EXTRA_SUBJECT,
+                        CommonUtils.getStringResource(R.string.share_system_default_title));
+                String url = PhotoUtils.getShareUrl(photo, photo.isPrivate());
+                String bodyText = CommonUtils.getStringResource(
+                        R.string.share_system_default_body,
+                        url, url);
+                shareIntent.putExtra(
+                        Intent.EXTRA_TEXT,
+                        bodyText
+                        );
+                context.startActivity(Intent.createChooser(shareIntent,
+                        CommonUtils.getStringResource(R.string.share_system_send_title)));
+            }
+        };
+        if (photo.isPrivate())
+        {
+            PhotoUtils.validateShareTokenExistsAsyncAndRunAsync(photo,
+                    runnable,
+                    null,
+                    loadingControl);
+        } else
+        {
+            runnable.run(photo);
+        }
+
+    }
+
+    /**
      * The runnable which opens twitter share dialog
      */
     public static class TwitterShareRunnable implements Runnable, Serializable

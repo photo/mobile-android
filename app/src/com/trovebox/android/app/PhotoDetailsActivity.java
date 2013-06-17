@@ -18,7 +18,6 @@ import android.content.Intent;
 import android.database.DataSetObserver;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.text.TextUtils;
@@ -268,6 +267,17 @@ public class PhotoDetailsActivity extends CommonActivity implements TwitterLoadi
                         }
                     });
                     break;
+                case R.id.menu_share_system:
+                    TrackerUtils.trackOptionsMenuClickEvent("menu_share_system",
+                            getSupportActivity());
+                    confirmPrivatePhotoSharingAndRun(new Runnable() {
+
+                        @Override
+                        public void run() {
+                            shareActivePhotoViaSystem();
+                        }
+                    });
+                    break;
                 case R.id.menu_share_twitter:
                     TrackerUtils.trackOptionsMenuClickEvent("menu_share_twitter",
                             getSupportActivity());
@@ -331,6 +341,17 @@ public class PhotoDetailsActivity extends CommonActivity implements TwitterLoadi
             if (photo != null)
             {
                 ShareUtils.shareViaEMail(photo, getActivity(),
+                        new ProgressDialogLoadingControl(
+                                getSupportActivity(), true, false,
+                                getString(R.string.loading)));
+            }
+        }
+
+        public void shareActivePhotoViaSystem() {
+            Photo photo = getActivePhoto();
+            if (photo != null)
+            {
+                ShareUtils.shareViaSystem(photo, getActivity(),
                         new ProgressDialogLoadingControl(
                                 getSupportActivity(), true, false,
                                 getString(R.string.loading)));
@@ -801,23 +822,6 @@ public class PhotoDetailsActivity extends CommonActivity implements TwitterLoadi
             @Override
             public boolean isViewFromObject(View view, Object object) {
                 return view == ((View) object);
-            }
-
-            @Override
-            public void finishUpdate(View arg0) {
-            }
-
-            @Override
-            public void restoreState(Parcelable arg0, ClassLoader arg1) {
-            }
-
-            @Override
-            public Parcelable saveState() {
-                return null;
-            }
-
-            @Override
-            public void startUpdate(View arg0) {
             }
 
             @Override

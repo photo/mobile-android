@@ -199,6 +199,11 @@ public class HomeFragment extends CommonRefreshableFragmentWithImageWorker
         ShareUtils.shareViaEMail(photo, getActivity(), loadingControl);
     }
 
+    private void shareViaSystem(Photo photo)
+    {
+        ShareUtils.shareViaSystem(photo, getActivity(), loadingControl);
+    }
+
     public void shareActivePhotoViaTwitter()
     {
         if (activePhoto != null)
@@ -639,8 +644,20 @@ public class HomeFragment extends CommonRefreshableFragmentWithImageWorker
                         }
                     });
                     break;
+                case R.id.menu_share_system:
+                    TrackerUtils.trackPopupMenuClickEvent("menu_share_system",
+                            getSupportActivity());
+                    confirmPrivatePhotoSharingAndRun(new Runnable() {
+
+                        @Override
+                        public void run() {
+                            shareViaSystem(activePhoto);
+                        }
+                    });
+                    break;
             }
             return true;
         }
+
     };
 }

@@ -16,6 +16,7 @@
     <string name="menu_share_email">E-Mail</string>
     <string name="menu_share_twitter">Twitter</string>
     <string name="menu_share_facebook">Facebook</string>
+    <string name="menu_share_system">Other System Apps…</string>
 
     <!-- Selection Menu -->
     <string name="menu_select_all">Select All</string>
@@ -30,6 +31,11 @@
     <string name="share_email_default_title">I\'m using Trovebox to share my moments</string>
     <string name="share_email_default_body">View the photo &lt;a href="%1$s">%1$s&lt;/a></string>
     <string name="share_email_send_title">Send E-Mail…</string>
+
+    <!-- Share System -->
+    <string name="share_system_default_title">@string/share_email_default_title</string>
+    <string name="share_system_default_body">View the photo %1$s</string>
+    <string name="share_system_send_title">Share photo URL</string>
 
     <!-- Share Twitter -->
     <string name="share_twitter_requesting_authentication">Requesting twitter authentication…</string>
