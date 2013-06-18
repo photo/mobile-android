@@ -6,14 +6,6 @@ import org.holoeverywhere.app.Activity;
 import org.holoeverywhere.app.Dialog;
 import org.holoeverywhere.widget.Switch;
 
-import com.trovebox.android.app.R;
-import com.trovebox.android.app.common.CommonStyledDialogFragment;
-import com.trovebox.android.app.model.Photo;
-import com.trovebox.android.app.model.utils.PhotoUtils;
-import com.trovebox.android.app.model.utils.TagUtils;
-import com.trovebox.android.app.util.ProgressDialogLoadingControl;
-import com.trovebox.android.app.util.TrackerUtils;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -21,6 +13,13 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+
+import com.trovebox.android.app.common.CommonStyledDialogFragment;
+import com.trovebox.android.app.model.Photo;
+import com.trovebox.android.app.model.utils.PhotoUtils;
+import com.trovebox.android.app.model.utils.TagUtils;
+import com.trovebox.android.app.util.ProgressDialogLoadingControl;
+import com.trovebox.android.app.util.TrackerUtils;
 
 /**
  * The view which represents photo details editing functionality
@@ -149,7 +148,7 @@ public class PhotoDetailsEditFragment extends CommonStyledDialogFragment {
                 Dialog dialog = PhotoDetailsEditFragment.this.getDialog();
                 if (dialog != null && dialog.isShowing())
                 {
-                    PhotoDetailsEditFragment.this.dismiss();
+                    PhotoDetailsEditFragment.this.dismissAllowingStateLoss();
                 }
             }
         };

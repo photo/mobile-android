@@ -167,7 +167,7 @@ public class TwitterFragment extends CommonStyledDialogFragment
         {
             GuiUtils.error(TAG, R.string.errorCouldNotInitTwitterFragment, ex,
                     getActivity());
-            dismiss();
+            dismissAllowingStateLoss();
         }
     }
 
@@ -179,7 +179,7 @@ public class TwitterFragment extends CommonStyledDialogFragment
     private void performTwitterLogout()
     {
         TwitterUtils.logout(getActivity());
-        dismiss();
+        dismissAllowingStateLoss();
     }
 
     @Override
@@ -319,7 +319,7 @@ public class TwitterFragment extends CommonStyledDialogFragment
             Dialog dialog = TwitterFragment.this.getDialog();
             if (dialog != null && dialog.isShowing())
             {
-                TwitterFragment.this.dismiss();
+                TwitterFragment.this.dismissAllowingStateLoss();
             }
         }
     }

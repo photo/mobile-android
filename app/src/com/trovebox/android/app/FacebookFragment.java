@@ -145,7 +145,7 @@ public class FacebookFragment extends CommonStyledDialogFragment
         {
             GuiUtils.error(TAG, R.string.errorCouldNotInitFacebookFragment, ex,
                     getActivity());
-            dismiss();
+            dismissAllowingStateLoss();
         }
     }
 
@@ -164,7 +164,7 @@ public class FacebookFragment extends CommonStyledDialogFragment
     private void performFacebookLogout()
     {
         FacebookUtils.logoutRequest(getSupportActivity());
-        dismiss();
+        dismissAllowingStateLoss();
     }
 
     @Override
@@ -303,7 +303,7 @@ public class FacebookFragment extends CommonStyledDialogFragment
             Dialog dialog = FacebookFragment.this.getDialog();
             if (dialog != null && dialog.isShowing())
             {
-                FacebookFragment.this.dismiss();
+                FacebookFragment.this.dismissAllowingStateLoss();
             }
         }
     }

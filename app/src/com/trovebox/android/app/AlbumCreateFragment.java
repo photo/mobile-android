@@ -65,7 +65,7 @@ public class AlbumCreateFragment extends CommonStyledDialogFragment {
                 Dialog dialog = AlbumCreateFragment.this.getDialog();
                 if (dialog != null && dialog.isShowing())
                 {
-                    AlbumCreateFragment.this.dismiss();
+                    AlbumCreateFragment.this.dismissAllowingStateLoss();
                 }
             }
         };
