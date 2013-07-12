@@ -32,7 +32,7 @@
             android:text="@string/sync_next_button" />
     </LinearLayout>
 
-    <GridView
+    <com.tonicartos.widget.stickygridheaders.StickyGridHeadersGridView
         android:id="@+id/grid_photos"
         style="@style/PhotoGridLayout"
         android:layout_width="match_parent"

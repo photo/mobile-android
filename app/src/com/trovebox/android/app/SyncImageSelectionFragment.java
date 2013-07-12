@@ -19,23 +19,24 @@ import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.provider.MediaStore;
-import android.util.TypedValue;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.view.ViewTreeObserver;
-import android.widget.AbsListView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.GridView;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
+import com.tonicartos.widget.stickygridheaders.StickyGridHeadersGridView;
+import com.tonicartos.widget.stickygridheaders.StickyGridHeadersSimpleAdapter;
 import com.trovebox.android.app.bitmapfun.util.ImageCache;
 import com.trovebox.android.app.bitmapfun.util.ImageFileSystemFetcher;
 import com.trovebox.android.app.bitmapfun.util.ImageResizer;
@@ -60,7 +61,7 @@ public class SyncImageSelectionFragment extends CommonRefreshableFragmentWithIma
     private int mImageThumbSize;
     private int mImageThumbSpacing;
     private int mImageThumbBorder;
-    private GridView photosGrid;
+    private StickyGridHeadersGridView photosGrid;
     ViewTreeObserver.OnGlobalLayoutListener photosGridListener;
     NextStepFlow nextStepFlow;
     InitTask initTask = null;
@@ -146,7 +147,7 @@ public class SyncImageSelectionFragment extends CommonRefreshableFragmentWithIma
         super.onDetach();
         if (mAdapter != null)
         {
-            mAdapter.setNumColumns(0);
+            mAdapter.mItemHeight = 0;
         }
     }
 
@@ -159,7 +160,8 @@ public class SyncImageSelectionFragment extends CommonRefreshableFragmentWithIma
 
     public void init(View v)
     {
-        photosGrid = (GridView) v.findViewById(R.id.grid_photos);
+        photosGrid = (StickyGridHeadersGridView) v.findViewById(R.id.grid_photos);
+        photosGrid.setAdapter(new DummyImageAdapter());
 
         // This listener is used to get the final width of the GridView and then
         // calculate the
@@ -173,7 +175,7 @@ public class SyncImageSelectionFragment extends CommonRefreshableFragmentWithIma
             @Override
             public void onGlobalLayout()
             {
-                if (mAdapter.getNumColumns() == 0)
+                if (mAdapter.mItemHeight == 0)
                 {
                     final int numColumns = (int) Math.floor(
                             photosGrid.getWidth()
@@ -184,7 +186,6 @@ public class SyncImageSelectionFragment extends CommonRefreshableFragmentWithIma
                         final int columnWidth =
                                 (photosGrid.getWidth() / numColumns)
                                         - mImageThumbSpacing;
-                        mAdapter.setNumColumns(numColumns);
                         mAdapter.setItemHeight(columnWidth, columnWidth
                                 - 2 * mImageThumbBorder);
                         if (BuildConfig.DEBUG)
@@ -252,10 +253,12 @@ public class SyncImageSelectionFragment extends CommonRefreshableFragmentWithIma
         if (isDataLoaded())
         {
             photosGrid.setAdapter(mAdapter);
-        }
-        if (photosGrid.getAdapter() == null && initTask == null)
+        } else
         {
-            refresh(v);
+            if (initTask == null)
+            {
+                refresh(v);
+            }
         }
     }
 
@@ -425,12 +428,41 @@ public class SyncImageSelectionFragment extends CommonRefreshableFragmentWithIma
     {
         public long id;
         public String data;
+        public String folder;
 
         public ImageData(long id, String data)
         {
             super();
             this.id = id;
             this.data = data;
+            folder = getFolderFromPath(data);
+        }
+
+        /**
+         * Get the parent folder name for the specified path
+         * 
+         * @param path
+         * @return
+         */
+        public String getFolderFromPath(String path)
+        {
+            if (path == null)
+            {
+                return null;
+            }
+            int p = path.lastIndexOf("/");
+            String result = "";
+            if (p > 0)
+            {
+                int p2 = path.lastIndexOf("/", p - 1);
+                if (p2 != -1)
+                {
+                    result = path.substring(p2 + 1, p);
+                }
+            }
+            CommonUtils.debug(TAG, "getFolderFromPath: fileName '%1$s; folderName '%2$s'", path,
+                    result);
+            return result;
         }
 
         @Override
@@ -451,6 +483,7 @@ public class SyncImageSelectionFragment extends CommonRefreshableFragmentWithIma
         public void writeToParcel(Parcel out, int flags) {
             out.writeLong(id);
             out.writeString(data);
+            out.writeString(folder);
         }
 
         public static final Parcelable.Creator<ImageData> CREATOR = new Parcelable.Creator<ImageData>() {
@@ -468,6 +501,7 @@ public class SyncImageSelectionFragment extends CommonRefreshableFragmentWithIma
         private ImageData(Parcel in) {
             id = in.readLong();
             data = in.readString();
+            folder = in.readString();
         }
     }
 
@@ -497,7 +531,7 @@ public class SyncImageSelectionFragment extends CommonRefreshableFragmentWithIma
         {
             super.onPreExecute();
             loadingControl.startLoading();
-            photosGrid.setAdapter(null);
+            photosGrid.setAdapter(new DummyImageAdapter());
             customImageWorkerAdapter = null;
             mImageWorker.setAdapter(null);
             selectionController.clearSelection();
@@ -604,8 +638,33 @@ public class SyncImageSelectionFragment extends CommonRefreshableFragmentWithIma
         }
     }
 
-    private class CustomImageAdapter extends ImageAdapter
+    private class DummyImageAdapter extends BaseAdapter
     {
+
+        @Override
+        public int getCount() {
+            return 0;
+        }
+
+        @Override
+        public Object getItem(int position) {
+            return null;
+        }
+
+        @Override
+        public long getItemId(int position) {
+            return 0;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            return null;
+        }
+
+    }
+
+    private class CustomImageAdapter extends ImageAdapter
+            implements StickyGridHeadersSimpleAdapter {
         SelectionController selectionController;
 
         public CustomImageAdapter(Context context, ImageResizer imageWorker,
@@ -620,44 +679,47 @@ public class SyncImageSelectionFragment extends CommonRefreshableFragmentWithIma
                 ViewGroup container)
         {
             // Now handle the main ImageView thumbnails
-            View view;
+            final ViewHolder holder;
             if (convertView == null)
             { // if it's not recycled, instantiate and initialize
                 final LayoutInflater layoutInflater = (LayoutInflater) getActivity()
                         .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                view = layoutInflater.inflate(
+                convertView = layoutInflater.inflate(
                         R.layout.item_sync_image, null);
-                view.setLayoutParams(mImageViewLayoutParams);
+                convertView.setLayoutParams(mImageViewLayoutParams);
+                holder = new ViewHolder();
+                holder.selectedOverlay = convertView
+                        .findViewById(R.id.selection_overlay);
+                holder.uploadedOverlay = convertView
+                        .findViewById(R.id.uploaded_overlay);
+                holder.imageContainer = convertView.findViewById(R.id.imageContainer);
+                holder.imageView = (ImageView) convertView.findViewById(R.id.image);
+                convertView.setTag(holder);
             } else
             { // Otherwise re-use the converted view
-                view = convertView;
+                holder = (ViewHolder) convertView.getTag();
             }
 
             // Check the height matches our calculated column width
-            if (view.getLayoutParams().height != mItemHeight)
+            if (convertView.getLayoutParams().height != mItemHeight)
             {
-                view.setLayoutParams(mImageViewLayoutParams);
+                convertView.setLayoutParams(mImageViewLayoutParams);
             }
-            final View selectedOverlay = view
-                    .findViewById(R.id.selection_overlay);
             ImageData value = (ImageData) getItem(position);
             final long id = value.id;
 
-            selectedOverlay.setVisibility(selectionController.isSelected(id) ?
+            holder.selectedOverlay.setVisibility(selectionController.isSelected(id) ?
                     View.VISIBLE : View.INVISIBLE);
             boolean isProcessed = customImageWorkerAdapter
                     .isProcessedValue(value);
-            final View uploadedOverlay = view
-                    .findViewById(R.id.uploaded_overlay);
-            uploadedOverlay.setVisibility(isProcessed ?
+            holder.uploadedOverlay.setVisibility(isProcessed ?
                     View.VISIBLE : View.INVISIBLE);
-            View imageContainer = view.findViewById(R.id.imageContainer);
             if (isProcessed)
             {
-                imageContainer.setOnClickListener(null);
+                holder.imageContainer.setOnClickListener(null);
             } else
             {
-                imageContainer.setOnClickListener(new OnClickListener()
+                holder.imageContainer.setOnClickListener(new OnClickListener()
                 {
                     @Override
                     public void onClick(View v)
@@ -672,20 +734,58 @@ public class SyncImageSelectionFragment extends CommonRefreshableFragmentWithIma
                         {
                             selectionController.addToSelected(id);
                         }
-                        selectedOverlay.setVisibility(selectionController.isSelected(id) ?
+                        holder.selectedOverlay.setVisibility(selectionController.isSelected(id) ?
                                 View.VISIBLE : View.INVISIBLE);
                     }
 
                 });
             }
-            ImageView imageView = (ImageView) view.findViewById(R.id.image);
             // Finally load the image asynchronously into the ImageView, this
             // also takes care of
             // setting a placeholder image while the background thread runs
-            mImageWorker.loadImage(position - mNumColumns, imageView);
-            return view;
+            mImageWorker.loadImage(position, holder.imageView);
+            return convertView;
         }
 
+        @Override
+        public long getHeaderId(int position) {
+            ImageData imageData = (ImageData) getItem(position);
+            return imageData == null ? -1 : imageData.folder.hashCode();
+        }
+
+        @Override
+        public View getHeaderView(int position, View convertView, ViewGroup parent) {
+            HeaderViewHolder holder;
+            if (convertView == null) {
+                convertView = inflater.inflate(R.layout.sync_category_separator, parent, false);
+                holder = new HeaderViewHolder();
+                holder.textView = (TextView) convertView.findViewById(android.R.id.text1);
+                convertView.setTag(holder);
+            } else {
+                holder = (HeaderViewHolder) convertView.getTag();
+            }
+
+            ImageData imageData = (ImageData) getItem(position);
+            if (imageData == null)
+            {
+                return null;
+            }
+            // set header text as first char in string
+            holder.textView.setText(imageData.folder);
+
+            return convertView;
+        }
+
+        protected class ViewHolder
+        {
+            View selectedOverlay;
+            View uploadedOverlay;
+            View imageContainer;
+            ImageView imageView;
+        }
+        protected class HeaderViewHolder {
+            public TextView textView;
+        }
     }
 
     /**
@@ -694,21 +794,20 @@ public class SyncImageSelectionFragment extends CommonRefreshableFragmentWithIma
      * empty views as we use a transparent ActionBar and don't want the real top
      * row of images to start off covered by it.
      */
-    private static class ImageAdapter extends BaseAdapter
-    {
+    private static class ImageAdapter extends BaseAdapter {
 
         protected final Context mContext;
         protected int mItemHeight = 0;
-        protected int mNumColumns = 0;
-        protected int mActionBarHeight = 0;
         protected GridView.LayoutParams mImageViewLayoutParams;
         private ImageResizer mImageWorker;
+        LayoutInflater inflater;
 
         public ImageAdapter(Context context, ImageResizer imageWorker)
         {
             super();
             mContext = context;
             this.mImageWorker = imageWorker;
+            this.inflater = LayoutInflater.from(context);
             mImageViewLayoutParams = new GridView.LayoutParams(
                     LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
         }
@@ -716,36 +815,19 @@ public class SyncImageSelectionFragment extends CommonRefreshableFragmentWithIma
         @Override
         public int getCount()
         {
-            // Size of adapter + number of columns for top empty row
-            return mImageWorker.getAdapter().getSize() + mNumColumns;
+            return mImageWorker.getAdapter().getSize();
         }
 
         @Override
         public Object getItem(int position)
         {
-            return position < mNumColumns ?
-                    null : mImageWorker.getAdapter().getItem(
-                            position - mNumColumns);
+            return mImageWorker.getAdapter().getItem(position);
         }
 
         @Override
         public long getItemId(int position)
         {
-            return position < mNumColumns ? -1 : position - mNumColumns;
-        }
-
-        @Override
-        public int getViewTypeCount()
-        {
-            // Two types of views, the normal ImageView and the top row of empty
-            // views
-            return 2;
-        }
-
-        @Override
-        public int getItemViewType(int position)
-        {
-            return (position < mNumColumns) ? 1 : 0;
+            return position;
         }
 
         @Override
@@ -758,37 +840,6 @@ public class SyncImageSelectionFragment extends CommonRefreshableFragmentWithIma
         public final View getView(int position, View convertView,
                 ViewGroup container)
         {
-            // First check if this is the top row
-            if (position < mNumColumns)
-            {
-                if (convertView == null)
-                {
-                    convertView = new View(mContext);
-                }
-                // Calculate ActionBar height
-                if (mActionBarHeight < 0)
-                {
-                    TypedValue tv = new TypedValue();
-                    if (mContext.getTheme().resolveAttribute(
-                            android.R.attr.actionBarSize, tv, true))
-                    {
-                        mActionBarHeight = TypedValue
-                                .complexToDimensionPixelSize(
-                                        tv.data, mContext.getResources()
-                                                .getDisplayMetrics());
-                    } else
-                    {
-                        // No ActionBar style (pre-Honeycomb or ActionBar not in
-                        // theme)
-                        mActionBarHeight = 0;
-                    }
-                }
-                // Set empty view with height of ActionBar
-                convertView.setLayoutParams(new AbsListView.LayoutParams(
-                        ViewGroup.LayoutParams.MATCH_PARENT, mActionBarHeight));
-                return convertView;
-            }
-
             return getViewAdditional(position, convertView, container);
         }
 
@@ -815,7 +866,7 @@ public class SyncImageSelectionFragment extends CommonRefreshableFragmentWithIma
             // Finally load the image asynchronously into the ImageView, this
             // also takes care of
             // setting a placeholder image while the background thread runs
-            mImageWorker.loadImage(position - mNumColumns, imageView);
+            mImageWorker.loadImage(position, imageView);
             return imageView;
         }
 
@@ -837,16 +888,6 @@ public class SyncImageSelectionFragment extends CommonRefreshableFragmentWithIma
                             mItemHeight);
             mImageWorker.setImageSize(imageHeight);
             notifyDataSetChanged();
-        }
-
-        public void setNumColumns(int numColumns)
-        {
-            mNumColumns = numColumns;
-        }
-
-        public int getNumColumns()
-        {
-            return mNumColumns;
         }
     }
 
@@ -1014,13 +1055,30 @@ public class SyncImageSelectionFragment extends CommonRefreshableFragmentWithIma
                 @Override
                 public int compare(ImageData lhs, ImageData rhs)
                 {
-                    boolean leftProcessed = isProcessedValue(lhs);
-                    boolean rightProcessed = isProcessedValue(rhs);
-                    if (leftProcessed == rightProcessed)
+                    int result;
+                    if (lhs.folder == null)
                     {
-                        return 0;
+                        result = -1;
+                    } else if (rhs.folder == null)
+                    {
+                        result = 1;
+                    } else
+                    {
+                        result = lhs.folder.toLowerCase().compareTo(rhs.folder.toLowerCase());
                     }
-                    return leftProcessed ? -1 : 1;
+                    if (result == 0)
+                    {
+                        boolean leftProcessed = isProcessedValue(lhs);
+                        boolean rightProcessed = isProcessedValue(rhs);
+                        if (leftProcessed == rightProcessed)
+                        {
+                            result = 0;
+                        } else
+                        {
+                            result = leftProcessed ? -1 : 1;
+                        }
+                    }
+                    return result;
                 }
             });
         }
