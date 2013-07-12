@@ -80,7 +80,8 @@ public class NavigationHandlerFragment extends CommonFragment {
             if (mCurrentPage != mPosition || getSupportFragmentManager()
                     .getBackStackEntryCount() > 0) {
                 CommonUtils.debug(TAG, "onNavigationItemSelected");
-                TrackerUtils.trackNavigationItemSelectedEvent(TAG,
+                TrackerUtils.trackNavigationItemSelectedEvent(
+                        mClass.getSimpleName(),
                         NavigationHandlerFragment.this);
                 if (mOnMenuClickListener != null) {
                     mOnMenuClickListener.onMenuClick(mPosition);

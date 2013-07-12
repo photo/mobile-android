@@ -10,7 +10,6 @@ import android.support.v4.app.FragmentActivity;
 
 import com.trovebox.android.app.R;
 import com.trovebox.android.app.TroveboxApplication;
-import com.trovebox.android.app.provider.UploadsUtils;
 import com.trovebox.android.app.util.CommonUtils;
 import com.trovebox.android.app.util.GuiUtils;
 import com.trovebox.android.app.util.LoadingControl;
@@ -22,7 +21,7 @@ import com.trovebox.android.app.util.SimpleAsyncTaskEx;
  * @author Eugene Popovich
  */
 public class ImageCacheUtils {
-    public static final String TAG = UploadsUtils.class.getSimpleName();
+    public static final String TAG = ImageCacheUtils.class.getSimpleName();
     public static String DISK_CACHE_CLEARED_BROADCAST_ACTION = "com.trovebox.DISK_CACHE_CLEARED";
 
     /**

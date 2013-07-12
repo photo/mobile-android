@@ -1,8 +1,10 @@
 
 package com.trovebox.android.app.model.utils;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
+import java.util.Date;
 
 import org.apache.http.client.ClientProtocolException;
 import org.json.JSONException;
@@ -24,6 +26,7 @@ import com.trovebox.android.app.net.TroveboxResponse;
 import com.trovebox.android.app.net.TroveboxResponseUtils;
 import com.trovebox.android.app.util.CommonUtils;
 import com.trovebox.android.app.util.GuiUtils;
+import com.trovebox.android.app.util.ImageUtils;
 import com.trovebox.android.app.util.LoadingControl;
 import com.trovebox.android.app.util.RunnableWithParameter;
 import com.trovebox.android.app.util.SimpleAsyncTaskEx;
@@ -495,4 +498,21 @@ public class PhotoUtils {
         void photoUpdated(Photo photo);
     }
 
+    /**
+     * Generate photo title based on its date of creation
+     * 
+     * @param filePath
+     * @return
+     * @throws IOException
+     */
+    public static String generatePhotoTitle(String filePath) throws IOException
+    {
+        long createdDate = ImageUtils.getExifDateTime(filePath);
+        if (createdDate == -1)
+        {
+            CommonUtils.debug(TAG, "generatePhotoTitle: createdDate from exif is missing");
+            createdDate = (new File(filePath)).lastModified();
+        }
+        return CommonUtils.formatDateTime(new Date(createdDate));
+    }
 }

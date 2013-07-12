@@ -44,6 +44,7 @@ import com.trovebox.android.app.net.HttpEntityWithProgress.ProgressListener;
 import com.trovebox.android.app.net.ITroveboxApi;
 import com.trovebox.android.app.net.PhotosResponse;
 import com.trovebox.android.app.net.ReturnSizes;
+import com.trovebox.android.app.net.UploadMetaData;
 import com.trovebox.android.app.net.UploadResponse;
 import com.trovebox.android.app.net.account.AccountLimitUtils;
 import com.trovebox.android.app.provider.PhotoUpload;
@@ -196,8 +197,17 @@ public class UploaderService extends Service {
                     final NotificationCompat.Builder builder = CommonUtils
                             .isIceCreamSandwichOrHigher() ? getStandardUploadNotification(file)
                             : null;
+                    UploadMetaData metaData = photoUpload.getMetaData();
+                    // String title = metaData.getTitle();
+                    // if (title == null || title.trim().length() == 0)
+                    // {
+                    // CommonUtils.debug(TAG,
+                    // "handleIntent: photo title is empty, generating new one");
+                    // title = PhotoUtils.generatePhotoTitle(filePath);
+                    // metaData.setTitle(title);
+                    // }
                     UploadResponse uploadResponse = mApi.uploadPhoto(file,
-                            photoUpload.getMetaData(),
+                            metaData,
                             new ProgressListener()
                             {
                                 private int mLastProgress = -1;
@@ -431,7 +441,8 @@ public class UploaderService extends Service {
         int icon = R.drawable.icon;
         CharSequence titleText = photoUpload.getError() == null ?
                 getString(R.string.notification_upload_failed_title)
-                :getString(R.string.notification_upload_failed_title_with_reason, photoUpload.getError());
+                : getString(R.string.notification_upload_failed_title_with_reason,
+                        photoUpload.getError());
         long when = System.currentTimeMillis();
         CharSequence contentMessageTitle = getString(R.string.notification_upload_failed_text,
                 file.getName());

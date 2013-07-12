@@ -128,7 +128,7 @@ public class NewPhotoObserver extends FileObserver {
         String extension = MimeTypeMap.getFileExtensionFromUrl(Uri.fromFile(file).getPath());
         if (extension != null) {
             MimeTypeMap mime = MimeTypeMap.getSingleton();
-            type = mime.getMimeTypeFromExtension(extension);
+            type = mime.getMimeTypeFromExtension(extension.toLowerCase());
         }
         CommonUtils.debug(TAG, "File: %1$s; extension %2$s; MimeType: %3$s",
                 file.getAbsolutePath(), extension, type);
