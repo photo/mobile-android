@@ -9,4 +9,4 @@
 	url = https://github.com/chrisbanes/PhotoView.git
 [submodule "submodules/StickyGridHeaders"]
 	path = submodules/StickyGridHeaders
-	url = https://github.com/httpdispatch/StickyGridHeaders.git
+	url = https://github.com/TonicArtos/StickyGridHeaders.git
