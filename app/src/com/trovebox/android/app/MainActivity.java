@@ -23,7 +23,6 @@ import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.view.Window;
 import com.trovebox.android.app.FacebookFragment.FacebookLoadingControlAccessor;
-import com.trovebox.android.app.HomeFragment.StartNowHandler;
 import com.trovebox.android.app.SyncFragment.SyncHandler;
 import com.trovebox.android.app.TwitterFragment.TwitterLoadingControlAccessor;
 import com.trovebox.android.app.bitmapfun.util.ImageCacheUtils;
@@ -57,7 +56,7 @@ public class MainActivity extends CommonActivity
         implements LoadingControl, GalleryOpenControl, SyncHandler,
         UploadsClearedHandler, PhotoUploadedHandler, TwitterLoadingControlAccessor,
         FacebookLoadingControlAccessor, SyncStartedHandler,
-        PhotoDeletedHandler, PhotoUpdatedHandler, StartNowHandler,
+        PhotoDeletedHandler, PhotoUpdatedHandler, GalleryFragment.StartNowHandler,
         PurchaseHandler, SubscriptionPurchasedHandler
 {
     private static final String NAVIGATION_HANDLER_FRAGMENT_TAG = "NavigationHandlerFragment";
@@ -397,7 +396,7 @@ public class MainActivity extends CommonActivity
         {
             if (!instanceSaved)
             {
-                selectTab(NavigationHandlerFragment.HOME_INDEX);
+                selectTab(NavigationHandlerFragment.GALLERY_INDEX);
             }
         }
     }
@@ -415,12 +414,6 @@ public class MainActivity extends CommonActivity
 
     @Override
     public void photoUploaded() {
-        HomeFragment homeFragment = navigationHandlerFragment.getHomeFragment();
-        if (homeFragment != null)
-        {
-            homeFragment.photoUploaded();
-        }
-
         GalleryFragment galleryFragment = navigationHandlerFragment.getGalleryFragment();
         if (galleryFragment != null)
         {
@@ -465,12 +458,6 @@ public class MainActivity extends CommonActivity
     @Override
     public void photoDeleted(Photo photo)
     {
-        HomeFragment homeFragment = navigationHandlerFragment.getHomeFragment();
-        if (homeFragment != null)
-        {
-            homeFragment.photoDeleted(photo);
-        }
-
         GalleryFragment galleryFragment = navigationHandlerFragment.getGalleryFragment();
         if (galleryFragment != null)
         {
@@ -481,12 +468,6 @@ public class MainActivity extends CommonActivity
     @Override
     public void photoUpdated(Photo photo)
     {
-        HomeFragment homeFragment = navigationHandlerFragment.getHomeFragment();
-        if (homeFragment != null)
-        {
-            homeFragment.photoUpdated(photo);
-        }
-
         GalleryFragment galleryFragment = navigationHandlerFragment.getGalleryFragment();
         if (galleryFragment != null)
         {

@@ -3,6 +3,7 @@ package com.trovebox.android.app;
 
 import org.holoeverywhere.LayoutInflater;
 import org.holoeverywhere.app.Activity;
+import org.holoeverywhere.app.Fragment;
 
 import android.content.Context;
 import android.content.Intent;
@@ -15,7 +16,6 @@ import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.ListView;
 
-import com.trovebox.android.app.HomeFragment.StartNowHandler;
 import com.trovebox.android.app.bitmapfun.util.ImageCache;
 import com.trovebox.android.app.bitmapfun.util.ImageFetcher;
 import com.trovebox.android.app.common.CommonRefreshableFragmentWithImageWorker;
@@ -456,7 +456,7 @@ public class GalleryFragment extends CommonRefreshableFragmentWithImageWorker
             LoadResponse result = super.loadItems(page);
             // show start now notification in case response returned no items
             // and there are no already loaded items
-            HomeFragment.showStartNowNotification(startNowHandler,
+            GalleryFragment.showStartNowNotification(startNowHandler,
                     GalleryFragment.this, result.items != null && result.items.isEmpty()
                             && getItems().isEmpty() && mTags == null && mAlbum == null);
             return result;
@@ -505,5 +505,50 @@ public class GalleryFragment extends CommonRefreshableFragmentWithImageWorker
     @Override
     public void photoUploaded() {
         refreshImmediatelyOrScheduleIfNecessary();
+    }
+
+    /**
+     * Adjust start now notification visibility state and init it in case it is
+     * visible. When user clicked on int startNowHandler.startNow will be
+     * executed
+     * 
+     * @param startNowHandler
+     * @param fragment
+     * @param show
+     */
+    public static void showStartNowNotification(final StartNowHandler startNowHandler,
+            final Fragment fragment,
+            final boolean show)
+    {
+        GuiUtils.runOnUiThread(
+                new Runnable() {
+    
+                    @Override
+                    public void run() {
+                        View view = fragment.getView();
+                        if (view != null)
+                        {
+                            view = view.findViewById(R.id.upload_new_images);
+                            if (show)
+                            {
+                                view.setOnClickListener(new OnClickListener() {
+    
+                                    @Override
+                                    public void onClick(View v) {
+                                        startNowHandler.startNow();
+                                    }
+                                });
+                            }
+                            view.setVisibility(
+                                    show ? View.VISIBLE : View.GONE);
+                        }
+    
+                    }
+                });
+    }
+
+    public static interface StartNowHandler
+    {
+        void startNow();
     }
 }

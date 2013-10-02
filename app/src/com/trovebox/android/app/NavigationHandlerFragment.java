@@ -38,12 +38,11 @@ import com.trovebox.android.app.util.TrackerUtils;
  */
 public class NavigationHandlerFragment extends CommonFragment {
     static final String TAG = NavigationHandlerFragment.class.getSimpleName();
-    public static final int HOME_INDEX = 0;
-    public static final int GALLERY_INDEX = 1;
-    public static final int ALBUMS_INDEX = 2;
-    public static final int TAGS_INDEX = 3;
-    public static final int SYNC_INDEX = 4;
-    public static final int ACCOUNT_INDEX = 5;
+    public static final int GALLERY_INDEX = 0;
+    public static final int ALBUMS_INDEX = GALLERY_INDEX + 1;
+    public static final int TAGS_INDEX = ALBUMS_INDEX + 1;
+    public static final int SYNC_INDEX = TAGS_INDEX + 1;
+    public static final int ACCOUNT_INDEX = SYNC_INDEX + 1;
 
     public static interface OnMenuClickListener {
         public void onMenuClick(int position);
@@ -230,11 +229,6 @@ public class NavigationHandlerFragment extends CommonFragment {
     void initPager()
     {
         adapter.add(
-                R.string.tab_home,
-                R.drawable.menu_latest_2states,
-                HomeFragment.class,
-                null);
-        adapter.add(
                 R.string.tab_gallery,
                 R.drawable.menu_gallery_2states,
                 GalleryFragment.class, null,
@@ -377,16 +371,6 @@ public class NavigationHandlerFragment extends CommonFragment {
     public SyncFragment getSyncFragment()
     {
         return getFragment(SYNC_INDEX);
-    }
-
-    /**
-     * Get home fragment
-     * 
-     * @return
-     */
-    public HomeFragment getHomeFragment()
-    {
-        return getFragment(HOME_INDEX);
     }
 
     /**

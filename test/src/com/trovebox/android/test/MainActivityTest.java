@@ -11,7 +11,6 @@ import android.test.ActivityInstrumentationTestCase2;
 import com.actionbarsherlock.app.ActionBar;
 import com.trovebox.android.app.AlbumsFragment;
 import com.trovebox.android.app.GalleryFragment;
-import com.trovebox.android.app.HomeFragment;
 import com.trovebox.android.app.MainActivity;
 import com.trovebox.android.app.NavigationHandlerFragment;
 import com.trovebox.android.app.SyncFragment;
@@ -45,7 +44,7 @@ public class MainActivityTest extends
     {
         fragment = activity.getCurrentFragment();
         assertNotNull(fragment);
-        assertTrue(fragment instanceof HomeFragment);
+        assertTrue(fragment instanceof GalleryFragment);
     }
 
     public void testTabSelection() throws InterruptedException
@@ -59,8 +58,6 @@ public class MainActivityTest extends
                 AlbumsFragment.class);
         testSingleTabSelection(NavigationHandlerFragment.TAGS_INDEX,
                 TagsFragment.class);
-        testSingleTabSelection(NavigationHandlerFragment.HOME_INDEX,
-                HomeFragment.class);
 
     }
 
