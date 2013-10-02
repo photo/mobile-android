@@ -4,14 +4,13 @@ package com.trovebox.android.app;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
 
+import org.holoeverywhere.app.Activity;
 import org.holoeverywhere.app.AlertDialog;
 import org.holoeverywhere.app.Dialog;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
-import android.app.Activity;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
@@ -29,6 +28,8 @@ import com.trovebox.android.app.net.account.IAccountTroveboxApiFactory;
 import com.trovebox.android.app.util.CommonUtils;
 import com.trovebox.android.app.util.GuiUtils;
 import com.trovebox.android.app.util.LoginUtils;
+import com.trovebox.android.app.util.LoginUtils.LoginActionHandler;
+import com.trovebox.android.app.util.ObjectAccessor;
 import com.trovebox.android.app.util.TrackerUtils;
 
 /**
@@ -36,16 +37,26 @@ import com.trovebox.android.app.util.TrackerUtils;
  * 
  * @author Eugene Popovich
  */
-public class GoogleLoginFragment extends CommonRetainedFragmentWithTaskAndProgress {
+public class GoogleLoginFragment extends CommonRetainedFragmentWithTaskAndProgress implements
+        LoginActionHandler {
 
     private static final String TAG = GoogleLoginFragment.class.getSimpleName();
     public static final String SCOPE =
             "audience:server:client_id:"
                     + CommonUtils.getStringResource(R.string.google_auth_server_client_id);
-    int requestCode;
-    boolean delayedLoggedIn = false;
+    static WeakReference<GoogleLoginFragment> sCurrentInstance;
+    static ObjectAccessor<GoogleLoginFragment> sCurrentInstanceAccessor = new ObjectAccessor<GoogleLoginFragment>() {
+        private static final long serialVersionUID = 1L;
 
-    static WeakReference<GoogleLoginFragment> currentInstance;
+        @Override
+        public GoogleLoginFragment run() {
+            return sCurrentInstance == null ? null : sCurrentInstance.get();
+        }
+    };
+
+    int mRequestCode;
+    boolean mDelayedLoginProcessing = false;
+    AccountTroveboxResponse mLastResponse;
 
     /**
      * Empty constructor as per the Fragment documentation
@@ -57,19 +68,19 @@ public class GoogleLoginFragment extends CommonRetainedFragmentWithTaskAndProgre
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        currentInstance = new WeakReference<GoogleLoginFragment>(this);
+        sCurrentInstance = new WeakReference<GoogleLoginFragment>(this);
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if (currentInstance != null)
+        if (sCurrentInstance != null)
         {
-            if (currentInstance.get() == GoogleLoginFragment.this
-                    || currentInstance.get() == null)
+            if (sCurrentInstance.get() == GoogleLoginFragment.this
+                    || sCurrentInstance.get() == null)
             {
                 CommonUtils.debug(TAG, "Nullify current instance");
-                currentInstance = null;
+                sCurrentInstance = null;
             } else
             {
                 CommonUtils.debug(TAG,
@@ -78,25 +89,8 @@ public class GoogleLoginFragment extends CommonRetainedFragmentWithTaskAndProgre
         }
     }
 
-    @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        if (delayedLoggedIn)
-        {
-            delayedLoggedIn = false;
-            onLoggedIn(getActivity());
-        }
-    }
-
-    void onLoggedIn(Activity activity) {
-        // start new activity
-        startActivity(new Intent(activity,
-                MainActivity.class));
-        LoginUtils.sendLoggedInBroadcast(activity);
-    }
-
     public void doLogin(int requestCode) {
-        this.requestCode = requestCode;
+        this.mRequestCode = requestCode;
         int availabilityResult = GooglePlayServicesUtil
                 .isGooglePlayServicesAvailable(getActivity());
         if (availabilityResult == ConnectionResult.SUCCESS)
@@ -134,7 +128,7 @@ public class GoogleLoginFragment extends CommonRetainedFragmentWithTaskAndProgre
             android.app.Dialog errorDialog = GooglePlayServicesUtil.getErrorDialog(
                     availabilityResult,
                     getActivity(),
-                    requestCode);
+                    mRequestCode);
             errorDialog.show();
         } catch (Exception ex)
         {
@@ -188,6 +182,25 @@ public class GoogleLoginFragment extends CommonRetainedFragmentWithTaskAndProgre
         return CommonUtils.getStringResource(R.string.logging_in_message);
     }
 
+    @Override
+    public void processLoginCredentials(com.trovebox.android.app.model.Credentials credentials) {
+        Activity activity = getSupportActivity();
+        credentials.saveCredentials(activity);
+        LoginUtils.onLoggedIn(activity, true);
+    }
+
+    void processLoginResonse(Activity activity) {
+        LoginUtils.processSuccessfulLoginResult(mLastResponse, sCurrentInstanceAccessor, activity);
+    }
+
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        if (mDelayedLoginProcessing) {
+            mDelayedLoginProcessing = false;
+            processLoginResonse(getSupportActivity());
+        }
+    }
     private class LogInUserTask extends
             RetainedTask {
         AccountTroveboxResponse result;
@@ -199,17 +212,17 @@ public class GoogleLoginFragment extends CommonRetainedFragmentWithTaskAndProgre
 
         @Override
         protected void onSuccessPostExecuteAdditional() {
-            // save credentials.
-            result.saveCredentials(TroveboxApplication.getContext());
-
-            Activity activity = getActivity();
-            if (activity != null)
-            {
-                onLoggedIn(activity);
-            } else
-            {
-                TrackerUtils.trackErrorEvent("activity_null", TAG);
-                delayedLoggedIn = true;
+            try {
+                mLastResponse = result;
+                Activity activity = getSupportActivity();
+                if (activity != null) {
+                    processLoginResonse(activity);
+                } else {
+                    TrackerUtils.trackErrorEvent("activity_null", TAG);
+                    mDelayedLoginProcessing = true;
+                }
+            } catch (Exception e) {
+                GuiUtils.error(TAG, e);
             }
         }
 
@@ -238,7 +251,7 @@ public class GoogleLoginFragment extends CommonRetainedFragmentWithTaskAndProgre
          */
         protected String fetchToken() throws IOException {
             try {
-                Activity activity = getActivity();
+                Activity activity = getSupportActivity();
                 if (activity == null || activity.isFinishing())
                 {
                     return null;
@@ -258,7 +271,7 @@ public class GoogleLoginFragment extends CommonRetainedFragmentWithTaskAndProgre
             } catch (UserRecoverableAuthException userRecoverableException) {
                 // Unable to authenticate, but the user can fix this.
                 // Forward the user to the appropriate activity.
-                startActivityForResult(userRecoverableException.getIntent(), requestCode);
+                startActivityForResult(userRecoverableException.getIntent(), mRequestCode);
             } catch (GoogleAuthException fatalException) {
                 GuiUtils.error(TAG, CommonUtils.getStringResource(
                         R.string.errorCouldNotFetchGoogleAccountToken,
@@ -279,7 +292,7 @@ public class GoogleLoginFragment extends CommonRetainedFragmentWithTaskAndProgre
 
         @Override
         public void itemSelected(int i) {
-            currentInstance.get().performLoginAction(getItems()[i]);
+            sCurrentInstance.get().performLoginAction(getItems()[i]);
         }
 
         @Override

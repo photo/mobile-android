@@ -21,6 +21,7 @@ import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.gson.GsonFactory;
 import com.trovebox.android.app.R;
 import com.trovebox.android.app.TroveboxApplication;
+import com.trovebox.android.app.model.Credentials;
 import com.trovebox.android.app.net.account.AccountTroveboxResponse;
 import com.trovebox.android.app.net.account.IAccountTroveboxApi;
 import com.trovebox.android.app.net.account.IAccountTroveboxApiFactory;
@@ -87,10 +88,14 @@ public class AccountTroveboxApiTest
                 tokenString);
         assertNotNull(response);
         assertTrue(response.isSuccess());
-        checkoAuthString(response.getoAuthConsumerKey());
-        checkoAuthString(response.getoAuthConsumerSecret());
-        checkoAuthString(response.getoAuthToken());
-        checkoAuthString(response.getoAuthConsumerSecret());
+        Credentials[] credentials = response.getCredentials();
+        assertNotNull(credentials);
+        assertTrue(credentials.length > 0);
+        Credentials c = credentials[0];
+        checkoAuthString(c.getoAuthConsumerKey());
+        checkoAuthString(c.getoAuthConsumerSecret());
+        checkoAuthString(c.getoAuthToken());
+        checkoAuthString(c.getoAuthConsumerSecret());
 
     }
 

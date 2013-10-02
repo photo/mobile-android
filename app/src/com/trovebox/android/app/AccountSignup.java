@@ -1,9 +1,10 @@
 
 package com.trovebox.android.app;
 
+import java.lang.ref.WeakReference;
+
 import org.holoeverywhere.app.Activity;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
@@ -17,6 +18,8 @@ import com.trovebox.android.app.net.account.IAccountTroveboxApiFactory;
 import com.trovebox.android.app.util.CommonUtils;
 import com.trovebox.android.app.util.GuiUtils;
 import com.trovebox.android.app.util.LoginUtils;
+import com.trovebox.android.app.util.LoginUtils.LoginActionHandler;
+import com.trovebox.android.app.util.ObjectAccessor;
 import com.trovebox.android.app.util.TrackerUtils;
 
 /**
@@ -83,8 +86,42 @@ public class AccountSignup extends CommonActivity {
      * The create new user fragment with the retained instance across
      * configuration change
      */
-    public static class NewUserFragment extends CommonRetainedFragmentWithTaskAndProgress {
+    public static class NewUserFragment extends CommonRetainedFragmentWithTaskAndProgress implements
+            LoginActionHandler {
         private static final String TAG = NewUserFragment.class.getSimpleName();
+
+        static WeakReference<NewUserFragment> sCurrentInstance;
+        static ObjectAccessor<NewUserFragment> sCurrentInstanceAccessor = new ObjectAccessor<NewUserFragment>() {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public NewUserFragment run() {
+                return sCurrentInstance == null ? null : sCurrentInstance.get();
+            }
+        };
+
+        boolean mDelayedLoginProcessing = false;
+        AccountTroveboxResponse mLastResponse;
+
+        @Override
+        public void onCreate(Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+            sCurrentInstance = new WeakReference<NewUserFragment>(this);
+        }
+
+        @Override
+        public void onDestroy() {
+            if (sCurrentInstance != null) {
+                if (sCurrentInstance.get() == NewUserFragment.this || sCurrentInstance.get() == null) {
+                    CommonUtils.debug(TAG, "Nullify current instance");
+                    sCurrentInstance = null;
+                } else {
+                    CommonUtils.debug(TAG,
+                            "Skipped nullify of current instance, such as it is not the same");
+                }
+            }
+            super.onDestroy();
+        }
 
         @Override
         public String getLoadingMessage() {
@@ -95,6 +132,26 @@ public class AccountSignup extends CommonActivity {
             startRetainedTask(new NewUserTask(username, email, password));
         }
 
+        @Override
+        public void processLoginCredentials(com.trovebox.android.app.model.Credentials credentials) {
+            Activity activity = getSupportActivity();
+            credentials.saveCredentials(activity);
+            LoginUtils.onLoggedIn(activity, true);
+        }
+
+        void processLoginResonse(Activity activity) {
+            LoginUtils.processSuccessfulLoginResult(mLastResponse, sCurrentInstanceAccessor,
+                    activity);
+        }
+
+        @Override
+        public void onViewCreated(View view, Bundle savedInstanceState) {
+            super.onViewCreated(view, savedInstanceState);
+            if (mDelayedLoginProcessing) {
+                mDelayedLoginProcessing = false;
+                processLoginResonse(getSupportActivity());
+            }
+        }
         class NewUserTask extends RetainedTask {
             String username, password, email;
             AccountTroveboxResponse result;
@@ -124,15 +181,14 @@ public class AccountSignup extends CommonActivity {
             protected void onSuccessPostExecuteAdditional() {
                 try
                 {
+                    mLastResponse = result;
                     Activity activity = getSupportActivity();
-                    // save credentials.
-                    result.saveCredentials(activity);
-
-                    // start new activity
-                    startActivity(new Intent(activity,
-                            MainActivity.class));
-                    LoginUtils.sendLoggedInBroadcast(activity);
-                    activity.finish();
+                    if (activity != null) {
+                        processLoginResonse(activity);
+                    } else {
+                        TrackerUtils.trackErrorEvent("activity_null", TAG);
+                        mDelayedLoginProcessing = true;
+                    }
                 } catch (Exception e)
                 {
                     GuiUtils.error(TAG, e);

@@ -5,15 +5,6 @@ package com.trovebox.android.app;
 import org.holoeverywhere.LayoutInflater;
 import org.holoeverywhere.app.ProgressDialog;
 
-import com.trovebox.android.app.R;
-import com.trovebox.android.app.common.CommonActivity;
-import com.trovebox.android.app.common.CommonFragment;
-import com.trovebox.android.app.oauth.OAuthUtils;
-import com.trovebox.android.app.util.GuiUtils;
-import com.trovebox.android.app.util.ProgressDialogLoadingControl;
-import com.trovebox.android.app.util.TrackerUtils;
-import com.trovebox.android.app.util.regex.Patterns;
-
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -23,6 +14,14 @@ import android.view.ViewGroup;
 import android.webkit.URLUtil;
 import android.widget.Button;
 import android.widget.EditText;
+
+import com.trovebox.android.app.common.CommonActivity;
+import com.trovebox.android.app.common.CommonFragment;
+import com.trovebox.android.app.oauth.OAuthUtils;
+import com.trovebox.android.app.util.GuiUtils;
+import com.trovebox.android.app.util.ProgressDialogLoadingControl;
+import com.trovebox.android.app.util.TrackerUtils;
+import com.trovebox.android.app.util.regex.Patterns;
 
 /**
  * The activity that gets presented to the user in case the user is not logged
@@ -110,7 +109,7 @@ public class SetupActivity extends CommonActivity
                     } else
                     {
                         Preferences.setServer(getActivity(), server);
-                        OAuthUtils.askOAuth(getActivity());
+                        OAuthUtils.askOAuth(getSupportActivity());
                     }
                     break;
             }

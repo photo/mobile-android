@@ -240,6 +240,7 @@
     <string name="password_recovery_instructions">Enter your email to recover your password</string>
     <string name="instant_sign_in_instructions"><![CDATA[<b>Sign up</b> or <b>sign in</b> with a single tap]]></string>
     <string name="select_google_account">Please select google account to login with</string>
+    <string name="select_trovebox_account">Please select trovebox account to login with</string>
     <!-- Hints -->
     <string name="hint_email">email</string>
     <string name="hint_password">password</string>

@@ -239,6 +239,7 @@
     <string name="password_recovery_instructions">Введите email чтобы восстановить пароль</string>
     <string name="instant_sign_in_instructions"><![CDATA[<b>Зарегистрируйтесь</b> или <b>войдите</b> в одно касание]]></string>
     <string name="select_google_account">Пожалуйста выберите аккаунт google для входа</string>
+    <string name="select_trovebox_account">Пожалуйста выберите аккаунт trovebox для входа</string>
     <!-- Hints -->
     <string name="hint_email">email</string>
     <string name="hint_password">пароль</string>
