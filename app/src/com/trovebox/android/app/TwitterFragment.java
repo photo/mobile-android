@@ -139,7 +139,7 @@ public class TwitterFragment extends CommonStyledDialogFragment
                     }
                 }
             });
-            if (!textModified && photo.isPrivate())
+            if (!textModified)
             {
                 sendButton.setEnabled(false);
                 PhotoUtils.validateShareTokenExistsAsyncAndRunAsync(photo,

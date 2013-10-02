@@ -101,7 +101,7 @@ public class ShareUtils {
                         Uri.fromParts("mailto", mailId, null));
                 emailIntent.putExtra(android.content.Intent.EXTRA_SUBJECT,
                         CommonUtils.getStringResource(R.string.share_email_default_title));
-                String url = PhotoUtils.getShareUrl(photo, photo.isPrivate());
+                String url = PhotoUtils.getShareUrl(photo);
                 String bodyText = CommonUtils.getStringResource(
                         R.string.share_email_default_body,
                         url, url);
@@ -113,16 +113,10 @@ public class ShareUtils {
                         CommonUtils.getStringResource(R.string.share_email_send_title)));
             }
         };
-        if (photo.isPrivate())
-        {
-            PhotoUtils.validateShareTokenExistsAsyncAndRunAsync(photo,
-                    runnable,
-                    null,
-                    loadingControl);
-        } else
-        {
-            runnable.run(photo);
-        }
+        PhotoUtils.validateShareTokenExistsAsyncAndRunAsync(photo,
+                runnable,
+                null,
+                loadingControl);
 
     }
 
@@ -144,7 +138,7 @@ public class ShareUtils {
                 shareIntent.setType("text/plain");
                 shareIntent.putExtra(android.content.Intent.EXTRA_SUBJECT,
                         CommonUtils.getStringResource(R.string.share_system_default_title));
-                String url = PhotoUtils.getShareUrl(photo, photo.isPrivate());
+                String url = PhotoUtils.getShareUrl(photo);
                 String bodyText = CommonUtils.getStringResource(
                         R.string.share_system_default_body,
                         url, url);
@@ -156,16 +150,10 @@ public class ShareUtils {
                         CommonUtils.getStringResource(R.string.share_system_send_title)));
             }
         };
-        if (photo.isPrivate())
-        {
-            PhotoUtils.validateShareTokenExistsAsyncAndRunAsync(photo,
-                    runnable,
-                    null,
-                    loadingControl);
-        } else
-        {
-            runnable.run(photo);
-        }
+        PhotoUtils.validateShareTokenExistsAsyncAndRunAsync(photo,
+                runnable,
+                null,
+                loadingControl);
 
     }
 

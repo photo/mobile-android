@@ -212,6 +212,16 @@ public class PhotoUtils {
      * Get the photo share url
      * 
      * @param photo the photo to get the share url for
+     * @return
+     */
+    public static String getShareUrl(Photo photo) {
+        return getShareUrl(photo, true);
+    }
+
+    /**
+     * Get the photo share url
+     * 
+     * @param photo the photo to get the share url for
      * @param appendToken whether to append share token at the end of url
      * @return
      */
