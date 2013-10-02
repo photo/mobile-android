@@ -151,6 +151,9 @@ public class GalleryFragment extends CommonRefreshableFragmentWithImageWorker
         }
 
         photosGrid = (ListView) v.findViewById(R.id.list_photos);
+        if (photosGridListener != null) {
+            GuiUtils.removeGlobalOnLayoutListener(photosGrid, photosGridListener);
+        }
         photosGridListener = new ViewTreeObserver.OnGlobalLayoutListener()
         {
             int lastHeight = 0;
@@ -162,6 +165,7 @@ public class GalleryFragment extends CommonRefreshableFragmentWithImageWorker
                         photosGrid.getWidth() || photosGrid.getHeight() != lastHeight))
                 {
                     CommonUtils.debug(TAG, "Reinit grid groups");
+                    mAdapter.imageFlowUtils.onGroupsStructureModified();
                     mAdapter.imageFlowUtils.buildGroups(photosGrid.getWidth(),
                             mImageThumbSize, photosGrid.getHeight() - 2
                                     * (mImageThumbBorder
@@ -412,8 +416,8 @@ public class GalleryFragment extends CommonRefreshableFragmentWithImageWorker
 
         @Override
         public void deleteItemAt(int index) {
-            super.deleteItemAt(index);
             imageFlowUtils.onGroupsStructureModified();
+            super.deleteItemAt(index);
         }
     }
 
