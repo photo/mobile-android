@@ -10,6 +10,7 @@ import org.holoeverywhere.addon.AddonSlider.AddonSliderA;
 import org.holoeverywhere.widget.LinearLayout;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -21,6 +22,7 @@ import android.view.inputmethod.InputMethodManager;
 
 import com.trovebox.android.app.common.CommonFragment;
 import com.trovebox.android.app.common.lifecycle.ViewPagerHandler;
+import com.trovebox.android.app.model.Album;
 import com.trovebox.android.app.net.SystemVersionResponseUtils;
 import com.trovebox.android.app.ui.adapter.FragmentPagerAdapter;
 import com.trovebox.android.app.ui.widget.SliderCategorySeparator;
@@ -28,6 +30,7 @@ import com.trovebox.android.app.ui.widget.SliderNavigationItem;
 import com.trovebox.android.app.util.CommonUtils;
 import com.trovebox.android.app.util.GuiUtils;
 import com.trovebox.android.app.util.LoadingControl;
+import com.trovebox.android.app.util.RunnableWithResult;
 import com.trovebox.android.app.util.TrackerUtils;
 
 /**
@@ -60,7 +63,8 @@ public class NavigationHandlerFragment extends CommonFragment {
         private int mIconId;
         private final Bundle mArgs;
         private Fragment mFragment;
-        private Runnable runOnReselect;
+        private Runnable mRunOnReselect;
+        RunnableWithResult<String> dynamicTitleGenerator;
 
         public FragmentWrapper(int title, int icon, Class<T> clz,
                 Bundle args,
@@ -71,7 +75,7 @@ public class NavigationHandlerFragment extends CommonFragment {
             mPosition = position;
             mClass = clz;
             mArgs = args;
-            this.runOnReselect = runOnReselect;
+            this.mRunOnReselect = runOnReselect;
         }
 
         @Override
@@ -95,9 +99,9 @@ public class NavigationHandlerFragment extends CommonFragment {
                 TrackerUtils.trackNavigationItemReselectedEvent(TAG,
                         NavigationHandlerFragment.this);
                 CommonUtils.debug(TAG, "onNavigationItemReselected");
-                if (mCurrentPage == mPosition && runOnReselect != null)
+                if (mCurrentPage == mPosition && mRunOnReselect != null)
                 {
-                    runOnReselect.run();
+                    mRunOnReselect.run();
                 }
             }
         }
@@ -115,6 +119,14 @@ public class NavigationHandlerFragment extends CommonFragment {
         void selectFragment()
         {
             selectTab(mPosition);
+        }
+
+        public String getActionbarTitle() {
+            String title = dynamicTitleGenerator == null ? null : dynamicTitleGenerator.run();
+            if (title == null) {
+                title = CommonUtils.getStringResource(mTitleId);
+            }
+            return title;
         }
     }
 
@@ -228,20 +240,37 @@ public class NavigationHandlerFragment extends CommonFragment {
      */
     void initPager()
     {
-        adapter.add(
-                R.string.tab_gallery,
-                R.drawable.menu_gallery_2states,
-                GalleryFragment.class, null,
-                new Runnable() {
-                    @Override
-                    public void run() {
-                        GalleryFragment gf = getGalleryFragment();
-                        if (gf != null)
-                        {
-                            gf.cleanRefreshIfFiltered();
+        {
+            FragmentWrapper<?> wrapper;
+            wrapper = adapter.add(R.string.tab_gallery, R.drawable.menu_gallery_2states,
+                    GalleryFragment.class, null, new Runnable() {
+                        @Override
+                        public void run() {
+                            GalleryFragment gf = getGalleryFragment();
+                            if (gf != null) {
+                                gf.cleanRefreshIfFiltered();
+                            }
+                            setActionBarTitle(adapter.wrappers.get(GALLERY_INDEX));
                         }
+                    });
+            wrapper.dynamicTitleGenerator = new RunnableWithResult<String>() {
+
+                @Override
+                public String run() {
+                    GalleryFragment gf = getGalleryFragment();
+                    Album album = null;
+                    if (gf != null) {
+                        album = gf.getAlbum();
                     }
-                });
+                    if (album == null) {
+                        Intent intent = getActivity().getIntent();
+                        album = intent != null ? (Album) intent
+                                .getParcelableExtra(GalleryFragment.EXTRA_ALBUM) : null;
+                    }
+                    return album == null ? null : album.getName();
+                }
+            };
+        }
         adapter.add(
                 R.string.tab_albums,
                 R.drawable.menu_album_2states,
@@ -388,6 +417,10 @@ public class NavigationHandlerFragment extends CommonFragment {
         return (AccountFragment) result;
     }
 
+    void setActionBarTitle(FragmentWrapper<?> wrapper) {
+        getSupportActivity().setActionBarTitle(" " + wrapper.getActionbarTitle());
+    }
+    
     /**
      * Custom fragment pager adapter
      */
@@ -463,11 +496,7 @@ public class NavigationHandlerFragment extends CommonFragment {
                 @Override
                 public void run() {
                     if (getSupportActivity() != null && !getSupportActivity().isFinishing()) {
-                        getSupportActivity()
-                                .setActionBarTitle(
-                                        " "
-                                                + CommonUtils.getStringResource(wrappers
-                                                        .get(position).mTitleId));
+                        setActionBarTitle(wrappers.get(position));
                         refreshLeftView();
                     }
                 }

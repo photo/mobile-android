@@ -28,6 +28,7 @@ import com.trovebox.android.app.TwitterFragment.TwitterLoadingControlAccessor;
 import com.trovebox.android.app.bitmapfun.util.ImageCacheUtils;
 import com.trovebox.android.app.common.CommonActivity;
 import com.trovebox.android.app.facebook.FacebookProvider;
+import com.trovebox.android.app.model.Album;
 import com.trovebox.android.app.model.Photo;
 import com.trovebox.android.app.model.utils.PhotoUtils;
 import com.trovebox.android.app.model.utils.PhotoUtils.PhotoDeletedHandler;
@@ -339,7 +340,7 @@ public class MainActivity extends CommonActivity
     }
 
     @Override
-    public void openGallery(String tag, String album)
+    public void openGallery(String tag, Album album)
     {
         Intent intent = getIntent();
         if (intent == null)

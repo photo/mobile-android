@@ -19,6 +19,7 @@ import android.widget.ListView;
 import com.trovebox.android.app.bitmapfun.util.ImageCache;
 import com.trovebox.android.app.bitmapfun.util.ImageFetcher;
 import com.trovebox.android.app.common.CommonRefreshableFragmentWithImageWorker;
+import com.trovebox.android.app.model.Album;
 import com.trovebox.android.app.model.Photo;
 import com.trovebox.android.app.model.utils.PhotoUtils;
 import com.trovebox.android.app.model.utils.PhotoUtils.PhotoDeletedHandler;
@@ -47,7 +48,7 @@ public class GalleryFragment extends CommonRefreshableFragmentWithImageWorker
     private StartNowHandler startNowHandler;
     private GalleryAdapterExt mAdapter;
     private String mTags;
-    private String mAlbum;
+    private Album mAlbum;
 
     private ReturnSizes thumbSize;
     private ReturnSizes returnSizes;
@@ -72,7 +73,7 @@ public class GalleryFragment extends CommonRefreshableFragmentWithImageWorker
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putString(EXTRA_TAG, mTags);
-        outState.putString(EXTRA_ALBUM, mAlbum);
+        outState.putParcelable(EXTRA_ALBUM, mAlbum);
     }
 
     @Override
@@ -84,7 +85,7 @@ public class GalleryFragment extends CommonRefreshableFragmentWithImageWorker
         if (savedInstanceState != null)
         {
             mTags = savedInstanceState.getString(EXTRA_TAG);
-            mAlbum = savedInstanceState.getString(EXTRA_ALBUM);
+            mAlbum = savedInstanceState.getParcelable(EXTRA_ALBUM);
         } else
         {
             mTags = null;
@@ -106,6 +107,10 @@ public class GalleryFragment extends CommonRefreshableFragmentWithImageWorker
         loadingControl = ((LoadingControl) activity);
         startNowHandler = ((StartNowHandler) activity);
 
+    }
+
+    public Album getAlbum() {
+        return mAlbum;
     }
 
     @Override
@@ -139,11 +144,11 @@ public class GalleryFragment extends CommonRefreshableFragmentWithImageWorker
             mTags = intent != null ? intent
                     .getStringExtra(EXTRA_TAG)
                     : null;
-            mAlbum = intent != null ? intent.getStringExtra(EXTRA_ALBUM) : null;
+            mAlbum = intent != null ? (Album) intent.getParcelableExtra(EXTRA_ALBUM) : null;
         }
         if (mTags != null || mAlbum != null)
         {
-            mAdapter = new GalleryAdapterExt(mTags, mAlbum);
+            mAdapter = new GalleryAdapterExt(mTags, mAlbum == null ? null : mAlbum.getId());
             removeTagsAndAlbumInformationFromActivityIntent();
         } else
         {
