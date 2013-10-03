@@ -462,10 +462,12 @@ public class NavigationHandlerFragment extends CommonFragment {
 
                 @Override
                 public void run() {
-                    if (getSupportActivity() != null && !getSupportActivity().isFinishing())
-                    {
-                        getSupportActivity().setActionBarTitle(": "
-                                + CommonUtils.getStringResource(wrappers.get(position).mTitleId));
+                    if (getSupportActivity() != null && !getSupportActivity().isFinishing()) {
+                        getSupportActivity()
+                                .setActionBarTitle(
+                                        " "
+                                                + CommonUtils.getStringResource(wrappers
+                                                        .get(position).mTitleId));
                         refreshLeftView();
                     }
                 }
