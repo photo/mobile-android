@@ -37,15 +37,15 @@ public interface ITroveboxApi {
     /**
      * Get albums.
      * 
-     * @param resize which sizes should be returned
      * @param paging paging information
+     * @param skipEmpty whether to do not return empty albums
      * @return albums which are used on the server
      * @throws ClientProtocolException
      * @throws IOException
      * @throws IllegalStateException
      * @throws JSONException
      */
-    AlbumsResponse getAlbums(Paging paging)
+    AlbumsResponse getAlbums(Paging paging, boolean skipEmpty)
             throws ClientProtocolException, IllegalStateException, IOException,
             JSONException;
 

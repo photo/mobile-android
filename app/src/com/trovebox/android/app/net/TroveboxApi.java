@@ -50,16 +50,20 @@ public class TroveboxApi extends ApiBase implements ITroveboxApi {
             IOException,
             IllegalStateException, JSONException
     {
-        return getAlbums(null);
+        return getAlbums(null, true);
     }
 
     @Override
-    public AlbumsResponse getAlbums(Paging paging) throws ClientProtocolException,
+    public AlbumsResponse getAlbums(Paging paging, boolean skipEmpty)
+            throws ClientProtocolException,
             IOException,
             IllegalStateException, JSONException
     {
         ApiRequest request = new ApiRequest(ApiRequest.GET, "/albums/list.json");
         addPagingRestrictions(paging, request);
+        if (skipEmpty) {
+            request.addParameter("skipEmpty", "1");
+        }
         ApiResponse response = execute(request);
         return new AlbumsResponse(response.getJSONObject());
     }
