@@ -38,4 +38,21 @@ public class AccountTroveboxResponseTest extends InstrumentationTestCase {
         CredentialsTest.checkCredentials(credentials[0], "hello@trovebox.com");
         CredentialsTest.checkCredentials(credentials[1], "hello2@trovebox.com");
     }
+
+    public void testMultiResponseV2() throws JSONException {
+        JSONObject json = JSONUtils.getJson(getInstrumentation().getContext(),
+                R.raw.json_login_multiple_v2);
+        AccountTroveboxResponse response = new AccountTroveboxResponse(RequestType.UNKNOWN, json);
+        assertNotNull(response);
+        assertEquals(200, response.getCode());
+        Credentials[] credentials = response.getCredentials();
+        assertNotNull(credentials);
+        assertTrue(credentials.length == 3);
+        CredentialsTest.checkCredentialsV2(credentials[0], "hello@trovebox.com",
+                "http://test.trovebox.com");
+        CredentialsTest.checkCredentialsV2(credentials[1], "hellox@trovebox.com",
+                "http://test2.trovebox.com");
+        CredentialsTest.checkCredentialsV2(credentials[2], "hellox2@trovebox.com",
+                "http://test3.trovebox.com");
+    }
 }

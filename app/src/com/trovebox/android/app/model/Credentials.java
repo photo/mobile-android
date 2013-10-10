@@ -16,7 +16,7 @@ import com.trovebox.android.app.R;
  * @author Eugene Popovich
  */
 public class Credentials implements Parcelable {
-    private String mServer;
+    private String mHost;
     private String mOAuthConsumerKey;
     private String mOAuthConsumerSecret;
     private String mOAuthToken;
@@ -27,7 +27,7 @@ public class Credentials implements Parcelable {
     }
 
     public Credentials(JSONObject json) throws JSONException {
-        mServer = "http://" + json.getString("host");
+        mHost = json.getString("host");
         mOAuthConsumerKey = json.getString("id");
         mOAuthConsumerSecret = json.getString("clientSecret");
         mOAuthToken = json.getString("userToken");
@@ -35,52 +35,32 @@ public class Credentials implements Parcelable {
         mEmail = json.getString("owner");
     }
 
-    public String getServer() {
-        return mServer;
+    public String getHost() {
+        return mHost;
     }
 
-    public void setServer(String server) {
-        this.mServer = server;
+    public String getServer() {
+        return "http://" + mHost;
     }
 
     public String getoAuthConsumerKey() {
         return mOAuthConsumerKey;
     }
 
-    public void setoAuthConsumerKey(String oAuthConsumerKey) {
-        this.mOAuthConsumerKey = oAuthConsumerKey;
-    }
-
     public String getoAuthConsumerSecret() {
         return mOAuthConsumerSecret;
-    }
-
-    public void setoAuthConsumerSecret(String oAuthConsumerSecret) {
-        this.mOAuthConsumerSecret = oAuthConsumerSecret;
     }
 
     public String getoAuthToken() {
         return mOAuthToken;
     }
 
-    public void setoAuthToken(String oAuthToken) {
-        this.mOAuthToken = oAuthToken;
-    }
-
     public String getoAuthTokenSecret() {
         return mOAuthTokenSecret;
     }
 
-    public void setoAuthTokenSecret(String oAuthTokenSecret) {
-        this.mOAuthTokenSecret = oAuthTokenSecret;
-    }
-
     public String getEmail() {
         return mEmail;
-    }
-
-    public void setEmail(String email) {
-        this.mEmail = email;
     }
 
     public void saveCredentials(Context context) {
@@ -113,7 +93,7 @@ public class Credentials implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel out, int flags) {
-        out.writeString(mServer);
+        out.writeString(mHost);
         out.writeString(mEmail);
         out.writeString(mOAuthConsumerKey);
         out.writeString(mOAuthConsumerSecret);
@@ -135,7 +115,7 @@ public class Credentials implements Parcelable {
 
     private Credentials(Parcel in) {
         this();
-        mServer = in.readString();
+        mHost = in.readString();
         mEmail = in.readString();
         mOAuthConsumerKey = in.readString();
         mOAuthConsumerSecret = in.readString();

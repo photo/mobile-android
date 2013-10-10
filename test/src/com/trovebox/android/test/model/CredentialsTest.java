@@ -15,8 +15,7 @@ public class CredentialsTest extends InstrumentationTestCase {
     public void testFromJson() {
         Credentials c;
         try {
-            JSONObject json = JSONUtils
-.getJson(getInstrumentation().getContext(),
+            JSONObject json = JSONUtils.getJson(getInstrumentation().getContext(),
                     R.raw.json_credentials);
             c = new Credentials(json);
         } catch (JSONException e) {
@@ -29,8 +28,7 @@ public class CredentialsTest extends InstrumentationTestCase {
     public void testCredentialsParcelable() {
         Credentials c;
         try {
-            JSONObject json = JSONUtils
-.getJson(getInstrumentation().getContext(),
+            JSONObject json = JSONUtils.getJson(getInstrumentation().getContext(),
                     R.raw.json_credentials);
             c = new Credentials(json);
         } catch (JSONException e) {
@@ -53,6 +51,17 @@ public class CredentialsTest extends InstrumentationTestCase {
         assertNotNull(c);
         assertEquals(c.getEmail(), email);
         assertEquals(c.getServer(), "http://apigee.trovebox.com");
+        assertEquals(c.getoAuthConsumerKey(), "102230629a6802fbca9825a4617bfe");
+        assertEquals(c.getoAuthConsumerSecret(), "0f5d654bca");
+        assertEquals(c.getoAuthToken(), "b662440d621f2f71352f8865888fe2");
+        assertEquals(c.getoAuthTokenSecret(), "6d1e8fc274");
+
+    }
+
+    public static void checkCredentialsV2(Credentials c, String email, String server) {
+        assertNotNull(c);
+        assertEquals(c.getEmail(), email);
+        assertEquals(c.getServer(), server);
         assertEquals(c.getoAuthConsumerKey(), "102230629a6802fbca9825a4617bfe");
         assertEquals(c.getoAuthConsumerSecret(), "0f5d654bca");
         assertEquals(c.getoAuthToken(), "b662440d621f2f71352f8865888fe2");

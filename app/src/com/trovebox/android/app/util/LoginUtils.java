@@ -181,7 +181,7 @@ public class LoginUtils
 
             final String[] items = new String[handler.getItems().length];
             for (int i = 0; i < items.length; i++) {
-                items[i] = handler.getItems()[i].getEmail();
+                items[i] = handler.getItems()[i].getHost();
             }
 
             AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
