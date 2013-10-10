@@ -47,6 +47,30 @@ public class CredentialsTest extends InstrumentationTestCase {
         checkCredentials(createFromParcel, "hello@trovebox.com");
     }
 
+    public void testCredentialsParcelableV2() {
+        Credentials c;
+        try {
+            JSONObject json = JSONUtils.getJson(getInstrumentation().getContext(),
+                    R.raw.json_credentials_v2);
+            c = new Credentials(json);
+        } catch (JSONException e) {
+            throw new AssertionError("This exception should not be thrown!");
+        }
+
+        checkCredentialsV2(c, "hellox2@trovebox.com", "http://test3.trovebox.com",
+                Credentials.GROUP_TYPE);
+
+        Parcel parcel = Parcel.obtain();
+        c.writeToParcel(parcel, 0);
+        // done writing, now reset parcel for reading
+        parcel.setDataPosition(0);
+        // finish round trip
+        Credentials createFromParcel = Credentials.CREATOR.createFromParcel(parcel);
+
+        checkCredentialsV2(createFromParcel, "hellox2@trovebox.com", "http://test3.trovebox.com",
+                Credentials.GROUP_TYPE);
+    }
+
     public static void checkCredentials(Credentials c, String email) {
         assertNotNull(c);
         assertEquals(c.getEmail(), email);
@@ -58,10 +82,11 @@ public class CredentialsTest extends InstrumentationTestCase {
 
     }
 
-    public static void checkCredentialsV2(Credentials c, String email, String server) {
+    public static void checkCredentialsV2(Credentials c, String email, String server, String type) {
         assertNotNull(c);
         assertEquals(c.getEmail(), email);
         assertEquals(c.getServer(), server);
+        assertEquals(c.getType(), type);
         assertEquals(c.getoAuthConsumerKey(), "102230629a6802fbca9825a4617bfe");
         assertEquals(c.getoAuthConsumerSecret(), "0f5d654bca");
         assertEquals(c.getoAuthToken(), "b662440d621f2f71352f8865888fe2");

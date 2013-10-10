@@ -350,7 +350,7 @@ public class MainActivity extends CommonActivity
         }
         intent.putExtra(GalleryFragment.EXTRA_TAG, tag);
         intent.putExtra(GalleryFragment.EXTRA_ALBUM, album);
-        selectTab(NavigationHandlerFragment.GALLERY_INDEX);
+        selectTab(navigationHandlerFragment.getGalleryIndex());
     }
 
     @Override
@@ -393,11 +393,12 @@ public class MainActivity extends CommonActivity
     public void syncStarted()
     {
         CommonUtils.debug(TAG, "Sync started");
-        if (navigationHandlerFragment.getSelectedNavigationIndex() == NavigationHandlerFragment.SYNC_INDEX)
+        if (navigationHandlerFragment.getSelectedNavigationIndex() == navigationHandlerFragment
+                .getSyncIndex())
         {
             if (!instanceSaved)
             {
-                selectTab(NavigationHandlerFragment.GALLERY_INDEX);
+                selectTab(navigationHandlerFragment.getGalleryIndex());
             }
         }
     }
@@ -405,8 +406,8 @@ public class MainActivity extends CommonActivity
     @Override
     public void uploadsCleared()
     {
-        SyncFragment fragment = navigationHandlerFragment
-                .getFragment(NavigationHandlerFragment.SYNC_INDEX);
+        SyncFragment fragment = navigationHandlerFragment.getFragment(navigationHandlerFragment
+                .getSyncIndex());
         if (fragment != null)
         {
             fragment.uploadsCleared();
@@ -479,11 +480,12 @@ public class MainActivity extends CommonActivity
     @Override
     public void startNow() {
         CommonUtils.debug(TAG, "Start now");
-        if (navigationHandlerFragment.getSelectedNavigationIndex() != NavigationHandlerFragment.SYNC_INDEX)
+        if (navigationHandlerFragment.getSelectedNavigationIndex() != navigationHandlerFragment
+                .getSyncIndex())
         {
             if (!instanceSaved)
             {
-                selectTab(NavigationHandlerFragment.SYNC_INDEX);
+                selectTab(navigationHandlerFragment.getSyncIndex());
             }
         }
     }

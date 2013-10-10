@@ -19,6 +19,7 @@
     <string name="setting_oauth_token_secret">setting_oauth_token_secret</string>
     <string name="setting_remaining_upload_limit">setting_remaining_upload_limit</string>
     <string name="setting_account_type">setting_account_type</string>
+    <string name="setting_account_access_type">setting_account_access_type</string>
     <string name="setting_upload_limit_reset_date">setting_upload_limit_reset_date</string>
     <string name="setting_system_version_info_updated">setting_system_version_info_updated</string>
     <string name="setting_system_version_hosted">setting_system_version_hosted</string>

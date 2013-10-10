@@ -41,11 +41,34 @@ import com.trovebox.android.app.util.TrackerUtils;
  */
 public class NavigationHandlerFragment extends CommonFragment {
     static final String TAG = NavigationHandlerFragment.class.getSimpleName();
-    public static final int GALLERY_INDEX = 0;
-    public static final int ALBUMS_INDEX = GALLERY_INDEX + 1;
-    public static final int TAGS_INDEX = ALBUMS_INDEX + 1;
-    public static final int SYNC_INDEX = TAGS_INDEX + 1;
-    public static final int ACCOUNT_INDEX = SYNC_INDEX + 1;
+
+    public int getGalleryIndex() {
+        return 0;
+    }
+
+    public int getAlbumsIndex() {
+        return getGalleryIndex() + 1;
+    }
+
+    public int getTagsIndex() {
+        return hasTags() ? (getAlbumsIndex() + 1) : -1;
+    }
+
+    public int getSyncIndex() {
+        return (hasTags() ? getTagsIndex() : getAlbumsIndex()) + 1;
+    }
+
+    public int getAccountIndex() {
+        return getSyncIndex() + 1;
+    }
+
+    /**
+     * Whether the currently logged in user has access to tags
+     * @return
+     */
+    boolean hasTags() {
+        return !Preferences.isLimitedAccountAccessType();
+    }
 
     public static interface OnMenuClickListener {
         public void onMenuClick(int position);
@@ -250,7 +273,7 @@ public class NavigationHandlerFragment extends CommonFragment {
                             if (gf != null) {
                                 gf.cleanRefreshIfFiltered();
                             }
-                            setActionBarTitle(adapter.wrappers.get(GALLERY_INDEX));
+                            setActionBarTitle(adapter.wrappers.get(getGalleryIndex()));
                         }
                     });
             wrapper.dynamicTitleGenerator = new RunnableWithResult<String>() {
@@ -275,10 +298,12 @@ public class NavigationHandlerFragment extends CommonFragment {
                 R.string.tab_albums,
                 R.drawable.menu_album_2states,
                 AlbumsFragment.class, null);
-        adapter.add(
-                R.string.tab_tags,
-                R.drawable.menu_tags_2states,
-                TagsFragment.class, null);
+        if (hasTags()) {
+            adapter.add(
+                    R.string.tab_tags,
+                    R.drawable.menu_tags_2states,
+                    TagsFragment.class, null);
+        }
         adapter.add(
                 R.string.tab_sync,
                 R.drawable.menu_upload_2states,
@@ -310,9 +335,9 @@ public class NavigationHandlerFragment extends CommonFragment {
                                             wrapper = adapter.add(R.string.tab_account,
                                                     R.drawable.menu_profile_2states,
                                                     AccountFragment.class, null, null,
-                                                    ACCOUNT_INDEX);
+                                                    getAccountIndex());
                                             wrapper.mSeparatorTitleId = R.string.tab_preferences;
-                                            for (int position = ACCOUNT_INDEX + 1, size = adapter
+                                            for (int position = getAccountIndex() + 1, size = adapter
                                                     .getCount(); position < size; position++)
                                             {
                                                 wrapper = adapter.wrappers
@@ -323,7 +348,7 @@ public class NavigationHandlerFragment extends CommonFragment {
                                             adapter.notifyDataSetChanged();
                                         }
                                         rebuildLeftView();
-                                        if (mCurrentPage >= ACCOUNT_INDEX)
+                                        if (mCurrentPage >= getAccountIndex())
                                         {
                                             selectTab(mCurrentPage);
                                         }
@@ -335,7 +360,7 @@ public class NavigationHandlerFragment extends CommonFragment {
         // such as account tab may be absent at this step
         // we need to exclute tab selection in case actibeTab
         // is account
-        if (mCurrentPage < ACCOUNT_INDEX)
+        if (mCurrentPage < getAccountIndex())
         {
             selectTab(mCurrentPage);
         }
@@ -389,7 +414,7 @@ public class NavigationHandlerFragment extends CommonFragment {
      */
     public GalleryFragment getGalleryFragment()
     {
-        return getFragment(GALLERY_INDEX);
+        return getFragment(getGalleryIndex());
     }
 
     /**
@@ -399,7 +424,7 @@ public class NavigationHandlerFragment extends CommonFragment {
      */
     public SyncFragment getSyncFragment()
     {
-        return getFragment(SYNC_INDEX);
+        return getFragment(getSyncIndex());
     }
 
     /**
@@ -409,7 +434,7 @@ public class NavigationHandlerFragment extends CommonFragment {
      */
     public AccountFragment getAccountFragment()
     {
-        Fragment result = getFragment(ACCOUNT_INDEX);
+        Fragment result = getFragment(getAccountIndex());
         if (!(result instanceof AccountFragment))
         {
             result = null;

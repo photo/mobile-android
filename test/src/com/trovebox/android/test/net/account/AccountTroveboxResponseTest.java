@@ -49,10 +49,10 @@ public class AccountTroveboxResponseTest extends InstrumentationTestCase {
         assertNotNull(credentials);
         assertTrue(credentials.length == 3);
         CredentialsTest.checkCredentialsV2(credentials[0], "hello@trovebox.com",
-                "http://test.trovebox.com");
+                "http://test.trovebox.com", Credentials.OWNER_TYPE);
         CredentialsTest.checkCredentialsV2(credentials[1], "hellox@trovebox.com",
-                "http://test2.trovebox.com");
+                "http://test2.trovebox.com", Credentials.ADMIN_TYPE);
         CredentialsTest.checkCredentialsV2(credentials[2], "hellox2@trovebox.com",
-                "http://test3.trovebox.com");
+                "http://test3.trovebox.com", Credentials.GROUP_TYPE);
     }
 }

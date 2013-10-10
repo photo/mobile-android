@@ -13,6 +13,7 @@ import org.holoeverywhere.preference.PreferenceManagerHelper;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import com.trovebox.android.app.model.Credentials;
 import com.trovebox.android.app.net.ITroveboxApi;
 import com.trovebox.android.app.net.TroveboxApi;
 import com.trovebox.android.app.purchase.util.Purchase;
@@ -169,6 +170,40 @@ public class Preferences {
                 .commit();
     }
 
+    /**
+     * Set currently loggged in user account access type. Either owner, admin or
+     * group
+     * 
+     * @param accessType
+     */
+    public static void setAccountAccessType(String accessType) {
+        getLimitsSharedPreferences()
+                .edit()
+                .putString(CommonUtils.getStringResource(R.string.setting_account_access_type),
+                        accessType).commit();
+    }
+
+
+    /**
+     * Get current account access type
+     * 
+     * @return
+     */
+    public static String getAccountAccessType() {
+        return getLimitsSharedPreferences().getString(
+                CommonUtils.getStringResource(R.string.setting_account_access_type),
+                Credentials.OWNER_TYPE);
+    }
+
+    /**
+     * Check whether the limited account access is used. Usually that is 'group'
+     * account access type
+     * 
+     * @return
+     */
+    public static boolean isLimitedAccountAccessType() {
+        return getAccountAccessType().equals(Credentials.GROUP_TYPE);
+    }
     /**
      * Get the remaining uploading limit
      * 

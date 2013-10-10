@@ -16,12 +16,17 @@ import com.trovebox.android.app.R;
  * @author Eugene Popovich
  */
 public class Credentials implements Parcelable {
+    public static final String OWNER_TYPE = "owner";
+    public static final String ADMIN_TYPE = "admin";
+    public static final String GROUP_TYPE = "group";
+
     private String mHost;
     private String mOAuthConsumerKey;
     private String mOAuthConsumerSecret;
     private String mOAuthToken;
     private String mOAuthTokenSecret;
     private String mEmail;
+    private String mType;
 
     private Credentials() {
     }
@@ -33,6 +38,7 @@ public class Credentials implements Parcelable {
         mOAuthToken = json.getString("userToken");
         mOAuthTokenSecret = json.getString("userSecret");
         mEmail = json.getString("owner");
+        mType = json.optString("_type", OWNER_TYPE);
     }
 
     public String getHost() {
@@ -63,24 +69,34 @@ public class Credentials implements Parcelable {
         return mEmail;
     }
 
+    public String getType() {
+        return mType;
+    }
+
     public void saveCredentials(Context context) {
-        Preferences.setServer(context, this.getServer());
+        saveCredentials(context, this);
+    }
+
+    public static void saveCredentials(Context context, Credentials credentials) {
+        Preferences.setServer(context, credentials.getServer());
 
         Preferences.getDefaultSharedPreferences(context).edit()
                 .putBoolean(context.getString(R.string.setting_account_loggedin_key), true)
                 .commit();
 
+        Preferences.setAccountAccessType(credentials.getType());
+
         Preferences
                 .getSharedPreferences("oauth")
                 .edit()
                 .putString(context.getString(R.string.setting_oauth_consumer_key),
-                        this.getoAuthConsumerKey())
+                        credentials.getoAuthConsumerKey())
                 .putString(context.getString(R.string.setting_oauth_consumer_secret),
-                        this.getoAuthConsumerSecret())
+                        credentials.getoAuthConsumerSecret())
                 .putString(context.getString(R.string.setting_oauth_token),
-                        this.getoAuthToken())
+                        credentials.getoAuthToken())
                 .putString(context.getString(R.string.setting_oauth_token_secret),
-                        this.getoAuthTokenSecret()).commit();
+                        credentials.getoAuthTokenSecret()).commit();
     }
 
     /*****************************
@@ -95,6 +111,7 @@ public class Credentials implements Parcelable {
     public void writeToParcel(Parcel out, int flags) {
         out.writeString(mHost);
         out.writeString(mEmail);
+        out.writeString(mType);
         out.writeString(mOAuthConsumerKey);
         out.writeString(mOAuthConsumerSecret);
         out.writeString(mOAuthToken);
@@ -117,6 +134,7 @@ public class Credentials implements Parcelable {
         this();
         mHost = in.readString();
         mEmail = in.readString();
+        mType = in.readString();
         mOAuthConsumerKey = in.readString();
         mOAuthConsumerSecret = in.readString();
         mOAuthToken = in.readString();
