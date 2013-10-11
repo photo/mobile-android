@@ -442,6 +442,10 @@ public class NavigationHandlerFragment extends CommonFragment {
         return (AccountFragment) result;
     }
 
+    public void refreshActionBarTitle() {
+        setActionBarTitle(adapter.wrappers.get(getSelectedNavigationIndex()));
+    }
+    
     void setActionBarTitle(FragmentWrapper<?> wrapper) {
         getSupportActivity().setActionBarTitle(" " + wrapper.getActionbarTitle());
     }
@@ -573,4 +577,7 @@ public class NavigationHandlerFragment extends CommonFragment {
         }
     }
 
+    public static interface TitleChangedHandler {
+        void titleChanged();
+    }
 }

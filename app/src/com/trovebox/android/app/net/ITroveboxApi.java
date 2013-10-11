@@ -50,6 +50,19 @@ public interface ITroveboxApi {
             JSONException;
 
     /**
+     * Retrieve a single album.
+     * 
+     * @param albumId id of the album
+     * @return the album
+     * @throws IOException
+     * @throws ClientProtocolException
+     * @throws JSONException
+     * @throws IllegalStateException
+     */
+    AlbumResponse getAlbum(String albumId) throws ClientProtocolException,
+            IOException, IllegalStateException, JSONException;
+
+    /**
      * Retrieve a single photo.
      * 
      * @param photoId id of the photo
@@ -248,13 +261,16 @@ public interface ITroveboxApi {
             IOException, IllegalStateException, JSONException;
 
     /**
+     * Get the profile information
+     * 
+     * @param includeViewer whether to include viewer profile information
      * @return profile information
      * @throws ClientProtocolException
      * @throws IOException
      * @throws IllegalStateException
      * @throws JSONException
      */
-    ProfileResponse getProfile() throws ClientProtocolException, IOException,
+    ProfileResponse getProfile(boolean includeViewer) throws ClientProtocolException, IOException,
             IllegalStateException, JSONException;
 
     /**

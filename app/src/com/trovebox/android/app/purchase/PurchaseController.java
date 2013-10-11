@@ -10,7 +10,7 @@ import com.google.analytics.tracking.android.Transaction;
 import com.google.analytics.tracking.android.Transaction.Item;
 import com.trovebox.android.app.Preferences;
 import com.trovebox.android.app.R;
-import com.trovebox.android.app.net.ProfileResponse;
+import com.trovebox.android.app.model.ProfileInformation;
 import com.trovebox.android.app.net.ProfileResponseUtils;
 import com.trovebox.android.app.net.account.AccountLimitUtils;
 import com.trovebox.android.app.net.account.PaymentVerificationResponseUtil;
@@ -252,11 +252,11 @@ public class PurchaseController {
             return;
         }
 
-        ProfileResponseUtils.runWithProfileResponseAsync(
-                new RunnableWithParameter<ProfileResponse>() {
+        ProfileResponseUtils.runWithProfileInformationAsync(
+                new RunnableWithParameter<ProfileInformation>() {
 
                     @Override
-                    public void run(ProfileResponse parameter) {
+                    public void run(ProfileInformation parameter) {
                         CommonUtils
                                 .debug(TAG,
                                         "Running purchase request for monthly subscription in profile response context");

@@ -24,6 +24,7 @@ import com.trovebox.android.app.net.UploadMetaDataUtils;
 import com.trovebox.android.app.util.CommonUtils;
 import com.trovebox.android.app.util.GuiUtils;
 import com.trovebox.android.app.util.LoadingControl;
+import com.trovebox.android.app.util.RunnableWithParameter;
 import com.trovebox.android.app.util.SimpleAsyncTaskEx;
 import com.trovebox.android.app.util.compare.ToStringComparator;
 
@@ -50,6 +51,22 @@ public class AlbumUtils {
             Collections.sort((List<String>) values, new ToStringComparator());
         }
         return UploadMetaDataUtils.getCommaSeparatedString(values);
+    }
+    
+    /**
+     * Get the album
+     * 
+     * @param id the id of album to retrieve
+     * @param runOnSuccessAction this will be executed in case of successful
+     *            album retrieval with the retrieved album as parameter
+     * @param runnableOnFailure runnable to run in case {@link Album} retrieval
+     *            failed. Could be null
+     * @param loadingControl the loading indicator control
+     */
+    public static void getAlbumAndRunAsync(String id, RunnableWithParameter<Album> runOnSuccessAction,
+            Runnable runnableOnFailure,
+            LoadingControl loadingControl) {
+        new GetAlbumTask(id, runOnSuccessAction, runnableOnFailure, loadingControl).execute();
     }
 
     /**
@@ -147,6 +164,55 @@ public class AlbumUtils {
             }
         }
         return index;
+    }
+
+    /**
+     * The async task to retrieve album details
+     */
+    private static class GetAlbumTask extends SimpleAsyncTaskEx {
+    	
+        private Album mAlbum;
+        private String mId;
+        private RunnableWithParameter<Album> mRunOnSuccessAction;
+        private Runnable mRunnableOnFailure;
+
+        public GetAlbumTask(String id, RunnableWithParameter<Album> runOnSuccessAction,
+                Runnable runnableOnFailure,
+                LoadingControl loadingControl) {
+            super(loadingControl);
+            this.mId = id;
+            this.mRunOnSuccessAction = runOnSuccessAction;
+            this.mRunnableOnFailure = runnableOnFailure;
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... params) {
+            try {
+                if (CommonUtils.checkLoggedInAndOnline()) {
+                    AlbumResponse response = Preferences.getApi().getAlbum(mId);
+                    mAlbum = response.getAlbum();
+                    return TroveboxResponseUtils.checkResponseValid(response);
+                }
+            } catch (Exception e) {
+                GuiUtils.error(TAG, R.string.errorCouldNotGetAlbum, e);
+            }
+            return false;
+        }
+
+        @Override
+        protected void onSuccessPostExecute() {
+            if (mRunOnSuccessAction != null) {
+                mRunOnSuccessAction.run(mAlbum);
+            }
+        }
+
+        @Override
+        protected void onFailedPostExecute() {
+            super.onFailedPostExecute();
+            if (mRunnableOnFailure != null) {
+                mRunnableOnFailure.run();
+            }
+        }
     }
 
     /**

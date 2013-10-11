@@ -166,6 +166,7 @@
     <string name="errorCouldNotLoadNextAlbumsInList">Could not load next albums in list</string>
     <string name="errorCouldNotUseIntentsToOpenMaps">Could not use Intent to open maps</string>
     <string name="errorCouldNotLoadNextPhotosInList">Could not load next photos in list</string>
+    <string name="errorCouldNotGetAlbum">Could not get album</string>
     <string name="errorCouldNotGetPhoto">Could not get photo</string>
     <string name="errorCouldNotDeletePhoto">Could not delete photo</string>
     <string name="errorCouldNotUpdatePhoto">Could not update photo details</string>

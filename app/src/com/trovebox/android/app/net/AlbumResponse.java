@@ -25,12 +25,4 @@ public class AlbumResponse extends TroveboxResponse {
     public Album getAlbum() {
         return mAlbum;
     }
-
-    /**
-     * @return true if the upload was successful
-     */
-    @Override
-    public boolean isSuccess() {
-        return getCode() == 201;
-    }
 }

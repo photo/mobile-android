@@ -1,0 +1,36 @@
+{
+   "message":"User profile",
+   "code":200,
+   "result":{
+
+      "id":"current.trovebox.com",
+      "photoUrl":"http:\/\/awesomeness.openphoto.me\/custom\/201203\/62f010-Boracay-Philippines-033_100x100xCR.jpg",
+      "counts":{
+         "photos":363,
+         "albums":5,
+         "tags":37
+      },
+      "name":" Demo User",
+      "isOwner":false,
+      "viewer":{
+         "id":"hello+test@openphoto.me",
+
+         "photoUrl":"http:\/\/d1odebs29o9vbg.cloudfront.net\/custom\/196912\/27005_original-526fb8_100x100xCR.jpg",
+         "name":"Trovebox Test Name",
+         "permission":{
+            "C":[
+               4
+            ],
+            "R":[
+               4
+            ],
+            "U":[
+
+            ],
+            "D":[
+
+            ]
+         }
+      }
+   }
+}

@@ -7,9 +7,10 @@ import java.util.Date;
 import com.trovebox.android.app.Preferences;
 import com.trovebox.android.app.R;
 import com.trovebox.android.app.TroveboxApplication;
+import com.trovebox.android.app.model.ProfileInformation;
+import com.trovebox.android.app.model.ProfileInformation.ProfileLimits;
 import com.trovebox.android.app.net.ITroveboxApi;
 import com.trovebox.android.app.net.ProfileResponse;
-import com.trovebox.android.app.net.ProfileResponse.ProfileLimits;
 import com.trovebox.android.app.net.ProfileResponseUtils;
 import com.trovebox.android.app.net.SystemVersionResponseUtils;
 import com.trovebox.android.app.net.TroveboxResponseUtils;
@@ -200,7 +201,7 @@ public class AccountLimitUtils {
         {
             CommonUtils.debug(TAG,
                     "Logged in and online. Running actions in ProfileResponse context.");
-            ProfileResponseUtils.runWithProfileResponseAsync(
+            ProfileResponseUtils.runWithProfileResponseAsync(false,
                     new RunnableWithParameter<ProfileResponse>() {
 
                         @Override
@@ -244,8 +245,9 @@ public class AccountLimitUtils {
         boolean result = false;
         if (response.isSuccess())
         {
-            Preferences.setProUser(response.isPaid());
-            ProfileLimits limits = response.getLimits();
+            ProfileInformation profileInformation = response.getProfileInformation();
+            Preferences.setProUser(profileInformation.isPaid());
+            ProfileLimits limits = profileInformation.getLimits();
             if (limits != null)
             {
                 Preferences.setRemainingUploadingLimit(limits.getRemaining());
@@ -312,7 +314,7 @@ public class AccountLimitUtils {
                 TrackerUtils.trackBackgroundEvent(LIMIT_INFORMATION_CACHE_UPDATE_EVENT, "started");
                 CommonUtils.debug(TAG, "Update limit information cache request");
                 ITroveboxApi api = Preferences.getApi(TroveboxApplication.getContext());
-                ProfileResponse response = api.getProfile();
+                ProfileResponse response = api.getProfile(false);
                 if (silent || TroveboxResponseUtils.checkResponseValid(response))
                 {
                     return AccountLimitUtils.saveLimitInformationToCache(response);

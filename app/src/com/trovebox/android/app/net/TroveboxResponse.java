@@ -8,17 +8,14 @@ public class TroveboxResponse {
     /**
      * Possible request types
      */
-    public enum RequestType
-    {
-        UNKNOWN,
-        TAGS,
-        PHOTO_UPLOAD, ALBUMS, PHOTOS,
-        PHOTO, DELETE_PHOTO, UPDATE_PHOTO,
-        CREATE_USER, SIGN_IN, SIGN_IN_GOOGLE, RECOVER_PASSWORD,
-        PROFILE, SYSTEM_VERSION,
-        PAYMENT_VERIFICATION,
-        CREATE_ALBUM,
-        CREATE_PHOTO_TOKEN
+    public enum RequestType {
+        UNKNOWN, TAGS, PHOTO_UPLOAD, 
+        ALBUM, ALBUMS, PHOTOS, 
+        PHOTO, DELETE_PHOTO, UPDATE_PHOTO, 
+        CREATE_USER, SIGN_IN, SIGN_IN_GOOGLE, 
+        RECOVER_PASSWORD, PROFILE, 
+        SYSTEM_VERSION, PAYMENT_VERIFICATION, 
+        CREATE_ALBUM, CREATE_PHOTO_TOKEN
     }
     private final String mMessage;
     private final int mCode;

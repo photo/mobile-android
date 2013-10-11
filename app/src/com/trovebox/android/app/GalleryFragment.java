@@ -16,14 +16,19 @@ import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.ListView;
 
+import com.trovebox.android.app.NavigationHandlerFragment.TitleChangedHandler;
 import com.trovebox.android.app.bitmapfun.util.ImageCache;
 import com.trovebox.android.app.bitmapfun.util.ImageFetcher;
 import com.trovebox.android.app.common.CommonRefreshableFragmentWithImageWorker;
 import com.trovebox.android.app.model.Album;
 import com.trovebox.android.app.model.Photo;
+import com.trovebox.android.app.model.ProfileInformation;
+import com.trovebox.android.app.model.ProfileInformation.AccessPermissions;
+import com.trovebox.android.app.model.utils.AlbumUtils;
 import com.trovebox.android.app.model.utils.PhotoUtils;
 import com.trovebox.android.app.model.utils.PhotoUtils.PhotoDeletedHandler;
 import com.trovebox.android.app.model.utils.PhotoUtils.PhotoUpdatedHandler;
+import com.trovebox.android.app.net.ProfileResponseUtils;
 import com.trovebox.android.app.net.ReturnSizes;
 import com.trovebox.android.app.service.UploaderServiceUtils.PhotoUploadedHandler;
 import com.trovebox.android.app.ui.adapter.PhotosEndlessAdapter;
@@ -46,9 +51,12 @@ public class GalleryFragment extends CommonRefreshableFragmentWithImageWorker
 
     private LoadingControl loadingControl;
     private StartNowHandler startNowHandler;
+    private TitleChangedHandler mTitleChangedHandler;
     private GalleryAdapterExt mAdapter;
     private String mTags;
     private Album mAlbum;
+    private boolean mSkipPermissionsCheck;
+    private CollaboratorAlbumRunnable mCollaboratorAlbumRunnable;
 
     private ReturnSizes thumbSize;
     private ReturnSizes returnSizes;
@@ -90,6 +98,7 @@ public class GalleryFragment extends CommonRefreshableFragmentWithImageWorker
         {
             mTags = null;
             mAlbum = null;
+            mSkipPermissionsCheck = false;
         }
         return v;
     }
@@ -106,6 +115,7 @@ public class GalleryFragment extends CommonRefreshableFragmentWithImageWorker
         super.onAttach(activity);
         loadingControl = ((LoadingControl) activity);
         startNowHandler = ((StartNowHandler) activity);
+        mTitleChangedHandler = ((TitleChangedHandler) activity);
 
     }
 
@@ -152,7 +162,15 @@ public class GalleryFragment extends CommonRefreshableFragmentWithImageWorker
             removeTagsAndAlbumInformationFromActivityIntent();
         } else
         {
-            mAdapter = new GalleryAdapterExt();
+            if (Preferences.isLimitedAccountAccessType() && !mSkipPermissionsCheck) {
+                mAdapter = null;
+                mCollaboratorAlbumRunnable = new CollaboratorAlbumRunnable();
+                ProfileResponseUtils.runWithProfileInformationAsync(true,
+                        mCollaboratorAlbumRunnable, null,
+                        loadingControl);
+            } else {
+                mAdapter = new GalleryAdapterExt();
+            }
         }
 
         photosGrid = (ListView) v.findViewById(R.id.list_photos);
@@ -225,6 +243,9 @@ public class GalleryFragment extends CommonRefreshableFragmentWithImageWorker
             mAdapter.forceStopLoadingIfNecessary();
         }
         GuiUtils.removeGlobalOnLayoutListener(photosGrid, photosGridListener);
+        if (mCollaboratorAlbumRunnable != null) {
+            mCollaboratorAlbumRunnable.cancel();
+        }
     }
 
     @Override
@@ -505,6 +526,9 @@ public class GalleryFragment extends CommonRefreshableFragmentWithImageWorker
             // viewpager to clear filters
             refreshOnPageActivated = true;
         }
+        if (mCollaboratorAlbumRunnable != null) {
+            mCollaboratorAlbumRunnable.cancel();
+        }
     };
 
     @Override
@@ -552,6 +576,58 @@ public class GalleryFragment extends CommonRefreshableFragmentWithImageWorker
                 });
     }
 
+    class CollaboratorAlbumRunnable implements RunnableWithParameter<ProfileInformation> {
+
+        boolean mCancelled = false;
+
+        @Override
+        public void run(ProfileInformation parameter) {
+            if (mCancelled) {
+                return;
+            }
+            try {
+                ProfileInformation viewer = parameter.getViewer();
+                AccessPermissions permissions = viewer == null ? null : viewer.getPermissions();
+                if (permissions == null || permissions.isFullCreateAccess()
+                        || permissions.getCreateAlbumAccessIds() == null
+                        || permissions.getCreateAlbumAccessIds().length == 0) {
+                    mSkipPermissionsCheck = true;
+                    refresh();
+                } else {
+                    AlbumUtils.getAlbumAndRunAsync(permissions.getCreateAlbumAccessIds()[0],
+                            new RunnableWithParameter<Album>() {
+
+                                @Override
+                                public void run(Album parameter) {
+                                    if (!mCancelled) {
+                                        mAlbum = parameter;
+                                        mTitleChangedHandler.titleChanged();
+                                        refresh();
+                                        cancel();
+                                    }
+                                }
+                            }, new Runnable() {
+
+                                @Override
+                                public void run() {
+                                    cancel();
+                                }
+                            }, loadingControl);
+                }
+            } catch (Exception ex) {
+                GuiUtils.error(TAG, ex);
+            }
+
+        }
+
+        void cancel() {
+            mCancelled = true;
+            if (mCollaboratorAlbumRunnable == this) {
+                mSkipPermissionsCheck = false;
+                mCollaboratorAlbumRunnable = null;
+            }
+        }
+    }
     public static interface StartNowHandler
     {
         void startNow();

@@ -23,6 +23,7 @@ import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.view.Window;
 import com.trovebox.android.app.FacebookFragment.FacebookLoadingControlAccessor;
+import com.trovebox.android.app.NavigationHandlerFragment.TitleChangedHandler;
 import com.trovebox.android.app.SyncFragment.SyncHandler;
 import com.trovebox.android.app.TwitterFragment.TwitterLoadingControlAccessor;
 import com.trovebox.android.app.bitmapfun.util.ImageCacheUtils;
@@ -53,13 +54,11 @@ import com.trovebox.android.app.util.SyncUtils.SyncStartedHandler;
 import com.trovebox.android.app.util.TrackerUtils;
 
 @Addons(Activity.ADDON_SLIDER)
-public class MainActivity extends CommonActivity
-        implements LoadingControl, GalleryOpenControl, SyncHandler,
-        UploadsClearedHandler, PhotoUploadedHandler, TwitterLoadingControlAccessor,
-        FacebookLoadingControlAccessor, SyncStartedHandler,
-        PhotoDeletedHandler, PhotoUpdatedHandler, GalleryFragment.StartNowHandler,
-        PurchaseHandler, SubscriptionPurchasedHandler
-{
+public class MainActivity extends CommonActivity implements LoadingControl, GalleryOpenControl,
+        SyncHandler, UploadsClearedHandler, PhotoUploadedHandler, TwitterLoadingControlAccessor,
+        FacebookLoadingControlAccessor, SyncStartedHandler, PhotoDeletedHandler,
+        PhotoUpdatedHandler, GalleryFragment.StartNowHandler, PurchaseHandler,
+        SubscriptionPurchasedHandler, TitleChangedHandler {
     private static final String NAVIGATION_HANDLER_FRAGMENT_TAG = "NavigationHandlerFragment";
 
     public static final String TAG = MainActivity.class.getSimpleName();
@@ -533,5 +532,10 @@ public class MainActivity extends CommonActivity
         {
             accountFragment.subscriptionPurchased();
         }
+    }
+
+    @Override
+    public void titleChanged() {
+        navigationHandlerFragment.refreshActionBarTitle();
     }
 }

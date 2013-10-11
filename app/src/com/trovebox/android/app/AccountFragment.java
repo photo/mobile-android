@@ -16,8 +16,8 @@ import android.widget.TextView;
 
 import com.trovebox.android.app.bitmapfun.util.ImageFetcher;
 import com.trovebox.android.app.common.CommonRefreshableFragmentWithImageWorker;
-import com.trovebox.android.app.net.ProfileResponse;
-import com.trovebox.android.app.net.ProfileResponse.ProfileCounters;
+import com.trovebox.android.app.model.ProfileInformation;
+import com.trovebox.android.app.model.ProfileInformation.ProfileCounters;
 import com.trovebox.android.app.net.ProfileResponseUtils;
 import com.trovebox.android.app.net.ReturnSizes;
 import com.trovebox.android.app.purchase.PurchaseController.PurchaseHandler;
@@ -120,23 +120,21 @@ public class AccountFragment extends CommonRefreshableFragmentWithImageWorker im
 
     void refresh(View v)
     {
-        ProfileResponseUtils.runWithProfileResponseAsync(
-                new RunnableWithParameter<ProfileResponse>()
+        ProfileResponseUtils.runWithProfileInformationAsync(
+                new RunnableWithParameter<ProfileInformation>()
                 {
                     @Override
-                    public void run(ProfileResponse profileResponse) {
+                    public void run(ProfileInformation profileInformation) {
                         if (getView() != null)
                         {
-                            initView(profileResponse);
+                            initView(profileInformation);
                         }
                     }
                 }, loadingControl);
     }
 
-    void initView(ProfileResponse response)
-    {
-        if (response == null)
-        {
+    void initView(ProfileInformation profileInformation) {
+        if (profileInformation == null) {
             userName.setText(null);
             photosCount.setText(null);
             tagsCount.setText(null);
@@ -146,24 +144,21 @@ public class AccountFragment extends CommonRefreshableFragmentWithImageWorker im
             email.setText(null);
             accountType.setText(null);
             upgradeOffer.setVisibility(View.GONE);
-        } else
-        {
-            userName.setText(response.getName());
-            ProfileCounters counters = response.getCounters();
-            if (counters != null)
-            {
+        } else {
+            userName.setText(profileInformation.getName());
+            ProfileCounters counters = profileInformation.getCounters();
+            if (counters != null) {
                 photosCount.setText(CommonUtils.format(counters.getPhotos()));
                 tagsCount.setText(CommonUtils.format(counters.getTags()));
                 albumsCount.setText(CommonUtils.format(counters.getAlbums()));
                 initStorageUsedFields(counters.getStorage());
             }
-            email.setText(response.getEmail());
-            accountType.setText(response.isPaid() ? R.string.profile_account_type_pro
+            email.setText(profileInformation.getEmail());
+            accountType.setText(profileInformation.isPaid() ? R.string.profile_account_type_pro
                     : R.string.profile_account_type_free);
-            upgradeOffer.setVisibility(response.isPaid() ? View.GONE : View.VISIBLE);
-            if (mImageWorker != null && !TextUtils.isEmpty(response.getPhotoUrl()))
-            {
-                mImageWorker.loadImage(response.getPhotoUrl(), profileImage);
+            upgradeOffer.setVisibility(profileInformation.isPaid() ? View.GONE : View.VISIBLE);
+            if (mImageWorker != null && !TextUtils.isEmpty(profileInformation.getPhotoUrl())) {
+                mImageWorker.loadImage(profileInformation.getPhotoUrl(), profileImage);
             }
         }
     }

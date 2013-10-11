@@ -1,0 +1,23 @@
+{ "counts" : { "albums" : 27,
+      "photos" : 397,
+      "storage" : 316116992,
+      "storage_str" : "316116992",
+      "tags" : 141
+    },
+  "email" : "hello+test@openphoto.me",
+  "id" : "test.trovebox.com",
+  "isOwner" : true,
+  "limit" : { "allowed" : 100,
+      "remaining" : 2147483647,
+      "resetsInDays" : 25,
+      "resetsOn" : 1383289200
+    },
+  "name" : "Trovebox Test Name",
+  "paid" : true,
+  "permission" : { "C" : true,
+      "D" : true,
+      "R" : true,
+      "U" : true
+    },
+  "photoUrl" : "http://d1odebs29o9vbg.cloudfront.net/custom/196912/27005_original-526fb8_100x100xCR.jpg"
+}

@@ -165,6 +165,7 @@
     <string name="errorCouldNotSignup">Не удалось зарегистрироваться</string>
     <string name="errorCouldNotLoadNextAlbumsInList">Не удалось загрузить следующие альбомы в списке</string>
     <string name="errorCouldNotUseIntentsToOpenMaps">Не удалось использовать Intent для открытия карт</string>
+    <string name="errorCouldNotGetAlbum">Не удалось загрузить информацию об альбоме</string>
     <string name="errorCouldNotGetPhoto">Не удалось принять фотографию</string>
     <string name="errorCouldNotDeletePhoto">Удалить фотографию не удалось</string>
     <string name="errorCouldNotUpdatePhoto">Не удалось обновить детали фотографии</string>
