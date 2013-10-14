@@ -51,17 +51,11 @@ public class AccountSignup extends CommonActivity {
         editText = (EditText) findViewById(R.id.edit_password);
         String password = editText.getText().toString();
 
-        if (!GuiUtils.validateBasicTextData(
-                new String[]
-                {
-                        username, email, password
-                }, new int[]
-                {
-                        R.string.field_username,
-                        R.string.field_email,
-                        R.string.field_password
-                }, this))
-        {
+        if (!GuiUtils.validateBasicTextData(new String[] {
+                username, email, password
+        }, new int[] {
+                R.string.field_username, R.string.field_email, R.string.field_password
+        })) {
             return;
         }
 

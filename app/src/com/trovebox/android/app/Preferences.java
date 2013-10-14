@@ -9,11 +9,15 @@ import oauth.signpost.basic.DefaultOAuthProvider;
 import oauth.signpost.commonshttp.CommonsHttpOAuthConsumer;
 
 import org.holoeverywhere.preference.PreferenceManagerHelper;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.text.TextUtils;
 
 import com.trovebox.android.app.model.Credentials;
+import com.trovebox.android.app.model.ProfileInformation.AccessPermissions;
 import com.trovebox.android.app.net.ITroveboxApi;
 import com.trovebox.android.app.net.TroveboxApi;
 import com.trovebox.android.app.purchase.util.Purchase;
@@ -204,6 +208,16 @@ public class Preferences {
     public static boolean isLimitedAccountAccessType() {
         return getAccountAccessType().equals(Credentials.GROUP_TYPE);
     }
+    
+    /**
+     * Check whether the owner account access is used.
+     * 
+     * @return
+     */
+    public static boolean isOwner() {
+        return getAccountAccessType().equals(Credentials.OWNER_TYPE);
+    }
+
     /**
      * Get the remaining uploading limit
      * 
@@ -268,6 +282,36 @@ public class Preferences {
                 .putLong(CommonUtils.getStringResource(R.string.setting_upload_limit_reset_date),
                         date == null ? 0l : date.getTime())
                 .commit();
+    }
+
+    /**
+     * Store the access permissions to preferences cache
+     * 
+     * @param permissions
+     */
+    public static void setAccessPermissions(AccessPermissions permissions) {
+        getLimitsSharedPreferences()
+                .edit()
+                .putString(
+                        CommonUtils.getStringResource(R.string.setting_account_access_permissions),
+                        permissions == null ? null : permissions.toJsonString()).commit();
+    }
+
+    /**
+     * Get the cached access permissions information
+     * 
+     * @return
+     * @throws JSONException
+     */
+    public static AccessPermissions getAccessPermissions() throws JSONException
+    {
+        String jsonString = getLimitsSharedPreferences().getString(
+                CommonUtils.getStringResource(R.string.setting_account_access_permissions), "");
+        AccessPermissions result = null;
+        if (!TextUtils.isEmpty(jsonString)) {
+            result = AccessPermissions.fromJson(new JSONObject(jsonString));
+        }
+        return result;
     }
 
     /**

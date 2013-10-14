@@ -55,7 +55,8 @@ public class ProfileResponseTest extends InstrumentationTestCase {
         assertNotNull(response);
         assertEquals(200, response.getCode());
         ProfileInformation pi = response.getProfileInformation();
-        ProfileInformationTest.checkProfileInformation3(pi);
+        ProfileInformationTest.checkProfileInformation3(pi, json.getJSONObject("result")
+                .getJSONObject("viewer").getJSONObject("permission").toString());
 
     }
 }

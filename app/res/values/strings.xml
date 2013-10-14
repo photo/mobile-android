@@ -199,6 +199,7 @@
     <string name="errorGooglePlayServicesNotAvailable">Sorry, looks like Google Play Services are not available on your device.</string>
     <string name="errorGoogleAccountsNotFound">Could not find any google account associated with the device.</string>
     <string name="errorCouldNotFetchGoogleAccountToken">Could not obtain google account access token: %1$s.</string>
+    <string name="errorNotAuthorizedUpload">You are not authorized to upload to any album.</string>
 
     <!-- Preferences -->
     <string name="upload_preference_category">Camera upload</string>
@@ -251,6 +252,7 @@
     <string name="field_email">email</string>
     <string name="field_password">password</string>
     <string name="field_username">username</string>
+    <string name="field_album">album</string>
 
     <!-- Feather -->
     <string name="feather_failed_to_retrieve_the_list_of_acitions">Failed to retrieve the list of actions!</string>

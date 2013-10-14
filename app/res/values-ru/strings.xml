@@ -198,6 +198,7 @@
     <string name="errorGooglePlayServicesNotAvailable">Извините, похоже сервисы Google Play не доступны на вашем устройстве.</string>
     <string name="errorGoogleAccountsNotFound">Не удалось найти ни одного привязанного к устройству аккаунта Google.</string>
     <string name="errorCouldNotFetchGoogleAccountToken">Не удалось получить метку доступа к аккаунту google: %1$s.</string>
+    <string name="errorNotAuthorizedUpload">У Вас недостаточно прав для загрузки изображений: нет доступных альбомов.</string>
 
     <!-- Preferences -->
     <string name="upload_preference_category">Загрузка фотографий с камеры</string>
@@ -250,6 +251,7 @@
     <string name="field_email">email</string>
     <string name="field_password">пароль</string>
     <string name="field_username">имя пользователя</string>
+    <string name="field_album">альбом</string>
 
     <!-- Feather -->
     <string name="feather_failed_to_retrieve_the_list_of_acitions">Не удалось извлечь список действий!</string>

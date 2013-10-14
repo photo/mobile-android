@@ -201,7 +201,7 @@ public class AccountLimitUtils {
         {
             CommonUtils.debug(TAG,
                     "Logged in and online. Running actions in ProfileResponse context.");
-            ProfileResponseUtils.runWithProfileResponseAsync(false,
+            ProfileResponseUtils.runWithProfileResponseAsync(true,
                     new RunnableWithParameter<ProfileResponse>() {
 
                         @Override
@@ -255,6 +255,9 @@ public class AccountLimitUtils {
             } else
             {
                 Preferences.setRemainingUploadingLimit(Integer.MAX_VALUE);
+            }
+            if (profileInformation.getViewer() != null) {
+                Preferences.setAccessPermissions(profileInformation.getViewer().getPermissions());
             }
             TrackerUtils.trackBackgroundEvent(LIMIT_INFORMATION_CACHE_UPDATE_EVENT, "success");
             result = true;

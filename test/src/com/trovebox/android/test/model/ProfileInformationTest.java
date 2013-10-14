@@ -22,7 +22,7 @@ public class ProfileInformationTest extends InstrumentationTestCase {
         JSONObject json = JSONUtils.getJson(getInstrumentation().getContext(),
                 R.raw.json_profile_information);
         pi = ProfileInformation.fromJson(json);
-        checkProfileInformation1(pi);
+        checkProfileInformation1(pi, json.getJSONObject("permission").toString());
     }
 
     public void testFromJson2() throws JSONException {
@@ -30,7 +30,7 @@ public class ProfileInformationTest extends InstrumentationTestCase {
         JSONObject json = JSONUtils.getJson(getInstrumentation().getContext(),
                 R.raw.json_profile_information2);
         pi = ProfileInformation.fromJson(json);
-        checkProfileInformation2(pi);
+        checkProfileInformation2(pi, json.getJSONObject("permission").toString());
     }
 
     public void testProfileInformationParcelable() throws JSONException {
@@ -39,7 +39,7 @@ public class ProfileInformationTest extends InstrumentationTestCase {
                 R.raw.json_profile_information);
         c = ProfileInformation.fromJson(json);
 
-        checkProfileInformation1(c);
+        checkProfileInformation1(c, json.getJSONObject("permission").toString());
 
         Parcel parcel = Parcel.obtain();
         c.writeToParcel(parcel, 0);
@@ -48,7 +48,7 @@ public class ProfileInformationTest extends InstrumentationTestCase {
         // finish round trip
         ProfileInformation createFromParcel = ProfileInformation.CREATOR.createFromParcel(parcel);
 
-        checkProfileInformation1(createFromParcel);
+        checkProfileInformation1(createFromParcel, json.getJSONObject("permission").toString());
     }
 
     public void testProfileInformation2Parcelable() throws JSONException {
@@ -57,7 +57,7 @@ public class ProfileInformationTest extends InstrumentationTestCase {
                 R.raw.json_profile_information2);
         c = ProfileInformation.fromJson(json);
 
-        checkProfileInformation2(c);
+        checkProfileInformation2(c, json.getJSONObject("permission").toString());
 
         Parcel parcel = Parcel.obtain();
         c.writeToParcel(parcel, 0);
@@ -66,7 +66,7 @@ public class ProfileInformationTest extends InstrumentationTestCase {
         // finish round trip
         ProfileInformation createFromParcel = ProfileInformation.CREATOR.createFromParcel(parcel);
 
-        checkProfileInformation2(createFromParcel);
+        checkProfileInformation2(createFromParcel, json.getJSONObject("permission").toString());
     }
 
     public void testProfileInformation3Parcelable() throws JSONException {
@@ -75,7 +75,8 @@ public class ProfileInformationTest extends InstrumentationTestCase {
                 R.raw.json_profile_response_with_viewer);
         c = ProfileInformation.fromJson(json.getJSONObject("result"));
 
-        checkProfileInformation3(c);
+        checkProfileInformation3(c, json.getJSONObject("result").getJSONObject("viewer")
+                .getJSONObject("permission").toString());
 
         Parcel parcel = Parcel.obtain();
         c.writeToParcel(parcel, 0);
@@ -84,10 +85,12 @@ public class ProfileInformationTest extends InstrumentationTestCase {
         // finish round trip
         ProfileInformation createFromParcel = ProfileInformation.CREATOR.createFromParcel(parcel);
 
-        checkProfileInformation3(createFromParcel);
+        checkProfileInformation3(createFromParcel,
+                json.getJSONObject("result").getJSONObject("viewer").getJSONObject("permission")
+                        .toString());
     }
 
-    public static void checkProfileInformation1(ProfileInformation pi) {
+    public static void checkProfileInformation1(ProfileInformation pi, String permissionsJson) {
         assertNotNull(pi);
         assertEquals(pi.getEmail(), "hello+test@openphoto.me");
         assertEquals(pi.getId(), "test.trovebox.com");
@@ -120,10 +123,10 @@ public class ProfileInformationTest extends InstrumentationTestCase {
         assertNull(permissions.getUpdateAlbumAccessIds());
         assertTrue(permissions.isFullDeleteAccess());
         assertNull(permissions.getDeleteAlbumAccessIds());
-
+        assertEquals(permissions.toJsonString(), permissionsJson);
     }
 
-    public static void checkProfileInformation2(ProfileInformation pi) {
+    public static void checkProfileInformation2(ProfileInformation pi, String permissionsJson) {
         assertNotNull(pi);
         assertEquals(pi.getEmail(), "");
         assertEquals(pi.getId(), "test3.trovebox.com");
@@ -158,10 +161,11 @@ public class ProfileInformationTest extends InstrumentationTestCase {
         assertNull(permissions.getUpdateAlbumAccessIds());
         assertFalse(permissions.isFullDeleteAccess());
         assertNull(permissions.getDeleteAlbumAccessIds());
+        assertEquals(permissions.toJsonString(), permissionsJson);
 
     }
 
-    public static void checkProfileInformation3(ProfileInformation pi) {
+    public static void checkProfileInformation3(ProfileInformation pi, String permissionsJson) {
         assertNotNull(pi);
         assertEquals(pi.getEmail(), "");
         assertEquals(pi.getId(), "current.trovebox.com");
@@ -203,6 +207,7 @@ public class ProfileInformationTest extends InstrumentationTestCase {
         assertFalse(permissions.isFullDeleteAccess());
         assertNotNull(permissions.getDeleteAlbumAccessIds());
         assertTrue(permissions.getDeleteAlbumAccessIds().length == 0);
+        assertEquals(permissions.toJsonString(), permissionsJson);
 
         assertEquals(viewer.getEmail(), "");
         assertEquals(viewer.getId(), "hello+test@openphoto.me");

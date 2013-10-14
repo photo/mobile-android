@@ -53,16 +53,11 @@ public class AccountLogin extends CommonActivity {
         editText = (EditText) findViewById(R.id.edit_password);
         String password = editText.getText().toString();
 
-        if (!GuiUtils.validateBasicTextData(
-                new String[]
-                {
-                        email, password
-                }, new int[]
-                {
-                        R.string.field_email,
-                        R.string.field_password
-                }, this))
-        {
+        if (!GuiUtils.validateBasicTextData(new String[] {
+                email, password
+        }, new int[] {
+                R.string.field_email, R.string.field_password
+        })) {
             return;
         }
 
@@ -88,15 +83,11 @@ public class AccountLogin extends CommonActivity {
         EditText editText = (EditText) findViewById(R.id.edit_email);
         String email = editText.getText().toString();
 
-        if (!GuiUtils.validateBasicTextData(
-                new String[]
-                {
-                    email
-                }, new int[]
-                {
-                    R.string.field_email,
-                }, this))
-        {
+        if (!GuiUtils.validateBasicTextData(new String[] {
+            email
+        }, new int[] {
+            R.string.field_email,
+        })) {
             return;
         }
         getRecoverPasswordFragment().recoverPassword(email);

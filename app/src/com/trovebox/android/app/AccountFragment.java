@@ -156,7 +156,9 @@ public class AccountFragment extends CommonRefreshableFragmentWithImageWorker im
             email.setText(profileInformation.getEmail());
             accountType.setText(profileInformation.isPaid() ? R.string.profile_account_type_pro
                     : R.string.profile_account_type_free);
-            upgradeOffer.setVisibility(profileInformation.isPaid() ? View.GONE : View.VISIBLE);
+            upgradeOffer
+                    .setVisibility(profileInformation.isPaid() || !Preferences.isOwner() ? View.GONE
+                            : View.VISIBLE);
             if (mImageWorker != null && !TextUtils.isEmpty(profileInformation.getPhotoUrl())) {
                 mImageWorker.loadImage(profileInformation.getPhotoUrl(), profileImage);
             }

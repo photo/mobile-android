@@ -295,6 +295,11 @@ public class ProfileInformation implements Parcelable {
     }
 
     public static class AccessPermissions implements Parcelable {
+        public static final String CREATE_KEY = "C";
+        public static final String READ_KEY = "R";
+        public static final String UPDATE_KEY = "U";
+        public static final String DELETE_KEY = "D";
+
         private boolean mFullCreateAccess;
         private String[] mCreateAlbumAccessIds;
         private boolean mFullReadAccess;
@@ -303,15 +308,17 @@ public class ProfileInformation implements Parcelable {
         private String[] mUpdateAlbumAccessIds;
         private boolean mFullDeleteAccess;
         private String[] mDeleteAlbumAccessIds;
+        private String mJsonString;
 
         private AccessPermissions() {
         }
 
         public static AccessPermissions fromJson(JSONObject json) throws JSONException {
             AccessPermissions permissions = new AccessPermissions();
+            permissions.mJsonString = json.toString();
 
             {
-                Object obj = json.get("C");
+                Object obj = json.get(CREATE_KEY);
                 if (obj instanceof Boolean) {
                     permissions.mFullCreateAccess = (Boolean) obj;
                 } else if (obj instanceof JSONArray) {
@@ -324,7 +331,7 @@ public class ProfileInformation implements Parcelable {
                 }
             }
             {
-                Object obj = json.get("R");
+                Object obj = json.get(READ_KEY);
                 if (obj instanceof Boolean) {
                     permissions.mFullReadAccess = (Boolean) obj;
                 } else if (obj instanceof JSONArray) {
@@ -337,7 +344,7 @@ public class ProfileInformation implements Parcelable {
                 }
             }
             {
-                Object obj = json.get("U");
+                Object obj = json.get(UPDATE_KEY);
                 if (obj instanceof Boolean) {
                     permissions.mFullUpdateAccess = (Boolean) obj;
                 } else if (obj instanceof JSONArray) {
@@ -350,7 +357,7 @@ public class ProfileInformation implements Parcelable {
                 }
             }
             {
-                Object obj = json.get("D");
+                Object obj = json.get(DELETE_KEY);
                 if (obj instanceof Boolean) {
                     permissions.mFullDeleteAccess = (Boolean) obj;
                 } else if (obj instanceof JSONArray) {
@@ -365,6 +372,10 @@ public class ProfileInformation implements Parcelable {
             return permissions;
         }
 
+        public String toJsonString() {
+            return mJsonString;
+        }
+        
         public boolean isFullCreateAccess() {
             return mFullCreateAccess;
         }
@@ -427,6 +438,7 @@ public class ProfileInformation implements Parcelable {
             if (mDeleteAlbumAccessIds != null) {
                 out.writeStringArray(mDeleteAlbumAccessIds);
             }
+            out.writeString(mJsonString);
         }
 
         public static final Parcelable.Creator<AccessPermissions> CREATOR = new Parcelable.Creator<AccessPermissions>() {
@@ -467,6 +479,7 @@ public class ProfileInformation implements Parcelable {
                 mDeleteAlbumAccessIds = new String[mDeleteAlbumAccessIdsSize];
                 in.readStringArray(mDeleteAlbumAccessIds);
             }
+            mJsonString = in.readString();
         }
     }
 }
