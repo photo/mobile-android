@@ -23,7 +23,9 @@ import android.view.inputmethod.InputMethodManager;
 import com.trovebox.android.app.common.CommonFragment;
 import com.trovebox.android.app.common.lifecycle.ViewPagerHandler;
 import com.trovebox.android.app.model.Album;
+import com.trovebox.android.app.model.ProfileInformation.AccessPermissions;
 import com.trovebox.android.app.net.SystemVersionResponseUtils;
+import com.trovebox.android.app.net.account.AccountLimitUtils;
 import com.trovebox.android.app.ui.adapter.FragmentPagerAdapter;
 import com.trovebox.android.app.ui.widget.SliderCategorySeparator;
 import com.trovebox.android.app.ui.widget.SliderNavigationItem;
@@ -42,26 +44,30 @@ import com.trovebox.android.app.util.TrackerUtils;
 public class NavigationHandlerFragment extends CommonFragment {
     static final String TAG = NavigationHandlerFragment.class.getSimpleName();
 
+    boolean mHasAlbums = false;
     public int getGalleryIndex() {
         return 0;
     }
 
     public int getAlbumsIndex() {
-        return getGalleryIndex() + 1;
+        return getGalleryIndex() + (hasAlbums() ? 1 : 0);
     }
 
     public int getTagsIndex() {
-        return hasTags() ? (getAlbumsIndex() + 1) : -1;
+        return getAlbumsIndex() + (hasTags() ? 1 : 0);
     }
 
     public int getSyncIndex() {
-        return (hasTags() ? getTagsIndex() : getAlbumsIndex()) + 1;
+        return getTagsIndex() + 1;
     }
 
     public int getAccountIndex() {
         return getSyncIndex() + 1;
     }
 
+    boolean hasAlbums() {
+        return mHasAlbums;
+    }
     /**
      * Whether the currently logged in user has access to tags
      * @return
@@ -294,10 +300,11 @@ public class NavigationHandlerFragment extends CommonFragment {
                 }
             };
         }
-        adapter.add(
-                R.string.tab_albums,
-                R.drawable.menu_album_2states,
-                AlbumsFragment.class, null);
+        mHasAlbums = !Preferences.isLimitedAccountAccessType();
+        if (hasAlbums()) {
+            adapter.add(R.string.tab_albums, R.drawable.menu_album_2states, AlbumsFragment.class,
+                    null);
+        }
         if (hasTags()) {
             adapter.add(
                     R.string.tab_tags,
@@ -346,8 +353,8 @@ public class NavigationHandlerFragment extends CommonFragment {
                                                 wrapper.mSeparatorTitleId = View.NO_ID;
                                             }
                                             adapter.notifyDataSetChanged();
+                                            rebuildLeftView();
                                         }
-                                        rebuildLeftView();
                                         if (mCurrentPage >= getAccountIndex())
                                         {
                                             selectTab(mCurrentPage);
@@ -355,12 +362,51 @@ public class NavigationHandlerFragment extends CommonFragment {
                                     }
                                 }
                             }, (LoadingControl) getActivity());
+            if (!hasAlbums()) {
+                AccountLimitUtils.tryToRefreshLimitInformationAndRunInContextAsync(new Runnable() {
+
+                    @Override
+                    public void run() {
+                        try {
+                            if (getActivity() != null && !getActivity().isFinishing()) {
+                                AccessPermissions permissions = Preferences.getAccessPermissions();
+                                if (permissions != null) {
+                                    mHasAlbums = permissions.isFullReadAccess();
+                                    if (!mHasAlbums) {
+                                        mHasAlbums = permissions.getReadAlbumAccessIds() != null
+                                                && permissions.getReadAlbumAccessIds().length > 0;
+                                    }
+                                    if (mHasAlbums) {
+                                        adapter.add(R.string.tab_albums,
+                                                R.drawable.menu_album_2states,
+                                                AlbumsFragment.class, null, null, getAlbumsIndex());
+                                        for (int position = getAlbumsIndex() + 1, size = adapter
+                                                .getCount(); position < size; position++)
+                                        {
+                                            FragmentWrapper<?> wrapper = adapter.wrappers
+                                                    .get(position);
+                                            wrapper.mPosition = position;
+                                        }
+                                        adapter.notifyDataSetChanged();
+                                        rebuildLeftView();
+                                    }
+                                }
+                                if (mCurrentPage == getAlbumsIndex()) {
+                                    selectTab(mCurrentPage);
+                                }
+                            }
+                        } catch (Exception ex) {
+                            GuiUtils.error(TAG, ex);
+                        }
+                    }
+                }, null, (LoadingControl) getActivity());
+            }
         }
         rebuildLeftView();
         // such as account tab may be absent at this step
         // we need to exclute tab selection in case actibeTab
         // is account
-        if (mCurrentPage < getAccountIndex())
+        if (mCurrentPage < getAccountIndex() && (mCurrentPage != getAlbumsIndex() || hasAlbums()))
         {
             selectTab(mCurrentPage);
         }
