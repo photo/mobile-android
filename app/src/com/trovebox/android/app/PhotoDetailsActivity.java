@@ -242,6 +242,25 @@ public class PhotoDetailsActivity extends CommonActivity implements TwitterLoadi
             super.onCreateOptionsMenu(menu, inflater);
             inflater.inflate(R.menu.photo_details, menu);
         }
+        
+        @Override
+        public void onPrepareOptionsMenu(Menu menu) {
+            reinitMenu(menu);
+            super.onPrepareOptionsMenu(menu);
+        }
+
+        protected void reinitMenu(Menu menu) {
+            try {
+                if (Preferences.isLimitedAccountAccessType()) {
+                    MenuItem deleteItem = menu.findItem(R.id.menu_delete_parent);
+                    deleteItem.setVisible(false);
+                    MenuItem editItem = menu.findItem(R.id.menu_edit);
+                    editItem.setVisible(false);
+                }
+            } catch (Exception ex) {
+                GuiUtils.noAlertError(TAG, ex);
+            }
+        }
 
         @Override
         public boolean onOptionsItemSelected(MenuItem item) {
