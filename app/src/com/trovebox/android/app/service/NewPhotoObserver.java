@@ -43,7 +43,8 @@ public class NewPhotoObserver extends FileObserver {
             if (type != null && type.toLowerCase().startsWith("image/"))
             {
                 TrackerUtils.trackBackgroundEvent("autoupload_observer", CommonUtils.format("Processed for Mime-Type: %1$s", type));
-                if (!Preferences.isAutoUploadActive(mContext) || !CommonUtils.checkLoggedIn(true)) {
+                if (!Preferences.isAutoUploadActive(mContext) || !CommonUtils.checkLoggedIn(true)
+                        || Preferences.isLimitedAccountAccessType()) {
                     return;
                 }
                 if (checkLimits())
