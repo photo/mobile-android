@@ -621,6 +621,15 @@ public class NavigationHandlerFragment extends CommonFragment {
         private String makeFragmentName(int viewId, long id) {
             return "android:switcher:" + viewId + ":" + id;
         }
+
+        /**
+         * Hack to refresh ViewPager when data set notification event is
+         * received http://stackoverflow.com/a/7287121/527759
+         */
+        @Override
+        public int getItemPosition(Object object) {
+            return POSITION_NONE;
+        }
     }
 
     public static interface TitleChangedHandler {
