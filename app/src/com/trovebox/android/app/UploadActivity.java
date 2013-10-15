@@ -262,6 +262,10 @@ public class UploadActivity extends CommonActivity {
             twitterSwitch = (Switch) v.findViewById(R.id.twitter_switch);
             facebookSwitch = (Switch) v.findViewById(R.id.facebook_switch);
 
+            if (Preferences.isLimitedAccountAccessType()) {
+                privateSwitch.setChecked(true);
+                privateSwitch.setEnabled(false);
+            }
             privateSwitch.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 
                 @Override

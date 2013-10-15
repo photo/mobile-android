@@ -172,6 +172,11 @@ public class SyncUploadFragment extends CommonFragment implements OnClickListene
         facebookSwitch = (Switch) v.findViewById(R.id.facebook_switch);
 
         albumsText.setOnClickListener(this);
+
+        if (Preferences.isLimitedAccountAccessType()) {
+            privateSwitch.setChecked(true);
+            privateSwitch.setEnabled(false);
+        }
         privateSwitch.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 
             @Override
