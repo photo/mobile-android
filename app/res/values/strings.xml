@@ -45,7 +45,7 @@
     <string name="share_twitter_logged_in_as">Logged in as %1$s</string>
     <string name="share_twitter_send_tweet">Post a Tweet</string>
     <string name="share_twitter_dialog_title">Twitter share</string>
-    <string name="share_twitter_logout">Logout</string>
+    <string name="share_twitter_logout">Sign out</string>
     <string name="share_twitter_default_msg">%1$s shared via @trovebox</string>
     <string name="share_twitter_default_with_title_msg">%1$s %2$s shared via @trovebox</string>
     <string name="share_twitter_success_message">Photo has been shared successfully</string>
@@ -145,7 +145,7 @@
     <string name="yes">Yes</string>
     <string name="no">No</string>
     <string name="pleaseSpecifyFirst">Please specify %1$s first!</string>
-    <string name="logOut">Log out</string>
+    <string name="logOut">Sign out</string>
     <string name="areYouSureQuestion">Are you sure?</string>
     <string name="external_storage_na_message">sdcard is missing or currently not mounted. Cannot continue.</string>
     <string name="action_not_supported_on_os_version">This action is not supported on your device OS version.</string>
@@ -210,7 +210,7 @@
     <string name="sync_clear">Clear sync information</string>
     <string name="sync_clear_comment">This doesn\'t touch your images. Only uploaded markers are removed.</string>
     <string name="sync_cleared_message">The sync information has been cleared</string>
-    <string name="setting_account_facebook_loggedin_logout">Facebook Log out</string>
+    <string name="setting_account_facebook_loggedin_logout">Facebook Sign out</string>
     <string name="setting_account_server_title">URL</string>
     <string name="setting_set_tag_dialog_title">Set tag for uploaded pictures</string>
     <string name="setting_set_tag_hint">Include these tags</string>
@@ -221,7 +221,7 @@
     <string name="setting_account_edit_account_title">Edit account</string>
     <string name="setting_account_change_profile_picture_title">Change profile picture</string>
     <string name="setting_account_title">Account</string>
-    <string name="setting_account_loggedin_logout">Log out</string>
+    <string name="setting_account_loggedin_logout">Sign out</string>
     <string name="setting_account_loggedin_login">Log in</string>
 
     <!-- Screens for Create/Login/Own domain: Account -->
