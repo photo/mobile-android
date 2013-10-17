@@ -36,6 +36,8 @@ public class AccountSignup extends CommonActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_account_signup);
         getNewUserFragment();
+        addRegisteredReceiver(LoginUtils.getAndRegisterDestroyOnLoginActionBroadcastReceiver(TAG,
+                this));
     }
 
     public void createAccountButtonAction(View view) {
@@ -130,7 +132,7 @@ public class AccountSignup extends CommonActivity {
         public void processLoginCredentials(com.trovebox.android.app.model.Credentials credentials) {
             Activity activity = getSupportActivity();
             credentials.saveCredentials(activity);
-            LoginUtils.onLoggedIn(activity, true);
+            LoginUtils.onLoggedIn(activity, false);
         }
 
         void processLoginResonse(Activity activity) {

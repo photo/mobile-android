@@ -47,18 +47,17 @@ public class CredentialsTest extends InstrumentationTestCase {
         checkCredentials(createFromParcel, "hello@trovebox.com");
     }
 
-    public void testCredentialsParcelableV2() {
+    public void testCredentialsParcelableV2() throws JSONException {
         Credentials c;
-        try {
-            JSONObject json = JSONUtils.getJson(getInstrumentation().getContext(),
-                    R.raw.json_credentials_v2);
-            c = new Credentials(json);
-        } catch (JSONException e) {
-            throw new AssertionError("This exception should not be thrown!");
-        }
+        JSONObject json = JSONUtils.getJson(getInstrumentation().getContext(),
+                R.raw.json_credentials_v2);
+        c = new Credentials(json);
 
         checkCredentialsV2(c, "hellox2@trovebox.com", "http://test3.trovebox.com",
                 Credentials.GROUP_TYPE);
+        ProfileInformationTest.checkProfileInformation2(c.getProfileInformation(), json
+                .getJSONObject("profile").getJSONObject("permission")
+                .toString());
 
         Parcel parcel = Parcel.obtain();
         c.writeToParcel(parcel, 0);
@@ -69,6 +68,9 @@ public class CredentialsTest extends InstrumentationTestCase {
 
         checkCredentialsV2(createFromParcel, "hellox2@trovebox.com", "http://test3.trovebox.com",
                 Credentials.GROUP_TYPE);
+        ProfileInformationTest.checkProfileInformation2(createFromParcel.getProfileInformation(),
+                json.getJSONObject("profile").getJSONObject("permission")
+                        .toString());
     }
 
     public static void checkCredentials(Credentials c, String email) {
@@ -91,6 +93,5 @@ public class CredentialsTest extends InstrumentationTestCase {
         assertEquals(c.getoAuthConsumerSecret(), "0f5d654bca");
         assertEquals(c.getoAuthToken(), "b662440d621f2f71352f8865888fe2");
         assertEquals(c.getoAuthTokenSecret(), "6d1e8fc274");
-
     }
 }

@@ -283,7 +283,7 @@ public class GalleryFragment extends CommonRefreshableFragmentWithImageWorker
             Photo imageData = fo.getObject();
             double ratio = imageData.getHeight() == 0 ? 1 : (float) imageData.getWidth()
                     / (float) imageData.getHeight();
-            int height = mImageHeight;
+            int height = imageHeight;
             int width = (int) (height * ratio);
             Bitmap result = null;
             try

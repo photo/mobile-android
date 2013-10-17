@@ -216,7 +216,7 @@ public abstract class ImageWorker {
      * {@link ImageWorker#setAdapter(ImageWorkerAdapter)} must be called before
      * using this method.
      * 
-     * @param data The URL of the image to download.
+     * @param num the num of the image data in the ImageWorkerAdapter
      * @param imageView The ImageView to bind the downloaded image to.
      */
     public void loadImage(int num, ImageView imageView) {

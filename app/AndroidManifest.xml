@@ -2,8 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.trovebox.android.app"
     android:installLocation="auto"
-    android:versionCode="12"
-    android:versionName="2.1" >
+    android:versionCode="13"
+    android:versionName="2.2 dev" >
 
     <uses-sdk
         android:minSdkVersion="7"
@@ -107,6 +107,11 @@
         <activity
             android:name=".AccountActivity"
             android:theme="@style/Theme.Trovebox.Login" />
+        <activity
+            android:name=".SelectAccountActivity"
+            android:label="@string/select_trovebox_account"
+            android:launchMode="singleTask" >
+        </activity>
         <activity
             android:name=".SelectTagsActivity"
             android:configChanges="orientation"

@@ -27,6 +27,7 @@ public class Credentials implements Parcelable {
     private String mOAuthTokenSecret;
     private String mEmail;
     private String mType;
+    private ProfileInformation mProfileInformation;
 
     private Credentials() {
     }
@@ -39,6 +40,10 @@ public class Credentials implements Parcelable {
         mOAuthTokenSecret = json.getString("userSecret");
         mEmail = json.getString("owner");
         mType = json.optString("_type", OWNER_TYPE);
+        JSONObject profileJson = json.optJSONObject("profile");
+        if (profileJson != null) {
+            mProfileInformation = ProfileInformation.fromJson(profileJson);
+        }
     }
 
     public String getHost() {
@@ -71,6 +76,10 @@ public class Credentials implements Parcelable {
 
     public String getType() {
         return mType;
+    }
+
+    public ProfileInformation getProfileInformation() {
+        return mProfileInformation;
     }
 
     public void saveCredentials(Context context) {
@@ -116,6 +125,7 @@ public class Credentials implements Parcelable {
         out.writeString(mOAuthConsumerSecret);
         out.writeString(mOAuthToken);
         out.writeString(mOAuthTokenSecret);
+        out.writeParcelable(mProfileInformation, flags);
     }
 
     public static final Parcelable.Creator<Credentials> CREATOR = new Parcelable.Creator<Credentials>() {
@@ -139,5 +149,6 @@ public class Credentials implements Parcelable {
         mOAuthConsumerSecret = in.readString();
         mOAuthToken = in.readString();
         mOAuthTokenSecret = in.readString();
+        mProfileInformation = in.readParcelable(Credentials.class.getClassLoader());
     }
 }

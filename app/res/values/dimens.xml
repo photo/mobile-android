@@ -21,6 +21,8 @@
     <dimen name="detail_thumbnail_with_border_size">104dp</dimen>
     <dimen name="profile_thumbnail_size">100dp</dimen>
     <dimen name="profile_thumbnail_corner_radius">10dp</dimen>
+    <dimen name="select_profile_thumbnail_size">50dp</dimen>
+    <dimen name="select_profile_thumbnail_corner_radius">5dp</dimen>
     <dimen name="profile_label_width">70dip</dimen>
     <dimen name="start_now_small_text">13sp</dimen>
     <dimen name="start_now_big_text">20sp</dimen>

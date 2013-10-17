@@ -127,6 +127,11 @@
     <string name="notification_upload_success_title">Загрузка завершена</string>
     <string name="notification_upload_skipped_title">Загрузка отменена. Найдена идентичная фотография на сервере.</string>
     <string name="notification_upload_success_text">%1$s</string>
+    <string name="notification_upload_multiple_title">Успешно загружено</string>
+    <string name="notification_upload_multiple_text">Загружено: %1$d; пропущено: %2$d</string>
+    <string name="notification_upload_multiple_details">Детали загрузки</string>
+    <string name="notification_upload_multiple_detail_skipped"><![CDATA[<b>%1$s</b> пропущено]]></string>
+    <string name="notification_upload_multiple_detail_done"><![CDATA[<b>%1$s</b> завершено]]></string>
     <string name="noInternetAccess">Интернет подключение недоступно</string>
 
     <!-- Newest Home -->
@@ -241,7 +246,7 @@
     <string name="password_recovery_instructions">Введите email чтобы восстановить пароль</string>
     <string name="instant_sign_in_instructions"><![CDATA[<b>Зарегистрируйтесь</b> или <b>войдите</b> в одно касание]]></string>
     <string name="select_google_account">Пожалуйста выберите аккаунт google для входа</string>
-    <string name="select_trovebox_account">Пожалуйста выберите аккаунт trovebox для входа</string>
+    <string name="select_trovebox_account">Выберите аккаунт Trovebox</string>
     <!-- Hints -->
     <string name="hint_email">email</string>
     <string name="hint_password">пароль</string>
