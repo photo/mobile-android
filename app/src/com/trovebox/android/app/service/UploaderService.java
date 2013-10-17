@@ -25,6 +25,7 @@ import android.os.IBinder;
 import android.os.Looper;
 import android.os.Message;
 import android.support.v4.app.NotificationCompat;
+import android.text.Html;
 import android.text.TextUtils;
 import android.util.Log;
 import android.widget.RemoteViews;
@@ -148,6 +149,12 @@ public class UploaderService extends Service {
         UploadsProviderAccessor uploads = new UploadsProviderAccessor(this);
         List<PhotoUpload> pendingUploads = uploads.getPendingUploads();
         boolean hasSuccessfulUploads = false;
+        NotificationCompat.Builder successNotification = getStandardSuccessNotification();
+        int uploadedCount = 0;
+        int skippedCount = 0;
+        int successNotificationId = requestCounter++;
+        ArrayList<Photo> uploadedPhotos = new ArrayList<Photo>();
+        List<PhotoUploadDetails> uploadDetails = new ArrayList<PhotoUploadDetails>();
         for (PhotoUpload photoUpload : pendingUploads) {
             if (!CommonUtils.checkLoggedInAndOnline(true))
             {
@@ -249,8 +256,15 @@ public class UploaderService extends Service {
                 Preferences.adjustRemainingUploadingLimit(-1);
                 hasSuccessfulUploads = true;
                 uploads.setUploaded(photoUpload.getId());
-                showSuccessNotification(photoUpload, file,
-                        photo, skipped);
+                if (skipped) {
+                    skippedCount++;
+                } else {
+                    uploadedCount++;
+                }
+                uploadedPhotos.add(photo);
+                uploadDetails.add(new PhotoUploadDetails(photoUpload, skipped, file));
+                updateSuccessNotification(successNotification, uploadedCount, skippedCount,
+                        uploadedPhotos, uploadDetails, successNotificationId);
                 shareIfRequested(photoUpload, photo, true);
                 if (!skipped)
                 {
@@ -476,51 +490,77 @@ public class UploaderService extends Service {
         mNotificationManager.cancel(file.hashCode());
     }
 
-    private void showSuccessNotification(PhotoUpload photoUpload, File file,
-            Photo photo,
-            boolean skipped)
-    {
+    private NotificationCompat.Builder getStandardSuccessNotification() {
         int icon = R.drawable.icon;
-        CharSequence titleText = getString(
-                skipped ?
-                        R.string.notification_upload_skipped_title :
-                        R.string.notification_upload_success_title);
-        long when = System.currentTimeMillis();
-        String imageName = file.getName();
-        if (!TextUtils.isEmpty(photoUpload.getMetaData().getTitle())) {
-            imageName = photoUpload.getMetaData().getTitle();
-        }
-        CharSequence contentMessageTitle = getString(R.string.notification_upload_success_text,
-                imageName);
 
-        Intent notificationIntent;
-        if (photo != null)
-        {
-            notificationIntent = new Intent(this, PhotoDetailsActivity.class);
-            notificationIntent
-                    .putExtra(PhotoDetailsActivity.EXTRA_PHOTO, photo);
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
+        builder.setSmallIcon(icon).setAutoCancel(true);
+        return builder;
+    }
+
+    private class PhotoUploadDetails {
+        PhotoUpload photoUpload;
+        boolean skipped;
+        File file;
+
+        public PhotoUploadDetails(PhotoUpload photoUpload, boolean skipped, File file) {
+            super();
+            this.photoUpload = photoUpload;
+            this.skipped = skipped;
+            this.file = file;
+        }
+    }
+
+    private void updateSuccessNotification(NotificationCompat.Builder builder, int uploaded,
+            int skipped, ArrayList<Photo> photos, List<PhotoUploadDetails> uploadDetails,
+            int notificationId) {
+        CharSequence contentMessageTitle;
+        CharSequence titleText;
+        if (photos.size() == 1) {
+            PhotoUploadDetails pud = uploadDetails.get(0);
+            titleText = getString(pud.skipped ? R.string.notification_upload_skipped_title
+                    : R.string.notification_upload_success_title);
+            contentMessageTitle = getUploadTitle(pud);
         } else {
-            notificationIntent = new Intent(this, MainActivity.class);
+            contentMessageTitle = getString(R.string.notification_upload_multiple_text, uploaded,
+                    skipped);
+            titleText = getString(R.string.notification_upload_multiple_title);
+
+            NotificationCompat.InboxStyle inboxStyle = new NotificationCompat.InboxStyle();
+            // Sets a title for the Inbox style big view
+            inboxStyle.setBigContentTitle(getString(R.string.notification_upload_multiple_details));
+            // Moves events into the big view
+            for (int i = 0; i < uploadDetails.size(); i++) {
+
+                PhotoUploadDetails pud = uploadDetails.get(i);
+                String title = getUploadTitle(pud);
+                String line = getString(
+                        pud.skipped ? R.string.notification_upload_multiple_detail_skipped
+                                : R.string.notification_upload_multiple_detail_done, title);
+                inboxStyle.addLine(Html.fromHtml(line));
+            }
+            // Moves the big view style object into the notification object.
+            builder.setStyle(inboxStyle);
         }
-        PendingIntent contentIntent = PendingIntent.getActivity(this,
-                requestCounter++, notificationIntent, 0);
+        long when = System.currentTimeMillis();
+        Intent notificationIntent;
+        notificationIntent = new Intent(this, PhotoDetailsActivity.class);
+        notificationIntent.putParcelableArrayListExtra(PhotoDetailsActivity.EXTRA_PHOTOS, photos);
+        PendingIntent contentIntent = PendingIntent.getActivity(this, requestCounter++,
+                notificationIntent, 0);
+        builder.setContentTitle(titleText).setContentText(contentMessageTitle).setWhen(when)
+                .setContentIntent(contentIntent);
+        mNotificationManager.notify(notificationId, builder.build());
+    }
 
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(
-                this);
-        Notification notification = builder
-                .setContentTitle(titleText)
-                .setContentText(contentMessageTitle)
-                .setWhen(when)
-                .setSmallIcon(icon)
-                .setAutoCancel(true)
-                .setContentIntent(contentIntent)
-                .build();
-        // Notification notification = new Notification(icon, titleText, when);
-        // notification.flags |= Notification.FLAG_AUTO_CANCEL;
-        // notification.setLatestEventInfo(this, titleText, contentMessageTitle,
-        // contentIntent);
-
-        mNotificationManager.notify(file.hashCode(), notification);
+    private String getUploadTitle(PhotoUploadDetails pud) {
+        String contentMessageTitle;
+        String imageName = pud.file.getName();
+        if (!TextUtils.isEmpty(pud.photoUpload.getMetaData().getTitle())) {
+            imageName = pud.photoUpload.getMetaData().getTitle();
+        }
+        contentMessageTitle = getString(R.string.notification_upload_success_text, imageName);
+        return contentMessageTitle;
     }
 
     @Override
