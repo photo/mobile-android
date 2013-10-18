@@ -5,6 +5,7 @@ import org.holoeverywhere.LayoutInflater;
 import org.holoeverywhere.app.Activity;
 import org.holoeverywhere.app.Fragment;
 
+import uk.co.senab.photoview.VersionedGestureDetector;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -32,6 +33,7 @@ import com.trovebox.android.app.net.ProfileResponseUtils;
 import com.trovebox.android.app.net.ReturnSizes;
 import com.trovebox.android.app.service.UploaderServiceUtils.PhotoUploadedHandler;
 import com.trovebox.android.app.ui.adapter.PhotosEndlessAdapter;
+import com.trovebox.android.app.ui.widget.ScalableListView;
 import com.trovebox.android.app.util.CommonUtils;
 import com.trovebox.android.app.util.GuiUtils;
 import com.trovebox.android.app.util.ImageFlowUtils;
@@ -68,6 +70,7 @@ public class GalleryFragment extends CommonRefreshableFragmentWithImageWorker
 
     ListView photosGrid;
     ViewTreeObserver.OnGlobalLayoutListener photosGridListener;
+    PhotosGridOnTouchListener mPhotosGridOnTouchListener;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -188,19 +191,16 @@ public class GalleryFragment extends CommonRefreshableFragmentWithImageWorker
                         photosGrid.getWidth() || photosGrid.getHeight() != lastHeight))
                 {
                     CommonUtils.debug(TAG, "Reinit grid groups");
-                    mAdapter.imageFlowUtils.onGroupsStructureModified();
-                    mAdapter.imageFlowUtils.buildGroups(photosGrid.getWidth(),
-                            mImageThumbSize, photosGrid.getHeight() - 2
-                                    * (mImageThumbBorder
-                                    + mImageThumbSpacing), mImageThumbBorder
-                                    + mImageThumbSpacing);
-                    mAdapter.notifyDataSetChanged();
+                    rebuildPhotosGrid();
                     lastHeight = photosGrid.getHeight();
                 }
             }
         };
         photosGrid.getViewTreeObserver().addOnGlobalLayoutListener(photosGridListener);
         photosGrid.setAdapter(mAdapter);
+        mPhotosGridOnTouchListener = new PhotosGridOnTouchListener();
+        ((ScalableListView) photosGrid).setVersionedGestureDetector(VersionedGestureDetector
+                .newInstance(photosGrid.getContext(), mPhotosGridOnTouchListener));
     }
 
     public void cleanRefreshIfFiltered()
@@ -536,6 +536,15 @@ public class GalleryFragment extends CommonRefreshableFragmentWithImageWorker
         refreshImmediatelyOrScheduleIfNecessary();
     }
 
+    void rebuildPhotosGrid() {
+        mAdapter.imageFlowUtils.onGroupsStructureModified();
+        mAdapter.imageFlowUtils.buildGroups(photosGrid.getWidth(),
+                (int) (mPhotosGridOnTouchListener.getScaleFactor() * mImageThumbSize),
+                photosGrid.getHeight() - 2 * (mImageThumbBorder + mImageThumbSpacing),
+                mImageThumbBorder + mImageThumbSpacing);
+        mAdapter.notifyDataSetChanged();
+    }
+
     /**
      * Adjust start now notification visibility state and init it in case it is
      * visible. When user clicked on int startNowHandler.startNow will be
@@ -628,6 +637,45 @@ public class GalleryFragment extends CommonRefreshableFragmentWithImageWorker
             }
         }
     }
+
+    class PhotosGridOnTouchListener implements VersionedGestureDetector.OnGestureListener {
+        private float mScaleFactor = 1.f;
+
+        @Override
+        public void onDrag(float dx, float dy) {
+            // TODO Auto-generated method stub
+
+        }
+
+        @Override
+        public void onFling(float startX, float startY, float velocityX, float velocityY) {
+            // TODO Auto-generated method stub
+
+        }
+
+        @Override
+        public void onScale(float scaleFactor, float focusX, float focusY) {
+            CommonUtils.debug(TAG,
+                    "LibraryListOnTouchListener.onScale: scale: %.2f. fX: %.2f. fY: %.2f",
+                    scaleFactor, focusX, focusY);
+
+            final float newScaleFactor = (1.0f + (scaleFactor - 1.0f) / 2) * mScaleFactor;
+            CommonUtils.debug(TAG,
+                    "LibraryListOnTouchListener.onScale: new scale: %.2f, new height: %d",
+                    newScaleFactor, (int) (newScaleFactor * mImageThumbSize));
+
+            if (newScaleFactor >= 0.5f && newScaleFactor <= 5.f) {
+                mScaleFactor = newScaleFactor;
+                // Don't let the object get too small or too large.
+                rebuildPhotosGrid();
+            }
+        }
+
+        public float getScaleFactor() {
+            return mScaleFactor;
+        }
+    }
+
     public static interface StartNowHandler
     {
         void startNow();
