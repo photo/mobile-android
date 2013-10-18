@@ -30,13 +30,10 @@ import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.GridView;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
-import com.tonicartos.widget.stickygridheaders.StickyGridHeadersGridView;
-import com.tonicartos.widget.stickygridheaders.StickyGridHeadersSimpleAdapter;
 import com.trovebox.android.app.bitmapfun.util.ImageCache;
 import com.trovebox.android.app.bitmapfun.util.ImageFileSystemFetcher;
 import com.trovebox.android.app.bitmapfun.util.ImageResizer;
@@ -61,7 +58,7 @@ public class SyncImageSelectionFragment extends CommonRefreshableFragmentWithIma
     private int mImageThumbSize;
     private int mImageThumbSpacing;
     private int mImageThumbBorder;
-    private StickyGridHeadersGridView photosGrid;
+    private GridView photosGrid;
     ViewTreeObserver.OnGlobalLayoutListener photosGridListener;
     NextStepFlow nextStepFlow;
     InitTask initTask = null;
@@ -160,7 +157,7 @@ public class SyncImageSelectionFragment extends CommonRefreshableFragmentWithIma
 
     public void init(View v)
     {
-        photosGrid = (StickyGridHeadersGridView) v.findViewById(R.id.grid_photos);
+        photosGrid = (GridView) v.findViewById(R.id.grid_photos);
         photosGrid.setAdapter(new DummyImageAdapter());
 
         // This listener is used to get the final width of the GridView and then
@@ -663,8 +660,7 @@ public class SyncImageSelectionFragment extends CommonRefreshableFragmentWithIma
 
     }
 
-    private class CustomImageAdapter extends ImageAdapter
-            implements StickyGridHeadersSimpleAdapter {
+    private class CustomImageAdapter extends ImageAdapter {
         SelectionController selectionController;
 
         public CustomImageAdapter(Context context, ImageResizer imageWorker,
@@ -682,8 +678,6 @@ public class SyncImageSelectionFragment extends CommonRefreshableFragmentWithIma
             final ViewHolder holder;
             if (convertView == null)
             { // if it's not recycled, instantiate and initialize
-                final LayoutInflater layoutInflater = (LayoutInflater) getActivity()
-                        .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                 convertView = layoutInflater.inflate(
                         R.layout.item_sync_image, null);
                 convertView.setLayoutParams(mImageViewLayoutParams);
@@ -747,44 +741,12 @@ public class SyncImageSelectionFragment extends CommonRefreshableFragmentWithIma
             return convertView;
         }
 
-        @Override
-        public long getHeaderId(int position) {
-            ImageData imageData = (ImageData) getItem(position);
-            return imageData == null ? -1 : imageData.folder.hashCode();
-        }
-
-        @Override
-        public View getHeaderView(int position, View convertView, ViewGroup parent) {
-            HeaderViewHolder holder;
-            if (convertView == null) {
-                convertView = inflater.inflate(R.layout.sync_category_separator, parent, false);
-                holder = new HeaderViewHolder();
-                holder.textView = (TextView) convertView.findViewById(android.R.id.text1);
-                convertView.setTag(holder);
-            } else {
-                holder = (HeaderViewHolder) convertView.getTag();
-            }
-
-            ImageData imageData = (ImageData) getItem(position);
-            if (imageData == null)
-            {
-                return null;
-            }
-            // set header text as first char in string
-            holder.textView.setText(imageData.folder);
-
-            return convertView;
-        }
-
         protected class ViewHolder
         {
             View selectedOverlay;
             View uploadedOverlay;
             View imageContainer;
             ImageView imageView;
-        }
-        protected class HeaderViewHolder {
-            public TextView textView;
         }
     }
 
@@ -800,14 +762,14 @@ public class SyncImageSelectionFragment extends CommonRefreshableFragmentWithIma
         protected int mItemHeight = 0;
         protected GridView.LayoutParams mImageViewLayoutParams;
         private ImageResizer mImageWorker;
-        LayoutInflater inflater;
+        LayoutInflater layoutInflater;
 
         public ImageAdapter(Context context, ImageResizer imageWorker)
         {
             super();
             mContext = context;
             this.mImageWorker = imageWorker;
-            this.inflater = LayoutInflater.from(context);
+            this.layoutInflater = LayoutInflater.from(context);
             mImageViewLayoutParams = new GridView.LayoutParams(
                     LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
         }
@@ -1056,26 +1018,25 @@ public class SyncImageSelectionFragment extends CommonRefreshableFragmentWithIma
                 public int compare(ImageData lhs, ImageData rhs)
                 {
                     int result;
-                    if (lhs.folder == null)
+                    boolean leftProcessed = isProcessedValue(lhs);
+                    boolean rightProcessed = isProcessedValue(rhs);
+                    if (leftProcessed == rightProcessed)
                     {
-                        result = -1;
-                    } else if (rhs.folder == null)
-                    {
-                        result = 1;
+                        result = 0;
                     } else
                     {
-                        result = lhs.folder.toLowerCase().compareTo(rhs.folder.toLowerCase());
+                        result = leftProcessed ? -1 : 1;
                     }
                     if (result == 0)
                     {
-                        boolean leftProcessed = isProcessedValue(lhs);
-                        boolean rightProcessed = isProcessedValue(rhs);
-                        if (leftProcessed == rightProcessed)
+                        if (lhs.folder == null) {
+                            result = -1;
+                        } else if (rhs.folder == null)
                         {
-                            result = 0;
+                            result = 1;
                         } else
                         {
-                            result = leftProcessed ? -1 : 1;
+                            result = lhs.folder.toLowerCase().compareTo(rhs.folder.toLowerCase());
                         }
                     }
                     return result;
