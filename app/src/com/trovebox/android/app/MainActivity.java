@@ -37,10 +37,6 @@ import com.trovebox.android.app.model.utils.PhotoUtils.PhotoUpdatedHandler;
 import com.trovebox.android.app.net.account.AccountLimitUtils;
 import com.trovebox.android.app.provider.UploadsUtils;
 import com.trovebox.android.app.provider.UploadsUtils.UploadsClearedHandler;
-import com.trovebox.android.app.purchase.PurchaseController;
-import com.trovebox.android.app.purchase.PurchaseController.PurchaseHandler;
-import com.trovebox.android.app.purchase.PurchaseControllerUtils;
-import com.trovebox.android.app.purchase.PurchaseControllerUtils.SubscriptionPurchasedHandler;
 import com.trovebox.android.app.service.UploaderServiceUtils;
 import com.trovebox.android.app.service.UploaderServiceUtils.PhotoUploadedHandler;
 import com.trovebox.android.app.twitter.TwitterUtils;
@@ -57,14 +53,12 @@ import com.trovebox.android.app.util.TrackerUtils;
 public class MainActivity extends CommonActivity implements LoadingControl, GalleryOpenControl,
         SyncHandler, UploadsClearedHandler, PhotoUploadedHandler, TwitterLoadingControlAccessor,
         FacebookLoadingControlAccessor, SyncStartedHandler, PhotoDeletedHandler,
-        PhotoUpdatedHandler, GalleryFragment.StartNowHandler, PurchaseHandler,
-        SubscriptionPurchasedHandler, TitleChangedHandler {
+        PhotoUpdatedHandler, GalleryFragment.StartNowHandler, TitleChangedHandler {
     private static final String NAVIGATION_HANDLER_FRAGMENT_TAG = "NavigationHandlerFragment";
 
     public static final String TAG = MainActivity.class.getSimpleName();
 
     public final static int AUTHORIZE_ACTIVITY_REQUEST_CODE = 0;
-    public final static int PURCHASE_FLOW_REQUEST_CODE = 1;
     public static final int REQUEST_ALBUMS = 2;
 
     private ActionBar mActionBar;
@@ -74,7 +68,6 @@ public class MainActivity extends CommonActivity implements LoadingControl, Gall
     boolean instanceSaved = false;
 
     final Handler handler = new Handler();
-    PurchaseController purchaseController;
 
     static WeakReference<MainActivity> currentInstance;
 
@@ -124,8 +117,6 @@ public class MainActivity extends CommonActivity implements LoadingControl, Gall
         addRegisteredReceiver(ImageCacheUtils.getAndRegisterOnDiskCacheClearedBroadcastReceiver(
                 TAG,
                 this));
-        addRegisteredReceiver(PurchaseControllerUtils
-                .getAndRegisterOnSubscriptionPurchasedActionBroadcastReceiver(TAG, this, this));
     }
 
     @Override
@@ -161,7 +152,6 @@ public class MainActivity extends CommonActivity implements LoadingControl, Gall
         {
             AccountLimitUtils.updateLimitInformationCacheAsync(this);
         }
-        purchaseController = PurchaseController.getAndSetup(this, this);
     }
 
     @Override
@@ -181,9 +171,6 @@ public class MainActivity extends CommonActivity implements LoadingControl, Gall
                         "Skipped nullify of current instance, such as it is not the same");
             }
         }
-        if (purchaseController != null)
-            purchaseController.dispose();
-        purchaseController = null;
     }
 
     @Override
@@ -235,10 +222,6 @@ public class MainActivity extends CommonActivity implements LoadingControl, Gall
                 FacebookProvider.getFacebook().authorizeCallback(requestCode,
                         resultCode,
                         data);
-            }
-                break;
-            case PURCHASE_FLOW_REQUEST_CODE: {
-                purchaseController.handleActivityResult(resultCode, data);
             }
                 break;
         }
@@ -489,12 +472,6 @@ public class MainActivity extends CommonActivity implements LoadingControl, Gall
         }
     }
 
-    @Override
-    public void purchaseMonthlySubscription() {
-        purchaseController.purchaseMonthlySubscription(this, PURCHASE_FLOW_REQUEST_CODE,
-                currentInstanceAccessor);
-    }
-
     private NavigationHandlerFragment navigationHandlerFragment;
 
     /**
@@ -523,15 +500,6 @@ public class MainActivity extends CommonActivity implements LoadingControl, Gall
     public void selectTab(int index)
     {
         navigationHandlerFragment.selectTab(index);
-    }
-
-    @Override
-    public void subscriptionPurchased() {
-        AccountFragment accountFragment = navigationHandlerFragment.getAccountFragment();
-        if (accountFragment != null)
-        {
-            accountFragment.subscriptionPurchased();
-        }
     }
 
     @Override

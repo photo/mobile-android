@@ -12,7 +12,6 @@ import android.content.Context;
 import com.trovebox.android.app.net.ApiBase;
 import com.trovebox.android.app.net.TroveboxResponse;
 import com.trovebox.android.app.net.TroveboxResponse.RequestType;
-import com.trovebox.android.app.purchase.util.Purchase;
 
 /**
  * @author Patrick Santana <patrick@trovebox.com>
@@ -83,31 +82,6 @@ public class FakeAccountTroveboxApi extends ApiBase implements
             e.printStackTrace();
         }
         return new AccountTroveboxResponse(RequestType.UNKNOWN, jsonObjFake);
-    }
-
-    @Override
-    public PaymentVerificationResponse verifyPayment(String email, Purchase purchase)
-            throws IllegalStateException, IOException,
-            NoSuchAlgorithmException, JSONException {
-        JSONObject jsonObjFake = purchase.isInPurchasedState() ?
-                new JSONObject(
-                "{\"message\" : \"Payment verified\"," +
-                        "\"code\" : 200," +
-                        "\"result\" :" +
-                                "{}}") :
-                new JSONObject(
-                        "{\"message\" : \"Payment invalid\"," +
-                                "\"code\" : 400," +
-                                "\"result\" :" +
-                                "{}}");
-        try {
-            // emulate network latency
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        return new PaymentVerificationResponse(jsonObjFake);
     }
 
     @Override

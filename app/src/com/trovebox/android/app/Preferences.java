@@ -21,7 +21,6 @@ import com.trovebox.android.app.model.ProfileInformation.AccessPermissions;
 import com.trovebox.android.app.net.ApiRequest.ApiVersion;
 import com.trovebox.android.app.net.ITroveboxApi;
 import com.trovebox.android.app.net.TroveboxApi;
-import com.trovebox.android.app.purchase.util.Purchase;
 import com.trovebox.android.app.util.CommonUtils;
 
 public class Preferences {
@@ -349,30 +348,6 @@ public class Preferences {
                 .putBoolean(CommonUtils.getStringResource(R.string.setting_system_version_hosted),
                         value)
                 .commit();
-    }
-
-    /**
-     * Check whether the purchase was already verified by the application
-     * 
-     * @param purchase purchase to verify
-     * @return true if purchase was successfully verified
-     */
-    public static boolean isPurchaseVerified(Purchase purchase)
-    {
-        return getVerifiedPaymentsPreferences().getBoolean(
-                purchase.getDeveloperPayload() + ":" + purchase.getToken(), false);
-    }
-
-    /**
-     * Set purchase verified state to the cache
-     * 
-     * @param purchase related purchase
-     * @param verified whether the verification was successful
-     */
-    public static void setPurchaseVerified(Purchase purchase, boolean verified)
-    {
-        getVerifiedPaymentsPreferences().edit().putBoolean(
-                purchase.getDeveloperPayload() + ":" + purchase.getToken(), verified);
     }
 
     /**
