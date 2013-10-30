@@ -42,13 +42,6 @@ public class AccountActivity extends CommonActivity {
         signUpInstructions.setText(Html.fromHtml(getString(R.string.account_signup_instructions)));
     }
 
-    public void accountSignupButtonAction(View view) {
-        CommonUtils.debug(TAG, "Start account signup button action");
-        TrackerUtils.trackButtonClickEvent("signup_button", AccountActivity.this);
-        Intent intent = new Intent(this, AccountSignup.class);
-        startActivity(intent);
-    }
-
     public void accountLoginButtonAction(View view) {
         CommonUtils.debug(TAG, "Start account login button action");
         TrackerUtils.trackButtonClickEvent("account_login_button", AccountActivity.this);

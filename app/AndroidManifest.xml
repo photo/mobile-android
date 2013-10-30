@@ -102,9 +102,6 @@
             android:name=".AccountLogin"
             android:theme="@style/Theme.Trovebox.Login" />
         <activity
-            android:name=".AccountSignup"
-            android:theme="@style/Theme.Trovebox.Login" />
-        <activity
             android:name=".AccountActivity"
             android:theme="@style/Theme.Trovebox.Login" />
         <activity
