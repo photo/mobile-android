@@ -328,40 +328,34 @@ public class NavigationHandlerFragment extends CommonFragment {
         if (CommonUtils.checkLoggedIn(true))
         {
             SystemVersionResponseUtils
-                    .tryToUpdateSystemVersionCacheIfNecessaryAndRunInContextAsync(
-                            new Runnable() {
+                    .tryToUpdateSystemVersionCacheIfNecessaryAndRunInContextAsync(new Runnable() {
 
-                                @Override
-                                public void run() {
-                                    if (getActivity() != null && !getActivity().isFinishing())
-                                    {
-                                        if (Preferences.isHosted())
-                                        {
-                                            FragmentWrapper<?> wrapper;
+                        @Override
+                        public void run() {
+                            if (getActivity() != null && !getActivity().isFinishing()) {
+                                if (Preferences.isHosted()
+                                        && !Preferences.isLimitedAccountAccessType()) {
+                                    FragmentWrapper<?> wrapper;
 
-                                            wrapper = adapter.add(R.string.tab_account,
-                                                    R.drawable.menu_profile_2states,
-                                                    AccountFragment.class, null, null,
-                                                    getAccountIndex());
-                                            wrapper.mSeparatorTitleId = R.string.tab_preferences;
-                                            for (int position = getAccountIndex() + 1, size = adapter
-                                                    .getCount(); position < size; position++)
-                                            {
-                                                wrapper = adapter.wrappers
-                                                        .get(position);
-                                                wrapper.mPosition = position;
-                                                wrapper.mSeparatorTitleId = View.NO_ID;
-                                            }
-                                            adapter.notifyDataSetChanged();
-                                            rebuildLeftView();
-                                        }
-                                        if (mCurrentPage >= getAccountIndex())
-                                        {
-                                            selectTab(mCurrentPage);
-                                        }
+                                    wrapper = adapter.add(R.string.tab_account,
+                                            R.drawable.menu_profile_2states, AccountFragment.class,
+                                            null, null, getAccountIndex());
+                                    wrapper.mSeparatorTitleId = R.string.tab_preferences;
+                                    for (int position = getAccountIndex() + 1, size = adapter
+                                            .getCount(); position < size; position++) {
+                                        wrapper = adapter.wrappers.get(position);
+                                        wrapper.mPosition = position;
+                                        wrapper.mSeparatorTitleId = View.NO_ID;
                                     }
+                                    adapter.notifyDataSetChanged();
+                                    rebuildLeftView();
                                 }
-                            }, (LoadingControl) getActivity());
+                                if (mCurrentPage >= getAccountIndex()) {
+                                    selectTab(mCurrentPage);
+                                }
+                            }
+                        }
+                    }, (LoadingControl) getActivity());
             if (!hasAlbums()) {
                 AccountLimitUtils.tryToRefreshLimitInformationAndRunInContextAsync(new Runnable() {
 
