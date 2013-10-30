@@ -231,6 +231,7 @@
 
     <!-- Screens for Create/Login/Own domain: Account -->
     <string name="account_google_login_button"><![CDATA[Connect using <b>Google</b> login]]></string>
+    <string name="account_signup_instructions"><![CDATA[Need an account, visit <a href="http://trovebox.com">trovebox.com</a>]]></string>
     <string name="account_signup_button">Sign up with your email</string>
     <string name="account_login_button">Sign in with your email</string>
     <string name="account_own_server_button">Using your own domain?</string>

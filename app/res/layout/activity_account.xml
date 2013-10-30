@@ -42,26 +42,14 @@
             android:textAppearance="?android:attr/textAppearanceMedium" />
     </RelativeLayout>
 
-    <RelativeLayout
+    <TextView
+        android:id="@+id/signup_instructions"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
-
-        <Button
-            android:id="@+id/account_signup_button"
-            style="@style/Trovebox.BeigeWithIconButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:onClick="accountSignupButtonAction"
-            android:text="@string/account_signup_button" />
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_centerVertical="true"
-            android:layout_marginLeft="16dp"
-            android:src="@drawable/sign_plus" />
-    </RelativeLayout>
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dip"
+        android:gravity="center"
+        android:text="@string/account_signup_instructions"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
 
     <RelativeLayout
         android:layout_width="match_parent"

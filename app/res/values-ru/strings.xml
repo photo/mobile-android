@@ -230,6 +230,7 @@
 
     <!-- Screens for Create/Login/Own domain: Account -->
     <string name="account_google_login_button"><![CDATA[Войти используя <b>Google</b> аккаунт]]></string>
+    <string name="account_signup_instructions"><![CDATA[Нужен аккаунт? Посетите <a href="http://trovebox.com">trovebox.com</a>]]></string>
     <string name="account_signup_button">Зарегистрироваться используя email</string>
     <string name="account_login_button">Войти используя email</string>
     <string name="account_own_server_button">Используете собственный домен?</string>
