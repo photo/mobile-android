@@ -8,6 +8,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.trovebox.android.app.Preferences;
 import com.trovebox.android.app.model.Album;
 
 /**
@@ -37,6 +38,10 @@ public class AlbumsResponse extends PagedResponse
 
     @Override
     public boolean hasNextPage() {
-        return !mAlbums.isEmpty();
+        if (Preferences.isV2ApiAvailable()) {
+            return super.hasNextPage();
+        } else {
+            return !mAlbums.isEmpty();
+        }
     }
 }

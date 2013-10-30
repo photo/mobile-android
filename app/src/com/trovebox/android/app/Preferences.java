@@ -18,6 +18,7 @@ import android.text.TextUtils;
 
 import com.trovebox.android.app.model.Credentials;
 import com.trovebox.android.app.model.ProfileInformation.AccessPermissions;
+import com.trovebox.android.app.net.ApiRequest.ApiVersion;
 import com.trovebox.android.app.net.ITroveboxApi;
 import com.trovebox.android.app.net.TroveboxApi;
 import com.trovebox.android.app.purchase.util.Purchase;
@@ -401,6 +402,43 @@ public class Preferences {
                         CommonUtils.getStringResource(R.string.setting_system_version_info_updated),
                         value)
                 .commit();
+    }
+
+    /**
+     * Set currently supported api version
+     * 
+     * @param apiVersion
+     */
+    public static void setApiVersion(ApiVersion apiVersion) {
+        getSystemVersionPreferences()
+                .edit()
+                .putString(
+                        CommonUtils.getStringResource(R.string.setting_system_version_api_version),
+                        apiVersion.getName()).commit();
+    }
+
+    /**
+     * Check whether v2 api features available
+     * 
+     * @return
+     */
+    public static boolean isV2ApiAvailable() {
+        return getCurrentApiVersion() == ApiVersion.V2;
+    }
+
+    /**
+     * Get currently supported api version information
+     * 
+     * @return
+     */
+    public static ApiVersion getCurrentApiVersion() {
+        String apiVersion = getSystemVersionPreferences().getString(
+                CommonUtils.getStringResource(R.string.setting_system_version_api_version), null);
+        if (apiVersion == null) {
+            return ApiVersion.V1;
+        } else {
+            return ApiVersion.getApiVersionByName(apiVersion);
+        }
     }
 
     public static void logout(Context context) {

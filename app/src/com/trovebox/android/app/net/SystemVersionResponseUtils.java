@@ -3,6 +3,7 @@ package com.trovebox.android.app.net;
 import com.trovebox.android.app.Preferences;
 import com.trovebox.android.app.R;
 import com.trovebox.android.app.TroveboxApplication;
+import com.trovebox.android.app.net.ApiRequest.ApiVersion;
 import com.trovebox.android.app.util.CommonUtils;
 import com.trovebox.android.app.util.GuiUtils;
 import com.trovebox.android.app.util.LoadingControl;
@@ -128,6 +129,7 @@ public class SystemVersionResponseUtils {
         if (response.isSuccess())
         {
             Preferences.setHosted(response.isHosted());
+            Preferences.setApiVersion(ApiVersion.getApiVersionByName(response.getApi()));
             Preferences.setSystemVersionInformationCached(true);
             TrackerUtils.trackBackgroundEvent(SYSTEM_VERSION_CACHE_UPDATE_EVENT, "success");
             CommonUtils.debug(TAG, "Update system version information cache successful");
