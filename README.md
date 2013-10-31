@@ -27,3 +27,6 @@ These are the steps on Eclipse:
 2. Select _Android Tools_
 3. Select _Add Support Library_
 4. Accept and Finish
+ 
+# Advanced Enironment Setup instructions
+https://github.com/photo/mobile-android/wiki/Eclipse-build-environment-setup
