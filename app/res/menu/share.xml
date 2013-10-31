@@ -3,15 +3,15 @@
 
     <item
         android:id="@+id/menu_share_email"
-        android:title="@string/menu_share_email"
-        />
+        android:title="@string/menu_share_email"/>
     <item
         android:id="@+id/menu_share_twitter"
-        android:title="@string/menu_share_twitter"
-        />
+        android:title="@string/menu_share_twitter"/>
     <item
         android:id="@+id/menu_share_facebook"
-        android:title="@string/menu_share_facebook"
-        />
+        android:title="@string/menu_share_facebook"/>
+    <item
+        android:id="@+id/menu_share_system"
+        android:title="@string/menu_share_system"/>
 
 </menu>

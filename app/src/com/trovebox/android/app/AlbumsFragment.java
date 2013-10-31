@@ -89,7 +89,7 @@ public class AlbumsFragment extends CommonRefreshableFragmentWithImageWorker imp
     {
         TrackerUtils.trackButtonClickEvent("album_item", AlbumsFragment.this);
         Album album = (Album) mAdapter.getItem(position);
-        galleryOpenControl.openGallery(null, album.getId());
+        galleryOpenControl.openGallery(null, album);
     }
 
     @Override

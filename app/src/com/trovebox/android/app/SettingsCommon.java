@@ -3,6 +3,7 @@ package com.trovebox.android.app;
 
 import org.holoeverywhere.app.Activity;
 import org.holoeverywhere.app.AlertDialog;
+import org.holoeverywhere.preference.CheckBoxPreference;
 import org.holoeverywhere.preference.EditTextPreference;
 import org.holoeverywhere.preference.Preference;
 import org.holoeverywhere.preference.Preference.OnPreferenceChangeListener;
@@ -174,6 +175,10 @@ public class SettingsCommon implements
                         return true;
                     }
                 });
+        if (Preferences.isLimitedAccountAccessType()) {
+            autoUploadPreference.setEnabled(false);
+            ((CheckBoxPreference) autoUploadPreference).setChecked(false);
+        }
     }
 
     public PreferenceCategory getLoginCategory() {

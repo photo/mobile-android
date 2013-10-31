@@ -3,7 +3,9 @@ package com.trovebox.android.app;
 
 import org.holoeverywhere.LayoutInflater;
 import org.holoeverywhere.app.Activity;
+import org.holoeverywhere.app.Fragment;
 
+import uk.co.senab.photoview.VersionedGestureDetector;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -15,17 +17,23 @@ import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.ListView;
 
-import com.trovebox.android.app.HomeFragment.StartNowHandler;
+import com.trovebox.android.app.NavigationHandlerFragment.TitleChangedHandler;
 import com.trovebox.android.app.bitmapfun.util.ImageCache;
 import com.trovebox.android.app.bitmapfun.util.ImageFetcher;
 import com.trovebox.android.app.common.CommonRefreshableFragmentWithImageWorker;
+import com.trovebox.android.app.model.Album;
 import com.trovebox.android.app.model.Photo;
+import com.trovebox.android.app.model.ProfileInformation;
+import com.trovebox.android.app.model.ProfileInformation.AccessPermissions;
+import com.trovebox.android.app.model.utils.AlbumUtils;
 import com.trovebox.android.app.model.utils.PhotoUtils;
 import com.trovebox.android.app.model.utils.PhotoUtils.PhotoDeletedHandler;
 import com.trovebox.android.app.model.utils.PhotoUtils.PhotoUpdatedHandler;
+import com.trovebox.android.app.net.ProfileResponseUtils;
 import com.trovebox.android.app.net.ReturnSizes;
 import com.trovebox.android.app.service.UploaderServiceUtils.PhotoUploadedHandler;
 import com.trovebox.android.app.ui.adapter.PhotosEndlessAdapter;
+import com.trovebox.android.app.ui.widget.ScalableListView;
 import com.trovebox.android.app.util.CommonUtils;
 import com.trovebox.android.app.util.GuiUtils;
 import com.trovebox.android.app.util.ImageFlowUtils;
@@ -45,9 +53,12 @@ public class GalleryFragment extends CommonRefreshableFragmentWithImageWorker
 
     private LoadingControl loadingControl;
     private StartNowHandler startNowHandler;
+    private TitleChangedHandler mTitleChangedHandler;
     private GalleryAdapterExt mAdapter;
     private String mTags;
-    private String mAlbum;
+    private Album mAlbum;
+    private boolean mSkipPermissionsCheck;
+    private CollaboratorAlbumRunnable mCollaboratorAlbumRunnable;
 
     private ReturnSizes thumbSize;
     private ReturnSizes returnSizes;
@@ -59,6 +70,7 @@ public class GalleryFragment extends CommonRefreshableFragmentWithImageWorker
 
     ListView photosGrid;
     ViewTreeObserver.OnGlobalLayoutListener photosGridListener;
+    PhotosGridOnTouchListener mPhotosGridOnTouchListener;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -72,7 +84,7 @@ public class GalleryFragment extends CommonRefreshableFragmentWithImageWorker
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putString(EXTRA_TAG, mTags);
-        outState.putString(EXTRA_ALBUM, mAlbum);
+        outState.putParcelable(EXTRA_ALBUM, mAlbum);
     }
 
     @Override
@@ -84,11 +96,12 @@ public class GalleryFragment extends CommonRefreshableFragmentWithImageWorker
         if (savedInstanceState != null)
         {
             mTags = savedInstanceState.getString(EXTRA_TAG);
-            mAlbum = savedInstanceState.getString(EXTRA_ALBUM);
+            mAlbum = savedInstanceState.getParcelable(EXTRA_ALBUM);
         } else
         {
             mTags = null;
             mAlbum = null;
+            mSkipPermissionsCheck = false;
         }
         return v;
     }
@@ -105,7 +118,12 @@ public class GalleryFragment extends CommonRefreshableFragmentWithImageWorker
         super.onAttach(activity);
         loadingControl = ((LoadingControl) activity);
         startNowHandler = ((StartNowHandler) activity);
+        mTitleChangedHandler = ((TitleChangedHandler) activity);
 
+    }
+
+    public Album getAlbum() {
+        return mAlbum;
     }
 
     @Override
@@ -139,18 +157,29 @@ public class GalleryFragment extends CommonRefreshableFragmentWithImageWorker
             mTags = intent != null ? intent
                     .getStringExtra(EXTRA_TAG)
                     : null;
-            mAlbum = intent != null ? intent.getStringExtra(EXTRA_ALBUM) : null;
+            mAlbum = intent != null ? (Album) intent.getParcelableExtra(EXTRA_ALBUM) : null;
         }
         if (mTags != null || mAlbum != null)
         {
-            mAdapter = new GalleryAdapterExt(mTags, mAlbum);
+            mAdapter = new GalleryAdapterExt(mTags, mAlbum == null ? null : mAlbum.getId());
             removeTagsAndAlbumInformationFromActivityIntent();
         } else
         {
-            mAdapter = new GalleryAdapterExt();
+            if (Preferences.isLimitedAccountAccessType() && !mSkipPermissionsCheck) {
+                mAdapter = null;
+                mCollaboratorAlbumRunnable = new CollaboratorAlbumRunnable();
+                ProfileResponseUtils.runWithProfileInformationAsync(true,
+                        mCollaboratorAlbumRunnable, null,
+                        loadingControl);
+            } else {
+                mAdapter = new GalleryAdapterExt();
+            }
         }
 
         photosGrid = (ListView) v.findViewById(R.id.list_photos);
+        if (photosGridListener != null) {
+            GuiUtils.removeGlobalOnLayoutListener(photosGrid, photosGridListener);
+        }
         photosGridListener = new ViewTreeObserver.OnGlobalLayoutListener()
         {
             int lastHeight = 0;
@@ -162,18 +191,16 @@ public class GalleryFragment extends CommonRefreshableFragmentWithImageWorker
                         photosGrid.getWidth() || photosGrid.getHeight() != lastHeight))
                 {
                     CommonUtils.debug(TAG, "Reinit grid groups");
-                    mAdapter.imageFlowUtils.buildGroups(photosGrid.getWidth(),
-                            mImageThumbSize, photosGrid.getHeight() - 2
-                                    * (mImageThumbBorder
-                                    + mImageThumbSpacing), mImageThumbBorder
-                                    + mImageThumbSpacing);
-                    mAdapter.notifyDataSetChanged();
+                    rebuildPhotosGrid();
                     lastHeight = photosGrid.getHeight();
                 }
             }
         };
         photosGrid.getViewTreeObserver().addOnGlobalLayoutListener(photosGridListener);
         photosGrid.setAdapter(mAdapter);
+        mPhotosGridOnTouchListener = new PhotosGridOnTouchListener();
+        ((ScalableListView) photosGrid).setVersionedGestureDetector(VersionedGestureDetector
+                .newInstance(photosGrid.getContext(), mPhotosGridOnTouchListener));
     }
 
     public void cleanRefreshIfFiltered()
@@ -216,8 +243,10 @@ public class GalleryFragment extends CommonRefreshableFragmentWithImageWorker
             mAdapter.forceStopLoadingIfNecessary();
         }
         GuiUtils.removeGlobalOnLayoutListener(photosGrid, photosGridListener);
+        if (mCollaboratorAlbumRunnable != null) {
+            mCollaboratorAlbumRunnable.cancel();
+        }
     }
-
 
     @Override
     public void photoDeleted(Photo photo)
@@ -254,7 +283,7 @@ public class GalleryFragment extends CommonRefreshableFragmentWithImageWorker
             Photo imageData = fo.getObject();
             double ratio = imageData.getHeight() == 0 ? 1 : (float) imageData.getWidth()
                     / (float) imageData.getHeight();
-            int height = mImageHeight;
+            int height = imageHeight;
             int width = (int) (height * ratio);
             Bitmap result = null;
             try
@@ -373,6 +402,15 @@ public class GalleryFragment extends CommonRefreshableFragmentWithImageWorker
         }
 
         @Override
+        public boolean checkNeedToLoadNextPage(int position) {
+            // #449 we need to take into account super count and super item
+            // position for each group
+            return checkNeedToLoadNextPage(
+                    imageFlowUtils.getSuperItemPositionForGroupPosition(position),
+                    getSuperCount());
+        }
+
+        @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             if (checkNeedToLoadNextPage(position))
             {
@@ -400,6 +438,12 @@ public class GalleryFragment extends CommonRefreshableFragmentWithImageWorker
         public boolean isEnabled(int position)
         {
             return false;
+        }
+
+        @Override
+        public void deleteItemAt(int index) {
+            imageFlowUtils.onGroupsStructureModified();
+            super.deleteItemAt(index);
         }
     }
 
@@ -438,7 +482,7 @@ public class GalleryFragment extends CommonRefreshableFragmentWithImageWorker
             LoadResponse result = super.loadItems(page);
             // show start now notification in case response returned no items
             // and there are no already loaded items
-            HomeFragment.showStartNowNotification(startNowHandler,
+            GalleryFragment.showStartNowNotification(startNowHandler,
                     GalleryFragment.this, result.items != null && result.items.isEmpty()
                             && getItems().isEmpty() && mTags == null && mAlbum == null);
             return result;
@@ -482,10 +526,158 @@ public class GalleryFragment extends CommonRefreshableFragmentWithImageWorker
             // viewpager to clear filters
             refreshOnPageActivated = true;
         }
+        if (mCollaboratorAlbumRunnable != null) {
+            mCollaboratorAlbumRunnable.cancel();
+        }
     };
 
     @Override
     public void photoUploaded() {
         refreshImmediatelyOrScheduleIfNecessary();
+    }
+
+    void rebuildPhotosGrid() {
+        mAdapter.imageFlowUtils.onGroupsStructureModified();
+        mAdapter.imageFlowUtils.buildGroups(photosGrid.getWidth(),
+                (int) (mPhotosGridOnTouchListener.getScaleFactor() * mImageThumbSize),
+                photosGrid.getHeight() - 2 * (mImageThumbBorder + mImageThumbSpacing),
+                mImageThumbBorder + mImageThumbSpacing);
+        mAdapter.notifyDataSetChanged();
+    }
+
+    /**
+     * Adjust start now notification visibility state and init it in case it is
+     * visible. When user clicked on int startNowHandler.startNow will be
+     * executed
+     * 
+     * @param startNowHandler
+     * @param fragment
+     * @param show
+     */
+    public static void showStartNowNotification(final StartNowHandler startNowHandler,
+            final Fragment fragment,
+            final boolean show)
+    {
+        GuiUtils.runOnUiThread(
+                new Runnable() {
+    
+                    @Override
+                    public void run() {
+                        View view = fragment.getView();
+                        if (view != null)
+                        {
+                            view = view.findViewById(R.id.upload_new_images);
+                            if (show)
+                            {
+                                view.setOnClickListener(new OnClickListener() {
+    
+                                    @Override
+                                    public void onClick(View v) {
+                                        startNowHandler.startNow();
+                                    }
+                                });
+                            }
+                            view.setVisibility(
+                                    show ? View.VISIBLE : View.GONE);
+                        }
+    
+                    }
+                });
+    }
+
+    class CollaboratorAlbumRunnable implements RunnableWithParameter<ProfileInformation> {
+
+        boolean mCancelled = false;
+
+        @Override
+        public void run(ProfileInformation parameter) {
+            if (mCancelled) {
+                return;
+            }
+            try {
+                ProfileInformation viewer = parameter.getViewer();
+                AccessPermissions permissions = viewer == null ? null : viewer.getPermissions();
+                if (permissions == null || permissions.isFullCreateAccess()
+                        || permissions.getCreateAlbumAccessIds() == null
+                        || permissions.getCreateAlbumAccessIds().length == 0) {
+                    mSkipPermissionsCheck = true;
+                    refresh();
+                } else {
+                    AlbumUtils.getAlbumAndRunAsync(permissions.getCreateAlbumAccessIds()[0],
+                            new RunnableWithParameter<Album>() {
+
+                                @Override
+                                public void run(Album parameter) {
+                                    if (!mCancelled) {
+                                        mAlbum = parameter;
+                                        mTitleChangedHandler.titleChanged();
+                                        refresh();
+                                        cancel();
+                                    }
+                                }
+                            }, new Runnable() {
+
+                                @Override
+                                public void run() {
+                                    cancel();
+                                }
+                            }, loadingControl);
+                }
+            } catch (Exception ex) {
+                GuiUtils.error(TAG, ex);
+            }
+
+        }
+
+        void cancel() {
+            mCancelled = true;
+            if (mCollaboratorAlbumRunnable == this) {
+                mSkipPermissionsCheck = false;
+                mCollaboratorAlbumRunnable = null;
+            }
+        }
+    }
+
+    class PhotosGridOnTouchListener implements VersionedGestureDetector.OnGestureListener {
+        private float mScaleFactor = 1.f;
+
+        @Override
+        public void onDrag(float dx, float dy) {
+            // TODO Auto-generated method stub
+
+        }
+
+        @Override
+        public void onFling(float startX, float startY, float velocityX, float velocityY) {
+            // TODO Auto-generated method stub
+
+        }
+
+        @Override
+        public void onScale(float scaleFactor, float focusX, float focusY) {
+            CommonUtils.debug(TAG,
+                    "LibraryListOnTouchListener.onScale: scale: %.2f. fX: %.2f. fY: %.2f",
+                    scaleFactor, focusX, focusY);
+
+            final float newScaleFactor = (1.0f + (scaleFactor - 1.0f) / 2) * mScaleFactor;
+            CommonUtils.debug(TAG,
+                    "LibraryListOnTouchListener.onScale: new scale: %.2f, new height: %d",
+                    newScaleFactor, (int) (newScaleFactor * mImageThumbSize));
+
+            if (newScaleFactor >= 0.5f && newScaleFactor <= 5.f) {
+                mScaleFactor = newScaleFactor;
+                // Don't let the object get too small or too large.
+                rebuildPhotosGrid();
+            }
+        }
+
+        public float getScaleFactor() {
+            return mScaleFactor;
+        }
+    }
+
+    public static interface StartNowHandler
+    {
+        void startNow();
     }
 }

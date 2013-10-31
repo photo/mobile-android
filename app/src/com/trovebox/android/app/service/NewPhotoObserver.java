@@ -43,7 +43,8 @@ public class NewPhotoObserver extends FileObserver {
             if (type != null && type.toLowerCase().startsWith("image/"))
             {
                 TrackerUtils.trackBackgroundEvent("autoupload_observer", CommonUtils.format("Processed for Mime-Type: %1$s", type));
-                if (!Preferences.isAutoUploadActive(mContext) || !CommonUtils.checkLoggedIn(true)) {
+                if (!Preferences.isAutoUploadActive(mContext) || !CommonUtils.checkLoggedIn(true)
+                        || Preferences.isLimitedAccountAccessType()) {
                     return;
                 }
                 if (checkLimits())
@@ -128,7 +129,7 @@ public class NewPhotoObserver extends FileObserver {
         String extension = MimeTypeMap.getFileExtensionFromUrl(Uri.fromFile(file).getPath());
         if (extension != null) {
             MimeTypeMap mime = MimeTypeMap.getSingleton();
-            type = mime.getMimeTypeFromExtension(extension);
+            type = mime.getMimeTypeFromExtension(extension.toLowerCase());
         }
         CommonUtils.debug(TAG, "File: %1$s; extension %2$s; MimeType: %3$s",
                 file.getAbsolutePath(), extension, type);

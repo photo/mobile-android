@@ -120,7 +120,6 @@ public class FacebookFragment extends CommonStyledDialogFragment
                     }
                 }
             });
-            if (photo.isPrivate())
             {
                 sendButton.setEnabled(false);
                 PhotoUtils.validateShareTokenExistsAsyncAndRunAsync(photo,
@@ -145,7 +144,7 @@ public class FacebookFragment extends CommonStyledDialogFragment
         {
             GuiUtils.error(TAG, R.string.errorCouldNotInitFacebookFragment, ex,
                     getActivity());
-            dismiss();
+            dismissAllowingStateLoss();
         }
     }
 
@@ -164,7 +163,7 @@ public class FacebookFragment extends CommonStyledDialogFragment
     private void performFacebookLogout()
     {
         FacebookUtils.logoutRequest(getSupportActivity());
-        dismiss();
+        dismissAllowingStateLoss();
     }
 
     @Override
@@ -303,7 +302,7 @@ public class FacebookFragment extends CommonStyledDialogFragment
             Dialog dialog = FacebookFragment.this.getDialog();
             if (dialog != null && dialog.isShowing())
             {
-                FacebookFragment.this.dismiss();
+                FacebookFragment.this.dismissAllowingStateLoss();
             }
         }
     }
@@ -313,7 +312,7 @@ public class FacebookFragment extends CommonStyledDialogFragment
         try
         {
             sharePhoto(messageEt.getText().toString(), photo, thumbSize,
-                    photo.isPrivate());
+                    true);
             return true;
         } catch (Exception ex)
         {
@@ -337,7 +336,7 @@ public class FacebookFragment extends CommonStyledDialogFragment
             ReturnSizes thumbSize) throws FileNotFoundException,
             MalformedURLException, IOException
     {
-        sharePhoto(message, photo, thumbSize, false);
+        sharePhoto(message, photo, thumbSize, true);
     }
 
     /**

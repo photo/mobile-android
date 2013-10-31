@@ -44,6 +44,7 @@ public class ImageFetcher extends ImageResizer {
     private static final String TAG = "ImageFetcher";
     private static final int HTTP_CACHE_SIZE = 10 * 1024 * 1024; // 10MB
     public static final String HTTP_CACHE_DIR = "http";
+    boolean mCheckLoggedIn = true;
 
     /**
      * Initialize providing a target image width and height for the processing
@@ -114,7 +115,7 @@ public class ImageFetcher extends ImageResizer {
      * @return The downloaded and resized bitmap
      */
     private Bitmap processBitmap(String data) {
-        return processBitmap(data, mImageWidth, mImageHeight);
+        return processBitmap(data, imageWidth, imageHeight);
     }
 
     /**
@@ -132,7 +133,7 @@ public class ImageFetcher extends ImageResizer {
         }
 
         // Download a bitmap, write it to a file
-        final File f = downloadBitmap(mContext, data);
+        final File f = downloadBitmap(mContext, data, mCheckLoggedIn);
 
         if (f != null) {
             try
@@ -160,9 +161,10 @@ public class ImageFetcher extends ImageResizer {
      * 
      * @param context The context to use
      * @param urlString The URL to fetch
+     * @param checkLoggedIn whether to check user logged in condition
      * @return A File pointing to the fetched bitmap
      */
-    public static File downloadBitmap(Context context, String urlString) {
+    public static File downloadBitmap(Context context, String urlString, boolean checkLoggedIn) {
         final File cacheDir = DiskLruCache.getDiskCacheDir(context, HTTP_CACHE_DIR);
 
         if (CommonUtils.TEST_CASE && urlString == null)
@@ -204,8 +206,11 @@ public class ImageFetcher extends ImageResizer {
             }
             return cacheFile;
         }
-        if (!CommonUtils.checkLoggedInAndOnline(true))
+        if (!CommonUtils.checkOnline(true))
         {
+            return null;
+        }
+        if (checkLoggedIn && !CommonUtils.checkLoggedIn(true)) {
             return null;
         }
         if (BuildConfig.DEBUG) {
@@ -248,5 +253,13 @@ public class ImageFetcher extends ImageResizer {
         }
 
         return null;
+    }
+
+    public boolean isCheckLoggedIn() {
+        return mCheckLoggedIn;
+    }
+
+    public void setCheckLoggedIn(boolean mCheckLoggedIn) {
+        this.mCheckLoggedIn = mCheckLoggedIn;
     }
 }

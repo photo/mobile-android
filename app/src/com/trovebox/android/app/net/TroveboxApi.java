@@ -50,18 +50,30 @@ public class TroveboxApi extends ApiBase implements ITroveboxApi {
             IOException,
             IllegalStateException, JSONException
     {
-        return getAlbums(null);
+        return getAlbums(null, true);
     }
 
     @Override
-    public AlbumsResponse getAlbums(Paging paging) throws ClientProtocolException,
+    public AlbumsResponse getAlbums(Paging paging, boolean skipEmpty)
+            throws ClientProtocolException,
             IOException,
             IllegalStateException, JSONException
     {
         ApiRequest request = new ApiRequest(ApiRequest.GET, "/albums/list.json");
         addPagingRestrictions(paging, request);
+        if (skipEmpty) {
+            request.addParameter("skipEmpty", "1");
+        }
         ApiResponse response = execute(request);
         return new AlbumsResponse(response.getJSONObject());
+    }
+
+    @Override
+    public AlbumResponse getAlbum(String albumId) throws ClientProtocolException, IOException,
+            IllegalStateException, JSONException {
+        ApiRequest request = new ApiRequest(ApiRequest.GET, "/album/" + albumId + "/view.json");
+        ApiResponse response = execute(request);
+        return new AlbumResponse(RequestType.ALBUM, response.getJSONObject());
     }
 
     @Override
@@ -306,10 +318,13 @@ public class TroveboxApi extends ApiBase implements ITroveboxApi {
     }
 
     @Override
-    public ProfileResponse getProfile() throws ClientProtocolException, IOException,
+    public ProfileResponse getProfile(boolean includeViewer) throws ClientProtocolException,
+            IOException,
             IllegalStateException, JSONException {
-        ApiRequest request = new ApiRequest(ApiRequest.GET,
-                "/user/profile.json");
+        ApiRequest request = new ApiRequest(ApiRequest.GET, "/user/profile.json");
+        if (includeViewer) {
+            request.addParameter("includeViewer", "1");
+        }
         ApiResponse response = execute(request);
         return new ProfileResponse(response.getJSONObject());
     }

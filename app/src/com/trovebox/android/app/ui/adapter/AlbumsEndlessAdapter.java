@@ -48,8 +48,8 @@ public abstract class AlbumsEndlessAdapter extends EndlessAdapter<Album> {
         {
             try
             {
-                AlbumsResponse response = mTroveboxApi.getAlbums(new Paging(page,
-                        getPageSize()));
+                AlbumsResponse response = mTroveboxApi.getAlbums(new Paging(page, getPageSize()),
+                        true);
                 if (TroveboxResponseUtils.checkResponseValid(response))
                 {
                     return new LoadResponse(response.getAlbums(), response.hasNextPage());

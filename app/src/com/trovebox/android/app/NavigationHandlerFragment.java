@@ -10,6 +10,7 @@ import org.holoeverywhere.addon.AddonSlider.AddonSliderA;
 import org.holoeverywhere.widget.LinearLayout;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -21,13 +22,17 @@ import android.view.inputmethod.InputMethodManager;
 
 import com.trovebox.android.app.common.CommonFragment;
 import com.trovebox.android.app.common.lifecycle.ViewPagerHandler;
+import com.trovebox.android.app.model.Album;
+import com.trovebox.android.app.model.ProfileInformation.AccessPermissions;
 import com.trovebox.android.app.net.SystemVersionResponseUtils;
+import com.trovebox.android.app.net.account.AccountLimitUtils;
 import com.trovebox.android.app.ui.adapter.FragmentPagerAdapter;
 import com.trovebox.android.app.ui.widget.SliderCategorySeparator;
 import com.trovebox.android.app.ui.widget.SliderNavigationItem;
 import com.trovebox.android.app.util.CommonUtils;
 import com.trovebox.android.app.util.GuiUtils;
 import com.trovebox.android.app.util.LoadingControl;
+import com.trovebox.android.app.util.RunnableWithResult;
 import com.trovebox.android.app.util.TrackerUtils;
 
 /**
@@ -38,12 +43,38 @@ import com.trovebox.android.app.util.TrackerUtils;
  */
 public class NavigationHandlerFragment extends CommonFragment {
     static final String TAG = NavigationHandlerFragment.class.getSimpleName();
-    public static final int HOME_INDEX = 0;
-    public static final int GALLERY_INDEX = 1;
-    public static final int ALBUMS_INDEX = 2;
-    public static final int TAGS_INDEX = 3;
-    public static final int SYNC_INDEX = 4;
-    public static final int ACCOUNT_INDEX = 5;
+
+    boolean mHasAlbums = false;
+    public int getGalleryIndex() {
+        return 0;
+    }
+
+    public int getAlbumsIndex() {
+        return getGalleryIndex() + (hasAlbums() ? 1 : 0);
+    }
+
+    public int getTagsIndex() {
+        return getAlbumsIndex() + (hasTags() ? 1 : 0);
+    }
+
+    public int getSyncIndex() {
+        return getTagsIndex() + 1;
+    }
+
+    public int getAccountIndex() {
+        return getSyncIndex() + 1;
+    }
+
+    boolean hasAlbums() {
+        return mHasAlbums;
+    }
+    /**
+     * Whether the currently logged in user has access to tags
+     * @return
+     */
+    boolean hasTags() {
+        return !Preferences.isLimitedAccountAccessType();
+    }
 
     public static interface OnMenuClickListener {
         public void onMenuClick(int position);
@@ -61,7 +92,8 @@ public class NavigationHandlerFragment extends CommonFragment {
         private int mIconId;
         private final Bundle mArgs;
         private Fragment mFragment;
-        private Runnable runOnReselect;
+        private Runnable mRunOnReselect;
+        RunnableWithResult<String> dynamicTitleGenerator;
 
         public FragmentWrapper(int title, int icon, Class<T> clz,
                 Bundle args,
@@ -72,7 +104,7 @@ public class NavigationHandlerFragment extends CommonFragment {
             mPosition = position;
             mClass = clz;
             mArgs = args;
-            this.runOnReselect = runOnReselect;
+            this.mRunOnReselect = runOnReselect;
         }
 
         @Override
@@ -80,7 +112,8 @@ public class NavigationHandlerFragment extends CommonFragment {
             if (mCurrentPage != mPosition || getSupportFragmentManager()
                     .getBackStackEntryCount() > 0) {
                 CommonUtils.debug(TAG, "onNavigationItemSelected");
-                TrackerUtils.trackNavigationItemSelectedEvent(TAG,
+                TrackerUtils.trackNavigationItemSelectedEvent(
+                        mClass.getSimpleName(),
                         NavigationHandlerFragment.this);
                 if (mOnMenuClickListener != null) {
                     mOnMenuClickListener.onMenuClick(mPosition);
@@ -95,9 +128,9 @@ public class NavigationHandlerFragment extends CommonFragment {
                 TrackerUtils.trackNavigationItemReselectedEvent(TAG,
                         NavigationHandlerFragment.this);
                 CommonUtils.debug(TAG, "onNavigationItemReselected");
-                if (mCurrentPage == mPosition && runOnReselect != null)
+                if (mCurrentPage == mPosition && mRunOnReselect != null)
                 {
-                    runOnReselect.run();
+                    mRunOnReselect.run();
                 }
             }
         }
@@ -115,6 +148,14 @@ public class NavigationHandlerFragment extends CommonFragment {
         void selectFragment()
         {
             selectTab(mPosition);
+        }
+
+        public String getActionbarTitle() {
+            String title = dynamicTitleGenerator == null ? null : dynamicTitleGenerator.run();
+            if (title == null) {
+                title = CommonUtils.getStringResource(mTitleId);
+            }
+            return title;
         }
     }
 
@@ -228,33 +269,48 @@ public class NavigationHandlerFragment extends CommonFragment {
      */
     void initPager()
     {
-        adapter.add(
-                R.string.tab_home,
-                R.drawable.menu_latest_2states,
-                HomeFragment.class,
-                null);
-        adapter.add(
-                R.string.tab_gallery,
-                R.drawable.menu_gallery_2states,
-                GalleryFragment.class, null,
-                new Runnable() {
-                    @Override
-                    public void run() {
-                        GalleryFragment gf = getGalleryFragment();
-                        if (gf != null)
-                        {
-                            gf.cleanRefreshIfFiltered();
+        {
+            FragmentWrapper<?> wrapper;
+            wrapper = adapter.add(R.string.tab_gallery, R.drawable.menu_gallery_2states,
+                    GalleryFragment.class, null, new Runnable() {
+                        @Override
+                        public void run() {
+                            GalleryFragment gf = getGalleryFragment();
+                            if (gf != null) {
+                                gf.cleanRefreshIfFiltered();
+                            }
+                            setActionBarTitle(adapter.wrappers.get(getGalleryIndex()));
                         }
+                    });
+            wrapper.dynamicTitleGenerator = new RunnableWithResult<String>() {
+
+                @Override
+                public String run() {
+                    GalleryFragment gf = getGalleryFragment();
+                    Album album = null;
+                    if (gf != null) {
+                        album = gf.getAlbum();
                     }
-                });
-        adapter.add(
-                R.string.tab_albums,
-                R.drawable.menu_album_2states,
-                AlbumsFragment.class, null);
-        adapter.add(
-                R.string.tab_tags,
-                R.drawable.menu_tags_2states,
-                TagsFragment.class, null);
+                    if (album == null) {
+                        Intent intent = getActivity().getIntent();
+                        album = intent != null ? (Album) intent
+                                .getParcelableExtra(GalleryFragment.EXTRA_ALBUM) : null;
+                    }
+                    return album == null ? null : album.getName();
+                }
+            };
+        }
+        mHasAlbums = !Preferences.isLimitedAccountAccessType();
+        if (hasAlbums()) {
+            adapter.add(R.string.tab_albums, R.drawable.menu_album_2states, AlbumsFragment.class,
+                    null);
+        }
+        if (hasTags()) {
+            adapter.add(
+                    R.string.tab_tags,
+                    R.drawable.menu_tags_2states,
+                    TagsFragment.class, null);
+        }
         adapter.add(
                 R.string.tab_sync,
                 R.drawable.menu_upload_2states,
@@ -272,46 +328,79 @@ public class NavigationHandlerFragment extends CommonFragment {
         if (CommonUtils.checkLoggedIn(true))
         {
             SystemVersionResponseUtils
-                    .tryToUpdateSystemVersionCacheIfNecessaryAndRunInContextAsync(
-                            new Runnable() {
+                    .tryToUpdateSystemVersionCacheIfNecessaryAndRunInContextAsync(new Runnable() {
 
-                                @Override
-                                public void run() {
-                                    if (getActivity() != null && !getActivity().isFinishing())
-                                    {
-                                        if (Preferences.isHosted())
+                        @Override
+                        public void run() {
+                            if (getActivity() != null && !getActivity().isFinishing()) {
+                                if (Preferences.isHosted()
+                                        && !Preferences.isLimitedAccountAccessType()) {
+                                    FragmentWrapper<?> wrapper;
+
+                                    wrapper = adapter.add(R.string.tab_account,
+                                            R.drawable.menu_profile_2states, AccountFragment.class,
+                                            null, null, getAccountIndex());
+                                    wrapper.mSeparatorTitleId = R.string.tab_preferences;
+                                    for (int position = getAccountIndex() + 1, size = adapter
+                                            .getCount(); position < size; position++) {
+                                        wrapper = adapter.wrappers.get(position);
+                                        wrapper.mPosition = position;
+                                        wrapper.mSeparatorTitleId = View.NO_ID;
+                                    }
+                                    adapter.notifyDataSetChanged();
+                                    rebuildLeftView();
+                                }
+                                if (mCurrentPage >= getAccountIndex()) {
+                                    selectTab(mCurrentPage);
+                                }
+                            }
+                        }
+                    }, (LoadingControl) getActivity());
+            if (!hasAlbums()) {
+                AccountLimitUtils.tryToRefreshLimitInformationAndRunInContextAsync(new Runnable() {
+
+                    @Override
+                    public void run() {
+                        try {
+                            if (getActivity() != null && !getActivity().isFinishing()) {
+                                AccessPermissions permissions = Preferences.getAccessPermissions();
+                                if (permissions != null) {
+                                    mHasAlbums = permissions.isFullReadAccess();
+                                    if (!mHasAlbums) {
+                                        mHasAlbums = permissions.getReadAlbumAccessIds() != null
+                                                && permissions.getReadAlbumAccessIds().length > 0;
+                                    }
+                                    if (mHasAlbums) {
+                                        adapter.add(R.string.tab_albums,
+                                                R.drawable.menu_album_2states,
+                                                AlbumsFragment.class, null, null, getAlbumsIndex());
+                                        for (int position = getAlbumsIndex() + 1, size = adapter
+                                                .getCount(); position < size; position++)
                                         {
-                                            FragmentWrapper<?> wrapper;
-
-                                            wrapper = adapter.add(R.string.tab_account,
-                                                    R.drawable.menu_profile_2states,
-                                                    AccountFragment.class, null, null,
-                                                    ACCOUNT_INDEX);
-                                            wrapper.mSeparatorTitleId = R.string.tab_preferences;
-                                            for (int position = ACCOUNT_INDEX + 1, size = adapter
-                                                    .getCount(); position < size; position++)
-                                            {
-                                                wrapper = adapter.wrappers
-                                                        .get(position);
-                                                wrapper.mPosition = position;
-                                                wrapper.mSeparatorTitleId = View.NO_ID;
-                                            }
-                                            adapter.notifyDataSetChanged();
+                                            FragmentWrapper<?> wrapper = adapter.wrappers
+                                                    .get(position);
+                                            wrapper.mPosition = position;
                                         }
+                                        adapter.notifyDataSetChanged();
                                         rebuildLeftView();
-                                        if (mCurrentPage >= ACCOUNT_INDEX)
-                                        {
-                                            selectTab(mCurrentPage);
-                                        }
                                     }
                                 }
-                            }, (LoadingControl) getActivity());
+                                if (mCurrentPage == getAlbumsIndex()) {
+                                    selectTab(mCurrentPage);
+                                }
+                            }
+                        } catch (Exception ex) {
+                            GuiUtils.error(TAG, ex);
+                        }
+                    }
+                }, null, (LoadingControl) getActivity());
+            }
         }
         rebuildLeftView();
         // such as account tab may be absent at this step
         // we need to exclute tab selection in case actibeTab
         // is account
-        if (mCurrentPage < ACCOUNT_INDEX)
+        if (mCurrentPage < getAccountIndex() && (mCurrentPage != getAlbumsIndex() || hasAlbums()))
         {
             selectTab(mCurrentPage);
         }
@@ -365,7 +454,7 @@ public class NavigationHandlerFragment extends CommonFragment {
      */
     public GalleryFragment getGalleryFragment()
     {
-        return getFragment(GALLERY_INDEX);
+        return getFragment(getGalleryIndex());
     }
 
     /**
@@ -375,17 +464,7 @@ public class NavigationHandlerFragment extends CommonFragment {
      */
     public SyncFragment getSyncFragment()
     {
-        return getFragment(SYNC_INDEX);
-    }
-
-    /**
-     * Get home fragment
-     * 
-     * @return
-     */
-    public HomeFragment getHomeFragment()
-    {
-        return getFragment(HOME_INDEX);
+        return getFragment(getSyncIndex());
     }
 
     /**
@@ -395,7 +474,7 @@ public class NavigationHandlerFragment extends CommonFragment {
      */
     public AccountFragment getAccountFragment()
     {
-        Fragment result = getFragment(ACCOUNT_INDEX);
+        Fragment result = getFragment(getAccountIndex());
         if (!(result instanceof AccountFragment))
         {
             result = null;
@@ -403,6 +482,14 @@ public class NavigationHandlerFragment extends CommonFragment {
         return (AccountFragment) result;
     }
 
+    public void refreshActionBarTitle() {
+        setActionBarTitle(adapter.wrappers.get(getSelectedNavigationIndex()));
+    }
+    
+    void setActionBarTitle(FragmentWrapper<?> wrapper) {
+        getSupportActivity().setActionBarTitle(" " + wrapper.getActionbarTitle());
+    }
+    
     /**
      * Custom fragment pager adapter
      */
@@ -477,10 +564,8 @@ public class NavigationHandlerFragment extends CommonFragment {
 
                 @Override
                 public void run() {
-                    if (getSupportActivity() != null && !getSupportActivity().isFinishing())
-                    {
-                        getSupportActivity().setActionBarTitle(": "
-                                + CommonUtils.getStringResource(wrappers.get(position).mTitleId));
+                    if (getSupportActivity() != null && !getSupportActivity().isFinishing()) {
+                        setActionBarTitle(wrappers.get(position));
                         refreshLeftView();
                     }
                 }
@@ -530,6 +615,18 @@ public class NavigationHandlerFragment extends CommonFragment {
         private String makeFragmentName(int viewId, long id) {
             return "android:switcher:" + viewId + ":" + id;
         }
+
+        /**
+         * Hack to refresh ViewPager when data set notification event is
+         * received http://stackoverflow.com/a/7287121/527759
+         */
+        @Override
+        public int getItemPosition(Object object) {
+            return POSITION_NONE;
+        }
     }
 
+    public static interface TitleChangedHandler {
+        void titleChanged();
+    }
 }

@@ -6,6 +6,7 @@ import org.holoeverywhere.widget.Toast;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Handler;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewTreeObserver;
@@ -290,7 +291,7 @@ public class GuiUtils
         for (int i = 0; i < values.length; i++)
         {
             String value = values[i];
-            if (value.length() == 0)
+            if (TextUtils.isEmpty(value))
             {
                 String pleaseSpecifyFirst = activity
                         .getString(R.string.pleaseSpecifyFirst);
@@ -308,24 +309,15 @@ public class GuiUtils
      * 
      * @param values
      * @param titles array of string resource codes
-     * @param activity
      * @return false if at least one field is invalid, otherwise return true
      */
-    public static boolean validateBasicTextData(
-            String[] values,
-            int[] titles,
-            Activity activity)
-    {
-        for (int i = 0; i < values.length; i++)
-        {
+    public static boolean validateBasicTextData(String[] values, int[] titles) {
+        for (int i = 0; i < values.length; i++) {
             String value = values[i];
-            if (value.length() == 0)
-            {
-                String pleaseSpecifyFirst = activity
-                        .getString(R.string.pleaseSpecifyFirst);
-                info(String.format(pleaseSpecifyFirst,
-                        activity.getString(titles[i])),
-                        activity);
+            if (TextUtils.isEmpty(value)) {
+                String pleaseSpecifyFirst = CommonUtils
+                        .getStringResource(R.string.pleaseSpecifyFirst);
+                info(String.format(pleaseSpecifyFirst, CommonUtils.getStringResource(titles[i])));
                 return false;
             }
         }

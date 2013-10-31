@@ -37,17 +37,30 @@ public interface ITroveboxApi {
     /**
      * Get albums.
      * 
-     * @param resize which sizes should be returned
      * @param paging paging information
+     * @param skipEmpty whether to do not return empty albums
      * @return albums which are used on the server
      * @throws ClientProtocolException
      * @throws IOException
      * @throws IllegalStateException
      * @throws JSONException
      */
-    AlbumsResponse getAlbums(Paging paging)
+    AlbumsResponse getAlbums(Paging paging, boolean skipEmpty)
             throws ClientProtocolException, IllegalStateException, IOException,
             JSONException;
+
+    /**
+     * Retrieve a single album.
+     * 
+     * @param albumId id of the album
+     * @return the album
+     * @throws IOException
+     * @throws ClientProtocolException
+     * @throws JSONException
+     * @throws IllegalStateException
+     */
+    AlbumResponse getAlbum(String albumId) throws ClientProtocolException,
+            IOException, IllegalStateException, JSONException;
 
     /**
      * Retrieve a single photo.
@@ -248,13 +261,16 @@ public interface ITroveboxApi {
             IOException, IllegalStateException, JSONException;
 
     /**
+     * Get the profile information
+     * 
+     * @param includeViewer whether to include viewer profile information
      * @return profile information
      * @throws ClientProtocolException
      * @throws IOException
      * @throws IllegalStateException
      * @throws JSONException
      */
-    ProfileResponse getProfile() throws ClientProtocolException, IOException,
+    ProfileResponse getProfile(boolean includeViewer) throws ClientProtocolException, IOException,
             IllegalStateException, JSONException;
 
     /**

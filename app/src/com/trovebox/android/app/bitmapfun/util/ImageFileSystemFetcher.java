@@ -57,7 +57,7 @@ public class ImageFileSystemFetcher extends ImageResizer
      */
     protected Bitmap processBitmap(String data)
     {
-        return processBitmap(data, mImageWidth, mImageHeight);
+        return processBitmap(data, imageWidth, imageHeight);
     }
 
     /**

@@ -19,7 +19,6 @@ import android.widget.ListView;
 import com.jayway.android.robotium.solo.Solo;
 import com.trovebox.android.app.GalleryFragment.GalleryAdapterExt;
 import com.trovebox.android.app.MainActivity;
-import com.trovebox.android.app.NavigationHandlerFragment;
 import com.trovebox.android.app.net.Paging;
 import com.trovebox.android.app.net.PhotoResponse;
 import com.trovebox.android.app.net.PhotosResponse;
@@ -73,7 +72,7 @@ public class GalleryActivityTest extends
             @Override
             public void run()
             {
-                getActivity().selectTab(NavigationHandlerFragment.GALLERY_INDEX);
+                getActivity().selectTab(0);
             }
         });
         getInstrumentation().waitForIdleSync();

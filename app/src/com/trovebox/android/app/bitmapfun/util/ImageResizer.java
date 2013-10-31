@@ -47,8 +47,8 @@ import com.trovebox.android.app.util.TrackerUtils;
  */
 public class ImageResizer extends ImageWorker {
     private static final String TAG = "ImageWorker";
-    protected int mImageWidth;
-    protected int mImageHeight;
+    protected int imageWidth;
+    protected int imageHeight;
     protected int cornerRadius;
 
     /**
@@ -107,8 +107,8 @@ public class ImageResizer extends ImageWorker {
      * @param height
      */
     public void setImageSize(int width, int height) {
-        mImageWidth = width;
-        mImageHeight = height;
+        imageWidth = width;
+        imageHeight = height;
     }
 
     /**
@@ -129,7 +129,7 @@ public class ImageResizer extends ImageWorker {
      * @return
      */
     private Bitmap processBitmap(int resId) {
-        return processBitmap(resId, mImageWidth, mImageHeight);
+        return processBitmap(resId, imageWidth, imageHeight);
     }
 
     /**

@@ -94,7 +94,18 @@ public abstract class EndlessAdapter<T> extends BaseAdapter {
      * @param position
      */
     public boolean checkNeedToLoadNextPage(int position) {
-        return (position >= getCount() - itemsBeforeLoadNextPage);
+        return checkNeedToLoadNextPage(position, getCount());
+    }
+
+    /**
+     * Check whether need to load next page for the specified position. If so
+     * then load
+     * 
+     * @param position
+     * @param count
+     */
+    public boolean checkNeedToLoadNextPage(int position, int count) {
+        return (position >= count - itemsBeforeLoadNextPage);
     }
 
     public void loadFirstPage() {

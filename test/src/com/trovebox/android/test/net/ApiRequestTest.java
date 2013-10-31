@@ -3,10 +3,11 @@ package com.trovebox.android.test.net;
 
 import java.io.File;
 
-import com.trovebox.android.app.net.ApiRequest;
-
 import junit.framework.TestCase;
 import android.os.Environment;
+
+import com.trovebox.android.app.net.ApiRequest;
+import com.trovebox.android.app.net.ApiRequest.ApiVersion;
 
 public class ApiRequestTest extends TestCase {
     public void testBasicConstruction() {
@@ -85,5 +86,15 @@ public class ApiRequestTest extends TestCase {
         assertEquals(2, request.getParametersMime().size());
         assertEquals("value1", (String) request.getParametersMime().get(0).getValue());
         assertTrue(request.getParametersMime().get(1).getValue() instanceof File);
+    }
+
+    public void testApiVersion() {
+        assertNull(ApiVersion.NO_VERSION.getPrefix());
+        assertEquals(ApiVersion.V1.getPrefix(), "/v1");
+        assertEquals(ApiVersion.V2.getPrefix(), "/v2");
+        assertSame(ApiVersion.getApiVersionByName(null), ApiVersion.NO_VERSION);
+        assertSame(ApiVersion.getApiVersionByName(""), ApiVersion.NO_VERSION);
+        assertSame(ApiVersion.getApiVersionByName("v1"), ApiVersion.V1);
+        assertSame(ApiVersion.getApiVersionByName("v2"), ApiVersion.V2);
     }
 }

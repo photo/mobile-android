@@ -9,13 +9,18 @@ import oauth.signpost.basic.DefaultOAuthProvider;
 import oauth.signpost.commonshttp.CommonsHttpOAuthConsumer;
 
 import org.holoeverywhere.preference.PreferenceManagerHelper;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.text.TextUtils;
 
+import com.trovebox.android.app.model.Credentials;
+import com.trovebox.android.app.model.ProfileInformation.AccessPermissions;
+import com.trovebox.android.app.net.ApiRequest.ApiVersion;
 import com.trovebox.android.app.net.ITroveboxApi;
 import com.trovebox.android.app.net.TroveboxApi;
-import com.trovebox.android.app.purchase.util.Purchase;
 import com.trovebox.android.app.util.CommonUtils;
 
 public class Preferences {
@@ -170,6 +175,50 @@ public class Preferences {
     }
 
     /**
+     * Set currently loggged in user account access type. Either owner, admin or
+     * group
+     * 
+     * @param accessType
+     */
+    public static void setAccountAccessType(String accessType) {
+        getLimitsSharedPreferences()
+                .edit()
+                .putString(CommonUtils.getStringResource(R.string.setting_account_access_type),
+                        accessType).commit();
+    }
+
+
+    /**
+     * Get current account access type
+     * 
+     * @return
+     */
+    public static String getAccountAccessType() {
+        return getLimitsSharedPreferences().getString(
+                CommonUtils.getStringResource(R.string.setting_account_access_type),
+                Credentials.OWNER_TYPE);
+    }
+
+    /**
+     * Check whether the limited account access is used. Usually that is 'group'
+     * account access type
+     * 
+     * @return
+     */
+    public static boolean isLimitedAccountAccessType() {
+        return getAccountAccessType().equals(Credentials.GROUP_TYPE);
+    }
+    
+    /**
+     * Check whether the owner account access is used.
+     * 
+     * @return
+     */
+    public static boolean isOwner() {
+        return getAccountAccessType().equals(Credentials.OWNER_TYPE);
+    }
+
+    /**
      * Get the remaining uploading limit
      * 
      * @return
@@ -236,6 +285,36 @@ public class Preferences {
     }
 
     /**
+     * Store the access permissions to preferences cache
+     * 
+     * @param permissions
+     */
+    public static void setAccessPermissions(AccessPermissions permissions) {
+        getLimitsSharedPreferences()
+                .edit()
+                .putString(
+                        CommonUtils.getStringResource(R.string.setting_account_access_permissions),
+                        permissions == null ? null : permissions.toJsonString()).commit();
+    }
+
+    /**
+     * Get the cached access permissions information
+     * 
+     * @return
+     * @throws JSONException
+     */
+    public static AccessPermissions getAccessPermissions() throws JSONException
+    {
+        String jsonString = getLimitsSharedPreferences().getString(
+                CommonUtils.getStringResource(R.string.setting_account_access_permissions), "");
+        AccessPermissions result = null;
+        if (!TextUtils.isEmpty(jsonString)) {
+            result = AccessPermissions.fromJson(new JSONObject(jsonString));
+        }
+        return result;
+    }
+
+    /**
      * Check whether currently used server is self-hosted
      * 
      * @return true if server is self-hosted, otherwise return false
@@ -272,30 +351,6 @@ public class Preferences {
     }
 
     /**
-     * Check whether the purchase was already verified by the application
-     * 
-     * @param purchase purchase to verify
-     * @return true if purchase was successfully verified
-     */
-    public static boolean isPurchaseVerified(Purchase purchase)
-    {
-        return getVerifiedPaymentsPreferences().getBoolean(
-                purchase.getDeveloperPayload() + ":" + purchase.getToken(), false);
-    }
-
-    /**
-     * Set purchase verified state to the cache
-     * 
-     * @param purchase related purchase
-     * @param verified whether the verification was successful
-     */
-    public static void setPurchaseVerified(Purchase purchase, boolean verified)
-    {
-        getVerifiedPaymentsPreferences().edit().putBoolean(
-                purchase.getDeveloperPayload() + ":" + purchase.getToken(), verified);
-    }
-
-    /**
      * Check whether necessary system version information already retrieved and
      * stored in the cache
      * 
@@ -322,6 +377,43 @@ public class Preferences {
                         CommonUtils.getStringResource(R.string.setting_system_version_info_updated),
                         value)
                 .commit();
+    }
+
+    /**
+     * Set currently supported api version
+     * 
+     * @param apiVersion
+     */
+    public static void setApiVersion(ApiVersion apiVersion) {
+        getSystemVersionPreferences()
+                .edit()
+                .putString(
+                        CommonUtils.getStringResource(R.string.setting_system_version_api_version),
+                        apiVersion.getName()).commit();
+    }
+
+    /**
+     * Check whether v2 api features available
+     * 
+     * @return
+     */
+    public static boolean isV2ApiAvailable() {
+        return getCurrentApiVersion() == ApiVersion.V2;
+    }
+
+    /**
+     * Get currently supported api version information
+     * 
+     * @return
+     */
+    public static ApiVersion getCurrentApiVersion() {
+        String apiVersion = getSystemVersionPreferences().getString(
+                CommonUtils.getStringResource(R.string.setting_system_version_api_version), null);
+        if (apiVersion == null) {
+            return ApiVersion.V1;
+        } else {
+            return ApiVersion.getApiVersionByName(apiVersion);
+        }
     }
 
     public static void logout(Context context) {

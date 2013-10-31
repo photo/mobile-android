@@ -24,6 +24,7 @@ import android.widget.EditText;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
+import com.trovebox.android.app.UploadActivity.UploadUiFragment;
 import com.trovebox.android.app.common.CommonFragment;
 import com.trovebox.android.app.facebook.FacebookUtils;
 import com.trovebox.android.app.model.utils.AlbumUtils;
@@ -36,6 +37,7 @@ import com.trovebox.android.app.util.CommonUtils;
 import com.trovebox.android.app.util.GuiUtils;
 import com.trovebox.android.app.util.LoadingControl;
 import com.trovebox.android.app.util.ProgressDialogLoadingControl;
+import com.trovebox.android.app.util.RunnableWithParameter;
 import com.trovebox.android.app.util.SyncUtils;
 import com.trovebox.android.app.util.TrackerUtils;
 import com.trovebox.android.app.util.concurrent.AsyncTaskEx;
@@ -150,6 +152,9 @@ public class SyncUploadFragment extends CommonFragment implements OnClickListene
             public void onClick(View v)
             {
                 TrackerUtils.trackButtonClickEvent("uploadBtn", SyncUploadFragment.this);
+                if (!UploadUiFragment.checkAlbumRequiredAndSpecified(albumsWrapper)) {
+                    return;
+                }
                 v.setEnabled(false);
                 uploadSelectedFiles(true, true);
             }
@@ -160,11 +165,18 @@ public class SyncUploadFragment extends CommonFragment implements OnClickListene
         editTags = (EditText) v.findViewById(
                 R.id.edit_tags);
         albumsText = ((EditText) v.findViewById(R.id.edit_albums));
+        albumsText.setVisibility(Preferences.isLimitedAccountAccessType() ? View.GONE
+                : View.VISIBLE);
         privateSwitch = (Switch) v.findViewById(R.id.private_switch);
         twitterSwitch = (Switch) v.findViewById(R.id.twitter_switch);
         facebookSwitch = (Switch) v.findViewById(R.id.facebook_switch);
 
         albumsText.setOnClickListener(this);
+
+        if (Preferences.isLimitedAccountAccessType()) {
+            privateSwitch.setChecked(true);
+            privateSwitch.setEnabled(false);
+        }
         privateSwitch.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 
             @Override
@@ -173,26 +185,29 @@ public class SyncUploadFragment extends CommonFragment implements OnClickListene
             }
         });
         reinitShareSwitches();
-        AccountLimitUtils.checkQuotaPerUploadAvailableAndRunAsync(
-                new Runnable() {
+        AccountLimitUtils.tryToRefreshLimitInformationAndRunInContextAsync(new Runnable() {
 
-                    @Override
-                    public void run() {
-                        CommonUtils.debug(TAG, "Upload limit check passed");
-                        TrackerUtils.trackLimitEvent("sync_upload_enabled_check", "success");
-                        uploadBtn.setEnabled(true);
-                    }
-                },
-                new Runnable() {
+            @Override
+            public void run() {
+                if (!isAdded()) {
+                    return;
+                }
+                UploadUiFragment.checkCanUpload(albumsText, uploadBtn,
+                        new RunnableWithParameter<StringMapParcelableWrapper>() {
 
-                    @Override
-                    public void run() {
-                        CommonUtils.debug(TAG, "Upload limit check failed");
-                        TrackerUtils.trackLimitEvent("sync_upload_enabled_check", "fail");
-                    }
-                },
-                previousStepFlow.getSelectedCount(),
-                loadingControl);
+                            @Override
+                            public void run(StringMapParcelableWrapper parameter) {
+                                SyncUploadFragment.this.albumsWrapper = parameter;
+                            }
+                        });
+            }
+        }, new Runnable() {
+
+            @Override
+            public void run() {
+                CommonUtils.debug(TAG, "Limit information refresh failed");
+            }
+        }, loadingControl);
     }
 
     void reinitShareSwitches()
@@ -329,8 +344,7 @@ public class SyncUploadFragment extends CommonFragment implements OnClickListene
                         .getText().toString());
                 metaData.setTags(editTags
                         .getText().toString());
-                StringMapParcelableWrapper albumsWrapper = (StringMapParcelableWrapper) albumsText
-                        .getTag();
+                StringMapParcelableWrapper albumsWrapper = SyncUploadFragment.this.albumsWrapper;
                 if (albumsWrapper != null)
                 {
                     metaData.setAlbums(albumsWrapper.getMap());

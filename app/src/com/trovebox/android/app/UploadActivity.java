@@ -41,6 +41,7 @@ import com.trovebox.android.app.common.CommonFragment;
 import com.trovebox.android.app.facebook.FacebookProvider;
 import com.trovebox.android.app.facebook.FacebookUtils;
 import com.trovebox.android.app.feather.FeatherFragment;
+import com.trovebox.android.app.model.ProfileInformation.AccessPermissions;
 import com.trovebox.android.app.model.utils.AlbumUtils;
 import com.trovebox.android.app.model.utils.TagUtils;
 import com.trovebox.android.app.net.UploadMetaData;
@@ -54,6 +55,7 @@ import com.trovebox.android.app.util.FileUtils;
 import com.trovebox.android.app.util.GuiUtils;
 import com.trovebox.android.app.util.ImageUtils;
 import com.trovebox.android.app.util.ProgressDialogLoadingControl;
+import com.trovebox.android.app.util.RunnableWithParameter;
 import com.trovebox.android.app.util.TrackerUtils;
 import com.trovebox.android.app.util.data.StringMapParcelableWrapper;
 
@@ -248,6 +250,8 @@ public class UploadActivity extends CommonActivity {
             v.findViewById(R.id.button_edit).setOnClickListener(this);
             tagsText = ((EditText) v.findViewById(R.id.edit_tags));
             albumsText = ((EditText) v.findViewById(R.id.edit_albums));
+            albumsText.setVisibility(Preferences.isLimitedAccountAccessType() ? View.GONE
+                    : View.VISIBLE);
             if (savedInstanceState != null)
             {
                 albumsText.setTag(savedInstanceState.getParcelable(SELECTED_ALBUMS));
@@ -258,6 +262,10 @@ public class UploadActivity extends CommonActivity {
             twitterSwitch = (Switch) v.findViewById(R.id.twitter_switch);
             facebookSwitch = (Switch) v.findViewById(R.id.facebook_switch);
 
+            if (Preferences.isLimitedAccountAccessType()) {
+                privateSwitch.setChecked(true);
+                privateSwitch.setEnabled(false);
+            }
             privateSwitch.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 
                 @Override
@@ -318,30 +326,80 @@ public class UploadActivity extends CommonActivity {
                 showSelectionDialog();
             }
             adjustUploadOriginalSwitchVisibility();
-            AccountLimitUtils.checkQuotaPerOneUploadAvailableAndRunAsync(
-                    new Runnable() {
+            AccountLimitUtils.tryToRefreshLimitInformationAndRunInContextAsync(new Runnable() {
 
-                        @Override
-                        public void run() {
-                            CommonUtils.debug(TAG, "Upload limit check passed");
-                            TrackerUtils.trackLimitEvent("upload_activity_upload_enabled_check",
-                                    "success");
-                            buttonUpload.setEnabled(true);
-                        }
-                    },
-                    new Runnable() {
+                @Override
+                public void run() {
+                    if (!isAdded()) {
+                        return;
+                    }
+                    checkCanUpload(albumsText, buttonUpload,
+                            new RunnableWithParameter<StringMapParcelableWrapper>() {
 
-                        @Override
-                        public void run() {
-                            CommonUtils.debug(TAG, "Upload limit check failed");
-                            TrackerUtils.trackLimitEvent("upload_activity_upload_enabled_check",
-                                    "fail");
-                        }
-                    },
-                    new ProgressDialogLoadingControl(getActivity(), true, true,
-                            getString(R.string.loading)));
+                                @Override
+                                public void run(StringMapParcelableWrapper parameter) {
+                                    albumsText.setTag(parameter);
+                                }
+
+                            });
+                }
+            }, new Runnable() {
+
+                @Override
+                public void run() {
+                    CommonUtils.debug(TAG, "Limit information refresh failed");
+                }
+            }, new ProgressDialogLoadingControl(getActivity(), true, true,
+                    getString(R.string.loading)));
         }
 
+        /**
+         * Check whether user has access to at least one album if he/she is a
+         * collaborator. Adjusts albumsText visibility depend on how many albums
+         * user has access to. Adjusts buttonUpload enabled state to disallow
+         * uploads if user doesn't have a permission.
+         * 
+         * @param albumsText
+         * @param buttonUpload
+         * @param mapSetter
+         */
+        public static void checkCanUpload(View albumsText, Button buttonUpload,
+                RunnableWithParameter<StringMapParcelableWrapper> mapSetter) {
+            try {
+                if (Preferences.isLimitedAccountAccessType()) {
+                    AccessPermissions permissions = Preferences.getAccessPermissions();
+                    boolean authorized = false;
+                    if (permissions != null) {
+                        if (permissions.isFullCreateAccess()) {
+                            authorized = true;
+                            albumsText.setVisibility(View.VISIBLE);
+                        } else {
+                            String[] albumIds = permissions.getCreateAlbumAccessIds();
+                            if (albumIds != null && albumIds.length > 0) {
+                                authorized = true;
+                                if (albumIds.length == 1) {
+                                    StringMapParcelableWrapper albumMap = new StringMapParcelableWrapper();
+                                    albumMap.getMap().put(albumIds[0], "");
+                                    mapSetter.run(albumMap);
+                                } else {
+                                    albumsText.setVisibility(View.VISIBLE);
+                                }
+                            }
+                        }
+                    }
+                    if (!authorized) {
+                        GuiUtils.alert(R.string.errorNotAuthorizedUpload);
+                    } else {
+                        buttonUpload.setEnabled(true);
+                    }
+                } else {
+                    buttonUpload.setEnabled(true);
+                }
+            } catch (Exception ex) {
+                GuiUtils.error(TAG, ex);
+            }
+        }
+        
         void reinitShareSwitches()
         {
             reinitShareSwitches(!privateSwitch.isChecked());
@@ -417,8 +475,10 @@ public class UploadActivity extends CommonActivity {
                 if (selectedImageUri != null)
                 {
                     String selectedImage = selectedImageUri.toString();
-                    if (selectedImage.indexOf("content://com.android.gallery3d.provider)") != -1 ||
-                            selectedImage.indexOf("content://com.google.android.gallery3d") != -1)
+                    if (selectedImage.indexOf("content://com.android.gallery3d.provider") != -1
+                            || selectedImage
+                                    .indexOf("content://com.android.sec.gallery3d.provider") != -1
+                            || selectedImage.indexOf("content://com.google.android.gallery3d") != -1)
                     {
                         TrackerUtils.trackErrorEvent("unsupported_gallery_upload", selectedImage);
                         GuiUtils.alert(R.string.errorPicasaUploadsNotSupported);
@@ -595,6 +655,10 @@ public class UploadActivity extends CommonActivity {
                     break;
                 case R.id.button_upload:
                     TrackerUtils.trackButtonClickEvent("button_upload", getActivity());
+                    if (!checkAlbumRequiredAndSpecified((StringMapParcelableWrapper) albumsText
+                            .getTag())) {
+                        return;
+                    }
                     if (mUploadImageFile != null) {
                         startUpload(mUploadImageFile, mUploadImageFileOriginal, true, true);
                     } else
@@ -623,6 +687,30 @@ public class UploadActivity extends CommonActivity {
                     }
                     break;
             }
+        }
+
+        /**
+         * Check albumsWrapper value in case it is required parameter. The
+         * parameter is required if user has limited account access (user is a
+         * collaborator with limited rights)
+         * 
+         * @param albumsWrapper
+         * @return
+         */
+        public static boolean checkAlbumRequiredAndSpecified(
+                StringMapParcelableWrapper albumsWrapper) {
+            if (Preferences.isLimitedAccountAccessType()) {
+                String album = albumsWrapper == null || albumsWrapper.getMap().isEmpty() ? ""
+                        : "dummy";
+                if (!GuiUtils.validateBasicTextData(new String[] {
+                    album
+                }, new int[] {
+                    R.string.field_album,
+                })) {
+                    return false;
+                }
+            }
+            return true;
         }
 
         /**

@@ -23,12 +23,13 @@ import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.view.Window;
 import com.trovebox.android.app.FacebookFragment.FacebookLoadingControlAccessor;
-import com.trovebox.android.app.HomeFragment.StartNowHandler;
+import com.trovebox.android.app.NavigationHandlerFragment.TitleChangedHandler;
 import com.trovebox.android.app.SyncFragment.SyncHandler;
 import com.trovebox.android.app.TwitterFragment.TwitterLoadingControlAccessor;
 import com.trovebox.android.app.bitmapfun.util.ImageCacheUtils;
 import com.trovebox.android.app.common.CommonActivity;
 import com.trovebox.android.app.facebook.FacebookProvider;
+import com.trovebox.android.app.model.Album;
 import com.trovebox.android.app.model.Photo;
 import com.trovebox.android.app.model.utils.PhotoUtils;
 import com.trovebox.android.app.model.utils.PhotoUtils.PhotoDeletedHandler;
@@ -36,10 +37,6 @@ import com.trovebox.android.app.model.utils.PhotoUtils.PhotoUpdatedHandler;
 import com.trovebox.android.app.net.account.AccountLimitUtils;
 import com.trovebox.android.app.provider.UploadsUtils;
 import com.trovebox.android.app.provider.UploadsUtils.UploadsClearedHandler;
-import com.trovebox.android.app.purchase.PurchaseController;
-import com.trovebox.android.app.purchase.PurchaseController.PurchaseHandler;
-import com.trovebox.android.app.purchase.PurchaseControllerUtils;
-import com.trovebox.android.app.purchase.PurchaseControllerUtils.SubscriptionPurchasedHandler;
 import com.trovebox.android.app.service.UploaderServiceUtils;
 import com.trovebox.android.app.service.UploaderServiceUtils.PhotoUploadedHandler;
 import com.trovebox.android.app.twitter.TwitterUtils;
@@ -53,19 +50,15 @@ import com.trovebox.android.app.util.SyncUtils.SyncStartedHandler;
 import com.trovebox.android.app.util.TrackerUtils;
 
 @Addons(Activity.ADDON_SLIDER)
-public class MainActivity extends CommonActivity
-        implements LoadingControl, GalleryOpenControl, SyncHandler,
-        UploadsClearedHandler, PhotoUploadedHandler, TwitterLoadingControlAccessor,
-        FacebookLoadingControlAccessor, SyncStartedHandler,
-        PhotoDeletedHandler, PhotoUpdatedHandler, StartNowHandler,
-        PurchaseHandler, SubscriptionPurchasedHandler
-{
+public class MainActivity extends CommonActivity implements LoadingControl, GalleryOpenControl,
+        SyncHandler, UploadsClearedHandler, PhotoUploadedHandler, TwitterLoadingControlAccessor,
+        FacebookLoadingControlAccessor, SyncStartedHandler, PhotoDeletedHandler,
+        PhotoUpdatedHandler, GalleryFragment.StartNowHandler, TitleChangedHandler {
     private static final String NAVIGATION_HANDLER_FRAGMENT_TAG = "NavigationHandlerFragment";
 
     public static final String TAG = MainActivity.class.getSimpleName();
 
     public final static int AUTHORIZE_ACTIVITY_REQUEST_CODE = 0;
-    public final static int PURCHASE_FLOW_REQUEST_CODE = 1;
     public static final int REQUEST_ALBUMS = 2;
 
     private ActionBar mActionBar;
@@ -75,7 +68,6 @@ public class MainActivity extends CommonActivity
     boolean instanceSaved = false;
 
     final Handler handler = new Handler();
-    PurchaseController purchaseController;
 
     static WeakReference<MainActivity> currentInstance;
 
@@ -125,8 +117,6 @@ public class MainActivity extends CommonActivity
         addRegisteredReceiver(ImageCacheUtils.getAndRegisterOnDiskCacheClearedBroadcastReceiver(
                 TAG,
                 this));
-        addRegisteredReceiver(PurchaseControllerUtils
-                .getAndRegisterOnSubscriptionPurchasedActionBroadcastReceiver(TAG, this, this));
     }
 
     @Override
@@ -162,7 +152,6 @@ public class MainActivity extends CommonActivity
         {
             AccountLimitUtils.updateLimitInformationCacheAsync(this);
         }
-        purchaseController = PurchaseController.getAndSetup(this, this);
     }
 
     @Override
@@ -182,9 +171,6 @@ public class MainActivity extends CommonActivity
                         "Skipped nullify of current instance, such as it is not the same");
             }
         }
-        if (purchaseController != null)
-            purchaseController.dispose();
-        purchaseController = null;
     }
 
     @Override
@@ -236,10 +222,6 @@ public class MainActivity extends CommonActivity
                 FacebookProvider.getFacebook().authorizeCallback(requestCode,
                         resultCode,
                         data);
-            }
-                break;
-            case PURCHASE_FLOW_REQUEST_CODE: {
-                purchaseController.handleActivityResult(resultCode, data);
             }
                 break;
         }
@@ -340,7 +322,7 @@ public class MainActivity extends CommonActivity
     }
 
     @Override
-    public void openGallery(String tag, String album)
+    public void openGallery(String tag, Album album)
     {
         Intent intent = getIntent();
         if (intent == null)
@@ -350,7 +332,7 @@ public class MainActivity extends CommonActivity
         }
         intent.putExtra(GalleryFragment.EXTRA_TAG, tag);
         intent.putExtra(GalleryFragment.EXTRA_ALBUM, album);
-        selectTab(NavigationHandlerFragment.GALLERY_INDEX);
+        selectTab(navigationHandlerFragment.getGalleryIndex());
     }
 
     @Override
@@ -393,11 +375,12 @@ public class MainActivity extends CommonActivity
     public void syncStarted()
     {
         CommonUtils.debug(TAG, "Sync started");
-        if (navigationHandlerFragment.getSelectedNavigationIndex() == NavigationHandlerFragment.SYNC_INDEX)
+        if (navigationHandlerFragment.getSelectedNavigationIndex() == navigationHandlerFragment
+                .getSyncIndex())
         {
             if (!instanceSaved)
             {
-                selectTab(NavigationHandlerFragment.HOME_INDEX);
+                selectTab(navigationHandlerFragment.getGalleryIndex());
             }
         }
     }
@@ -405,8 +388,8 @@ public class MainActivity extends CommonActivity
     @Override
     public void uploadsCleared()
     {
-        SyncFragment fragment = navigationHandlerFragment
-                .getFragment(NavigationHandlerFragment.SYNC_INDEX);
+        SyncFragment fragment = navigationHandlerFragment.getFragment(navigationHandlerFragment
+                .getSyncIndex());
         if (fragment != null)
         {
             fragment.uploadsCleared();
@@ -415,12 +398,6 @@ public class MainActivity extends CommonActivity
 
     @Override
     public void photoUploaded() {
-        HomeFragment homeFragment = navigationHandlerFragment.getHomeFragment();
-        if (homeFragment != null)
-        {
-            homeFragment.photoUploaded();
-        }
-
         GalleryFragment galleryFragment = navigationHandlerFragment.getGalleryFragment();
         if (galleryFragment != null)
         {
@@ -465,12 +442,6 @@ public class MainActivity extends CommonActivity
     @Override
     public void photoDeleted(Photo photo)
     {
-        HomeFragment homeFragment = navigationHandlerFragment.getHomeFragment();
-        if (homeFragment != null)
-        {
-            homeFragment.photoDeleted(photo);
-        }
-
         GalleryFragment galleryFragment = navigationHandlerFragment.getGalleryFragment();
         if (galleryFragment != null)
         {
@@ -481,12 +452,6 @@ public class MainActivity extends CommonActivity
     @Override
     public void photoUpdated(Photo photo)
     {
-        HomeFragment homeFragment = navigationHandlerFragment.getHomeFragment();
-        if (homeFragment != null)
-        {
-            homeFragment.photoUpdated(photo);
-        }
-
         GalleryFragment galleryFragment = navigationHandlerFragment.getGalleryFragment();
         if (galleryFragment != null)
         {
@@ -497,19 +462,14 @@ public class MainActivity extends CommonActivity
     @Override
     public void startNow() {
         CommonUtils.debug(TAG, "Start now");
-        if (navigationHandlerFragment.getSelectedNavigationIndex() != NavigationHandlerFragment.SYNC_INDEX)
+        if (navigationHandlerFragment.getSelectedNavigationIndex() != navigationHandlerFragment
+                .getSyncIndex())
         {
             if (!instanceSaved)
             {
-                selectTab(NavigationHandlerFragment.SYNC_INDEX);
+                selectTab(navigationHandlerFragment.getSyncIndex());
             }
         }
-    }
-
-    @Override
-    public void purchaseMonthlySubscription() {
-        purchaseController.purchaseMonthlySubscription(this, PURCHASE_FLOW_REQUEST_CODE,
-                currentInstanceAccessor);
     }
 
     private NavigationHandlerFragment navigationHandlerFragment;
@@ -543,11 +503,7 @@ public class MainActivity extends CommonActivity
     }
 
     @Override
-    public void subscriptionPurchased() {
-        AccountFragment accountFragment = navigationHandlerFragment.getAccountFragment();
-        if (accountFragment != null)
-        {
-            accountFragment.subscriptionPurchased();
-        }
+    public void titleChanged() {
+        navigationHandlerFragment.refreshActionBarTitle();
     }
 }

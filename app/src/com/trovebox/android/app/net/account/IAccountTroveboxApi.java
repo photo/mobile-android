@@ -7,7 +7,6 @@ import java.security.NoSuchAlgorithmException;
 import org.json.JSONException;
 
 import com.trovebox.android.app.net.TroveboxResponse;
-import com.trovebox.android.app.purchase.util.Purchase;
 
 /**
  * @author Patrick Santana <patrick@trovebox.com>
@@ -55,20 +54,4 @@ public interface IAccountTroveboxApi {
      */
     public TroveboxResponse recoverPassword(String email) throws IllegalStateException,
             IOException, NoSuchAlgorithmException, JSONException;
-
-    /**
-     * Verify payment information
-     * 
-     * @param email user's email
-     * @param purchase the in-app billing purchase information
-     * @return
-     * @throws IllegalStateException
-     * @throws IOException
-     * @throws NoSuchAlgorithmException
-     * @throws JSONException
-     */
-    public PaymentVerificationResponse verifyPayment(String email, Purchase purchase)
-            throws IllegalStateException, IOException,
-            NoSuchAlgorithmException,
-            JSONException;
 }

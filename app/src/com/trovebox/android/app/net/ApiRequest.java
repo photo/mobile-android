@@ -8,34 +8,55 @@ import java.util.List;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 
+import android.text.TextUtils;
+
+import com.trovebox.android.app.Preferences;
+
 /**
  * ApiRequest holds the information for a call to the API.
  * 
  * @author Patrick Boos
  */
 public class ApiRequest {
-    public enum ApiVersion
-    {
-        NO_VERSION, V1("/v1"), V2("/v2");
-        private String prefix;
+    public enum ApiVersion {
+        NO_VERSION, V1("v1", "/v1"), V2("v2", "/v2");
 
-        public String getPrefix()
-        {
+        private String prefix;
+        private String name;
+
+        public String getPrefix() {
             return prefix;
         }
 
-        public String correctPathWithPrefix(String path)
-        {
-            return prefix == null ? path : prefix + path;
-        }
-        ApiVersion()
-        {
-            this(null);
+        public String getName() {
+            return name;
         }
 
-        ApiVersion(String prefix)
-        {
+        public String correctPathWithPrefix(String path) {
+            return prefix == null ? path : prefix + path;
+        }
+
+        ApiVersion() {
+            this(null, null);
+        }
+
+        ApiVersion(String name, String prefix) {
+            this.name = name;
             this.prefix = prefix;
+        }
+
+        public static ApiVersion getApiVersionByName(String name) {
+            ApiVersion result = null;
+            for (ApiVersion v : values()) {
+                if (TextUtils.equals(name, v.name)) {
+                    result = v;
+                    break;
+                }
+            }
+            if (result == null) {
+                result = NO_VERSION;
+            }
+            return result;
         }
     }
     public static final int GET = 1;
@@ -58,7 +79,7 @@ public class ApiRequest {
      * @param path Path of the url. Must start with '/'.
      */
     public ApiRequest(int requestMethod, String path) {
-        this(requestMethod, path, ApiVersion.V1);
+        this(requestMethod, path, Preferences.getCurrentApiVersion());
     }
 
     /**

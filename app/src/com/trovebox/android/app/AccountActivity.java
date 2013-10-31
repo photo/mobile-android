@@ -6,6 +6,7 @@ import org.holoeverywhere.widget.TextView;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Html;
+import android.text.method.LinkMovementMethod;
 import android.view.View;
 import android.widget.Button;
 
@@ -36,13 +37,9 @@ public class AccountActivity extends CommonActivity {
                 CommonUtils.isFroyoOrHigher() ? View.GONE : View.GONE);
         TextView signInInstructions = (TextView) findViewById(R.id.instant_sign_in_instructions);
         signInInstructions.setText(Html.fromHtml(getString(R.string.instant_sign_in_instructions)));
-    }
-
-    public void accountSignupButtonAction(View view) {
-        CommonUtils.debug(TAG, "Start account signup button action");
-        TrackerUtils.trackButtonClickEvent("signup_button", AccountActivity.this);
-        Intent intent = new Intent(this, AccountSignup.class);
-        startActivity(intent);
+        TextView signUpInstructions = (TextView) findViewById(R.id.signup_instructions);
+        signUpInstructions.setMovementMethod(LinkMovementMethod.getInstance());
+        signUpInstructions.setText(Html.fromHtml(getString(R.string.account_signup_instructions)));
     }
 
     public void accountLoginButtonAction(View view) {

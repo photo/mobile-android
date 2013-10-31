@@ -18,7 +18,6 @@ import android.content.Intent;
 import android.database.DataSetObserver;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.text.TextUtils;
@@ -82,6 +81,8 @@ public class PhotoDetailsActivity extends CommonActivity implements TwitterLoadi
     private static final String TAG = PhotoDetailsActivity.class.getSimpleName();
 
     public static final String EXTRA_PHOTO = "EXTRA_PHOTO";
+    
+    public static final String EXTRA_PHOTOS = "EXTRA_PHOTOS";
 
     public static final String EXTRA_ADAPTER_PHOTOS = "EXTRA_ADAPTER_PHOTOS";
 
@@ -243,6 +244,25 @@ public class PhotoDetailsActivity extends CommonActivity implements TwitterLoadi
             super.onCreateOptionsMenu(menu, inflater);
             inflater.inflate(R.menu.photo_details, menu);
         }
+        
+        @Override
+        public void onPrepareOptionsMenu(Menu menu) {
+            reinitMenu(menu);
+            super.onPrepareOptionsMenu(menu);
+        }
+
+        protected void reinitMenu(Menu menu) {
+            try {
+                if (Preferences.isLimitedAccountAccessType()) {
+                    MenuItem deleteItem = menu.findItem(R.id.menu_delete_parent);
+                    deleteItem.setVisible(false);
+                    MenuItem editItem = menu.findItem(R.id.menu_edit);
+                    editItem.setVisible(false);
+                }
+            } catch (Exception ex) {
+                GuiUtils.noAlertError(TAG, ex);
+            }
+        }
 
         @Override
         public boolean onOptionsItemSelected(MenuItem item) {
@@ -265,6 +285,17 @@ public class PhotoDetailsActivity extends CommonActivity implements TwitterLoadi
                         @Override
                         public void run() {
                             shareActivePhotoViaEMail();
+                        }
+                    });
+                    break;
+                case R.id.menu_share_system:
+                    TrackerUtils.trackOptionsMenuClickEvent("menu_share_system",
+                            getSupportActivity());
+                    confirmPrivatePhotoSharingAndRun(new Runnable() {
+
+                        @Override
+                        public void run() {
+                            shareActivePhotoViaSystem();
                         }
                     });
                     break;
@@ -337,6 +368,17 @@ public class PhotoDetailsActivity extends CommonActivity implements TwitterLoadi
             }
         }
 
+        public void shareActivePhotoViaSystem() {
+            Photo photo = getActivePhoto();
+            if (photo != null)
+            {
+                ShareUtils.shareViaSystem(photo, getActivity(),
+                        new ProgressDialogLoadingControl(
+                                getSupportActivity(), true, false,
+                                getString(R.string.loading)));
+            }
+        }
+
         Photo getActivePhoto()
         {
             return mAdapter.currentPhoto;
@@ -393,6 +435,10 @@ public class PhotoDetailsActivity extends CommonActivity implements TwitterLoadi
                 Photo photo = intent.getParcelableExtra(EXTRA_PHOTO);
                 ArrayList<Photo> photos = new ArrayList<Photo>();
                 photos.add(photo);
+                thumbnailsAdapter = new ThumbnailsAdapter(photos);
+                position = 0;
+            } else if (intent.hasExtra(EXTRA_PHOTOS)) {
+                ArrayList<Photo> photos = intent.getParcelableArrayListExtra(EXTRA_PHOTOS);
                 thumbnailsAdapter = new ThumbnailsAdapter(photos);
                 position = 0;
             } else if (intent.hasExtra(EXTRA_ADAPTER_PHOTOS)) {
@@ -801,23 +847,6 @@ public class PhotoDetailsActivity extends CommonActivity implements TwitterLoadi
             @Override
             public boolean isViewFromObject(View view, Object object) {
                 return view == ((View) object);
-            }
-
-            @Override
-            public void finishUpdate(View arg0) {
-            }
-
-            @Override
-            public void restoreState(Parcelable arg0, ClassLoader arg1) {
-            }
-
-            @Override
-            public Parcelable saveState() {
-                return null;
-            }
-
-            @Override
-            public void startUpdate(View arg0) {
             }
 
             @Override

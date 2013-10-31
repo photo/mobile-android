@@ -1,6 +1,8 @@
 
 package com.trovebox.android.app;
 
+import java.lang.ref.WeakReference;
+
 import org.holoeverywhere.app.Activity;
 import org.holoeverywhere.widget.TextView;
 
@@ -20,6 +22,8 @@ import com.trovebox.android.app.net.account.IAccountTroveboxApiFactory;
 import com.trovebox.android.app.util.CommonUtils;
 import com.trovebox.android.app.util.GuiUtils;
 import com.trovebox.android.app.util.LoginUtils;
+import com.trovebox.android.app.util.LoginUtils.LoginActionHandler;
+import com.trovebox.android.app.util.ObjectAccessor;
 import com.trovebox.android.app.util.TrackerUtils;
 
 public class AccountLogin extends CommonActivity {
@@ -30,6 +34,8 @@ public class AccountLogin extends CommonActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_account_login);
         init();
+        addRegisteredReceiver(LoginUtils.getAndRegisterDestroyOnLoginActionBroadcastReceiver(TAG,
+                this));
     }
 
     void init() {
@@ -49,16 +55,11 @@ public class AccountLogin extends CommonActivity {
         editText = (EditText) findViewById(R.id.edit_password);
         String password = editText.getText().toString();
 
-        if (!GuiUtils.validateBasicTextData(
-                new String[]
-                {
-                        email, password
-                }, new int[]
-                {
-                        R.string.field_email,
-                        R.string.field_password
-                }, this))
-        {
+        if (!GuiUtils.validateBasicTextData(new String[] {
+                email, password
+        }, new int[] {
+                R.string.field_email, R.string.field_password
+        })) {
             return;
         }
 
@@ -84,15 +85,11 @@ public class AccountLogin extends CommonActivity {
         EditText editText = (EditText) findViewById(R.id.edit_email);
         String email = editText.getText().toString();
 
-        if (!GuiUtils.validateBasicTextData(
-                new String[]
-                {
-                    email
-                }, new int[]
-                {
-                    R.string.field_email,
-                }, this))
-        {
+        if (!GuiUtils.validateBasicTextData(new String[] {
+            email
+        }, new int[] {
+            R.string.field_email,
+        })) {
             return;
         }
         getRecoverPasswordFragment().recoverPassword(email);
@@ -122,8 +119,43 @@ public class AccountLogin extends CommonActivity {
      * The log in fragment with the retained instance across configuration
      * change
      */
-    public static class LogInFragment extends CommonRetainedFragmentWithTaskAndProgress {
+    public static class LogInFragment extends CommonRetainedFragmentWithTaskAndProgress implements
+            LoginActionHandler {
         private static final String TAG = LogInFragment.class.getSimpleName();
+
+        static WeakReference<LogInFragment> sCurrentInstance;
+        static ObjectAccessor<LogInFragment> sCurrentInstanceAccessor = new ObjectAccessor<LogInFragment>() {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public LogInFragment run() {
+                return sCurrentInstance == null ? null : sCurrentInstance.get();
+            }
+        };
+
+        boolean mDelayedLoginProcessing = false;
+        AccountTroveboxResponse mLastResponse;
+
+        @Override
+        public void onCreate(Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+            sCurrentInstance = new WeakReference<LogInFragment>(this);
+        }
+
+        @Override
+        public void onDestroy() {
+            if (sCurrentInstance != null) {
+                if (sCurrentInstance.get() == LogInFragment.this
+                        || sCurrentInstance.get() == null) {
+                    CommonUtils.debug(TAG, "Nullify current instance");
+                    sCurrentInstance = null;
+                } else {
+                    CommonUtils.debug(TAG,
+                            "Skipped nullify of current instance, such as it is not the same");
+                }
+            }
+            super.onDestroy();
+        }
 
         @Override
         public String getLoadingMessage() {
@@ -134,6 +166,26 @@ public class AccountLogin extends CommonActivity {
             startRetainedTask(new LogInUserTask(new Credentials(user, pwd)));
         }
 
+        @Override
+        public void processLoginCredentials(com.trovebox.android.app.model.Credentials credentials) {
+            Activity activity = getSupportActivity();
+            credentials.saveCredentials(activity);
+            LoginUtils.onLoggedIn(activity, false);
+        }
+
+        void processLoginResonse(Activity activity) {
+            LoginUtils.processSuccessfulLoginResult(mLastResponse, sCurrentInstanceAccessor,
+                    activity);
+        }
+
+        @Override
+        public void onViewCreated(View view, Bundle savedInstanceState) {
+            super.onViewCreated(view, savedInstanceState);
+            if (mDelayedLoginProcessing) {
+                mDelayedLoginProcessing = false;
+                processLoginResonse(getSupportActivity());
+            }
+        }
         class LogInUserTask extends RetainedTask {
             private Credentials credentials;
             AccountTroveboxResponse result;
@@ -161,15 +213,14 @@ public class AccountLogin extends CommonActivity {
             protected void onSuccessPostExecuteAdditional() {
                 try
                 {
+                    mLastResponse = result;
                     Activity activity = getSupportActivity();
-                    // save credentials.
-                    result.saveCredentials(activity);
-
-                    // start new activity
-                    startActivity(new Intent(activity,
-                            MainActivity.class));
-                    LoginUtils.sendLoggedInBroadcast(activity);
-                    activity.finish();
+                    if (activity != null) {
+                        processLoginResonse(activity);
+                    } else {
+                        TrackerUtils.trackErrorEvent("activity_null", TAG);
+                        mDelayedLoginProcessing = true;
+                    }
                 } catch (Exception e)
                 {
                     GuiUtils.error(TAG, e);

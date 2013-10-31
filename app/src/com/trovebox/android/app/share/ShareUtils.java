@@ -101,7 +101,7 @@ public class ShareUtils {
                         Uri.fromParts("mailto", mailId, null));
                 emailIntent.putExtra(android.content.Intent.EXTRA_SUBJECT,
                         CommonUtils.getStringResource(R.string.share_email_default_title));
-                String url = PhotoUtils.getShareUrl(photo, photo.isPrivate());
+                String url = PhotoUtils.getShareUrl(photo);
                 String bodyText = CommonUtils.getStringResource(
                         R.string.share_email_default_body,
                         url, url);
@@ -113,16 +113,47 @@ public class ShareUtils {
                         CommonUtils.getStringResource(R.string.share_email_send_title)));
             }
         };
-        if (photo.isPrivate())
-        {
-            PhotoUtils.validateShareTokenExistsAsyncAndRunAsync(photo,
-                    runnable,
-                    null,
-                    loadingControl);
-        } else
-        {
-            runnable.run(photo);
-        }
+        PhotoUtils.validateShareTokenExistsAsyncAndRunAsync(photo,
+                runnable,
+                null,
+                loadingControl);
+
+    }
+
+    /**
+     * Shares the specified photo url via system share menu.
+     * 
+     * @param photo
+     * @param context
+     * @param loadingControl the loading control for token retrieval operation
+     */
+    public static void shareViaSystem(Photo photo, final Context context,
+            LoadingControl loadingControl)
+    {
+        RunnableWithParameter<Photo> runnable = new RunnableWithParameter<Photo>() {
+
+            @Override
+            public void run(Photo photo) {
+                Intent shareIntent = new Intent(Intent.ACTION_SEND);
+                shareIntent.setType("text/plain");
+                shareIntent.putExtra(android.content.Intent.EXTRA_SUBJECT,
+                        CommonUtils.getStringResource(R.string.share_system_default_title));
+                String url = PhotoUtils.getShareUrl(photo);
+                String bodyText = CommonUtils.getStringResource(
+                        R.string.share_system_default_body,
+                        url, url);
+                shareIntent.putExtra(
+                        Intent.EXTRA_TEXT,
+                        bodyText
+                        );
+                context.startActivity(Intent.createChooser(shareIntent,
+                        CommonUtils.getStringResource(R.string.share_system_send_title)));
+            }
+        };
+        PhotoUtils.validateShareTokenExistsAsyncAndRunAsync(photo,
+                runnable,
+                null,
+                loadingControl);
 
     }
 

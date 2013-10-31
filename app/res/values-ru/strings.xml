@@ -16,6 +16,7 @@
     <string name="menu_share_email">Электронная почта</string>
     <string name="menu_share_twitter">Twitter</string>
     <string name="menu_share_facebook">Facebook</string>
+    <string name="menu_share_system">Другие системные приложения…</string>
 
     <!-- Selection Menu -->
     <string name="menu_select_all">Выбрать все</string>
@@ -28,8 +29,13 @@
 
     <!-- Share E-Mail -->
     <string name="share_email_default_title">Я использую Trovebox, чтобы поделиться мгновением</string>
-    <string name="share_email_default_body">Увидеть фотографию &lt;a href="%1$s">%1$s&lt;/a></string>
+    <string name="share_email_default_body">Посмотреть фотографию &lt;a href="%1$s">%1$s&lt;/a></string>
     <string name="share_email_send_title">Отправить по электронной почте…</string>
+
+    <!-- Share System -->
+    <string name="share_system_default_title">@string/share_email_default_title</string>
+    <string name="share_system_default_body">Посмотреть фотографию %1$s</string>
+    <string name="share_system_send_title">Поделиться ссылкой на фото</string>
 
     <!-- Share Twitter -->
     <string name="share_twitter_requesting_authentication">Запрос аутентификации в twitter…</string>
@@ -121,6 +127,11 @@
     <string name="notification_upload_success_title">Загрузка завершена</string>
     <string name="notification_upload_skipped_title">Загрузка отменена. Найдена идентичная фотография на сервере.</string>
     <string name="notification_upload_success_text">%1$s</string>
+    <string name="notification_upload_multiple_title">Успешно загружено</string>
+    <string name="notification_upload_multiple_text">Загружено: %1$d; пропущено: %2$d</string>
+    <string name="notification_upload_multiple_details">Детали загрузки</string>
+    <string name="notification_upload_multiple_detail_skipped"><![CDATA[<b>%1$s</b> пропущено]]></string>
+    <string name="notification_upload_multiple_detail_done"><![CDATA[<b>%1$s</b> завершено]]></string>
     <string name="noInternetAccess">Интернет подключение недоступно</string>
 
     <!-- Newest Home -->
@@ -159,6 +170,7 @@
     <string name="errorCouldNotSignup">Не удалось зарегистрироваться</string>
     <string name="errorCouldNotLoadNextAlbumsInList">Не удалось загрузить следующие альбомы в списке</string>
     <string name="errorCouldNotUseIntentsToOpenMaps">Не удалось использовать Intent для открытия карт</string>
+    <string name="errorCouldNotGetAlbum">Не удалось загрузить информацию об альбоме</string>
     <string name="errorCouldNotGetPhoto">Не удалось принять фотографию</string>
     <string name="errorCouldNotDeletePhoto">Удалить фотографию не удалось</string>
     <string name="errorCouldNotUpdatePhoto">Не удалось обновить детали фотографии</string>
@@ -191,6 +203,7 @@
     <string name="errorGooglePlayServicesNotAvailable">Извините, похоже сервисы Google Play не доступны на вашем устройстве.</string>
     <string name="errorGoogleAccountsNotFound">Не удалось найти ни одного привязанного к устройству аккаунта Google.</string>
     <string name="errorCouldNotFetchGoogleAccountToken">Не удалось получить метку доступа к аккаунту google: %1$s.</string>
+    <string name="errorNotAuthorizedUpload">У Вас недостаточно прав для загрузки изображений: нет доступных альбомов.</string>
 
     <!-- Preferences -->
     <string name="upload_preference_category">Загрузка фотографий с камеры</string>
@@ -217,6 +230,7 @@
 
     <!-- Screens for Create/Login/Own domain: Account -->
     <string name="account_google_login_button"><![CDATA[Войти используя <b>Google</b> аккаунт]]></string>
+    <string name="account_signup_instructions"><![CDATA[Нужен аккаунт? Посетите <a href="http://trovebox.com">trovebox.com</a>]]></string>
     <string name="account_signup_button">Зарегистрироваться используя email</string>
     <string name="account_login_button">Войти используя email</string>
     <string name="account_own_server_button">Используете собственный домен?</string>
@@ -233,6 +247,7 @@
     <string name="password_recovery_instructions">Введите email чтобы восстановить пароль</string>
     <string name="instant_sign_in_instructions"><![CDATA[<b>Зарегистрируйтесь</b> или <b>войдите</b> в одно касание]]></string>
     <string name="select_google_account">Пожалуйста выберите аккаунт google для входа</string>
+    <string name="select_trovebox_account">Выберите аккаунт Trovebox</string>
     <!-- Hints -->
     <string name="hint_email">email</string>
     <string name="hint_password">пароль</string>
@@ -242,6 +257,7 @@
     <string name="field_email">email</string>
     <string name="field_password">пароль</string>
     <string name="field_username">имя пользователя</string>
+    <string name="field_album">альбом</string>
 
     <!-- Feather -->
     <string name="feather_failed_to_retrieve_the_list_of_acitions">Не удалось извлечь список действий!</string>

@@ -1,0 +1,18 @@
+{ "code" : 200,
+  "message" : "User credentials",
+  "result" : [ { "clientSecret" : "0f5d654bca",
+        "host" : "apigee.trovebox.com",
+        "id" : "102230629a6802fbca9825a4617bfe",
+        "owner" : "hello@trovebox.com",
+        "userSecret" : "6d1e8fc274",
+        "userToken" : "b662440d621f2f71352f8865888fe2"
+      },
+      { "clientSecret" : "0f5d654bca",
+        "host" : "apigee.trovebox.com",
+        "id" : "102230629a6802fbca9825a4617bfe",
+        "owner" : "hello2@trovebox.com",
+        "userSecret" : "6d1e8fc274",
+        "userToken" : "b662440d621f2f71352f8865888fe2"
+      }
+    ]
+}

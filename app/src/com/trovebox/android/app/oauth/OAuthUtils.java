@@ -6,7 +6,9 @@ import java.net.URLEncoder;
 import oauth.signpost.OAuthConsumer;
 import oauth.signpost.OAuthProvider;
 import oauth.signpost.basic.DefaultOAuthConsumer;
-import android.app.Activity;
+
+import org.holoeverywhere.app.Activity;
+
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;

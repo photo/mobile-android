@@ -1,0 +1,14 @@
+{ "counts" : { "albums" : 5,
+      "photos" : 363,
+      "tags" : 37
+    },
+  "id" : "test3.trovebox.com",
+  "isOwner" : false,
+  "name" : " Demo User",
+  "permission" : { "C" : [ "4" ],
+      "D" : false,
+      "R" : [ "5","4" ],
+      "U" : false
+    },
+  "photoUrl" : "http://awesomeness.openphoto.me/custom/201203/62f010-Boracay-Philippines-033_100x100xCR.jpg"
+}
