@@ -185,12 +185,10 @@ public class SyncUploadFragment extends CommonFragment implements OnClickListene
             }
         });
         reinitShareSwitches();
-        AccountLimitUtils.checkQuotaPerUploadAvailableAndRunAsync(new Runnable() {
+        AccountLimitUtils.tryToRefreshLimitInformationAndRunInContextAsync(new Runnable() {
 
             @Override
             public void run() {
-                CommonUtils.debug(TAG, "Upload limit check passed");
-                TrackerUtils.trackLimitEvent("sync_upload_enabled_check", "success");
                 if (!isAdded()) {
                     return;
                 }
@@ -207,10 +205,9 @@ public class SyncUploadFragment extends CommonFragment implements OnClickListene
 
             @Override
             public void run() {
-                CommonUtils.debug(TAG, "Upload limit check failed");
-                TrackerUtils.trackLimitEvent("sync_upload_enabled_check", "fail");
+                CommonUtils.debug(TAG, "Limit information refresh failed");
             }
-        }, previousStepFlow.getSelectedCount(), loadingControl);
+        }, loadingControl);
     }
 
     void reinitShareSwitches()

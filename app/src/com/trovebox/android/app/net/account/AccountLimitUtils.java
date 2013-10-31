@@ -1,9 +1,6 @@
 
 package com.trovebox.android.app.net.account;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
 import com.trovebox.android.app.Preferences;
 import com.trovebox.android.app.R;
 import com.trovebox.android.app.TroveboxApplication;
@@ -14,7 +11,6 @@ import com.trovebox.android.app.net.ProfileResponse;
 import com.trovebox.android.app.net.ProfileResponseUtils;
 import com.trovebox.android.app.net.SystemVersionResponseUtils;
 import com.trovebox.android.app.net.TroveboxResponseUtils;
-import com.trovebox.android.app.provider.UploadsProviderAccessor;
 import com.trovebox.android.app.util.CommonUtils;
 import com.trovebox.android.app.util.GuiUtils;
 import com.trovebox.android.app.util.LoadingControl;
@@ -95,91 +91,7 @@ public class AccountLimitUtils {
             final LoadingControl loadingControl
             )
     {
-        SystemVersionResponseUtils.tryToUpdateSystemVersionCacheIfNecessaryAndRunInContextAsync(
-                new Runnable() {
-
-                    @Override
-                    public void run() {
-                        if (Preferences.isSelfHosted())
-                        {
-                            runnable.run();
-                        } else
-                        {
-                            tryToRefreshLimitInformationAndRunInContextAsync(
-                                    new Runnable() {
-
-                                        @Override
-                                        public void run() {
-
-                                            if (Preferences.isProUser())
-                                            {
-                                                runnable.run();
-                                            } else
-                                            {
-                                                int remaining = Preferences
-                                                        .getRemainingUploadingLimit();
-                                                UploadsProviderAccessor uploads = new UploadsProviderAccessor(
-                                                        TroveboxApplication.getContext());
-                                                int pending = uploads.getPendingUploadsCount();
-                                                if (remaining - pending >= requiredUploadSlotsCount)
-                                                {
-                                                    CommonUtils.debug(TAG, "Quota check passed");
-                                                    if (requiredUploadSlotsCount == 1)
-                                                    {
-                                                        TrackerUtils.trackLimitEvent(
-                                                                "quota_per_one_image_check",
-                                                                "success");
-                                                    } else
-                                                    {
-                                                        TrackerUtils.trackLimitEvent(
-                                                                "quota_per_multiple_images_check",
-                                                                "success");
-                                                    }
-                                                    runnable.run();
-                                                } else
-                                                {
-                                                    CommonUtils.debug(TAG, "Quota check failed");
-                                                    if (requiredUploadSlotsCount == 1)
-                                                    {
-                                                        TrackerUtils
-                                                                .trackLimitEvent(
-                                                                        "quota_per_one_image_check",
-                                                                        "fail");
-                                                        Date resetsOnDate = Preferences
-                                                                .getUploadLimitResetsOnDate();
-                                                        if (resetsOnDate == null)
-                                                        {
-                                                            GuiUtils.alert(R.string.upload_limit_reached_message);
-                                                        } else
-                                                        {
-                                                            GuiUtils.alert(
-                                                                    R.string.upload_limit_reached_with_reset_message,
-                                                                    SimpleDateFormat.getInstance()
-                                                                            .format(resetsOnDate));
-                                                        }
-                                                    } else
-                                                    {
-                                                        TrackerUtils.trackLimitEvent(
-                                                                "quota_per_multiple_images_check",
-                                                                "fail");
-                                                        GuiUtils.alert(
-                                                                R.string.upload_limit_for_multiple_upload_reached_message,
-                                                                requiredUploadSlotsCount, remaining
-                                                                        - pending);
-                                                    }
-                                                    if (runnableOnFailure != null)
-                                                    {
-                                                        runnableOnFailure.run();
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    },
-                                    runnableOnFailure, loadingControl);
-                        }
-                    }
-                }
-                , runnableOnFailure, loadingControl);
+        runnable.run();
     }
 
     /**

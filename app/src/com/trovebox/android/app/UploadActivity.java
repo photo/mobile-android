@@ -326,12 +326,10 @@ public class UploadActivity extends CommonActivity {
                 showSelectionDialog();
             }
             adjustUploadOriginalSwitchVisibility();
-            AccountLimitUtils.checkQuotaPerOneUploadAvailableAndRunAsync(new Runnable() {
+            AccountLimitUtils.tryToRefreshLimitInformationAndRunInContextAsync(new Runnable() {
 
                 @Override
                 public void run() {
-                    CommonUtils.debug(TAG, "Upload limit check passed");
-                    TrackerUtils.trackLimitEvent("upload_activity_upload_enabled_check", "success");
                     if (!isAdded()) {
                         return;
                     }
@@ -349,8 +347,7 @@ public class UploadActivity extends CommonActivity {
 
                 @Override
                 public void run() {
-                    CommonUtils.debug(TAG, "Upload limit check failed");
-                    TrackerUtils.trackLimitEvent("upload_activity_upload_enabled_check", "fail");
+                    CommonUtils.debug(TAG, "Limit information refresh failed");
                 }
             }, new ProgressDialogLoadingControl(getActivity(), true, true,
                     getString(R.string.loading)));
