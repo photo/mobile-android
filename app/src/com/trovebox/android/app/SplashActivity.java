@@ -73,7 +73,7 @@ public class SplashActivity extends Activity {
                 // Go to Main screen
                 Intent i = Preferences.isLoggedIn() ?
                         new Intent(SplashActivity.this, MainActivity.class) :
-                        new Intent(SplashActivity.this, AccountActivity.class);
+                        new Intent(SplashActivity.this, IntroActivity.class);
                 startActivity(i);
                 finish();
             }

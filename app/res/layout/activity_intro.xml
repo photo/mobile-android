@@ -1,0 +1,36 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+     xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:paddingBottom="10dp"
+    android:paddingLeft="10dp"
+    android:paddingRight="10dp"
+    android:paddingTop="10dp"
+    xmlns:app="http://schemas.android.com/apk/res/com.trovebox.android.app">
+
+    <android.support.v4.view.ViewPager
+        android:id="@+id/pager"
+        android:layout_width="fill_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+    
+  <com.viewpagerindicator.CirclePageIndicator
+         android:id="@+id/indicator"
+        android:padding="10dp"
+        android:layout_height="wrap_content"
+        android:layout_width="fill_parent"
+        app:radius="2dp"
+        app:strokeColor="#FF000000"
+        app:strokeWidth="1dp"
+        
+        /> 
+    <Button
+        android:id="@+id/button_skip"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right"
+        android:onClick="skipIntro"
+        android:text="@string/button_skip" />
+
+</LinearLayout>
