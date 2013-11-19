@@ -4,6 +4,8 @@ package com.trovebox.android.app;
 import java.sql.Timestamp;
 import java.util.Date;
 
+import org.holoeverywhere.HoloEverywhere;
+
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -17,7 +19,7 @@ import android.view.View;
 import com.viewpagerindicator.CirclePageIndicator;
 import com.viewpagerindicator.PageIndicator;
 
-public class IntroActivity extends FragmentActivity
+public class IntroActivity extends org.holoeverywhere.app.Activity
 {
 
     ImageFragmentAdapter mAdapter;
@@ -92,39 +94,16 @@ public class IntroActivity extends FragmentActivity
     @Override
     protected void onResume() {
         super.onResume();
-        Log.i("DD", "onResume()");
-//        
-        SharedPreferences  sharedPrefs = this.getSharedPreferences(
-                "skip_intro", this.MODE_PRIVATE);
-        Log.i("DD", "" + (sharedPrefs.getInt("clickedSkip", 0)));
-
-        if(sharedPrefs.getInt("clickedSkip", 0) == 1)
+        if(Preferences.getSkipButton() == true)
         {
             startActivity(new Intent(this, AccountActivity.class));
             finish();
         }
-            
-      //  startActivity(new Intent(this, MainActivity.class));
-        
-        
     }
-  
     public void skipIntro(View v)
     {
-        
-          
-        SharedPreferences  sharedPrefs = this.getSharedPreferences(
-                  "skip_intro", this.MODE_PRIVATE);
-        Log.i("DD", "" + (sharedPrefs.getInt("clickedSkip", 0)));
-        
-        if(sharedPrefs.getInt("clickedSkip", 0) == 0)
-        {
-            SharedPreferences.Editor editor = sharedPrefs.edit();
-            editor.putInt("clickedSkip", 1);
-            editor.commit();
-           
-        }
-        Log.i("DD", "" + (sharedPrefs.getInt("clickedSkip", 0)));
+        if(Preferences.getSkipButton() == false)
+            Preferences.setSkipButton(true);
         startActivity(new Intent(this, AccountActivity.class));
         finish();
         

@@ -193,9 +193,7 @@ public class MainActivity extends CommonActivity implements LoadingControl, Gall
         {
             // startActivity(new Intent(this, SetupActivity.class));
             // startActivity(new Intent(this, AccountActivity.class));
-            SharedPreferences sharedPrefs = this.getSharedPreferences(
-                    "skip_intro", this.MODE_PRIVATE);
-            if (sharedPrefs.getInt("clickedSkip", 0) == 0)
+            if(Preferences.getSkipButton() == false)
                 startActivity(new Intent(this, IntroActivity.class));
             else
                 startActivity(new Intent(this, AccountActivity.class));

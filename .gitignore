@@ -1,3 +1,6 @@
 test/ant.properties
 .DS_Store
 app/src/me/openphoto/android/app/net/account/AccountOpenPhotoApi.java
+etc/
+
+

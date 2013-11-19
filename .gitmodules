@@ -7,9 +7,6 @@
 [submodule "submodules/PhotoView"]
 	path = submodules/PhotoView
 	url = https://github.com/chrisbanes/PhotoView.git
-[submodule "viewpagerindicator"]
-	path = viewpagerindicator
-	url = git://github.com/JakeWharton/Android-ViewPagerIndicator.git
 [submodule "submodules/viewpagerindicator"]
 	path = submodules/viewpagerindicator
 	url = git://github.com/JakeWharton/Android-ViewPagerIndicator.git
