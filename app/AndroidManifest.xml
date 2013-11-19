@@ -25,12 +25,12 @@
     <uses-permission android:name="com.android.vending.BILLING" />
 
     <application
-        android:name="com.trovebox.android.app.TroveboxApplication"
+        android:name=".TroveboxApplication"
         android:icon="@drawable/icon"
         android:label="@string/app_name"
         android:theme="@style/Theme.Trovebox.Light" >
         <activity
-            android:name="com.trovebox.android.app.SplashActivity"
+            android:name=".SplashActivity"
             android:launchMode="singleTask"
             android:theme="@style/Theme.Trovebox.Login" >
             <intent-filter>
@@ -40,7 +40,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.trovebox.android.app.SetupActivity"
+            android:name=".SetupActivity"
             android:launchMode="singleTask"
             android:theme="@style/Theme.Trovebox.Login" >
             <intent-filter>
@@ -52,8 +52,11 @@
                 <data android:scheme="trovebox" />
             </intent-filter>
         </activity>
+           <activity
+            android:name=".IntroActivity" android:configChanges="keyboardHidden|orientation|screenSize"  android:launchMode="singleTask"/>
+     
         <activity
-            android:name="com.trovebox.android.app.MainActivity"
+            android:name=".MainActivity"
             android:launchMode="singleTask"
             android:logo="@drawable/actionbar_logo" >
             <intent-filter>
@@ -66,7 +69,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.trovebox.android.app.PhotoDetailsActivity"
+            android:name=".PhotoDetailsActivity"
             android:launchMode="singleTask"
             android:theme="@style/Theme.Trovebox.TransparentActionBar" >
             <intent-filter>
@@ -79,7 +82,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.trovebox.android.app.UploadActivity"
+            android:name=".UploadActivity"
             android:launchMode="singleTask" >
             <intent-filter>
                 <action android:name="android.intent.action.SEND" />
@@ -97,31 +100,26 @@
                 <data android:scheme="trovebox-t3" />
             </intent-filter>
         </activity>
-        <activity android:name="com.trovebox.android.app.SettingsActivity" />
+        <activity android:name=".SettingsActivity" />
         <activity
-            android:name="com.trovebox.android.app.AccountLogin"
+            android:name=".AccountLogin"
             android:theme="@style/Theme.Trovebox.Login" />
-          <activity
-            android:name="com.trovebox.android.app.IntroActivity" android:configChanges="keyboardHidden|orientation|screenSize"  android:launchMode="singleTask"/>
-       
         <activity
-            android:name="com.trovebox.android.app.AccountActivity"
+            android:name=".AccountActivity"
             android:theme="@style/Theme.Trovebox.Login" />
-        
-        
         <activity
-            android:name="com.trovebox.android.app.SelectAccountActivity"
+            android:name=".SelectAccountActivity"
             android:label="@string/select_trovebox_account"
             android:launchMode="singleTask" >
         </activity>
         <activity
-            android:name="com.trovebox.android.app.SelectTagsActivity"
+            android:name=".SelectTagsActivity"
             android:configChanges="orientation"
             android:label="@string/title_activity_select_tags"
             android:theme="@style/Theme.Trovebox.DialogActivity.Light" >
         </activity>
         <activity
-            android:name="com.trovebox.android.app.SelectAlbumsActivity"
+            android:name=".SelectAlbumsActivity"
             android:configChanges="orientation"
             android:label="@string/title_activity_select_albums"
             android:theme="@style/Theme.Trovebox.DialogActivity.Light" >
@@ -149,17 +147,17 @@
 
         <!-- AutoUpload things -->
         <!-- Stuff for auto uploading photos -->
-        <receiver android:name="com.trovebox.android.app.receiver.BootCompletedReceiver" >
+        <receiver android:name=".receiver.BootCompletedReceiver" >
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" >
                 </action>
             </intent-filter>
         </receiver>
 
-        <service android:name="com.trovebox.android.app.service.UploaderService" />
+        <service android:name=".service.UploaderService" />
 
         <provider
-            android:name="com.trovebox.android.app.provider.UploadsProvider"
+            android:name=".provider.UploadsProvider"
             android:authorities="com.trovebox.android.app" />
         <!-- Required for the hi-res image processing -->
         <!-- authorities can have the value you prefer -->
@@ -168,8 +166,6 @@
             android:authorities="com.trovebox.aviary.launcher.HiResProvider"
             android:exported="false" >
         </provider>
-
-
     </application>
 
 </manifest>
