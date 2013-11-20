@@ -13,6 +13,7 @@ import android.util.FloatMath;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout.LayoutParams;
 
 import com.trovebox.android.app.bitmapfun.util.ImageWorker;
 
@@ -313,6 +314,7 @@ public abstract class ImageFlowUtils<T>
             int imageViewId,
             Context context) {
         ViewGroup view;
+        CommonUtils.debug(TAG, "getView: called for position %1$d", position);
         if (convertView == null)
         { // if it's not recycled, instantiate and initialize
             final LayoutInflater layoutInflater = (LayoutInflater)
@@ -433,17 +435,20 @@ public abstract class ImageFlowUtils<T>
         int height = imageHeight;
         int width = (int) (ratio * height) + extraWidth;
 
-        CommonUtils.debug(TAG, "Processing image: " + value
+        CommonUtils.debug(TAG, "getSingleImageView: processing image: " + value
                 + "; Width: " + getWidth(value)
                 + "; Height: " + getHeight(value)
                 + "; Extra width: " + extraWidth
                 + "; Req Width: " + width
                 + "; Req Height: " + height);
 
-        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
-                width + 2 * borderSize,
-                height + 2 * borderSize);
-        view.setLayoutParams(layoutParams);
+        width = width + 2 * borderSize;
+        height = height + 2 * borderSize;
+        LinearLayout.LayoutParams layoutParams = (LayoutParams) view.getLayoutParams();
+        if (layoutParams == null || layoutParams.width != width || layoutParams.height != height) {
+            layoutParams = new LinearLayout.LayoutParams(width, height);
+            view.setLayoutParams(layoutParams);
+        }
 
         additionalSingleImageViewInit(view, value);
         ImageView imageView = (ImageView) view.findViewById(imageViewId);

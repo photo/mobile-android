@@ -869,10 +869,9 @@ public class SyncImageSelectionFragment extends CommonRefreshableFragmentWithIma
         }
 
         @Override
-        protected Bitmap processBitmap(Object data)
-        {
+        protected Bitmap processBitmap(Object data, ProcessingState processingState) {
             ImageData imageData = (ImageData) data;
-            return super.processBitmap(imageData.data);
+            return super.processBitmap(imageData.data, processingState);
         }
     }
 

@@ -72,6 +72,8 @@ public class GalleryFragment extends CommonRefreshableFragmentWithImageWorker
     ViewTreeObserver.OnGlobalLayoutListener photosGridListener;
     PhotosGridOnTouchListener mPhotosGridOnTouchListener;
 
+    boolean mRevalidateRequired = false;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -122,6 +124,21 @@ public class GalleryFragment extends CommonRefreshableFragmentWithImageWorker
 
     }
 
+    @Override
+    public void setImageWorkerExitTaskEarly(boolean exitTaskEarly) {
+        super.setImageWorkerExitTaskEarly(exitTaskEarly);
+        if (exitTaskEarly) {
+            mRevalidateRequired = true;
+        } else {
+            if (mRevalidateRequired) {
+                mRevalidateRequired = false;
+                if (mAdapter != null) {
+                    mAdapter.notifyDataSetChanged();
+                }
+            }
+        }
+    }
+
     public Album getAlbum() {
         return mAlbum;
     }
@@ -151,6 +168,7 @@ public class GalleryFragment extends CommonRefreshableFragmentWithImageWorker
 
     void refresh(View v)
     {
+        mRevalidateRequired = false;
         if (mTags == null && mAlbum == null)
         {
             Intent intent = getActivity().getIntent();
@@ -277,8 +295,7 @@ public class GalleryFragment extends CommonRefreshableFragmentWithImageWorker
 
         @SuppressWarnings("unchecked")
         @Override
-        protected Bitmap processBitmap(Object data)
-        {
+        protected Bitmap processBitmap(Object data, ProcessingState processingState) {
             FlowObjectToStringWrapper<Photo> fo = (FlowObjectToStringWrapper<Photo>) data;
             Photo imageData = fo.getObject();
             double ratio = imageData.getHeight() == 0 ? 1 : (float) imageData.getWidth()
@@ -286,12 +303,10 @@ public class GalleryFragment extends CommonRefreshableFragmentWithImageWorker
             int height = imageHeight;
             int width = (int) (height * ratio);
             Bitmap result = null;
-            try
-            {
+            try {
                 imageData = PhotoUtils.validateUrlForSizeExistAndReturn(imageData, thumbSize);
-                result = super.processBitmap(fo.toString(), width, height);
-            } catch (Exception e)
-            {
+                result = super.processBitmap(fo.toString(), width, height, processingState);
+            } catch (Exception e) {
                 GuiUtils.noAlertError(TAG, e);
             }
             return result;
@@ -664,7 +679,7 @@ public class GalleryFragment extends CommonRefreshableFragmentWithImageWorker
                     "LibraryListOnTouchListener.onScale: new scale: %.2f, new height: %d",
                     newScaleFactor, (int) (newScaleFactor * mImageThumbSize));
 
-            if (newScaleFactor >= 0.5f && newScaleFactor <= 5.f) {
+            if (newScaleFactor >= 0.5f && newScaleFactor <= 5.f && mScaleFactor != newScaleFactor) {
                 mScaleFactor = newScaleFactor;
                 // Don't let the object get too small or too large.
                 rebuildPhotosGrid();

@@ -50,7 +50,7 @@ import com.trovebox.android.app.util.TrackerUtils;
  */
 public class DiskLruCache {
     private static final String TAG = "DiskLruCache";
-    private static final String CACHE_FILENAME_PREFIX = "cache_";
+    public static final String CACHE_FILENAME_PREFIX = "cache_";
     private static final int MAX_REMOVALS = 4;
     private static final int INITIAL_CAPACITY = 32;
     private static final float LOAD_FACTOR = 0.75f;
@@ -438,6 +438,10 @@ public class DiskLruCache {
      */
     public String createFilePath(String key) {
         return createFilePath(mCacheDir, key);
+    }
+
+    public File getCacheDir() {
+        return mCacheDir;
     }
 
     /**

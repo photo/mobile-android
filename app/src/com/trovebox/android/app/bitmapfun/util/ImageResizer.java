@@ -151,7 +151,7 @@ public class ImageResizer extends ImageWorker {
     }
 
     @Override
-    protected Bitmap processBitmap(Object data) {
+    protected Bitmap processBitmap(Object data, ProcessingState processingState) {
         return processBitmap(Integer.parseInt(String.valueOf(data)));
     }
 
