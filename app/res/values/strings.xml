@@ -5,6 +5,12 @@
     <string name="loading">Loading&#8230;</string>
     <string name="take_photo">Take Photo</string>
 
+    <!-- Intro -->
+    <string name="button_skip">Skip</string>
+    <string name="slide_1_text">One spot for your company\'s photos and videos</string>
+    <string name="slide_2_text">Collaborate with colleagues and clients</string>
+    <string name="slide_3_text">Securely and painlessly organize and share</string>
+
     <!-- Menu -->
     <string name="menu_camera">Take a photo</string>
     <string name="menu_refresh">Refresh</string>
@@ -311,5 +317,8 @@
     <!-- In-App Billing -->
     <string name="iabMonthlySubscriptionSuccess">Thank you for subscribing to premium!</string>
     <string name="iabNoNeedToUpgrade">You are already a premium member and don\'t need to upgrade!</string>
+    
+    <string name="action_settings">Settings</string>
+    <string name="hello_world">Hello world!</string>
 
 </resources>

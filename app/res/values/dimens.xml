@@ -29,4 +29,8 @@
 
     <item name="slider_menu_width" type="dimen">200dip</item>
 
+    <dimen name="activity_horizontal_margin">16dp</dimen>
+    <dimen name="activity_vertical_margin">16dp</dimen>
+
+    <dimen name="activity_intro_margin">16dp</dimen>
 </resources>

@@ -503,4 +503,19 @@ public class Preferences {
     public static ITroveboxApi getApi(Context context) {
         return TroveboxApi.createInstance(context);
     }
+    
+    public static void setSkipButton(boolean b)
+    {
+        getLimitsSharedPreferences()
+        .edit()
+        .putBoolean(CommonUtils.getStringResource(R.string.setting_intro_skip),
+                b)
+        .commit();
+       
+    }
+    public static boolean getSkipButton()
+    {
+        return getLimitsSharedPreferences()
+        .getBoolean(CommonUtils.getStringResource(R.string.setting_intro_skip), false);
+    }
 }

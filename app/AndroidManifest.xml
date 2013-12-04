@@ -52,6 +52,9 @@
                 <data android:scheme="trovebox" />
             </intent-filter>
         </activity>
+           <activity
+            android:name=".IntroActivity" android:configChanges="keyboardHidden|orientation|screenSize"  android:launchMode="singleTask"/>
+     
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTask"

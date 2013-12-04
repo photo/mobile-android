@@ -12,10 +12,12 @@ import org.holoeverywhere.app.Activity;
 import org.holoeverywhere.app.Activity.Addons;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
+import android.view.KeyEvent;
 
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.view.Menu;
@@ -179,7 +181,7 @@ public class MainActivity extends CommonActivity implements LoadingControl, Gall
         super.onSaveInstanceState(outState);
         instanceSaved = true;
     }
-
+  
     @Override
     protected void onResume()
     {
@@ -190,7 +192,12 @@ public class MainActivity extends CommonActivity implements LoadingControl, Gall
         if (!Preferences.isLoggedIn(this))
         {
             // startActivity(new Intent(this, SetupActivity.class));
-            startActivity(new Intent(this, AccountActivity.class));
+            // startActivity(new Intent(this, AccountActivity.class));
+            if(Preferences.getSkipButton() == false)
+                startActivity(new Intent(this, IntroActivity.class));
+            else
+                startActivity(new Intent(this, AccountActivity.class));
+
             finish();
         }
     }

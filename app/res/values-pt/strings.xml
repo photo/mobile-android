@@ -5,6 +5,9 @@
     <string name="loading">Carregando&#8230;</string>
     <string name="take_photo">Tire foto</string>
 
+     <!-- Intro -->
+    <string name="button_skip">Pular</string>
+    
     <!-- Menu -->
     <string name="menu_refresh">Atualizar</string>
     <string name="menu_preferences">Preferências</string>
