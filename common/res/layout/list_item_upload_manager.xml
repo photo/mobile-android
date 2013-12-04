@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:paddingBottom="@dimen/trovebox_site_padding_half"
+    android:paddingLeft="@dimen/trovebox_site_padding"
+    android:paddingRight="@dimen/trovebox_site_padding"
+    android:paddingTop="@dimen/trovebox_site_padding_half" >
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="5dip"
+        android:adjustViewBounds="true"
+        android:background="@drawable/shadow_border"
+        android:paddingBottom="2dp"
+        android:paddingLeft="1dp"
+        android:paddingRight="2dp"
+        android:paddingTop="1dp" >
+
+        <ImageView
+            android:id="@+id/thumb"
+            android:layout_width="@dimen/upload_manager_image_thumbnail_size"
+            android:layout_height="@dimen/upload_manager_image_thumbnail_size"
+            android:scaleType="centerCrop"
+            android:src="@drawable/empty_photo" />
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="5dip"
+        android:layout_weight="1"
+        android:orientation="vertical" >
+
+        <TextView
+            android:id="@+id/uploadTitleText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Test.jpg"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <TextView
+            android:id="@+id/uploadStatusText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Successfully uploaded"
+            android:textAppearance="?android:attr/textAppearanceSmall" />
+
+        <ProgressBar
+            android:id="@+id/progress"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:layout_marginTop="3dp" />
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/uploadStatusIcon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_checked" />
+
+</LinearLayout>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <item
+        android:id="@+id/menu_filter"
+        android:icon="@drawable/ic_menu_filter"
+        android:menuCategory="container"
+        android:orderInCategory="14"
+        android:showAsAction="always"
+        android:title="@string/menu_filter">
+        <menu>
+            <item
+                android:id="@+id/menu_filter_show_all"
+                android:title="@string/menu_filter_show_all"/>
+            <item
+                android:id="@+id/menu_filter_show_not_uploaded"
+                android:title="@string/menu_filter_show_not_uploaded"/>
+        </menu>
+    </item>
+
+</menu>

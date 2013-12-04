@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical" >
+
+    <RelativeLayout
+        android:id="@+id/imageContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#000"
+        android:clickable="true"
+        android:padding="@dimen/sync_image_thumbnail_border" >
+
+        <ImageView
+            android:id="@+id/image"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop" />
+
+        <RelativeLayout
+            android:id="@+id/selection_overlay"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/pressed_trovebox"
+            android:visibility="invisible" >
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentRight="true"
+                android:duplicateParentState="true"
+                android:paddingBottom="10dip"
+                android:paddingRight="10dip"
+                android:src="@drawable/ic_checked" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/uploaded_overlay"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="invisible" >
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentRight="true"
+                android:paddingBottom="10dip"
+                android:paddingRight="10dip"
+                android:src="@drawable/ic_synced" />
+        </RelativeLayout>
+    </RelativeLayout>
+
+</LinearLayout>

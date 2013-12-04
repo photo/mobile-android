@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:layout_marginLeft="4dip"
+    android:layout_marginRight="4dip"
+    android:text="@string/abs__action_mode_done"
+    android:textAllCaps="true"
+    android:textAppearance="?android:attr/textAppearanceSmall"
+    android:textColor="?actionMenuTextColor"
+    android:textSize="12sp" />
