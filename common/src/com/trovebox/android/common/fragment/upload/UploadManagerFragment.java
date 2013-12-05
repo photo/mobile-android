@@ -532,7 +532,7 @@ public class UploadManagerFragment extends CommonRefreshableFragmentWithImageWor
         }
     }
 
-    static class PhotoUploadWrapper {
+    static class PhotoUploadWrapper implements Parcelable {
         static enum UploadStatus {
             DONE, PENDING, UPLOADING, ERROR
         }
@@ -567,6 +567,39 @@ public class UploadManagerFragment extends CommonRefreshableFragmentWithImageWor
                 uploadStatus = UploadStatus.DONE;
             }
             return uploadStatus;
+        }
+
+        /*****************************
+         * PARCELABLE IMPLEMENTATION *
+         *****************************/
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        @Override
+        public void writeToParcel(Parcel out, int flags) {
+            out.writeParcelable(photoUpload, flags);
+            out.writeString(path);
+            out.writeByte((byte) (pathChecked ? 1 : 0));
+        }
+
+        public static final Parcelable.Creator<PhotoUploadWrapper> CREATOR = new Parcelable.Creator<PhotoUploadWrapper>() {
+            @Override
+            public PhotoUploadWrapper createFromParcel(Parcel in) {
+                return new PhotoUploadWrapper(in);
+            }
+
+            @Override
+            public PhotoUploadWrapper[] newArray(int size) {
+                return new PhotoUploadWrapper[size];
+            }
+        };
+
+        private PhotoUploadWrapper(Parcel in) {
+            photoUpload = in.readParcelable(getClass().getClassLoader());
+            path = in.readString();
+            pathChecked = in.readByte() == 1;
         }
     }
 }

@@ -8,12 +8,12 @@ import java.util.Iterator;
 
 import org.apache.http.client.ClientProtocolException;
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import android.content.Context;
 import android.text.TextUtils;
 
 import com.trovebox.android.common.CommonConfigurationUtils;
+import com.trovebox.android.common.net.ApiRequest.ApiVersion;
 import com.trovebox.android.common.net.HttpEntityWithProgress.ProgressListener;
 import com.trovebox.android.common.net.TroveboxResponse.RequestType;
 
@@ -378,10 +378,11 @@ public class TroveboxApi extends ApiBase implements ITroveboxApi {
     }
 
     @Override
-    public TroveboxResponse validateUploadToken(String host, String token)
+    public TokenValidationResponse validateUploadToken(String token)
             throws ClientProtocolException, IOException, IllegalStateException, JSONException {
-        JSONObject jsonObjFake = new JSONObject("{\"message\" : \"Token validated\","
-                + "\"code\" : 200" + "}");
-        return new TroveboxResponse(RequestType.VALIDATE_UPLOAD_TOKEN, jsonObjFake);
+        ApiRequest request = new ApiRequest(ApiRequest.GET, "/c/" + token + ".json",
+                ApiVersion.NO_VERSION);
+        ApiResponse response = execute(request);
+        return new TokenValidationResponse(response.getJSONObject());
     }
 }

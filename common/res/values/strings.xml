@@ -9,6 +9,10 @@
     <string name="no">No</string>
     <string name="loading">Loading&#8230;</string>
 
+    <!-- Api -->
+    <string name="api_invalid_token">Invalid token</string>
+    <string name="api_expired_token">Expired token</string>
+
     <!-- Menu -->
     <string name="menu_refresh">Refresh</string>
 

@@ -328,9 +328,8 @@ public interface ITroveboxApi {
             IllegalStateException, JSONException;
 
     /**
-     * Validate upload token for the host
+     * Validate upload token
      * 
-     * @param host the host token should be applied to
      * @param token the token to validate
      * @return
      * @throws ClientProtocolException
@@ -338,7 +337,7 @@ public interface ITroveboxApi {
      * @throws IllegalStateException
      * @throws JSONException
      */
-    TroveboxResponse validateUploadToken(String host, String token) throws ClientProtocolException,
+    TokenValidationResponse validateUploadToken(String token) throws ClientProtocolException,
             IOException, IllegalStateException, JSONException;
 
 }
