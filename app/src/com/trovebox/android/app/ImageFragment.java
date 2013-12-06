@@ -1,15 +1,9 @@
 
 package com.trovebox.android.app;
 
-import com.trovebox.android.app.R;
-import com.trovebox.android.app.common.CommonFragment;
-import com.trovebox.android.app.util.CommonUtils;
-
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -17,7 +11,9 @@ import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.TextView;
 
-public final class ImageFragment extends com.trovebox.android.app.common.CommonFragment {
+import com.trovebox.android.app.common.CommonFragment;
+
+public final class ImageFragment extends CommonFragment {
     int imageResourceId;
     int contentResourceId;
     private static final String KEY_CONTENT = "ImageFragment:imageResourceId";
@@ -34,12 +30,13 @@ public final class ImageFragment extends com.trovebox.android.app.common.CommonF
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        
+
         if ((savedInstanceState != null) && savedInstanceState.containsKey(KEY_CONTENT)) {
             imageResourceId = savedInstanceState.getInt(KEY_CONTENT);
         }
-    
+
     }
+
     @Override
     public View onCreateView(org.holoeverywhere.LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
@@ -56,8 +53,8 @@ public final class ImageFragment extends com.trovebox.android.app.common.CommonF
 
         LinearLayout layout = new LinearLayout(getActivity());
         layout.setOrientation(LinearLayout.VERTICAL);
-        layout.setLayoutParams(new LayoutParams(LayoutParams.FILL_PARENT,
-                LayoutParams.FILL_PARENT));
+        layout.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT,
+                LayoutParams.MATCH_PARENT));
 
         layout.setGravity(Gravity.CENTER);
         layout.addView(image);
@@ -66,9 +63,6 @@ public final class ImageFragment extends com.trovebox.android.app.common.CommonF
         return layout;
     }
 
-        
-  
-    
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);

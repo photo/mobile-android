@@ -30,6 +30,10 @@ public class Preferences {
     public final static String SYSTEM_VERSION_PREFERENCES_NAME = "system_version";
     public final static String VERIFIED_PAYMENTS_PREFERENCES_NAME = "verified_payments";
 
+    public static SharedPreferences getDefaultSharedPreferences() {
+        return getDefaultSharedPreferences(null);
+    }
+
     public static SharedPreferences getDefaultSharedPreferences(Context context)
     {
         return PreferenceManagerHelper.wrap(TroveboxApplication.getContext() == null ? context
@@ -420,6 +424,7 @@ public class Preferences {
         getDefaultSharedPreferences(context)
                 .edit()
                 .putBoolean(context.getString(R.string.setting_account_loggedin_key), false)
+                .remove(CommonUtils.getStringResource(R.string.setting_intro_skip))
                 .commit();
         getDefaultSharedPreferences(context)
                 .edit()
@@ -504,18 +509,25 @@ public class Preferences {
         return TroveboxApi.createInstance(context);
     }
     
-    public static void setSkipButton(boolean b)
+    /**
+     * Set the skip intro flag
+     * 
+     * @param skipIntro
+     */
+    public static void setSkipIntro(boolean skipIntro)
     {
-        getLimitsSharedPreferences()
-        .edit()
-        .putBoolean(CommonUtils.getStringResource(R.string.setting_intro_skip),
-                b)
-        .commit();
-       
+        getDefaultSharedPreferences().edit()
+                .putBoolean(CommonUtils.getStringResource(R.string.setting_intro_skip), skipIntro)
+                .commit();
     }
-    public static boolean getSkipButton()
-    {
-        return getLimitsSharedPreferences()
-        .getBoolean(CommonUtils.getStringResource(R.string.setting_intro_skip), false);
+
+    /**
+     * Whether the intro should be skipped
+     * 
+     * @return
+     */
+    public static boolean isSkipIntro() {
+        return getDefaultSharedPreferences().getBoolean(
+                CommonUtils.getStringResource(R.string.setting_intro_skip), false);
     }
 }

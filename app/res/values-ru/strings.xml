@@ -5,6 +5,12 @@
     <string name="loading">Загрузка&#8230;</string>
     <string name="take_photo">Сделать снимок</string>
 
+    <!-- Intro -->
+    <string name="button_skip">Пропустить</string>
+    <string name="slide_1_text">Единое место для фотографий и видео вашей компании</string>
+    <string name="slide_2_text">Работайте совместно с коллегами и клиентами</string>
+    <string name="slide_3_text">Организовывайте и делитесь безопасно и безболезненно</string>
+
     <!-- Menu -->
     <string name="menu_camera">Добавить фотографию</string>
     <string name="menu_refresh">Обновить</string>

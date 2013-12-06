@@ -28,6 +28,6 @@ public class IAccountTroveboxApiFactory {
      */
     public static IAccountTroveboxApi getApi(Context context)
     {
-        return new FakeAccountTroveboxApi(context);
+        return new AccountTroveboxApi(context);
     }
 }
