@@ -30,7 +30,7 @@
     <string name="sync_please_pick_at_least_one_photo">Please pick at least one photo first!</string>
     <string name="sync_show_all">Show all</string>
     <string name="sync_uploaded">UPLOADED!</string>
-    <string name="sync_upload_button">Upload!</string>
+    <string name="sync_upload_button">Upload</string>
     <string name="sync_uploading_in_background">Your upload has been started</string>
 
     <!-- Upload Manager screen -->
