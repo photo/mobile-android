@@ -101,7 +101,7 @@ public class ImageFileSystemFetcher extends ImageResizer
     }
 
     @Override
-    protected Bitmap processBitmap(Object data)
+    protected Bitmap processBitmap(Object data, ProcessingState processingState)
     {
         return processBitmap(String.valueOf(data));
     }

@@ -1,27 +1,18 @@
 
 package com.trovebox.android.app;
 
-import java.sql.Timestamp;
-import java.util.Date;
-
-import org.holoeverywhere.HoloEverywhere;
-
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
-import android.util.Log;
-import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 
+import com.trovebox.android.app.common.CommonActivity;
+import com.trovebox.android.app.util.TrackerUtils;
 import com.viewpagerindicator.CirclePageIndicator;
 import com.viewpagerindicator.PageIndicator;
 
-public class IntroActivity extends org.holoeverywhere.app.Activity
-{
-
+public class IntroActivity extends CommonActivity {
     ImageFragmentAdapter mAdapter;
     ViewPager mPager;
     PageIndicator mIndicator;
@@ -48,14 +39,12 @@ public class IntroActivity extends org.holoeverywhere.app.Activity
             public boolean onTouch(View v, MotionEvent touchEvent) {
                 int action = touchEvent.getAction();
                 switch (action) {
-                    case MotionEvent.ACTION_DOWN:
-                    {
+                    case MotionEvent.ACTION_DOWN: {
                         x1 = touchEvent.getX();
                         y1 = touchEvent.getY();
                         break;
                     }
-                    case MotionEvent.ACTION_UP:
-                    {
+                    case MotionEvent.ACTION_UP: {
                         x2 = touchEvent.getX();
                         y2 = touchEvent.getY();
 
@@ -91,21 +80,25 @@ public class IntroActivity extends org.holoeverywhere.app.Activity
         });
 
     }
+
     @Override
     protected void onResume() {
         super.onResume();
-        if(Preferences.getSkipButton() == true)
-        {
+        if (Preferences.isSkipIntro() == true) {
             startActivity(new Intent(this, AccountActivity.class));
             finish();
         }
     }
-    public void skipIntro(View v)
-    {
-        if(Preferences.getSkipButton() == false)
-            Preferences.setSkipButton(true);
+
+    public void skipIntro(View v) {
+        if (v != null) {
+            TrackerUtils.trackButtonClickEvent("intro_skip_button", IntroActivity.this);
+        }
+
+        if (Preferences.isSkipIntro() == false)
+            Preferences.setSkipIntro(true);
         startActivity(new Intent(this, AccountActivity.class));
         finish();
-        
+
     }
 }

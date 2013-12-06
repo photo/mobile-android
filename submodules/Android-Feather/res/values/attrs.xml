@@ -118,7 +118,7 @@
     <declare-styleable name="CellLayout">
         <attr name="startPadding" format="dimension" />
         <attr name="endPadding" format="dimension" />
-        <attr name="topPadding" format="dimension" />
+        <attr name="topPadding" />
         <attr name="bottomPadding" format="dimension" />
         <attr name="horizontalPadding" format="dimension" />
         <attr name="verticalPadding" format="dimension" />

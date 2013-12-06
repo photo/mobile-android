@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="pleaseSpecifyFirst">Please specify %1$s first!</string>
+    <string name="noInternetAccess">Internet connection is not available</string>
+    <string name="upload_limit_reached_message">The free upload limit is reached.</string>
+    <string name="sync_cleared_message">The sync information has been cleared</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="loading">Loading&#8230;</string>
+
+    <!-- Api -->
+    <string name="api_invalid_token">Invalid token</string>
+    <string name="api_expired_token">Expired token</string>
+
+    <!-- Menu -->
+    <string name="menu_refresh">Refresh</string>
+
+    <!-- Selection Menu -->
+    <string name="menu_select_all">Select All</string>
+    <string name="menu_select_none">Select None</string>
+    <string name="menu_selection">Selection</string>
+    <string name="menu_filter">Filter</string>
+    <string name="menu_filter_show_all">Show All</string>
+    <string name="menu_filter_show_not_uploaded">Show Not Uploaded</string>
+
+    <!-- Sync screen -->
+    <string name="sync_next_button">Next</string>
+    <string name="sync_previous_button">Back</string>
+    <string name="sync_please_pick_at_least_one_photo">Please pick at least one photo first!</string>
+    <string name="sync_show_all">Show all</string>
+    <string name="sync_uploaded">UPLOADED!</string>
+    <string name="sync_upload_button">Upload!</string>
+    <string name="sync_uploading_in_background">Your upload has been started</string>
+
+    <!-- Upload Manager screen -->
+    <string name="upload_status_uploaded">Uploaded</string>
+    <string name="upload_status_uploading">Uploading: %1$d%%</string>
+    <string name="upload_status_error">Error: %1$s</string>
+    <string name="upload_status_pending">Pending</string>
+    <string name="upload_manager_title">Upload Manager</string>
+    <string name="upload_manager_menu_cancel">Cancel</string>
+    <string name="upload_manager_menu_clear">Clear</string>
+
+    <plurals name="sync_upload_selected_confirmation">
+        <item quantity="zero">Do you want to upload %1$d selected pictures?</item>
+        <item quantity="one">Do you want to upload %1$d selected picture?</item>
+        <item quantity="other">Do you want to upload %1$d selected pictures?</item>
+    </plurals>
+    <!--
+         String indicating how many media item(s) is(are) selected
+            eg. 1 selected [CHAR LIMIT=30]
+    -->
+    <plurals name="number_of_items_selected">
+        <item quantity="zero">%1$d selected</item>
+        <item quantity="one">%1$d selected</item>
+        <item quantity="other">%1$d selected</item>
+    </plurals>
+
+    <!-- Notifications -->
+    <string name="notification_uploading_photo">Uploading %1$s</string>
+    <string name="notification_upload_failed_title">Upload failed</string>
+    <string name="notification_upload_failed_title_with_reason">Upload failed: %1$s</string>
+    <string name="notification_upload_failed_text">%1$s</string>
+    <string name="notification_upload_success_title">Upload finished</string>
+    <string name="notification_upload_skipped_title">Upload skipped. Found same photo on the server.</string>
+    <string name="notification_upload_success_text">%1$s</string>
+    <string name="notification_upload_multiple_title">Successfull upload</string>
+    <string name="notification_upload_multiple_text">Uploaded: %1$d; skipped: %2$d</string>
+    <string name="notification_upload_multiple_details">Upload details</string>
+    <string name="notification_upload_multiple_detail_skipped"><![CDATA[<b>%1$s</b> skipped]]></string>
+    <string name="notification_upload_multiple_detail_done"><![CDATA[<b>%1$s</b> done]]></string>
+
+    <!-- Errors -->
+    <string name="errorCouldNotStoreDownloadablePhotoNotEnoughSpace">Couldn\'t store downloadable photo on disk. Not enough free space.</string>
+    <string name="errorNotLoggedIn">You are not yet logged in.</string>
+    <string name="errorCouldNotValidateUploadToken">Could not validate upload token.</string>
+    <string name="errorSpecifiedUrlIsInvalid">The specified URL is invalid</string>
+    <string name="unknown_error_with_code">Unknown error with code %1$d</string>
+
+</resources>

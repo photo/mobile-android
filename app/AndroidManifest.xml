@@ -2,8 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.trovebox.android.app"
     android:installLocation="auto"
-    android:versionCode="13"
-    android:versionName="2.2 dev" >
+    android:versionCode="14"
+    android:versionName="2.3" >
 
     <uses-sdk
         android:minSdkVersion="7"
@@ -52,9 +52,10 @@
                 <data android:scheme="trovebox" />
             </intent-filter>
         </activity>
-           <activity
-            android:name=".IntroActivity" android:configChanges="keyboardHidden|orientation|screenSize"  android:launchMode="singleTask"/>
-     
+        <activity
+            android:name=".IntroActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:launchMode="singleTask" />
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTask"

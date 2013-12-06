@@ -50,7 +50,8 @@
         <item>publish_stream</item>
         <item>photo_upload</item>
     </string-array>
-    
-    <!--  Intro -->
-	<string name="setting_intro_skip">setting_intro_skip</string>
+
+    <!-- Intro -->
+    <string name="setting_intro_skip">setting_intro_skip</string>
+
 </resources>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <dimen name="trovebox_site_padding">10dp</dimen>
+    <dimen name="trovebox_site_padding_half">5dp</dimen>
+    <dimen name="sync_image_thumbnail_size">100dp</dimen>
+    <dimen name="upload_manager_image_thumbnail_size">@dimen/sync_image_thumbnail_size</dimen>
+    <dimen name="sync_image_thumbnail_spacing">1dp</dimen>
+    <dimen name="sync_image_thumbnail_border">1dp</dimen>
+
+</resources>

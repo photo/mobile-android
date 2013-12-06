@@ -271,6 +271,7 @@ public abstract class ImageWorker {
     }
 
     public void setExitTasksEarly(boolean exitTasksEarly) {
+        CommonUtils.debug(TAG, "setExitTasksEarly: called for parameter %1$b", exitTasksEarly);
         mExitTasksEarly = exitTasksEarly;
     }
 
@@ -282,9 +283,12 @@ public abstract class ImageWorker {
      * 
      * @param data The data to identify which image to process, as provided by
      *            {@link ImageWorker#loadImage(Object, ImageView)}
+     * @param processingCancelledState may be used to determine whether the
+     *            processing is cancelled during long operations
      * @return The processed bitmap
      */
-    protected abstract Bitmap processBitmap(Object data);
+    protected abstract Bitmap processBitmap(Object data,
+            ProcessingState processingCancelledState);
 
     public static void cancelWork(ImageView imageView) {
         final BitmapWorkerTask bitmapWorkerTask = getBitmapWorkerTask(imageView);
@@ -305,12 +309,13 @@ public abstract class ImageWorker {
     public static boolean cancelPotentialWork(Object data, ImageView imageView) {
         final BitmapWorkerTask bitmapWorkerTask = getBitmapWorkerTask(imageView);
 
-        if (bitmapWorkerTask != null) {
+        if (bitmapWorkerTask != null && !bitmapWorkerTask.isCancelled()) {
             final Object bitmapData = bitmapWorkerTask.data;
             if (bitmapData == null || !bitmapData.equals(data)) {
                 bitmapWorkerTask.cancel(true);
                 if (BuildConfig.DEBUG) {
-                    CommonUtils.debug(TAG, "cancelPotentialWork - cancelled work for " + data);
+                    CommonUtils
+                            .debug(TAG, "cancelPotentialWork - cancelled work for " + bitmapData);
                 }
             } else {
                 // The same work is already in progress.
@@ -339,7 +344,8 @@ public abstract class ImageWorker {
     /**
      * The actual AsyncTaskEx that will asynchronously process the image.
      */
-    private class BitmapWorkerTask extends AsyncTaskEx<Object, Void, Bitmap> {
+    private class BitmapWorkerTask extends AsyncTaskEx<Object, Void, Bitmap> implements
+            ProcessingState {
         private Object data;
         private final WeakReference<ImageView> imageViewReference;
         LoadingControl loadingControl;
@@ -419,7 +425,7 @@ public abstract class ImageWorker {
                 // process method (as implemented by a subclass)
                 if (bitmap == null && !isCancelled() && getAttachedImageView() != null
                         && !mExitTasksEarly) {
-                    bitmap = processBitmap(params[0]);
+                    bitmap = processBitmap(params[0], this);
                 }
 
                 // If the bitmap was processed and the image cache is available,
@@ -475,6 +481,11 @@ public abstract class ImageWorker {
             }
 
             return null;
+        }
+
+        @Override
+        public boolean isProcessingCancelled() {
+            return isCancelled() || mExitTasksEarly;
         }
     }
 
@@ -565,6 +576,15 @@ public abstract class ImageWorker {
      */
     public ImageWorkerAdapter getAdapter() {
         return mImageWorkerAdapter;
+    }
+
+    /**
+     * An interface to handle processing cancelled state in the processBitmap
+     * method. Useful for long loading operations such as downloadBitmap in
+     * ImageFetcher
+     */
+    public static interface ProcessingState {
+        boolean isProcessingCancelled();
     }
 
     /**

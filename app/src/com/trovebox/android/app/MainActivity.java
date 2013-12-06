@@ -12,12 +12,10 @@ import org.holoeverywhere.app.Activity;
 import org.holoeverywhere.app.Activity.Addons;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
-import android.view.KeyEvent;
 
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.view.Menu;
@@ -193,7 +191,7 @@ public class MainActivity extends CommonActivity implements LoadingControl, Gall
         {
             // startActivity(new Intent(this, SetupActivity.class));
             // startActivity(new Intent(this, AccountActivity.class));
-            if(Preferences.getSkipButton() == false)
+            if(Preferences.isSkipIntro() == false)
                 startActivity(new Intent(this, IntroActivity.class));
             else
                 startActivity(new Intent(this, AccountActivity.class));
