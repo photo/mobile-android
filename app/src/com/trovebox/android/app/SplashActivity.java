@@ -7,9 +7,9 @@ import android.os.Bundle;
 
 import com.trovebox.android.app.service.UploaderService;
 import com.trovebox.android.app.service.UploaderServiceUtils;
-import com.trovebox.android.app.util.CommonUtils;
-import com.trovebox.android.app.util.TrackerUtils;
-import com.trovebox.android.app.util.concurrent.AsyncTaskEx;
+import com.trovebox.android.common.util.CommonUtils;
+import com.trovebox.android.common.util.TrackerUtils;
+import com.trovebox.android.common.util.concurrent.AsyncTaskEx;
 
 /**
  * The splash/loading screen before you get to the Main screen
@@ -46,7 +46,7 @@ public class SplashActivity extends Activity {
      */
     private class InitialLoad extends AsyncTaskEx<Void, Void, Void> {
         /**
-         * @see com.trovebox.android.app.util.concurrent.AsyncTaskEx#doInBackground(Params[])
+         * @see com.trovebox.android.common.util.concurrent.AsyncTaskEx#doInBackground(Params[])
          */
         @Override
         protected Void doInBackground(Void... params) {
@@ -63,7 +63,7 @@ public class SplashActivity extends Activity {
         }
 
         /**
-         * @see com.trovebox.android.app.util.concurrent.AsyncTaskEx#onPostExecute(java.lang.Object)
+         * @see com.trovebox.android.common.util.concurrent.AsyncTaskEx#onPostExecute(java.lang.Object)
          */
         @Override
         protected void onPostExecute(Void result) {

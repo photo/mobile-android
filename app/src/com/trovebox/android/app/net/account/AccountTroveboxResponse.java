@@ -8,8 +8,8 @@ import org.json.JSONObject;
 
 import com.trovebox.android.app.R;
 import com.trovebox.android.app.TroveboxApplication;
-import com.trovebox.android.app.model.Credentials;
-import com.trovebox.android.app.net.TroveboxResponse;
+import com.trovebox.android.common.model.Credentials;
+import com.trovebox.android.common.net.TroveboxResponse;
 
 /**
  * @author Patrick Santana <patrick@trovebox.com>

@@ -10,7 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 
-import com.trovebox.android.app.util.concurrent.AsyncTaskEx;
+import com.trovebox.android.common.util.concurrent.AsyncTaskEx;
 
 public abstract class EndlessAdapter<T> extends BaseAdapter {
     @Override

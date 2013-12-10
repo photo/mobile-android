@@ -10,10 +10,14 @@ import android.support.v4.app.FragmentActivity;
 
 import com.trovebox.android.app.R;
 import com.trovebox.android.app.TroveboxApplication;
-import com.trovebox.android.app.util.CommonUtils;
-import com.trovebox.android.app.util.GuiUtils;
-import com.trovebox.android.app.util.LoadingControl;
-import com.trovebox.android.app.util.SimpleAsyncTaskEx;
+import com.trovebox.android.common.bitmapfun.util.DiskLruCache;
+import com.trovebox.android.common.bitmapfun.util.ImageCache;
+import com.trovebox.android.common.bitmapfun.util.ImageFetcher;
+import com.trovebox.android.common.bitmapfun.util.RetainFragment;
+import com.trovebox.android.common.util.CommonUtils;
+import com.trovebox.android.common.util.GuiUtils;
+import com.trovebox.android.common.util.LoadingControl;
+import com.trovebox.android.common.util.SimpleAsyncTaskEx;
 
 /**
  * Utils for {@link ImageCache}

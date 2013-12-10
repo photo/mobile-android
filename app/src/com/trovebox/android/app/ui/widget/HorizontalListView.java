@@ -32,10 +32,11 @@ import java.util.LinkedList;
 import java.util.Queue;
 
 
+
 import org.holoeverywhere.widget.AdapterView;
 import org.holoeverywhere.widget.Scroller;
 
-import com.trovebox.android.app.util.CommonUtils;
+import com.trovebox.android.common.util.CommonUtils;
 
 import android.content.Context;
 import android.database.DataSetObserver;

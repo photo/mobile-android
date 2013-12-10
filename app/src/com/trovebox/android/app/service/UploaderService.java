@@ -39,24 +39,23 @@ import com.trovebox.android.app.R;
 import com.trovebox.android.app.TwitterFragment;
 import com.trovebox.android.app.UploadActivity;
 import com.trovebox.android.app.facebook.FacebookProvider;
-import com.trovebox.android.app.model.Photo;
 import com.trovebox.android.app.model.utils.PhotoUtils;
-import com.trovebox.android.app.net.HttpEntityWithProgress.ProgressListener;
-import com.trovebox.android.app.net.ITroveboxApi;
-import com.trovebox.android.app.net.PhotosResponse;
-import com.trovebox.android.app.net.ReturnSizes;
-import com.trovebox.android.app.net.UploadMetaData;
-import com.trovebox.android.app.net.UploadResponse;
-import com.trovebox.android.app.net.account.AccountLimitUtils;
-import com.trovebox.android.app.provider.PhotoUpload;
-import com.trovebox.android.app.provider.UploadsProviderAccessor;
+import com.trovebox.android.app.net.account.AccountLimitUtils2;
 import com.trovebox.android.app.twitter.TwitterProvider;
-import com.trovebox.android.app.util.CommonUtils;
-import com.trovebox.android.app.util.GuiUtils;
-import com.trovebox.android.app.util.ImageUtils;
-import com.trovebox.android.app.util.SHA1Utils;
-import com.trovebox.android.app.util.TrackerUtils;
-import com.trovebox.android.app.util.Utils;
+import com.trovebox.android.common.model.Photo;
+import com.trovebox.android.common.net.HttpEntityWithProgress.ProgressListener;
+import com.trovebox.android.common.net.ITroveboxApi;
+import com.trovebox.android.common.net.PhotosResponse;
+import com.trovebox.android.common.net.ReturnSizes;
+import com.trovebox.android.common.net.UploadMetaData;
+import com.trovebox.android.common.net.UploadResponse;
+import com.trovebox.android.common.provider.PhotoUpload;
+import com.trovebox.android.common.provider.UploadsProviderAccessor;
+import com.trovebox.android.common.util.CommonUtils;
+import com.trovebox.android.common.util.GuiUtils;
+import com.trovebox.android.common.util.ImageUtils;
+import com.trovebox.android.common.util.SHA1Utils;
+import com.trovebox.android.common.util.TrackerUtils;
 
 public class UploaderService extends Service {
     private static final int NOTIFICATION_UPLOAD_PROGRESS = 1;
@@ -142,7 +141,7 @@ public class UploaderService extends Service {
     }
 
     private void handleIntent(Intent intent) {
-        if (!CommonUtils.checkLoggedInAndOnline(true))
+        if (!GuiUtils.checkLoggedInAndOnline(true))
         {
             return;
         }
@@ -156,7 +155,7 @@ public class UploaderService extends Service {
         ArrayList<Photo> uploadedPhotos = new ArrayList<Photo>();
         List<PhotoUploadDetails> uploadDetails = new ArrayList<PhotoUploadDetails>();
         for (PhotoUpload photoUpload : pendingUploads) {
-            if (!CommonUtils.checkLoggedInAndOnline(true))
+            if (!GuiUtils.checkLoggedInAndOnline(true))
             {
                 return;
             }
@@ -170,7 +169,7 @@ public class UploaderService extends Service {
             }
             boolean wifiOnlyUpload = Preferences
                     .isWiFiOnlyUploadActive(getBaseContext());
-            if (wifiOnlyUpload && !Utils.isWiFiActive(getBaseContext()))
+            if (wifiOnlyUpload && !CommonUtils.isWiFiActive())
             {
                 CommonUtils.info(TAG, "Upload canceled because WiFi is not active anymore");
                 break;
@@ -238,6 +237,11 @@ public class UploaderService extends Service {
                                         }
                                     }
                                 }
+
+                                @Override
+                                public boolean isCancelled() {
+                                    return false;
+                                }
                             });
                     if(uploadResponse.isSuccess())
                     {
@@ -291,7 +295,7 @@ public class UploaderService extends Service {
         // update limit information only in case we had successful uploads
         if (hasSuccessfulUploads)
         {
-            AccountLimitUtils.updateLimitInformationCacheIfNecessary(true);
+            AccountLimitUtils2.updateLimitInformationCacheIfNecessary(true);
         }
     }
 
@@ -589,7 +593,7 @@ public class UploaderService extends Service {
             sNewPhotoObservers = new ArrayList<NewPhotoObserver>();
             alreadyObservingPaths = new HashSet<String>();
         }
-        Set<String> externalMounts = Utils.getExternalMounts();
+        Set<String> externalMounts = CommonUtils.getExternalMounts();
         File externalStorage = Environment.getExternalStorageDirectory();
         if (externalStorage != null)
         {
@@ -630,13 +634,13 @@ public class UploaderService extends Service {
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            boolean online = Utils.isOnline(context);
+            boolean online = CommonUtils.isOnline(context);
             boolean wifiOnlyUpload = Preferences
                     .isWiFiOnlyUploadActive(getBaseContext());
             CommonUtils.debug(TAG, "Connectivity changed to " + (online ? "online" : "offline"));
             if (online
-                    && (!wifiOnlyUpload || (wifiOnlyUpload && Utils
-                            .isWiFiActive(context))))
+                    && (!wifiOnlyUpload || (wifiOnlyUpload && CommonUtils
+                            .isWiFiActive())))
             {
                 context.startService(new Intent(context, UploaderService.class));
             }

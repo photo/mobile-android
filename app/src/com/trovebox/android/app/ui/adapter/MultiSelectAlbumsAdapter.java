@@ -7,8 +7,8 @@ import java.util.Map;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 
-import com.trovebox.android.app.model.Album;
-import com.trovebox.android.app.util.LoadingControl;
+import com.trovebox.android.common.model.Album;
+import com.trovebox.android.common.util.LoadingControl;
 
 /**
  * @author Eugene Popovich

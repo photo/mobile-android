@@ -8,6 +8,7 @@ import java.io.InputStream;
 import java.util.Date;
 
 
+
 import org.holoeverywhere.app.Fragment;
 import org.holoeverywhere.app.ProgressDialog;
 
@@ -45,8 +46,8 @@ import com.aviary.android.feather.library.utils.StringUtils;
 import com.aviary.android.feather.library.utils.SystemUtils;
 import com.trovebox.android.app.TroveboxApplication;
 import com.trovebox.android.app.R;
-import com.trovebox.android.app.util.CommonUtils;
-import com.trovebox.android.app.util.GuiUtils;
+import com.trovebox.android.common.util.CommonUtils;
+import com.trovebox.android.common.util.GuiUtils;
 
 /**
  * The feather editor support fragment. It is used as external util to open

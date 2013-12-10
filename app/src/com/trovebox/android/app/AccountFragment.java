@@ -11,15 +11,15 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.trovebox.android.app.bitmapfun.util.ImageFetcher;
-import com.trovebox.android.app.common.CommonRefreshableFragmentWithImageWorker;
-import com.trovebox.android.app.model.ProfileInformation;
-import com.trovebox.android.app.model.ProfileInformation.ProfileCounters;
 import com.trovebox.android.app.net.ProfileResponseUtils;
-import com.trovebox.android.app.net.ReturnSizes;
-import com.trovebox.android.app.util.CommonUtils;
-import com.trovebox.android.app.util.LoadingControl;
-import com.trovebox.android.app.util.RunnableWithParameter;
+import com.trovebox.android.common.bitmapfun.util.ImageFetcher;
+import com.trovebox.android.common.fragment.common.CommonRefreshableFragmentWithImageWorker;
+import com.trovebox.android.common.model.ProfileInformation;
+import com.trovebox.android.common.model.ProfileInformation.ProfileCounters;
+import com.trovebox.android.common.net.ReturnSizes;
+import com.trovebox.android.common.util.CommonUtils;
+import com.trovebox.android.common.util.LoadingControl;
+import com.trovebox.android.common.util.RunnableWithParameter;
 
 /**
  * The fragment which displays account information

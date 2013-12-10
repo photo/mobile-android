@@ -7,10 +7,10 @@ import org.apache.http.client.ClientProtocolException;
 import org.json.JSONException;
 
 import com.trovebox.android.app.Preferences;
-import com.trovebox.android.app.model.Photo;
-import com.trovebox.android.app.model.Token;
-import com.trovebox.android.app.net.TokenResponse;
-import com.trovebox.android.app.util.TrackerUtils;
+import com.trovebox.android.common.model.Photo;
+import com.trovebox.android.common.model.Token;
+import com.trovebox.android.common.net.TokenResponse;
+import com.trovebox.android.common.util.TrackerUtils;
 
 /**
  * Utils class for the token object

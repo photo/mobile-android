@@ -6,7 +6,7 @@ import java.security.NoSuchAlgorithmException;
 
 import org.json.JSONException;
 
-import com.trovebox.android.app.net.TroveboxResponse;
+import com.trovebox.android.common.net.TroveboxResponse;
 
 /**
  * @author Patrick Santana <patrick@trovebox.com>

@@ -21,10 +21,10 @@ import android.provider.MediaStore;
 
 import com.jayway.android.robotium.solo.Solo;
 import com.trovebox.android.app.UploadActivity;
-import com.trovebox.android.app.net.PhotosResponse;
-import com.trovebox.android.app.net.UploadMetaData;
-import com.trovebox.android.app.net.UploadResponse;
-import com.trovebox.android.app.net.HttpEntityWithProgress.ProgressListener;
+import com.trovebox.android.common.net.PhotosResponse;
+import com.trovebox.android.common.net.UploadMetaData;
+import com.trovebox.android.common.net.UploadResponse;
+import com.trovebox.android.common.net.HttpEntityWithProgress.ProgressListener;
 import com.trovebox.android.test.net.JSONUtils;
 import com.trovebox.android.test.util.FileUtils;
 

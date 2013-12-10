@@ -12,15 +12,15 @@ import android.util.DisplayMetrics;
 
 import com.trovebox.android.app.Preferences;
 import com.trovebox.android.app.R;
-import com.trovebox.android.app.model.Photo;
-import com.trovebox.android.app.net.ITroveboxApi;
-import com.trovebox.android.app.net.Paging;
-import com.trovebox.android.app.net.PhotosResponse;
-import com.trovebox.android.app.net.ReturnSizes;
-import com.trovebox.android.app.net.TroveboxResponseUtils;
-import com.trovebox.android.app.util.CommonUtils;
-import com.trovebox.android.app.util.GuiUtils;
-import com.trovebox.android.app.util.TrackerUtils;
+import com.trovebox.android.common.model.Photo;
+import com.trovebox.android.common.net.ITroveboxApi;
+import com.trovebox.android.common.net.Paging;
+import com.trovebox.android.common.net.PhotosResponse;
+import com.trovebox.android.common.net.ReturnSizes;
+import com.trovebox.android.common.net.TroveboxResponseUtils;
+import com.trovebox.android.common.util.CommonUtils;
+import com.trovebox.android.common.util.GuiUtils;
+import com.trovebox.android.common.util.TrackerUtils;
 
 public abstract class PhotosEndlessAdapter extends EndlessAdapter<Photo>
 {
@@ -117,7 +117,7 @@ public abstract class PhotosEndlessAdapter extends EndlessAdapter<Photo>
     public LoadResponse loadItems(
             int page)
     {
-        if (CommonUtils.checkLoggedInAndOnline())
+        if (GuiUtils.checkLoggedInAndOnline())
         {
             return loadItemsGeneral(page, getPageSize());
         } else
@@ -158,7 +158,7 @@ public abstract class PhotosEndlessAdapter extends EndlessAdapter<Photo>
 
     @Override
     public LoadResponse loadOneMoreItem(int index) {
-        if (CommonUtils.checkLoggedInAndOnline())
+        if (GuiUtils.checkLoggedInAndOnline())
         {
             return loadItemsGeneral(index, 1);
         } else

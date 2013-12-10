@@ -3,12 +3,14 @@ package com.trovebox.android.app.net;
 import com.trovebox.android.app.Preferences;
 import com.trovebox.android.app.R;
 import com.trovebox.android.app.TroveboxApplication;
-import com.trovebox.android.app.model.ProfileInformation;
-import com.trovebox.android.app.util.CommonUtils;
-import com.trovebox.android.app.util.GuiUtils;
-import com.trovebox.android.app.util.LoadingControl;
-import com.trovebox.android.app.util.RunnableWithParameter;
-import com.trovebox.android.app.util.SimpleAsyncTaskEx;
+import com.trovebox.android.common.model.ProfileInformation;
+import com.trovebox.android.common.net.ITroveboxApi;
+import com.trovebox.android.common.net.ProfileResponse;
+import com.trovebox.android.common.net.TroveboxResponseUtils;
+import com.trovebox.android.common.util.GuiUtils;
+import com.trovebox.android.common.util.LoadingControl;
+import com.trovebox.android.common.util.RunnableWithParameter;
+import com.trovebox.android.common.util.SimpleAsyncTaskEx;
 
 /**
  * Utils for {@link ProfileResponse}
@@ -77,7 +79,7 @@ public class ProfileResponseUtils {
     public static void runWithProfileResponseAsync(boolean includeViewer,
             RunnableWithParameter<ProfileResponse> runnable, Runnable runnableOnFailure,
             LoadingControl loadingControl) {
-        if (CommonUtils.checkLoggedInAndOnline()) {
+        if (GuiUtils.checkLoggedInAndOnline()) {
             new RetrieveProfileInformationTask(includeViewer, runnable, runnableOnFailure,
                     loadingControl).execute();
         }

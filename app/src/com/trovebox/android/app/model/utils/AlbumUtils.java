@@ -17,16 +17,16 @@ import android.content.IntentFilter;
 import com.trovebox.android.app.Preferences;
 import com.trovebox.android.app.R;
 import com.trovebox.android.app.TroveboxApplication;
-import com.trovebox.android.app.model.Album;
-import com.trovebox.android.app.net.AlbumResponse;
-import com.trovebox.android.app.net.TroveboxResponseUtils;
-import com.trovebox.android.app.net.UploadMetaDataUtils;
-import com.trovebox.android.app.util.CommonUtils;
-import com.trovebox.android.app.util.GuiUtils;
-import com.trovebox.android.app.util.LoadingControl;
-import com.trovebox.android.app.util.RunnableWithParameter;
-import com.trovebox.android.app.util.SimpleAsyncTaskEx;
 import com.trovebox.android.app.util.compare.ToStringComparator;
+import com.trovebox.android.common.model.Album;
+import com.trovebox.android.common.net.AlbumResponse;
+import com.trovebox.android.common.net.TroveboxResponseUtils;
+import com.trovebox.android.common.net.UploadMetaDataUtils;
+import com.trovebox.android.common.util.CommonUtils;
+import com.trovebox.android.common.util.GuiUtils;
+import com.trovebox.android.common.util.LoadingControl;
+import com.trovebox.android.common.util.RunnableWithParameter;
+import com.trovebox.android.common.util.SimpleAsyncTaskEx;
 
 /**
  * @author Eugene Popovich
@@ -188,7 +188,7 @@ public class AlbumUtils {
         @Override
         protected Boolean doInBackground(Void... params) {
             try {
-                if (CommonUtils.checkLoggedInAndOnline()) {
+                if (GuiUtils.checkLoggedInAndOnline()) {
                     AlbumResponse response = Preferences.getApi().getAlbum(mId);
                     mAlbum = response.getAlbum();
                     return TroveboxResponseUtils.checkResponseValid(response);
@@ -235,7 +235,7 @@ public class AlbumUtils {
         @Override
         protected Boolean doInBackground(Void... params) {
             try {
-                if (CommonUtils.checkLoggedInAndOnline())
+                if (GuiUtils.checkLoggedInAndOnline())
                 {
                     AlbumResponse response =
                             Preferences.getApi()

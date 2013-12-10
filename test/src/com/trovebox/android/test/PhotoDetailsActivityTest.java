@@ -15,10 +15,10 @@ import android.support.v4.app.Fragment;
 
 import com.trovebox.android.app.PhotoDetailsActivity;
 import com.trovebox.android.app.PhotoDetailsActivity.PhotoDetailsUiFragment;
-import com.trovebox.android.app.model.Photo;
-import com.trovebox.android.app.net.PhotoResponse;
-import com.trovebox.android.app.net.ReturnSizes;
-import com.trovebox.android.app.net.TroveboxResponse.RequestType;
+import com.trovebox.android.common.model.Photo;
+import com.trovebox.android.common.net.PhotoResponse;
+import com.trovebox.android.common.net.ReturnSizes;
+import com.trovebox.android.common.net.TroveboxResponse.RequestType;
 import com.trovebox.android.test.net.JSONUtils;
 
 public class PhotoDetailsActivityTest extends

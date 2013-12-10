@@ -33,31 +33,31 @@ import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
 import android.widget.ImageView;
 
-import com.trovebox.android.app.bitmapfun.util.ImageFileSystemFetcher;
-import com.trovebox.android.app.bitmapfun.util.ImageResizer;
-import com.trovebox.android.app.common.CommonActivity;
-import com.trovebox.android.app.common.CommonClosableOnRestoreDialogFragment;
-import com.trovebox.android.app.common.CommonFragment;
 import com.trovebox.android.app.facebook.FacebookProvider;
 import com.trovebox.android.app.facebook.FacebookUtils;
 import com.trovebox.android.app.feather.FeatherFragment;
-import com.trovebox.android.app.model.ProfileInformation.AccessPermissions;
 import com.trovebox.android.app.model.utils.AlbumUtils;
 import com.trovebox.android.app.model.utils.TagUtils;
-import com.trovebox.android.app.net.UploadMetaData;
-import com.trovebox.android.app.net.account.AccountLimitUtils;
-import com.trovebox.android.app.provider.PhotoUpload;
-import com.trovebox.android.app.provider.UploadsProviderAccessor;
+import com.trovebox.android.app.net.account.AccountLimitUtils2;
 import com.trovebox.android.app.service.UploaderService;
 import com.trovebox.android.app.twitter.TwitterUtils;
-import com.trovebox.android.app.util.CommonUtils;
-import com.trovebox.android.app.util.FileUtils;
-import com.trovebox.android.app.util.GuiUtils;
-import com.trovebox.android.app.util.ImageUtils;
-import com.trovebox.android.app.util.ProgressDialogLoadingControl;
-import com.trovebox.android.app.util.RunnableWithParameter;
-import com.trovebox.android.app.util.TrackerUtils;
-import com.trovebox.android.app.util.data.StringMapParcelableWrapper;
+import com.trovebox.android.common.activity.CommonActivity;
+import com.trovebox.android.common.bitmapfun.util.ImageFileSystemFetcher;
+import com.trovebox.android.common.bitmapfun.util.ImageResizer;
+import com.trovebox.android.common.fragment.common.CommonClosableOnRestoreDialogFragment;
+import com.trovebox.android.common.fragment.common.CommonFragment;
+import com.trovebox.android.common.model.ProfileInformation.AccessPermissions;
+import com.trovebox.android.common.net.UploadMetaData;
+import com.trovebox.android.common.provider.PhotoUpload;
+import com.trovebox.android.common.provider.UploadsProviderAccessor;
+import com.trovebox.android.common.util.CommonUtils;
+import com.trovebox.android.common.util.FileUtils;
+import com.trovebox.android.common.util.GuiUtils;
+import com.trovebox.android.common.util.ImageUtils;
+import com.trovebox.android.common.util.ProgressDialogLoadingControl;
+import com.trovebox.android.common.util.RunnableWithParameter;
+import com.trovebox.android.common.util.TrackerUtils;
+import com.trovebox.android.common.util.data.StringMapParcelableWrapper;
 
 /**
  * This activity handles uploading pictures to Trovebox.
@@ -79,7 +79,7 @@ public class UploadActivity extends CommonActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (!CommonUtils.checkLoggedIn())
+        if (!GuiUtils.checkLoggedIn())
         {
             CommonUtils.debug(TAG, "Not logged in. Finishing...");
             TrackerUtils.trackUiEvent(TAG + ".AutoClose", "Not logged in");
@@ -326,7 +326,7 @@ public class UploadActivity extends CommonActivity {
                 showSelectionDialog();
             }
             adjustUploadOriginalSwitchVisibility();
-            AccountLimitUtils.tryToRefreshLimitInformationAndRunInContextAsync(new Runnable() {
+            AccountLimitUtils2.tryToRefreshLimitInformationAndRunInContextAsync(new Runnable() {
 
                 @Override
                 public void run() {

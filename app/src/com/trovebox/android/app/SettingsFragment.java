@@ -6,7 +6,7 @@ import org.holoeverywhere.preference.PreferenceCategory;
 
 import android.os.Bundle;
 
-import com.trovebox.android.app.common.CommonPreferenceFragment;
+import com.trovebox.android.app.fragment.common.CommonPreferenceFragment;
 
 /**
  * @author Eugene Popovich

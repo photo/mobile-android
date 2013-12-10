@@ -20,14 +20,14 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ListView;
 
-import com.trovebox.android.app.common.CommonActivity;
-import com.trovebox.android.app.common.CommonFragment;
-import com.trovebox.android.app.model.Tag;
 import com.trovebox.android.app.model.utils.TagUtils;
 import com.trovebox.android.app.ui.adapter.MultiSelectTagsAdapter;
-import com.trovebox.android.app.util.LoadingControl;
-import com.trovebox.android.app.util.TrackerUtils;
 import com.trovebox.android.app.util.compare.ToStringComparator;
+import com.trovebox.android.common.activity.CommonActivity;
+import com.trovebox.android.common.fragment.common.CommonFragment;
+import com.trovebox.android.common.model.Tag;
+import com.trovebox.android.common.util.LoadingControl;
+import com.trovebox.android.common.util.TrackerUtils;
 
 public class SelectTagsActivity extends CommonActivity {
 

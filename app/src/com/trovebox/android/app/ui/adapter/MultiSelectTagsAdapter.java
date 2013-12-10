@@ -14,15 +14,14 @@ import android.widget.CompoundButton.OnCheckedChangeListener;
 import com.trovebox.android.app.Preferences;
 import com.trovebox.android.app.R;
 import com.trovebox.android.app.TroveboxApplication;
-import com.trovebox.android.app.model.Tag;
 import com.trovebox.android.app.model.utils.TagUtils;
-import com.trovebox.android.app.net.ITroveboxApi;
-import com.trovebox.android.app.net.TagsResponse;
-import com.trovebox.android.app.net.TroveboxResponseUtils;
-import com.trovebox.android.app.util.CommonUtils;
-import com.trovebox.android.app.util.GuiUtils;
-import com.trovebox.android.app.util.LoadingControl;
 import com.trovebox.android.app.util.compare.ToStringComparator;
+import com.trovebox.android.common.model.Tag;
+import com.trovebox.android.common.net.ITroveboxApi;
+import com.trovebox.android.common.net.TagsResponse;
+import com.trovebox.android.common.net.TroveboxResponseUtils;
+import com.trovebox.android.common.util.GuiUtils;
+import com.trovebox.android.common.util.LoadingControl;
 
 /**
  * @author Eugene Popovich
@@ -71,7 +70,7 @@ public abstract class MultiSelectTagsAdapter extends EndlessAdapter<Tag>
     @Override
     public LoadResponse loadItems(int page)
     {
-        if (CommonUtils.checkLoggedInAndOnline())
+        if (GuiUtils.checkLoggedInAndOnline())
         {
             try
             {

@@ -12,19 +12,20 @@ import android.text.Html;
 import android.view.View;
 import android.widget.EditText;
 
-import com.trovebox.android.app.common.CommonActivity;
-import com.trovebox.android.app.common.CommonFragmentUtils;
-import com.trovebox.android.app.common.CommonRetainedFragmentWithTaskAndProgress;
-import com.trovebox.android.app.net.TroveboxResponse;
-import com.trovebox.android.app.net.TroveboxResponseUtils;
+import com.trovebox.android.app.model.utils.CredentialsUtils;
 import com.trovebox.android.app.net.account.AccountTroveboxResponse;
 import com.trovebox.android.app.net.account.IAccountTroveboxApiFactory;
-import com.trovebox.android.app.util.CommonUtils;
-import com.trovebox.android.app.util.GuiUtils;
 import com.trovebox.android.app.util.LoginUtils;
 import com.trovebox.android.app.util.LoginUtils.LoginActionHandler;
-import com.trovebox.android.app.util.ObjectAccessor;
-import com.trovebox.android.app.util.TrackerUtils;
+import com.trovebox.android.common.activity.CommonActivity;
+import com.trovebox.android.common.fragment.common.CommonFragmentUtils;
+import com.trovebox.android.common.fragment.common.CommonRetainedFragmentWithTaskAndProgress;
+import com.trovebox.android.common.net.TroveboxResponse;
+import com.trovebox.android.common.net.TroveboxResponseUtils;
+import com.trovebox.android.common.util.CommonUtils;
+import com.trovebox.android.common.util.GuiUtils;
+import com.trovebox.android.common.util.ObjectAccessor;
+import com.trovebox.android.common.util.TrackerUtils;
 
 public class AccountLogin extends CommonActivity {
     private static final String TAG = AccountLogin.class.getSimpleName();
@@ -167,9 +168,9 @@ public class AccountLogin extends CommonActivity {
         }
 
         @Override
-        public void processLoginCredentials(com.trovebox.android.app.model.Credentials credentials) {
+        public void processLoginCredentials(com.trovebox.android.common.model.Credentials credentials) {
             Activity activity = getSupportActivity();
-            credentials.saveCredentials(activity);
+            CredentialsUtils.saveCredentials(activity, credentials);
             LoginUtils.onLoggedIn(activity, false);
         }
 
@@ -197,7 +198,7 @@ public class AccountLogin extends CommonActivity {
             @Override
             protected Boolean doInBackground(Void... params) {
                 try {
-                    if (CommonUtils.checkOnline())
+                    if (GuiUtils.checkOnline())
                     {
                         result = IAccountTroveboxApiFactory.getApi()
                                 .signIn(credentials.getUser(), credentials.getPwd());
@@ -278,7 +279,7 @@ public class AccountLogin extends CommonActivity {
             @Override
             protected Boolean doInBackground(Void... params) {
                 try {
-                    if (CommonUtils.checkOnline())
+                    if (GuiUtils.checkOnline())
                     {
                         TroveboxResponse response = IAccountTroveboxApiFactory.getApi()
                                 .recoverPassword(email);

@@ -12,8 +12,8 @@ import android.content.Intent;
 import android.content.IntentFilter;
 
 import com.trovebox.android.app.TroveboxApplication;
-import com.trovebox.android.app.util.CommonUtils;
-import com.trovebox.android.app.util.GuiUtils;
+import com.trovebox.android.common.util.CommonUtils;
+import com.trovebox.android.common.util.GuiUtils;
 
 /**
  * @author Eugene Popovich

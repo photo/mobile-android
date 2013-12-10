@@ -18,19 +18,19 @@ import android.content.IntentFilter;
 import com.trovebox.android.app.Preferences;
 import com.trovebox.android.app.R;
 import com.trovebox.android.app.TroveboxApplication;
-import com.trovebox.android.app.model.Photo;
-import com.trovebox.android.app.net.PhotoResponse;
-import com.trovebox.android.app.net.ReturnSizes;
-import com.trovebox.android.app.net.TokenResponse;
-import com.trovebox.android.app.net.TroveboxResponse;
-import com.trovebox.android.app.net.TroveboxResponseUtils;
-import com.trovebox.android.app.util.CommonUtils;
-import com.trovebox.android.app.util.GuiUtils;
-import com.trovebox.android.app.util.ImageUtils;
-import com.trovebox.android.app.util.LoadingControl;
-import com.trovebox.android.app.util.RunnableWithParameter;
-import com.trovebox.android.app.util.SimpleAsyncTaskEx;
-import com.trovebox.android.app.util.TrackerUtils;
+import com.trovebox.android.common.model.Photo;
+import com.trovebox.android.common.net.PhotoResponse;
+import com.trovebox.android.common.net.ReturnSizes;
+import com.trovebox.android.common.net.TokenResponse;
+import com.trovebox.android.common.net.TroveboxResponse;
+import com.trovebox.android.common.net.TroveboxResponseUtils;
+import com.trovebox.android.common.util.CommonUtils;
+import com.trovebox.android.common.util.GuiUtils;
+import com.trovebox.android.common.util.ImageUtils;
+import com.trovebox.android.common.util.LoadingControl;
+import com.trovebox.android.common.util.RunnableWithParameter;
+import com.trovebox.android.common.util.SimpleAsyncTaskEx;
+import com.trovebox.android.common.util.TrackerUtils;
 
 /**
  * Utils class for the photo object
@@ -330,7 +330,7 @@ public class PhotoUtils {
         @Override
         protected Boolean doInBackground(Void... params) {
             try {
-                if (CommonUtils.checkLoggedInAndOnline())
+                if (GuiUtils.checkLoggedInAndOnline())
                 {
                     TroveboxResponse response =
                             Preferences.getApi(TroveboxApplication.getContext())
@@ -374,7 +374,7 @@ public class PhotoUtils {
         @Override
         protected Boolean doInBackground(Void... params) {
             try {
-                if (CommonUtils.checkLoggedInAndOnline())
+                if (GuiUtils.checkLoggedInAndOnline())
                 {
                     PhotoResponse response =
                             Preferences.getApi(TroveboxApplication.getContext())

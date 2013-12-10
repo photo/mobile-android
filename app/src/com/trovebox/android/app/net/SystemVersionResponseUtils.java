@@ -3,12 +3,16 @@ package com.trovebox.android.app.net;
 import com.trovebox.android.app.Preferences;
 import com.trovebox.android.app.R;
 import com.trovebox.android.app.TroveboxApplication;
-import com.trovebox.android.app.net.ApiRequest.ApiVersion;
-import com.trovebox.android.app.util.CommonUtils;
-import com.trovebox.android.app.util.GuiUtils;
-import com.trovebox.android.app.util.LoadingControl;
-import com.trovebox.android.app.util.SimpleAsyncTaskEx;
-import com.trovebox.android.app.util.TrackerUtils;
+import com.trovebox.android.common.net.ApiRequest;
+import com.trovebox.android.common.net.ITroveboxApi;
+import com.trovebox.android.common.net.SystemVersionResponse;
+import com.trovebox.android.common.net.TroveboxResponseUtils;
+import com.trovebox.android.common.net.ApiRequest.ApiVersion;
+import com.trovebox.android.common.util.CommonUtils;
+import com.trovebox.android.common.util.GuiUtils;
+import com.trovebox.android.common.util.LoadingControl;
+import com.trovebox.android.common.util.SimpleAsyncTaskEx;
+import com.trovebox.android.common.util.TrackerUtils;
 
 /**
  * Utils for {@link SystemVersionResponse}
@@ -90,7 +94,7 @@ public class SystemVersionResponseUtils {
     {
         try
         {
-            if (CommonUtils.checkLoggedInAndOnline(silent))
+            if (GuiUtils.checkLoggedInAndOnline(silent))
             {
                 TrackerUtils.trackBackgroundEvent(SYSTEM_VERSION_CACHE_UPDATE_EVENT, "started");
                 CommonUtils.debug(TAG, "Update system version information cache started");

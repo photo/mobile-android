@@ -20,20 +20,20 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 
-import com.trovebox.android.app.common.CommonFragment;
-import com.trovebox.android.app.common.lifecycle.ViewPagerHandler;
-import com.trovebox.android.app.model.Album;
-import com.trovebox.android.app.model.ProfileInformation.AccessPermissions;
 import com.trovebox.android.app.net.SystemVersionResponseUtils;
-import com.trovebox.android.app.net.account.AccountLimitUtils;
+import com.trovebox.android.app.net.account.AccountLimitUtils2;
 import com.trovebox.android.app.ui.adapter.FragmentPagerAdapter;
 import com.trovebox.android.app.ui.widget.SliderCategorySeparator;
 import com.trovebox.android.app.ui.widget.SliderNavigationItem;
-import com.trovebox.android.app.util.CommonUtils;
-import com.trovebox.android.app.util.GuiUtils;
-import com.trovebox.android.app.util.LoadingControl;
-import com.trovebox.android.app.util.RunnableWithResult;
-import com.trovebox.android.app.util.TrackerUtils;
+import com.trovebox.android.common.fragment.common.CommonFragment;
+import com.trovebox.android.common.model.Album;
+import com.trovebox.android.common.model.ProfileInformation.AccessPermissions;
+import com.trovebox.android.common.util.CommonUtils;
+import com.trovebox.android.common.util.GuiUtils;
+import com.trovebox.android.common.util.LoadingControl;
+import com.trovebox.android.common.util.RunnableWithResult;
+import com.trovebox.android.common.util.TrackerUtils;
+import com.trovebox.android.common.utils.lifecycle.ViewPagerHandler;
 
 /**
  * The fragment which handles navigation in the MainActivity. Left slider and
@@ -325,7 +325,7 @@ public class NavigationHandlerFragment extends CommonFragment {
 
         // the account tab should appear only for hosted installation such
         // as profile api is absent on self-hosted
-        if (CommonUtils.checkLoggedIn(true))
+        if (GuiUtils.checkLoggedIn(true))
         {
             SystemVersionResponseUtils
                     .tryToUpdateSystemVersionCacheIfNecessaryAndRunInContextAsync(new Runnable() {
@@ -357,7 +357,7 @@ public class NavigationHandlerFragment extends CommonFragment {
                         }
                     }, (LoadingControl) getActivity());
             if (!hasAlbums()) {
-                AccountLimitUtils.tryToRefreshLimitInformationAndRunInContextAsync(new Runnable() {
+                AccountLimitUtils2.tryToRefreshLimitInformationAndRunInContextAsync(new Runnable() {
 
                     @Override
                     public void run() {

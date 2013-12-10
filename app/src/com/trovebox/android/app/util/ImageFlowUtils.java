@@ -15,7 +15,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout.LayoutParams;
 
-import com.trovebox.android.app.bitmapfun.util.ImageWorker;
+import com.trovebox.android.common.bitmapfun.util.ImageWorker;
+import com.trovebox.android.common.util.CommonUtils;
 
 /**
  * This is an util class which is used to build images flow layout based on

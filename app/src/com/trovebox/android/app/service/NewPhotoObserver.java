@@ -15,11 +15,12 @@ import android.webkit.MimeTypeMap;
 import com.trovebox.android.app.Preferences;
 import com.trovebox.android.app.R;
 import com.trovebox.android.app.TroveboxApplication;
-import com.trovebox.android.app.net.UploadMetaData;
-import com.trovebox.android.app.net.account.AccountLimitUtils;
-import com.trovebox.android.app.provider.UploadsProviderAccessor;
-import com.trovebox.android.app.util.CommonUtils;
-import com.trovebox.android.app.util.TrackerUtils;
+import com.trovebox.android.app.net.account.AccountLimitUtils2;
+import com.trovebox.android.common.net.UploadMetaData;
+import com.trovebox.android.common.provider.UploadsProviderAccessor;
+import com.trovebox.android.common.util.CommonUtils;
+import com.trovebox.android.common.util.GuiUtils;
+import com.trovebox.android.common.util.TrackerUtils;
 
 public class NewPhotoObserver extends FileObserver {
 
@@ -43,7 +44,7 @@ public class NewPhotoObserver extends FileObserver {
             if (type != null && type.toLowerCase().startsWith("image/"))
             {
                 TrackerUtils.trackBackgroundEvent("autoupload_observer", CommonUtils.format("Processed for Mime-Type: %1$s", type));
-                if (!Preferences.isAutoUploadActive(mContext) || !CommonUtils.checkLoggedIn(true)
+                if (!Preferences.isAutoUploadActive(mContext) || !GuiUtils.checkLoggedIn(true)
                         || Preferences.isLimitedAccountAccessType()) {
                     return;
                 }
@@ -76,7 +77,7 @@ public class NewPhotoObserver extends FileObserver {
      */
     private boolean checkLimits()
     {
-        AccountLimitUtils.updateLimitInformationCacheIfNecessary(true);
+        AccountLimitUtils2.updateLimitInformationCacheIfNecessary(true);
         if (Preferences.isSelfHosted() || Preferences.isProUser())
         {
             return true;

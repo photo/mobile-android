@@ -18,13 +18,13 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 
-import com.trovebox.android.app.common.CommonRefreshableFragment;
-import com.trovebox.android.app.model.Tag;
 import com.trovebox.android.app.ui.adapter.MultiSelectTagsAdapter;
-import com.trovebox.android.app.util.CommonUtils;
-import com.trovebox.android.app.util.GalleryOpenControl;
-import com.trovebox.android.app.util.LoadingControl;
-import com.trovebox.android.app.util.TrackerUtils;
+import com.trovebox.android.common.fragment.common.CommonRefreshableFragment;
+import com.trovebox.android.common.model.Tag;
+import com.trovebox.android.common.util.CommonUtils;
+import com.trovebox.android.common.util.GalleryOpenControl;
+import com.trovebox.android.common.util.LoadingControl;
+import com.trovebox.android.common.util.TrackerUtils;
 
 public class TagsFragment extends CommonRefreshableFragment
 {

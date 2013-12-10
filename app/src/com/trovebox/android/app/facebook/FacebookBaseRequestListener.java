@@ -9,7 +9,7 @@ import android.content.Context;
 
 import com.facebook.android.AsyncFacebookRunner.RequestListener;
 import com.facebook.android.FacebookError;
-import com.trovebox.android.app.util.GuiUtils;
+import com.trovebox.android.common.util.GuiUtils;
 
 /**
  * Skeleton base class for RequestListeners, providing default error handling.

@@ -15,11 +15,11 @@ import android.view.ViewGroup;
 
 import com.trovebox.android.app.SyncImageSelectionFragment.NextStepFlow;
 import com.trovebox.android.app.SyncUploadFragment.PreviousStepFlow;
-import com.trovebox.android.app.common.CommonFragment;
-import com.trovebox.android.app.common.lifecycle.ViewPagerHandler;
-import com.trovebox.android.app.provider.UploadsUtils.UploadsClearedHandler;
-import com.trovebox.android.app.util.BackKeyControl;
-import com.trovebox.android.app.util.CommonUtils;
+import com.trovebox.android.common.fragment.common.CommonFragment;
+import com.trovebox.android.common.provider.UploadsUtils.UploadsClearedHandler;
+import com.trovebox.android.common.util.BackKeyControl;
+import com.trovebox.android.common.util.CommonUtils;
+import com.trovebox.android.common.utils.lifecycle.ViewPagerHandler;
 
 public class SyncFragment extends CommonFragment implements NextStepFlow,
         PreviousStepFlow, UploadsClearedHandler, BackKeyControl

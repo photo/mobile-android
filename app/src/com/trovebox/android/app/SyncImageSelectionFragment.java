@@ -34,18 +34,18 @@ import android.widget.ImageView;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
-import com.trovebox.android.app.bitmapfun.util.ImageCache;
-import com.trovebox.android.app.bitmapfun.util.ImageFileSystemFetcher;
-import com.trovebox.android.app.bitmapfun.util.ImageResizer;
-import com.trovebox.android.app.bitmapfun.util.ImageWorker.ImageWorkerAdapter;
-import com.trovebox.android.app.common.CommonRefreshableFragmentWithImageWorker;
-import com.trovebox.android.app.net.account.AccountLimitUtils;
-import com.trovebox.android.app.provider.UploadsProviderAccessor;
-import com.trovebox.android.app.util.CommonUtils;
-import com.trovebox.android.app.util.GuiUtils;
-import com.trovebox.android.app.util.LoadingControl;
-import com.trovebox.android.app.util.TrackerUtils;
-import com.trovebox.android.app.util.concurrent.AsyncTaskEx;
+import com.trovebox.android.app.net.account.AccountLimitUtils2;
+import com.trovebox.android.common.bitmapfun.util.ImageCache;
+import com.trovebox.android.common.bitmapfun.util.ImageFileSystemFetcher;
+import com.trovebox.android.common.bitmapfun.util.ImageResizer;
+import com.trovebox.android.common.bitmapfun.util.ImageWorker.ImageWorkerAdapter;
+import com.trovebox.android.common.fragment.common.CommonRefreshableFragmentWithImageWorker;
+import com.trovebox.android.common.provider.UploadsProviderAccessor;
+import com.trovebox.android.common.util.CommonUtils;
+import com.trovebox.android.common.util.GuiUtils;
+import com.trovebox.android.common.util.LoadingControl;
+import com.trovebox.android.common.util.TrackerUtils;
+import com.trovebox.android.common.util.concurrent.AsyncTaskEx;
 
 public class SyncImageSelectionFragment extends CommonRefreshableFragmentWithImageWorker
 {
@@ -209,7 +209,7 @@ public class SyncImageSelectionFragment extends CommonRefreshableFragmentWithIma
                     {
                         int selectedCount = getSelectedCount();
                         nextStepBtn.setEnabled(false);
-                        AccountLimitUtils.checkQuotaPerUploadAvailableAndRunAsync(new Runnable() {
+                        com.trovebox.android.common.net.account.AccountLimitUtils.checkQuotaPerUploadAvailableAndRunAsync(new Runnable() {
                             @Override
                             public void run() {
                                 CommonUtils.debug(TAG, "Upload limit check passed");

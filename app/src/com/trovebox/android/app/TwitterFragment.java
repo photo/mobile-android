@@ -21,19 +21,19 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.trovebox.android.app.common.CommonStyledDialogFragment;
-import com.trovebox.android.app.model.Photo;
 import com.trovebox.android.app.model.utils.PhotoUtils;
 import com.trovebox.android.app.twitter.TwitterProvider;
 import com.trovebox.android.app.twitter.TwitterUtils;
-import com.trovebox.android.app.util.CommonUtils;
-import com.trovebox.android.app.util.GuiUtils;
-import com.trovebox.android.app.util.LoadingControl;
-import com.trovebox.android.app.util.LoadingControlWithCounter;
-import com.trovebox.android.app.util.RunnableWithParameter;
-import com.trovebox.android.app.util.SimpleAsyncTaskEx;
-import com.trovebox.android.app.util.TrackerUtils;
-import com.trovebox.android.app.util.concurrent.AsyncTaskEx;
+import com.trovebox.android.common.fragment.common.CommonStyledDialogFragment;
+import com.trovebox.android.common.model.Photo;
+import com.trovebox.android.common.util.CommonUtils;
+import com.trovebox.android.common.util.GuiUtils;
+import com.trovebox.android.common.util.LoadingControl;
+import com.trovebox.android.common.util.LoadingControlWithCounter;
+import com.trovebox.android.common.util.RunnableWithParameter;
+import com.trovebox.android.common.util.SimpleAsyncTaskEx;
+import com.trovebox.android.common.util.TrackerUtils;
+import com.trovebox.android.common.util.concurrent.AsyncTaskEx;
 
 /**
  * @author Eugene Popovich
@@ -133,7 +133,7 @@ public class TwitterFragment extends CommonStyledDialogFragment
                 public void onClick(View v)
                 {
                     TrackerUtils.trackButtonClickEvent("sendBtn", TwitterFragment.this);
-                    if (CommonUtils.checkLoggedInAndOnline())
+                    if (GuiUtils.checkLoggedInAndOnline())
                     {
                         postTweet();
                     }

@@ -1,7 +1,7 @@
 
 package com.trovebox.android.app;
 
-import com.trovebox.android.app.common.CommonPreferenceActivity;
+import com.trovebox.android.app.activity.CommonPreferenceActivity;
 
 import android.os.Bundle;
 

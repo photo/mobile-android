@@ -14,12 +14,12 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 
-import com.trovebox.android.app.common.CommonStyledDialogFragment;
-import com.trovebox.android.app.model.Photo;
 import com.trovebox.android.app.model.utils.PhotoUtils;
 import com.trovebox.android.app.model.utils.TagUtils;
-import com.trovebox.android.app.util.ProgressDialogLoadingControl;
-import com.trovebox.android.app.util.TrackerUtils;
+import com.trovebox.android.common.fragment.common.CommonStyledDialogFragment;
+import com.trovebox.android.common.model.Photo;
+import com.trovebox.android.common.util.ProgressDialogLoadingControl;
+import com.trovebox.android.common.util.TrackerUtils;
 
 /**
  * The view which represents photo details editing functionality

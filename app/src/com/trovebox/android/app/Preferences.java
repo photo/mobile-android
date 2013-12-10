@@ -16,12 +16,12 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.text.TextUtils;
 
-import com.trovebox.android.app.model.Credentials;
-import com.trovebox.android.app.model.ProfileInformation.AccessPermissions;
-import com.trovebox.android.app.net.ApiRequest.ApiVersion;
-import com.trovebox.android.app.net.ITroveboxApi;
-import com.trovebox.android.app.net.TroveboxApi;
-import com.trovebox.android.app.util.CommonUtils;
+import com.trovebox.android.common.model.Credentials;
+import com.trovebox.android.common.model.ProfileInformation.AccessPermissions;
+import com.trovebox.android.common.net.ApiRequest.ApiVersion;
+import com.trovebox.android.common.net.ITroveboxApi;
+import com.trovebox.android.common.net.TroveboxApi;
+import com.trovebox.android.common.util.CommonUtils;
 
 public class Preferences {
     public final static int PREFERENCES_MODE = Context.MODE_MULTI_PROCESS;
@@ -506,7 +506,7 @@ public class Preferences {
     }
 
     public static ITroveboxApi getApi(Context context) {
-        return TroveboxApi.createInstance(context);
+        return TroveboxApi.createInstance();
     }
     
     /**

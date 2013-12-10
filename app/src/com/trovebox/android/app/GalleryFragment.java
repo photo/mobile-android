@@ -18,30 +18,29 @@ import android.widget.ImageView;
 import android.widget.ListView;
 
 import com.trovebox.android.app.NavigationHandlerFragment.TitleChangedHandler;
-import com.trovebox.android.app.bitmapfun.util.ImageCache;
-import com.trovebox.android.app.bitmapfun.util.ImageFetcher;
-import com.trovebox.android.app.common.CommonRefreshableFragmentWithImageWorker;
-import com.trovebox.android.app.model.Album;
-import com.trovebox.android.app.model.Photo;
-import com.trovebox.android.app.model.ProfileInformation;
-import com.trovebox.android.app.model.ProfileInformation.AccessPermissions;
 import com.trovebox.android.app.model.utils.AlbumUtils;
 import com.trovebox.android.app.model.utils.PhotoUtils;
 import com.trovebox.android.app.model.utils.PhotoUtils.PhotoDeletedHandler;
 import com.trovebox.android.app.model.utils.PhotoUtils.PhotoUpdatedHandler;
 import com.trovebox.android.app.net.ProfileResponseUtils;
-import com.trovebox.android.app.net.ReturnSizes;
 import com.trovebox.android.app.service.UploaderServiceUtils.PhotoUploadedHandler;
 import com.trovebox.android.app.ui.adapter.PhotosEndlessAdapter;
 import com.trovebox.android.app.ui.widget.ScalableListView;
-import com.trovebox.android.app.util.CommonUtils;
-import com.trovebox.android.app.util.GuiUtils;
 import com.trovebox.android.app.util.ImageFlowUtils;
 import com.trovebox.android.app.util.ImageFlowUtils.FlowObjectToStringWrapper;
-import com.trovebox.android.app.util.LoadingControl;
-import com.trovebox.android.app.util.RunnableWithParameter;
-import com.trovebox.android.app.util.TrackerUtils;
-import com.trovebox.android.app.util.Utils;
+import com.trovebox.android.common.bitmapfun.util.ImageCache;
+import com.trovebox.android.common.bitmapfun.util.ImageFetcher;
+import com.trovebox.android.common.fragment.common.CommonRefreshableFragmentWithImageWorker;
+import com.trovebox.android.common.model.Album;
+import com.trovebox.android.common.model.Photo;
+import com.trovebox.android.common.model.ProfileInformation;
+import com.trovebox.android.common.model.ProfileInformation.AccessPermissions;
+import com.trovebox.android.common.net.ReturnSizes;
+import com.trovebox.android.common.util.CommonUtils;
+import com.trovebox.android.common.util.GuiUtils;
+import com.trovebox.android.common.util.LoadingControl;
+import com.trovebox.android.common.util.RunnableWithParameter;
+import com.trovebox.android.common.util.TrackerUtils;
 
 public class GalleryFragment extends CommonRefreshableFragmentWithImageWorker
         implements PhotoDeletedHandler, PhotoUpdatedHandler, PhotoUploadedHandler
@@ -78,7 +77,7 @@ public class GalleryFragment extends CommonRefreshableFragmentWithImageWorker
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        pageSize = Utils.isTablet(getActivity()) ? 45
+        pageSize = CommonUtils.isTablet(getActivity()) ? 45
                 : PhotosEndlessAdapter.DEFAULT_PAGE_SIZE;
     }
 

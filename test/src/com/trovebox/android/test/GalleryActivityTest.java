@@ -19,12 +19,12 @@ import android.widget.ListView;
 import com.jayway.android.robotium.solo.Solo;
 import com.trovebox.android.app.GalleryFragment.GalleryAdapterExt;
 import com.trovebox.android.app.MainActivity;
-import com.trovebox.android.app.net.Paging;
-import com.trovebox.android.app.net.PhotoResponse;
-import com.trovebox.android.app.net.PhotosResponse;
-import com.trovebox.android.app.net.ReturnSizes;
-import com.trovebox.android.app.net.TroveboxResponse.RequestType;
-import com.trovebox.android.app.util.CommonUtils;
+import com.trovebox.android.common.net.Paging;
+import com.trovebox.android.common.net.PhotoResponse;
+import com.trovebox.android.common.net.PhotosResponse;
+import com.trovebox.android.common.net.ReturnSizes;
+import com.trovebox.android.common.net.TroveboxResponse.RequestType;
+import com.trovebox.android.common.util.CommonUtils;
 import com.trovebox.android.test.net.JSONUtils;
 
 public class GalleryActivityTest extends

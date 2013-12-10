@@ -12,9 +12,9 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.trovebox.android.app.util.CommonUtils;
-import com.trovebox.android.app.util.GuiUtils;
-import com.trovebox.android.app.util.TrackerUtils;
+import com.trovebox.android.common.util.CommonUtils;
+import com.trovebox.android.common.util.GuiUtils;
+import com.trovebox.android.common.util.TrackerUtils;
 
 /**
  * This is adjusted version of android.support.v4.view.FragmentPagerAdapter

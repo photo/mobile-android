@@ -6,7 +6,7 @@ import com.trovebox.android.test.R;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.trovebox.android.app.net.TagsResponse;
+import com.trovebox.android.common.net.TagsResponse;
 
 import android.test.InstrumentationTestCase;
 

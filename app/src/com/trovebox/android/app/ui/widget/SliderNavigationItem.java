@@ -17,7 +17,7 @@ import android.view.View;
 import android.widget.ImageView;
 
 import com.trovebox.android.app.R;
-import com.trovebox.android.app.util.CommonUtils;
+import com.trovebox.android.common.util.CommonUtils;
 
 public class SliderNavigationItem extends LinearLayout {
     private final TextView label;

@@ -6,7 +6,7 @@ import com.trovebox.android.test.R;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.trovebox.android.app.model.Photo;
+import com.trovebox.android.common.model.Photo;
 import com.trovebox.android.test.net.JSONUtils;
 
 import android.test.InstrumentationTestCase;
