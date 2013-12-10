@@ -30,7 +30,7 @@ import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 import com.trovebox.android.common.CommonConfigurationUtils;
 import com.trovebox.android.common.R;
-import com.trovebox.android.common.activity.common.CommonActivity;
+import com.trovebox.android.common.activity.CommonActivity;
 import com.trovebox.android.common.bitmapfun.util.ImageCache;
 import com.trovebox.android.common.bitmapfun.util.ImageFileSystemFetcher;
 import com.trovebox.android.common.bitmapfun.util.ImageResizer;

@@ -1,5 +1,5 @@
 
-package com.trovebox.android.common.common.lifecycle;
+package com.trovebox.android.common.utils.lifecycle;
 
 /**
  * Basic handler for fragments inside viewpager to know when page is

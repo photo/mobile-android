@@ -82,9 +82,13 @@ public class UploadsProviderAccessor {
         addPendingUpload(photoUri, metaData, null, null, null, true, false, false);
     }
 
+    public void addPendingUpload(Uri photoUri, UploadMetaData metaData, boolean isShareOnTwitter,
+            boolean isShareOnFacebook) {
+        addPendingUpload(photoUri, metaData, null, null, null, isShareOnTwitter, isShareOnFacebook);
+    }
+
     public void addPendingUpload(Uri photoUri, UploadMetaData metaData, String host, String token,
-            String userName,
-            boolean isShareOnTwitter, boolean isShareOnFacebook) {
+            String userName, boolean isShareOnTwitter, boolean isShareOnFacebook) {
         addPendingUpload(photoUri, metaData, host, token, userName, false, isShareOnTwitter,
                 isShareOnFacebook);
     }

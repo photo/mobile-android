@@ -1,5 +1,5 @@
 
-package com.trovebox.android.common.activity.common;
+package com.trovebox.android.common.activity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,10 +10,10 @@ import android.content.BroadcastReceiver;
 import android.content.Intent;
 import android.os.Bundle;
 
-import com.trovebox.android.common.common.lifecycle.LifecycleEventHandler;
-import com.trovebox.android.common.common.lifecycle.LifecycleEventHandler.HasLifecycleEventHandler;
 import com.trovebox.android.common.util.CommonUtils;
 import com.trovebox.android.common.util.TrackerUtils;
+import com.trovebox.android.common.utils.lifecycle.LifecycleEventHandler;
+import com.trovebox.android.common.utils.lifecycle.LifecycleEventHandler.HasLifecycleEventHandler;
 
 /**
  * Common activity

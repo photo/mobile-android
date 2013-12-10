@@ -1,4 +1,4 @@
-package com.trovebox.android.common.activity.common;
+package com.trovebox.android.common.activity;
 
 import java.util.concurrent.atomic.AtomicInteger;
 

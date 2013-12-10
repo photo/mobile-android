@@ -1,10 +1,10 @@
 
-package com.trovebox.android.common.common.lifecycle;
+package com.trovebox.android.common.utils.lifecycle;
 
 import android.content.Intent;
 import android.os.Bundle;
 
-import com.trovebox.android.common.activity.common.CommonActivity;
+import com.trovebox.android.common.activity.CommonActivity;
 
 /**
  * Lifecycle listener. This can be used to listen for Activity or Fragment

@@ -1,5 +1,5 @@
 
-package com.trovebox.android.common.common.lifecycle;
+package com.trovebox.android.common.utils.lifecycle;
 
 import java.util.ArrayList;
 import java.util.List;

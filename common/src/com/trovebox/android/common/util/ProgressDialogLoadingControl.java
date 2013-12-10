@@ -8,8 +8,8 @@ import org.holoeverywhere.app.ProgressDialog;
 import android.app.Activity;
 import android.content.Context;
 
-import com.trovebox.android.common.common.lifecycle.LifecycleAdapter;
-import com.trovebox.android.common.common.lifecycle.LifecycleEventHandler.HasLifecycleEventHandler;
+import com.trovebox.android.common.utils.lifecycle.LifecycleAdapter;
+import com.trovebox.android.common.utils.lifecycle.LifecycleEventHandler.HasLifecycleEventHandler;
 
 /**
  * Simple loading control which shows progress dialog

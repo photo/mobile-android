@@ -14,11 +14,11 @@ import android.os.Handler;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.trovebox.android.common.common.lifecycle.ViewPagerHandler;
 import com.trovebox.android.common.util.CommonUtils;
 import com.trovebox.android.common.util.ObjectAccessor;
 import com.trovebox.android.common.util.RunnableWithResult;
 import com.trovebox.android.common.util.TrackerUtils;
+import com.trovebox.android.common.utils.lifecycle.ViewPagerHandler;
 
 /**
  * Common parent fragment. All the tab fragments under MainActivity should to
