@@ -2,7 +2,6 @@
 <resources>
 
     <string name="app_name">Trovebox</string>
-    <string name="loading">Загрузка&#8230;</string>
     <string name="take_photo">Сделать снимок</string>
 
     <!-- Intro -->
@@ -13,7 +12,6 @@
 
     <!-- Menu -->
     <string name="menu_camera">Добавить фотографию</string>
-    <string name="menu_refresh">Обновить</string>
     <string name="menu_preferences">Настройки</string>
     <string name="menu_exit">Выход</string>
 
@@ -23,11 +21,6 @@
     <string name="menu_share_twitter">Twitter</string>
     <string name="menu_share_facebook">Facebook</string>
     <string name="menu_share_system">Другие системные приложения…</string>
-
-    <!-- Selection Menu -->
-    <string name="menu_select_all">Выбрать все</string>
-    <string name="menu_select_none">Снять выделение</string>
-    <string name="menu_selection">Выделение</string>
 
     <!-- Share -->
     <string name="share_private_photo_forbidden">Вы не можете делиться частными фотографиями</string>
@@ -118,28 +111,6 @@
     <!-- SelectAlbumsActivity -->
     <string name="title_activity_select_albums">Выбор альбомов</string>
 
-    <!-- Sync screen -->
-    <string name="sync_next_button">Следующий шаг</string>
-    <string name="sync_previous_button">Предыдущий шаг</string>
-    <string name="sync_please_pick_at_least_one_photo">Пожалуйста, выберите хоть одну фотографию сначала!</string>
-    <string name="sync_show_all">Показать все</string>
-    <string name="sync_uploaded">ЗАГРУЖЕНО!</string>
-
-    <!-- Notifications -->
-    <string name="notification_uploading_photo">Загружается %1$s</string>
-    <string name="notification_upload_failed_title">Загрузка не удалась</string>
-    <string name="notification_upload_failed_title_with_reason">Загрузка не удалась: %1$s</string>
-    <string name="notification_upload_failed_text">%1$s</string>
-    <string name="notification_upload_success_title">Загрузка завершена</string>
-    <string name="notification_upload_skipped_title">Загрузка отменена. Найдена идентичная фотография на сервере.</string>
-    <string name="notification_upload_success_text">%1$s</string>
-    <string name="notification_upload_multiple_title">Успешно загружено</string>
-    <string name="notification_upload_multiple_text">Загружено: %1$d; пропущено: %2$d</string>
-    <string name="notification_upload_multiple_details">Детали загрузки</string>
-    <string name="notification_upload_multiple_detail_skipped"><![CDATA[<b>%1$s</b> пропущено]]></string>
-    <string name="notification_upload_multiple_detail_done"><![CDATA[<b>%1$s</b> завершено]]></string>
-    <string name="noInternetAccess">Интернет подключение недоступно</string>
-
     <!-- Newest Home -->
     <string name="newest_this_photo_was_taken">Эта фотография была сделана %1$d %2$s тому назад.</string>
     <string name="newest_this_photo_was_taken_less_one_hour">Эта фотография была сделана менее часа назад</string>
@@ -153,14 +124,10 @@
     <string name="hours">часа(ов)</string>
     <string name="year">год</string>
     <string name="years">года(лет)</string>
-    <string name="yes">Да</string>
-    <string name="no">Нет</string>
-    <string name="pleaseSpecifyFirst">Пожалуйста, введите сначала %1$s!</string>
     <string name="logOut">Выход</string>
     <string name="areYouSureQuestion">Вы уверены?</string>
     <string name="external_storage_na_message">Карта SD не установлена. Невозможно продолжить.</string>
     <string name="action_not_supported_on_os_version">Это действие недоступно на версии операционной системы, используемой вашим устройством.</string>
-    <string name="upload_limit_reached_message">Достигнут лимит бесплатных загрузок.</string>
     <string name="upload_limit_reached_with_reset_message">Достигнут лимит бесплатных загрузок. Пожалуйста улучшите учетную запись до Про или ожидайте спроса лимита %1$s</string>
     <string name="upload_limit_for_multiple_upload_reached_message">Вы выбрали для загрузки %1$d фотографий. Но доступный бесплатный лимит загрузок для Вашей учетной записи %2$d. Пожалуйста выберите количество фотографий, которое не превышает лимит или улучшите вашу учетную запись до Про.</string>
     <string name="autoupload_ignored">Автоматическая загрузка проигнорирована.</string>
@@ -191,12 +158,9 @@
     <string name="errorCouldNotInitFacebookFragment">Не удалось инициализировать facebook фрагмент</string>
     <string name="errorCouldNotRetrieveFacebookScreenName">Не удалось извлечь имя пользователя facebook</string>
     <string name="errorCouldNotSendFacebookPhoto">Не удалось опубликовать сообщение в facebook</string>
-    <string name="errorSpecifiedUrlIsInvalid">Указанный URL неверен</string>
     <string name="errorCantFindPendingUploadInformation">Не могу найти информацию об ожидающих загрузках</string>
-    <string name="errorCouldNotStoreDownloadablePhotoNotEnoughSpace">Не удалось сохранить загружаемое фото на диск. Не достаточно свободного места.</string>
     <string name="errorCouldNotRetrieveProfileInfo">Не удалось загрузить информацию об учетной записи.</string>
     <string name="errorCouldNotRetrieveSystemVersionInfo">Не удалось загрузить информацию о системе.</string>
-    <string name="errorNotLoggedIn">Вы еще не авторизированы</string>
     <string name="errorSubscriptionNotSupported">Извините, подписки не поддерживаются вашим устройством!</string>
     <string name="errorIabNotSupported">Извините, ваше устройство не поддерживает покупки внутри приложения!</string>
     <string name="errorPurchasing">Ошибка покупки: %1$s</string>
@@ -219,7 +183,6 @@
     <string name="sync_preference_category">Синхронизация</string>
     <string name="sync_clear">Очистить информацию о синхронизации</string>
     <string name="sync_clear_comment">Это не заденет ваши фотографии. Только маркеры загрузок будут очищены.</string>
-    <string name="sync_cleared_message">Информация о синхронизации очищена</string>
     <string name="setting_account_facebook_loggedin_logout">Выход из Facebook</string>
     <string name="setting_account_server_title">URL</string>
     <string name="setting_set_tag_dialog_title">Выберите тег для загружаемых фотографий</string>
@@ -248,7 +211,6 @@
     <string name="title_activity_account_signup">AccountSignup</string>
     <string name="invalid_credentials">Не правильное имя пользователя или пароль</string>
     <string name="unknown_error">Неизвестная ошибка</string>
-    <string name="unknown_error_with_code">Неизвестная ошибка с кодом %1$d</string>
     <string name="sign_in_instructions"><![CDATA[<b>Введите</b> адрес email, пароль и нажмите <b>Вход</b>]]></string>
     <string name="password_recovery_instructions">Введите email чтобы восстановить пароль</string>
     <string name="instant_sign_in_instructions"><![CDATA[<b>Зарегистрируйтесь</b> или <b>войдите</b> в одно касание]]></string>

@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- general -->
+    <string name="pleaseSpecifyFirst">Пожалуйста, введите сначала %1$s!</string>
+    <string name="noInternetAccess">Интернет подключение недоступно</string>
+    <string name="upload_limit_reached_message">Достигнут лимит бесплатных загрузок.</string>
+    <string name="sync_cleared_message">Информация о синхронизации очищена</string>
+    <string name="yes">Да</string>
+    <string name="no">Нет</string>
+    <string name="loading">Загрузка&#8230;</string>
+
+    <!-- Api -->
+    <string name="api_invalid_token">Неправильный ключ</string>
+    <string name="api_expired_token">Срок действия ключа истек</string>
+
+    <!-- Menu -->
+    <string name="menu_refresh">Обновить</string>
+
+    <!-- Selection Menu -->
+    <string name="menu_select_all">Выбрать все</string>
+    <string name="menu_select_none">Снять выделение</string>
+    <string name="menu_selection">Выделение</string>
+    <string name="menu_filter">Фильтр</string>
+    <string name="menu_filter_show_all">Показать все</string>
+    <string name="menu_filter_show_not_uploaded">Показать незагруженные</string>
+
+    <!-- Sync screen -->
+    <string name="sync_next_button">Следующий шаг</string>
+    <string name="sync_previous_button">Предыдущий шаг</string>
+    <string name="sync_please_pick_at_least_one_photo">Пожалуйста, выберите хоть одну фотографию сначала!</string>
+    <string name="sync_show_all">Показать все</string>
+    <string name="sync_uploaded">ЗАГРУЖЕНО!</string>
+    <string name="sync_upload_button">Загрузить</string>
+    <string name="sync_uploading_in_background">Загрузка начата</string>
+
+    <plurals name="sync_upload_selected_confirmation">
+        <item quantity="zero">Вы хотите загрузить %1$d выбранных изображения?</item>
+        <item quantity="one">Вы хотите загрузить выбранное изображение?</item>
+        <item quantity="other">Вы хотите загрузить %1$d выбранных изображения?</item>
+    </plurals>
+
+    <!-- Upload Manager screen -->
+    <string name="upload_status_uploaded">Загружено</string>
+    <string name="upload_status_uploading">Загружается: %1$d%%</string>
+    <string name="upload_status_error">Ошибка: %1$s</string>
+    <string name="upload_status_pending">Ожидание</string>
+    <string name="upload_manager_title">Менеджер загрузок</string>
+    <string name="upload_manager_menu_cancel">Отменить</string>
+    <string name="upload_manager_menu_clear">Очистить</string>
+
+    <!--
+         String indicating how many media item(s) is(are) selected
+            eg. 1 selected [CHAR LIMIT=30]
+    -->
+    <plurals name="number_of_items_selected">
+        <item quantity="zero">%1$d выбрано</item>
+        <item quantity="one">%1$d выбрано</item>
+        <item quantity="other">%1$d выбрано</item>
+    </plurals>
+
+    <!-- Notifications -->
+    <string name="notification_uploading_photo">Загружается %1$s</string>
+    <string name="notification_upload_failed_title">Загрузка не удалась</string>
+    <string name="notification_upload_failed_title_with_reason">Загрузка не удалась: %1$s</string>
+    <string name="notification_upload_failed_text">%1$s</string>
+    <string name="notification_upload_success_title">Загрузка завершена</string>
+    <string name="notification_upload_skipped_title">Загрузка отменена. Найдена идентичная фотография на сервере.</string>
+    <string name="notification_upload_success_text">%1$s</string>
+    <string name="notification_upload_multiple_title">Успешно загружено</string>
+    <string name="notification_upload_multiple_text">Загружено: %1$d; пропущено: %2$d</string>
+    <string name="notification_upload_multiple_details">Детали загрузки</string>
+    <string name="notification_upload_multiple_detail_skipped"><![CDATA[<b>%1$s</b> пропущено]]></string>
+    <string name="notification_upload_multiple_detail_done"><![CDATA[<b>%1$s</b> завершено]]></string>
+
+    <!-- Errors -->
+    <string name="errorCouldNotStoreDownloadablePhotoNotEnoughSpace">Не удалось сохранить загружаемое фото на диск. Не достаточно свободного места.</string>
+    <string name="errorNotLoggedIn">Вы еще не авторизированы</string>
+    <string name="errorCouldNotValidateUploadToken">Не удалось верифицировать ключ для загрузки</string>
+    <string name="errorSpecifiedUrlIsInvalid">Указанный URL неверен</string>
+    <string name="unknown_error_with_code">Неизвестная ошибка с кодом %1$d</string>
+
+</resources>

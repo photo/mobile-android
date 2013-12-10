@@ -2,14 +2,12 @@
 <resources>
 
     <string name="app_name">Trovebox</string>
-    <string name="loading">Carregando&#8230;</string>
     <string name="take_photo">Tire foto</string>
 
-     <!-- Intro -->
+    <!-- Intro -->
     <string name="button_skip">Pular</string>
-    
+
     <!-- Menu -->
-    <string name="menu_refresh">Atualizar</string>
     <string name="menu_preferences">Preferências</string>
     <string name="menu_exit">Sair</string>
 
@@ -17,11 +15,6 @@
     <string name="menu_share_email">E-Mail</string>
     <string name="menu_share_twitter">Twitter</string>
     <string name="menu_share_facebook">Facebook</string>
-
-    <!-- Selection Menu -->
-    <string name="menu_select_all">Selecionar Todos</string>
-    <string name="menu_select_none">Apague Seleção</string>
-    <string name="menu_selection">Seleção</string>
 
     <!-- Share -->
     <string name="share_private_photo_forbidden">Não permitido compartilhar fotos privadas</string>
@@ -100,23 +93,6 @@
     <!-- SelectTagsActivity -->
     <string name="title_activity_select_tags">Selecione Tags</string>
 
-    <!-- Sync screen -->
-    <string name="sync_next_button">Próximo</string>
-    <string name="sync_previous_button">Anterior</string>
-    <string name="sync_please_pick_at_least_one_photo">Por favor, selecione primeiramente uma foto!</string>
-    <string name="sync_show_all">Mostre todas</string>
-    <string name="sync_uploaded">ENVIADA!</string>
-
-    <!-- Notifications -->
-    <string name="notification_uploading_photo">Enviando %1$s</string>
-    <string name="notification_upload_failed_title">Falha no envio</string>
-    <string name="notification_upload_failed_title_with_reason">Falha no envio: %1$s</string>
-    <string name="notification_upload_failed_text">%1$s</string>
-    <string name="notification_upload_success_title">Enviado</string>
-    <string name="notification_upload_skipped_title">Envio não necessário. Versão já no servidor.</string>
-    <string name="notification_upload_success_text">%1$s</string>
-    <string name="noInternetAccess">Sem conexão à internet</string>
-
     <!-- Newest Home -->
     <string name="newest_this_photo_was_taken">Foto tirada há %1$d %2$s.</string>
     <string name="newest_this_photo_was_taken_less_one_hour">Foto tirada há menos de uma hora.</string>
@@ -130,14 +106,10 @@
     <string name="hours">horas</string>
     <string name="year">ano</string>
     <string name="years">anos</string>
-    <string name="yes">Sim</string>
-    <string name="no">Não</string>
-    <string name="pleaseSpecifyFirst">Por favor, forneça %1$s primeiramente!</string>
     <string name="logOut">Sair</string>
     <string name="areYouSureQuestion">Confirma?</string>
     <string name="external_storage_na_message">sdcard não presente ou não montado. Cancelando procedimento.</string>
     <string name="action_not_supported_on_os_version">Ação não compatível com a versão do seu SO.</string>
-    <string name="upload_limit_reached_message">Limite para contas gratuítas alcançado.</string>
     <string name="upload_limit_reached_with_reset_message">Limite para contas gratuítas alcançado. Por favor, atualize sua conta para PRO ou aguarde até %1$s</string>
     <string name="upload_limit_for_multiple_upload_reached_message">Você selecionou %1$d fotos para enviar mas seu limite gratuito está em %2$d. Por favor, envie menos fotos ou atualize sua conta para PRO.</string>
     <string name="autoupload_ignored">Envio automático ignorado.</string>
@@ -166,12 +138,9 @@
     <string name="errorCouldNotInitFacebookFragment">Erro ao iniciar fragment Facebook</string>
     <string name="errorCouldNotRetrieveFacebookScreenName">Erro ao ler o nome do usuário no Twitter.</string>
     <string name="errorCouldNotSendFacebookPhoto">Erro ao postar no Facebook</string>
-    <string name="errorSpecifiedUrlIsInvalid">URL não é válida</string>
     <string name="errorCantFindPendingUploadInformation">Não foi possível encontrar informações dos uploads pendentes</string>
-    <string name="errorCouldNotStoreDownloadablePhotoNotEnoughSpace">Sem espaço em disco. Não é possível salvar fotos.</string>
     <string name="errorCouldNotRetrieveProfileInfo">Não foi possível carregar detalhes do Profile.</string>
     <string name="errorCouldNotRetrieveSystemVersionInfo">Não foi possível carregar detalhes do sistema.</string>
-    <string name="errorNotLoggedIn">Você não está logado.</string>
     <string name="errorSubscriptionNotSupported">Subscription não é suportável no seu aparelho!</string>
     <string name="errorIabNotSupported">Operação de pagamento não é suportável no seu aparelho!</string>
     <string name="errorPurchasing">Erro na compra: %1$s</string>
@@ -188,7 +157,6 @@
     <string name="sync_preference_category">Sync</string>
     <string name="sync_clear">Limpar informações do Sync</string>
     <string name="sync_clear_comment">Suas fotos não serão afetadas, somente o marcadores serão removidos.</string>
-    <string name="sync_cleared_message">Informações do Sync removidas</string>
     <string name="setting_account_facebook_loggedin_logout">Sair do Facebook</string>
     <string name="setting_account_server_title">URL</string>
     <string name="setting_set_tag_dialog_title">Define tag para fotos enviadas</string>
@@ -214,7 +182,6 @@
     <string name="title_activity_account_signup">AccountSignup</string>
     <string name="invalid_credentials">Inválido usuário ou senha</string>
     <string name="unknown_error">Erro desconhecido</string>
-    <string name="unknown_error_with_code">Erro desconhecido com código %1$d</string>
     <string name="sign_in_instructions"><![CDATA[<b>Forneça</b> um email, senha e selecione <b>Conectar</b>]]></string>
     <!-- Hints -->
     <string name="hint_email">email</string>
