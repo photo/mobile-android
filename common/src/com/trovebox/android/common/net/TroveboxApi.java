@@ -385,4 +385,18 @@ public class TroveboxApi extends ApiBase implements ITroveboxApi {
         ApiResponse response = execute(request);
         return new TokenValidationResponse(response.getJSONObject());
     }
+
+    @Override
+    public TroveboxResponse notifyUploadFinished(String token, String host, String uploader,
+            int count) throws ClientProtocolException, IOException, IllegalStateException,
+            JSONException {
+        ApiRequest request = new ApiRequest(ApiRequest.POST, "/photos/upload/" + token
+                + "/notify.json");
+        if (!TextUtils.isEmpty(uploader)) {
+            request.addParameter("uploader", uploader);
+        }
+        request.addParameter("count", Integer.toString(count));
+        ApiResponse response = TextUtils.isEmpty(host) ? execute(request) : execute(request, host);
+        return new TroveboxResponse(RequestType.NOTIFY_UPLOAD_DONE, response.getJSONObject());
+    }
 }

@@ -4,8 +4,11 @@ package com.trovebox.android.common.service;
 import java.io.File;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import android.app.Notification;
@@ -31,11 +34,12 @@ import android.widget.RemoteViews;
 import com.trovebox.android.common.CommonConfigurationUtils;
 import com.trovebox.android.common.R;
 import com.trovebox.android.common.model.Photo;
+import com.trovebox.android.common.net.HttpEntityWithProgress.ProgressListener;
 import com.trovebox.android.common.net.ITroveboxApi;
 import com.trovebox.android.common.net.PhotosResponse;
+import com.trovebox.android.common.net.TroveboxResponse;
 import com.trovebox.android.common.net.UploadMetaData;
 import com.trovebox.android.common.net.UploadResponse;
-import com.trovebox.android.common.net.HttpEntityWithProgress.ProgressListener;
 import com.trovebox.android.common.provider.PhotoUpload;
 import com.trovebox.android.common.provider.UploadsProviderAccessor;
 import com.trovebox.android.common.service.UploaderServiceUtils.PhotoUploadHandler;
@@ -57,6 +61,7 @@ public abstract class AbstractUploaderService extends Service implements PhotoUp
 
     private NotificationManager mNotificationManager;
     private long mNotificationLastUpdateTime;
+    private UploadCounters mUploadCounters = new UploadCounters();
 
     private Set<Long> mIdsToSkip = new HashSet<Long>();
     /**
@@ -295,6 +300,8 @@ public abstract class AbstractUploaderService extends Service implements PhotoUp
                     if (!isUploadRemoved(photoUpload)) {
                         UploaderServiceUtils.sendPhotoUploadedBroadcast();
                     }
+                    mUploadCounters.increment(photoUpload.getToken(), photoUpload.getUserName(),
+                            photoUpload.getHost());
                 } else {
                     TrackerUtils.trackServiceEvent("photo_upload_skip", TAG);
                 }
@@ -311,6 +318,7 @@ public abstract class AbstractUploaderService extends Service implements PhotoUp
 
             stopUploadNotification();
         }
+        mUploadCounters.notifyServer(mApi);
         // to avoid so many invalid json response errors at unauthorised wi-fi
         // networks we need to
         // update limit information only in case we had successful uploads
@@ -563,6 +571,92 @@ public abstract class AbstractUploaderService extends Service implements PhotoUp
         return mIdsToSkip.contains(upload.getId());
     }
 
+    private static class UploadCounters
+    {
+        Map<String, Map<String, HostCounter>> mTokenUserNameHostMap = new HashMap<String, Map<String, HostCounter>>();
+        
+        static class HostCounter
+        {
+            static final int MAX_RETRIES = 5;
+
+            String host;
+            int counter = 0;
+            int retriesCount = 0;
+
+            HostCounter(String host) {
+                this.host = host;
+            }
+
+            void increment() {
+                counter++;
+            }
+        }
+
+        void increment(String token, String userName, String host) {
+            if (TextUtils.isEmpty(token)) {
+                return;
+            }
+            Map<String, HostCounter> userNameHostMap = mTokenUserNameHostMap.get(token);
+            if (userNameHostMap == null) {
+                userNameHostMap = new HashMap<String, HostCounter>();
+                mTokenUserNameHostMap.put(token, userNameHostMap);
+            }
+            HostCounter hostCounter = userNameHostMap.get(userName);
+            if(hostCounter == null)
+            {
+                hostCounter = new HostCounter(host);
+                userNameHostMap.put(userName, hostCounter);
+            }
+            hostCounter.increment();
+        }
+
+        public void notifyServer(ITroveboxApi api) {
+            try {
+                if (CommonUtils.isOnline()) {
+                    boolean allEntriesProcessed = true;
+                    for (Entry<String, Map<String, HostCounter>> tokenEntry : mTokenUserNameHostMap
+                            .entrySet()) {
+                        String token = tokenEntry.getKey();
+                        boolean userNameEntryProcessed = true;
+                        for (Entry<String, HostCounter> userNameEntry : tokenEntry.getValue()
+                                .entrySet()) {
+                            String userName = userNameEntry.getKey();
+                            HostCounter hostCounter = userNameEntry.getValue();
+                            if (hostCounter.counter > 0) {
+                                CommonUtils
+                                        .debug(TAG,
+                                                "notifyServer: Notifying server %1$s, token %2$s for user name %3$s with counter %4$d",
+                                                hostCounter.host, token, userName,
+                                                hostCounter.counter);
+                                TroveboxResponse response = api.notifyUploadFinished(token,
+                                        hostCounter.host, userName, hostCounter.counter);
+                                if (response.isSuccess()) {
+                                    hostCounter.counter = 0;
+                                } else {
+                                    userNameEntryProcessed = false;
+                                    allEntriesProcessed = false;
+                                    if (hostCounter.retriesCount == HostCounter.MAX_RETRIES) {
+                                        hostCounter.counter = 0;
+                                    }
+                                    hostCounter.retriesCount++;
+                                }
+                            }
+                        }
+                        if (userNameEntryProcessed) {
+                            tokenEntry.getValue().clear();
+                        }
+                    }
+                    if (allEntriesProcessed) {
+                        mTokenUserNameHostMap.clear();
+                    }
+                }
+            } catch (Exception ex) {
+                CommonUtils.error(TAG, ex);
+            }
+        }
+    }
+
+    
     private class PhotoUploadDetails {
         PhotoUpload photoUpload;
         boolean skipped;

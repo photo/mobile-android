@@ -340,4 +340,20 @@ public interface ITroveboxApi {
     TokenValidationResponse validateUploadToken(String token) throws ClientProtocolException,
             IOException, IllegalStateException, JSONException;
 
+    /**
+     * Notify upload finished event for the token
+     * 
+     * @param token the token uploads done for
+     * @param host the alternate notify host
+     * @param uploader the user name uploads was tagged with
+     * @param count the successful uploads count
+     * @return
+     * @throws ClientProtocolException
+     * @throws IOException
+     * @throws IllegalStateException
+     * @throws JSONException
+     */
+    TroveboxResponse notifyUploadFinished(String token, String host, String uploader, int count)
+            throws ClientProtocolException, IOException, IllegalStateException, JSONException;
+
 }

@@ -42,7 +42,7 @@ public class UploadsProvider extends ContentProvider
 
     public static final String TAG = UploadsProvider.class.getSimpleName();
     private static final String DATABASE_NAME = "uploads.db";
-    private static final int DATABASE_VERSION = 10;
+    private static final int DATABASE_VERSION = 11;
     private static final String PHOTOS_TABLE = "uploads";
 
     // Column names
@@ -56,6 +56,7 @@ public class UploadsProvider extends ContentProvider
     public static final String KEY_SHARE_ON_FACEBOOK = "share_on_facebook";
     public static final String KEY_HOST = "host";
     public static final String KEY_TOKEN = "token";
+    public static final String KEY_USER_NAME = "user_name";
 
     // Column indexes
     public static final int ID_COLUMN = 0;
@@ -65,9 +66,10 @@ public class UploadsProvider extends ContentProvider
     public static final int ERROR_COLUMN = 4;
     public static final int HOST_COLUMN = 5;
     public static final int TOKEN_COLUMN = 6;
-    public static final int IS_AUTOUPLOAD_COLUMN = 7;
-    public static final int SHARE_ON_TWITTER_COLUMN = 8;
-    public static final int SHARE_ON_FACEBOOK_COLUMN = 9;
+    public static final int USER_NAME_COLUMN = 7;
+    public static final int IS_AUTOUPLOAD_COLUMN = 8;
+    public static final int SHARE_ON_TWITTER_COLUMN = 9;
+    public static final int SHARE_ON_FACEBOOK_COLUMN = 10;
 
     private static final String DATABASE_CREATE =
             "CREATE TABLE " + PHOTOS_TABLE + " ("
@@ -78,6 +80,7 @@ public class UploadsProvider extends ContentProvider
                     + ", " + KEY_ERROR + " TEXT null"
                     + ", " + KEY_HOST + " VARCHAR(255) null"
                     + ", " + KEY_TOKEN + " VARCHAR(255) null"
+                    + ", " + KEY_USER_NAME + " VARCHAR(255) null"
                     + ", " + KEY_IS_AUTOUPLOAD + " INTEGER DEFAULT (0)"
                     + ", " + KEY_SHARE_ON_TWITTER + " INTEGER DEFAULT (0)"
                     + ", " + KEY_SHARE_ON_FACEBOOK + " INTEGER DEFAULT (0)"

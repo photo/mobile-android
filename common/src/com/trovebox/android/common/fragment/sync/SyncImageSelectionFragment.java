@@ -933,6 +933,7 @@ public abstract class SyncImageSelectionFragment extends CommonRefreshableFragme
         Class<? extends AbstractUploaderService> mUploaderServiceClass;
         String mHost;
         String mToken;
+        String mUserName;
 
         /**
          * @param title
@@ -950,7 +951,7 @@ public abstract class SyncImageSelectionFragment extends CommonRefreshableFragme
                 StringMapParcelableWrapper albumsWrapper, boolean isPrivate,
                 boolean shareOnFacebook, boolean shareOnTwitter,
                 Class<? extends AbstractUploaderService> uploaderServiceClass, String host,
-                String token, LoadingControl loadingControl) {
+                String token, String userName, LoadingControl loadingControl) {
             super(loadingControl);
             this.mTitle = title;
             this.mTags = tags;
@@ -961,6 +962,7 @@ public abstract class SyncImageSelectionFragment extends CommonRefreshableFragme
             this.mUploaderServiceClass = uploaderServiceClass;
             this.mHost = host;
             this.mToken = token;
+            this.mUserName = userName;
         }
 
         protected abstract ArrayList<String> getSelectedFileNames();
@@ -986,7 +988,7 @@ public abstract class SyncImageSelectionFragment extends CommonRefreshableFragme
                 for (String fileName : mSelectedFiles) {
                     File uploadFile = new File(fileName);
                     uploads.addPendingUpload(Uri.fromFile(uploadFile), metaData, mHost, mToken,
-                            shareOnTwitter, shareOnFacebook);
+                            mUserName, shareOnTwitter, shareOnFacebook);
                 }
                 CommonConfigurationUtils.getApplicationContext().startService(
                         new Intent(CommonConfigurationUtils.getApplicationContext(),

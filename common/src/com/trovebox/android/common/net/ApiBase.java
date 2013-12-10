@@ -58,7 +58,21 @@ public class ApiBase {
      */
     public ApiResponse execute(ApiRequest request)
             throws ClientProtocolException, IOException {
-        return execute(request, null);
+        return execute(request, CommonConfigurationUtils.getServer());
+    }
+
+    /**
+     * Execute a request to the API.
+     * 
+     * @param request request to perform
+     * @param baseUrl the base server url
+     * @return the response from the API
+     * @throws ClientProtocolException
+     * @throws IOException
+     */
+    public ApiResponse execute(ApiRequest request, String baseUrl) throws ClientProtocolException,
+            IOException {
+        return execute(request, baseUrl, null, NetworkConnectionTimeout_ms);
     }
 
     /**

@@ -17,6 +17,7 @@ public class PhotoUpload implements Parcelable {
     private boolean mShareOnFacebook;
     private String mHost;
     private String mToken;
+    private String mUserName;
     private long mUploaded;
 
     public PhotoUpload(long id, Uri photoUri, UploadMetaData metaData) {
@@ -89,6 +90,14 @@ public class PhotoUpload implements Parcelable {
         this.mToken = mToken;
     }
 
+    public String getUserName() {
+        return mUserName;
+    }
+
+    public void setUserName(String mUserName) {
+        this.mUserName = mUserName;
+    }
+
     public long getUploaded() {
         return mUploaded;
     }
@@ -116,6 +125,7 @@ public class PhotoUpload implements Parcelable {
         out.writeByte((byte) (mShareOnFacebook ? 1 : 0));
         out.writeString(mHost);
         out.writeString(mToken);
+        out.writeString(mUserName);
         out.writeLong(mUploaded);
     }
 
@@ -141,6 +151,7 @@ public class PhotoUpload implements Parcelable {
         mShareOnFacebook = in.readByte() == 1;
         mHost = in.readString();
         mToken = in.readString();
+        mUserName = in.readString();
         mUploaded = in.readLong();
     }
 }
