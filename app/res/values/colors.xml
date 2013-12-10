@@ -15,18 +15,7 @@
     <drawable name="ab_bg_brown_dark">#1b0e05</drawable>
 
     <color name="menu_pressed_text_color">#fece31</color>
-    <color name="ab_bg_brown_top_line_color">#684e3b</color>
-    <color name="ab_bg_brown_top_line_color_with_alpha">#66684e3b</color>
-    <color name="ab_bg_brown_dark_bottom_line_color">#1b0e05</color>
-    <color name="ab_bg_brown_dark_bottom_line_color_with_alpa">#661b0e05</color>
-    <color name="ab_bg_brown_gradient_start_color">#573925</color>
-    <color name="ab_bg_brown_gradient_start_color_with_alpha">#66573925</color>
-    <color name="ab_bg_brown_gradient_end_color">#3c2514</color>
-    <color name="ab_bg_brown_gradient_end_color_with_alpha">#663c2514</color>
-    <color name="ab_fg_white">#ffffff</color>
-    <color name="ab_fg_black">#000000</color>
     <color name="button_color">#fac806</color>
-    <color name="pressed_trovebox">#CCfece31</color>
     <color name="profile_icon_color">#8c7b73</color>
     <color name="profile_icon_color_transparent">#558c7b73</color>
 
