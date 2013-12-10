@@ -10,11 +10,11 @@
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:clickable="false"
-        android:horizontalSpacing="@dimen/site_padding_half"
+        android:horizontalSpacing="@dimen/trovebox_site_padding_half"
         android:longClickable="false"
         android:numColumns="@integer/home_number_of_columns"
-        android:paddingLeft="@dimen/site_padding_half"
-        android:paddingRight="@dimen/site_padding_half"
+        android:paddingLeft="@dimen/trovebox_site_padding_half"
+        android:paddingRight="@dimen/trovebox_site_padding_half"
         android:stretchMode="columnWidth"
         android:verticalSpacing="0dip" />
 

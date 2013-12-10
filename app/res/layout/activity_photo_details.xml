@@ -29,10 +29,10 @@
         android:layout_alignParentBottom="true"
         android:background="@drawable/ab_bg_black"
         android:orientation="horizontal"
-        android:paddingLeft="@dimen/site_padding"
-        android:paddingRight="@dimen/site_padding"
-        android:paddingTop="@dimen/site_padding_half"
-        android:paddingBottom="@dimen/site_padding_half" 
+        android:paddingLeft="@dimen/trovebox_site_padding"
+        android:paddingRight="@dimen/trovebox_site_padding"
+        android:paddingTop="@dimen/trovebox_site_padding_half"
+        android:paddingBottom="@dimen/trovebox_site_padding_half" 
         >
             <LinearLayout
 		        android:id="@+id/image_details"
