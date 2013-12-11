@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <!-- general -->
     <string name="pleaseSpecifyFirst">Please specify %1$s first!</string>
     <string name="noInternetAccess">Internet connection is not available</string>
     <string name="upload_limit_reached_message">The free upload limit is reached.</string>
@@ -33,6 +34,12 @@
     <string name="sync_upload_button">Upload</string>
     <string name="sync_uploading_in_background">Your upload has been started</string>
 
+    <plurals name="sync_upload_selected_confirmation">
+        <item quantity="zero">Do you want to upload %1$d selected pictures?</item>
+        <item quantity="one">Do you want to upload %1$d selected picture?</item>
+        <item quantity="other">Do you want to upload %1$d selected pictures?</item>
+    </plurals>
+
     <!-- Upload Manager screen -->
     <string name="upload_status_uploaded">Uploaded</string>
     <string name="upload_status_uploading">Uploading: %1$d%%</string>
@@ -42,11 +49,6 @@
     <string name="upload_manager_menu_cancel">Cancel</string>
     <string name="upload_manager_menu_clear">Clear</string>
 
-    <plurals name="sync_upload_selected_confirmation">
-        <item quantity="zero">Do you want to upload %1$d selected pictures?</item>
-        <item quantity="one">Do you want to upload %1$d selected picture?</item>
-        <item quantity="other">Do you want to upload %1$d selected pictures?</item>
-    </plurals>
     <!--
          String indicating how many media item(s) is(are) selected
             eg. 1 selected [CHAR LIMIT=30]

@@ -41,9 +41,11 @@ import com.trovebox.android.common.bitmapfun.util.ImageFileSystemFetcher;
 import com.trovebox.android.common.bitmapfun.util.ImageResizer;
 import com.trovebox.android.common.bitmapfun.util.ImageWorker.ImageWorkerAdapter;
 import com.trovebox.android.common.fragment.common.CommonRefreshableFragmentWithImageWorker;
+import com.trovebox.android.common.fragment.sync.SyncActionModeHandler.ActionModeListener;
 import com.trovebox.android.common.net.UploadMetaData;
 import com.trovebox.android.common.provider.UploadsProviderAccessor;
 import com.trovebox.android.common.service.AbstractUploaderService;
+import com.trovebox.android.common.util.BackKeyControl;
 import com.trovebox.android.common.util.CommonUtils;
 import com.trovebox.android.common.util.GuiUtils;
 import com.trovebox.android.common.util.LoadingControl;
@@ -57,7 +59,8 @@ import com.trovebox.android.common.util.data.StringMapParcelableWrapper;
  * 
  * @author Eugene Popovich
  */
-public abstract class SyncImageSelectionFragment extends CommonRefreshableFragmentWithImageWorker {
+public abstract class SyncImageSelectionFragment extends CommonRefreshableFragmentWithImageWorker
+        implements SyncSelectionListener, BackKeyControl {
     public static final String TAG = SyncImageSelectionFragment.class.getSimpleName();
     public static final String SELECTED_IMAGES = CommonConfigurationUtils.getApplicationContext()
             .getPackageName() + ".SyncImageSelectionFragmentSelectedImages";
@@ -77,6 +80,20 @@ public abstract class SyncImageSelectionFragment extends CommonRefreshableFragme
     CustomImageWorkerAdapter customImageWorkerAdapter;
     protected SelectionController selectionController;
     protected boolean mFiltered;
+
+    private SyncActionModeHandler mActionModeHandler;
+    SyncSelectionManager mSelectionManager;
+
+    private int mActionModeLayout;
+    private boolean mActionModeSelectionHasPopupMenu;
+    private int mActionButtonTextResource;
+
+    public SyncImageSelectionFragment(int actionModeLayout, boolean actionModeSelectionHasPopupMenu,
+            int actionButtonTextResource) {
+        mActionModeLayout = actionModeLayout;
+        mActionModeSelectionHasPopupMenu = actionModeSelectionHasPopupMenu;
+        mActionButtonTextResource = actionButtonTextResource;
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -103,6 +120,47 @@ public abstract class SyncImageSelectionFragment extends CommonRefreshableFragme
         }
         mAdapter = new CustomImageAdapter(getActivity(), (ImageResizer) mImageWorker,
                 selectionController);
+
+        mSelectionManager = new SyncSelectionManager() {
+
+            @Override
+            public void selectNone() {
+                TrackerUtils.trackOptionsMenuClickEvent("menu_select_none",
+                        SyncImageSelectionFragment.this);
+                SyncImageSelectionFragment.this.selectNone();
+                onSelectionChanged();
+            }
+
+            @Override
+            public void selectAll() {
+                TrackerUtils.trackOptionsMenuClickEvent("menu_select_all",
+                        SyncImageSelectionFragment.this);
+                SyncImageSelectionFragment.this.selectAll();
+                onSelectionChanged();
+            }
+
+            @Override
+            public int getSelectedCount() {
+                return SyncImageSelectionFragment.this.getSelectedCount();
+            }
+        };
+        mSelectionManager.setSelectionListener(this);
+        mActionModeHandler = new SyncActionModeHandler(mActionModeLayout, mActionModeSelectionHasPopupMenu,
+                mActionButtonTextResource, getSupportActivity(), mSelectionManager,
+                new OnClickListener() {
+
+                    @Override
+                    public void onClick(View v) {
+                        actionButtonPressed();
+                    }
+                });
+
+        mActionModeHandler.setActionModeListener(new ActionModeListener() {
+            @Override
+            public boolean onActionItemClicked(com.actionbarsherlock.view.MenuItem item) {
+                return onItemSelected(item);
+            }
+        });
     }
 
     @Override
@@ -277,6 +335,7 @@ public abstract class SyncImageSelectionFragment extends CommonRefreshableFragme
         if (isDataLoaded()) {
             mAdapter.notifyDataSetChanged();
         }
+        mActionModeHandler.resume();
     }
 
     @Override
@@ -329,10 +388,6 @@ public abstract class SyncImageSelectionFragment extends CommonRefreshableFragme
         }
     }
 
-    protected void onSelectionChanged() {
-
-    }
-
     public void uploadsCleared() {
         if (isDataLoaded()) {
             customImageWorkerAdapter.clearProcessedValues();
@@ -352,6 +407,68 @@ public abstract class SyncImageSelectionFragment extends CommonRefreshableFragme
      */
     protected boolean isSelectionDisabled() {
         return false;
+    }
+
+    protected void actionButtonPressed()
+    {
+        mSelectionManager.leaveSelectionMode();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        mActionModeHandler.pause();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mActionModeHandler.destroy();
+    }
+
+    @Override
+    public void onSelectionModeChange(int mode) {
+        switch (mode) {
+            case SyncSelectionManager.ENTER_SELECTION_MODE: {
+                mActionModeHandler.startActionMode();
+                break;
+            }
+            case SyncSelectionManager.LEAVE_SELECTION_MODE: {
+                mActionModeHandler.finishActionMode();
+                break;
+            }
+            case SyncSelectionManager.SELECT_ALL_MODE: {
+                mActionModeHandler.updateSupportedOperation();
+                break;
+            }
+        }
+    }
+
+    protected void onSelectionChanged() {
+        if (getSelectedCount() > 0) {
+            mSelectionManager.enterSelectionMode();
+            mActionModeHandler.updateSelectionMenu();
+        } else {
+            mSelectionManager.leaveSelectionMode();
+        }
+    }
+
+    protected boolean onItemSelected(MenuItem item) {
+        return false;
+    }
+    
+    @Override
+    public boolean isBackKeyOverrode() {
+        if (mSelectionManager.inSelectionMode()) {
+            mSelectionManager.leaveSelectionMode();
+            return true;
+        }
+        return false;
+    }
+
+    public void syncStarted(List<String> processedFileNames) {
+        mSelectionManager.selectNone();
+        addProcessedValues(processedFileNames);
     }
 
     public static class ImageData implements Parcelable {
