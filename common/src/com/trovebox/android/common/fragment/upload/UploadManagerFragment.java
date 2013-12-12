@@ -450,9 +450,9 @@ public class UploadManagerFragment extends CommonRefreshableFragmentWithImageWor
 
             }
             if (uploadStatus == UploadStatus.DONE) {
-                vh.uploadStatusIcon.setImageResource(R.drawable.ic_checked);
+                vh.uploadStatusIcon.setImageResource(R.drawable.ic_checked_yellow);
             } else {
-                vh.uploadStatusIcon.setImageResource(R.drawable.ic_synced);
+                vh.uploadStatusIcon.setImageResource(R.drawable.ic_synced_yellow);
             }
             vh.uploadStatusText.setText(uploadStatusDescription);
 
