@@ -313,10 +313,13 @@ public class SyncFragment extends CommonFragment implements NextStepFlow,
 
     @Override
     public boolean isBackKeyOverrode() {
-        if (activeFragment != null && activeFragment == secondStepFragment)
+        if (activeFragment != null)
         {
-            activatePreviousStep();
-            return true;
+            if (activeFragment == secondStepFragment) {
+                activatePreviousStep();
+            } else {
+                return firstStepFragment.isBackKeyOverrode();
+            }
         }
         return false;
     }

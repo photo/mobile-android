@@ -16,6 +16,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
+import android.view.KeyEvent;
 
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.view.Menu;
@@ -47,8 +48,8 @@ import com.trovebox.android.common.util.GuiUtils;
 import com.trovebox.android.common.util.LoadingControl;
 import com.trovebox.android.common.util.ObjectAccessor;
 import com.trovebox.android.common.util.SyncUtils;
-import com.trovebox.android.common.util.TrackerUtils;
 import com.trovebox.android.common.util.SyncUtils.SyncStartedHandler;
+import com.trovebox.android.common.util.TrackerUtils;
 
 @Addons(Activity.ADDON_SLIDER)
 public class MainActivity extends CommonActivity implements LoadingControl, GalleryOpenControl,
@@ -422,17 +423,20 @@ public class MainActivity extends CommonActivity implements LoadingControl, Gall
     }
 
     @Override
-    public void onBackPressed() {
-        Fragment fragment = getCurrentFragment();
+    public boolean dispatchKeyEvent(android.view.KeyEvent event) {
+        final int keyCode = event.getKeyCode();
+
         boolean proceed = true;
-        if (fragment != null && fragment instanceof BackKeyControl)
-        {
-            proceed &= !((BackKeyControl) fragment).isBackKeyOverrode();
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            Fragment fragment = getCurrentFragment();
+            if (fragment != null && fragment instanceof BackKeyControl) {
+                proceed &= !((BackKeyControl) fragment).isBackKeyOverrode();
+            }
         }
-        if (proceed)
-        {
-            super.onBackPressed();
+        if (proceed) {
+            return super.dispatchKeyEvent(event);
         }
+        return proceed;
     }
 
     @Override
