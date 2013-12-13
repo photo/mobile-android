@@ -471,6 +471,10 @@ public abstract class SyncImageSelectionFragment extends CommonRefreshableFragme
         addProcessedValues(processedFileNames);
     }
 
+    public void leaveSelectionMode() {
+        mSelectionManager.leaveSelectionMode();
+    }
+
     public static class ImageData implements Parcelable {
         public long id;
         public String data;

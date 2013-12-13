@@ -69,7 +69,7 @@ public abstract class AbstractUploaderService extends Service implements PhotoUp
      * different request codes each time we put some extra data into intent, or
      * it will not be recreated
      */
-    int requestCounter = 0;
+    int requestCounter = 2;
 
     protected boolean mCheckPhotoExistingOnServer = false;
 
@@ -144,11 +144,15 @@ public abstract class AbstractUploaderService extends Service implements PhotoUp
         }
         boolean hasSuccessfulUploads = false;
         NotificationCompat.Builder successNotification = getStandardSuccessNotification();
+        NotificationCompat.Builder errorNotification = getStandardErrorNotification();
         int uploadedCount = 0;
         int skippedCount = 0;
         int successNotificationId = requestCounter++;
+        int errorNotificationId = requestCounter++;
         ArrayList<Photo> uploadedPhotos = new ArrayList<Photo>();
         List<PhotoUploadDetails> uploadDetails = new ArrayList<PhotoUploadDetails>();
+        ArrayList<PhotoUpload> errorUploads = new ArrayList<PhotoUpload>();
+        List<PhotoUploadDetails> errorDetails = new ArrayList<PhotoUploadDetails>();
         for (final PhotoUpload photoUpload : pendingUploads) {
             if (!GuiUtils.checkLoggedInAndOnline(true)) {
                 return;
@@ -182,7 +186,8 @@ public abstract class AbstractUploaderService extends Service implements PhotoUp
                     if (!photos.isSuccess()) {
                         uploads.setError(photoUpload.getId(), photos.getAlertMessage());
                         photoUpload.setError(photos.getAlertMessage());
-                        showErrorNotification(photoUpload, file);
+                        addErrorDetailsAndUpdateErrorNotification(errorNotification,
+                                errorNotificationId, errorUploads, errorDetails, photoUpload, file);
                         if (!isUploadRemoved(photoUpload)) {
                             UploaderServiceUtils.sendPhotoUploadUpdatedBroadcast(photoUpload);
                         }
@@ -270,7 +275,8 @@ public abstract class AbstractUploaderService extends Service implements PhotoUp
                     } else {
                         uploads.setError(photoUpload.getId(), uploadResponse.getAlertMessage());
                         photoUpload.setError(uploadResponse.getAlertMessage());
-                        showErrorNotification(photoUpload, file);
+                        addErrorDetailsAndUpdateErrorNotification(errorNotification,
+                                errorNotificationId, errorUploads, errorDetails, photoUpload, file);
                         stopUploadNotification();
                         if (!isUploadRemoved(photoUpload)) {
                             UploaderServiceUtils.sendPhotoUploadUpdatedBroadcast(photoUpload);
@@ -310,7 +316,8 @@ public abstract class AbstractUploaderService extends Service implements PhotoUp
                 uploads.setError(photoUpload.getId(),
                         e.getClass().getSimpleName() + ": " + e.getLocalizedMessage());
                 photoUpload.setError(e.getClass().getSimpleName() + ": " + e.getLocalizedMessage());
-                showErrorNotification(photoUpload, file);
+                addErrorDetailsAndUpdateErrorNotification(errorNotification, errorNotificationId,
+                        errorUploads, errorDetails, photoUpload, file);
                 if (!isUploadRemoved(photoUpload)) {
                     UploaderServiceUtils.sendPhotoUploadUpdatedBroadcast(photoUpload);
                 }
@@ -325,6 +332,16 @@ public abstract class AbstractUploaderService extends Service implements PhotoUp
         if (hasSuccessfulUploads) {
             runAfterSuccessfullUploads();
         }
+    }
+
+    private void addErrorDetailsAndUpdateErrorNotification(
+            NotificationCompat.Builder errorNotification, int errorNotificationId,
+            ArrayList<PhotoUpload> errorUploads, List<PhotoUploadDetails> errorDetails,
+            final PhotoUpload photoUpload, File file) {
+        errorDetails.add(new PhotoUploadDetails(photoUpload, false, file));
+        errorUploads.add(photoUpload);
+        updateErrorNotification(errorNotification, errorUploads, errorDetails,
+                errorNotificationId);
     }
 
     public void shareIfRequested(PhotoUpload photoUpload, Photo photo, boolean silent) {
@@ -358,7 +375,7 @@ public abstract class AbstractUploaderService extends Service implements PhotoUp
 
     protected abstract PendingIntent getStandardPendingIntent();
 
-    protected abstract PendingIntent getErrorPendingIntent(PhotoUpload photoUpload);
+    protected abstract PendingIntent getErrorPendingIntent(ArrayList<PhotoUpload> photoUploads);
 
     protected abstract PendingIntent getSuccessPendingIntent(ArrayList<Photo> photos);
 
@@ -451,37 +468,19 @@ public abstract class AbstractUploaderService extends Service implements PhotoUp
         mNotificationManager.cancel(NOTIFICATION_UPLOAD_PROGRESS);
     }
 
-    private void showErrorNotification(PhotoUpload photoUpload, File file) {
-        int icon = getNotificationIcon();
-        CharSequence titleText = photoUpload.getError() == null ? getString(R.string.notification_upload_failed_title)
-                : getString(R.string.notification_upload_failed_title_with_reason,
-                        photoUpload.getError());
-        long when = System.currentTimeMillis();
-        CharSequence contentMessageTitle = getString(R.string.notification_upload_failed_text,
-                file.getName());
-
-        PendingIntent contentIntent = getErrorPendingIntent(photoUpload);
-
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
-        if (contentIntent != null) {
-            builder.setContentIntent(contentIntent);
-        }
-        Notification notification = builder.setContentTitle(titleText)
-                .setContentText(contentMessageTitle).setWhen(when).setSmallIcon(icon)
-                .setAutoCancel(true).build();
-        // Notification notification = new Notification(icon, titleText, when);
-        // notification.flags |= Notification.FLAG_AUTO_CANCEL;
-        // notification.setLatestEventInfo(this, titleText, contentMessageTitle,
-        // contentIntent);
-
-        mNotificationManager.notify(file.hashCode(), notification);
-    }
-
     private void stopErrorNotification(File file) {
         mNotificationManager.cancel(file.hashCode());
     }
 
     private NotificationCompat.Builder getStandardSuccessNotification() {
+        int icon = getNotificationIcon();
+
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
+        builder.setSmallIcon(icon).setAutoCancel(true);
+        return builder;
+    }
+
+    private NotificationCompat.Builder getStandardErrorNotification() {
         int icon = getNotificationIcon();
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
@@ -522,6 +521,52 @@ public abstract class AbstractUploaderService extends Service implements PhotoUp
         }
         long when = System.currentTimeMillis();
         PendingIntent contentIntent = getSuccessPendingIntent(photos);
+        if (contentIntent != null) {
+            builder.setContentIntent(contentIntent);
+        }
+        builder.setContentTitle(titleText).setContentText(contentMessageTitle).setWhen(when);
+        mNotificationManager.notify(notificationId, builder.build());
+    }
+
+    private void updateErrorNotification(NotificationCompat.Builder builder,
+            ArrayList<PhotoUpload> photos, List<PhotoUploadDetails> uploadDetails,
+            int notificationId) {
+        CharSequence contentMessageTitle;
+        CharSequence titleText;
+        if (photos.size() == 1) {
+            PhotoUploadDetails pud = uploadDetails.get(0);
+
+            titleText = pud.photoUpload.getError() == null ? getString(R.string.notification_upload_failed_title)
+                    : getString(R.string.notification_upload_failed_title_with_reason,
+                            pud.photoUpload.getError());
+            contentMessageTitle = getString(R.string.notification_upload_failed_text,
+                    pud.file.getName());
+
+        } else {
+            contentMessageTitle = getString(R.string.notification_upload_failed_multiple_text,
+                    uploadDetails.size());
+            titleText = getString(R.string.notification_upload_failed_multiple_title);
+
+            NotificationCompat.InboxStyle inboxStyle = new NotificationCompat.InboxStyle();
+            // Sets a title for the Inbox style big view
+            inboxStyle
+                    .setBigContentTitle(getString(R.string.notification_upload_failed_multiple_details));
+            // Moves events into the big view
+            for (int i = 0; i < uploadDetails.size(); i++) {
+
+                PhotoUploadDetails pud = uploadDetails.get(i);
+                String title = pud.file.getName();
+                String line = getString(
+                        pud.photoUpload.getError() == null ? R.string.notification_upload_failed_multiple_detail
+                                : R.string.notification_upload_failed_multiple_detail_with_reason,
+                        title, pud.photoUpload.getError());
+                inboxStyle.addLine(Html.fromHtml(line));
+            }
+            // Moves the big view style object into the notification object.
+            builder.setStyle(inboxStyle);
+        }
+        long when = System.currentTimeMillis();
+        PendingIntent contentIntent = getErrorPendingIntent(photos);
         if (contentIntent != null) {
             builder.setContentIntent(contentIntent);
         }
@@ -571,11 +616,15 @@ public abstract class AbstractUploaderService extends Service implements PhotoUp
         return mIdsToSkip.contains(upload.getId());
     }
 
-    private static class UploadCounters
+    protected void allNotificationsSent() {
+
+    }
+
+    private class UploadCounters
     {
         Map<String, Map<String, HostCounter>> mTokenUserNameHostMap = new HashMap<String, Map<String, HostCounter>>();
         
-        static class HostCounter
+        class HostCounter
         {
             static final int MAX_RETRIES = 5;
 
@@ -647,6 +696,9 @@ public abstract class AbstractUploaderService extends Service implements PhotoUp
                         }
                     }
                     if (allEntriesProcessed) {
+                        if (!mTokenUserNameHostMap.isEmpty()) {
+                            allNotificationsSent();
+                        }
                         mTokenUserNameHostMap.clear();
                     }
                 }

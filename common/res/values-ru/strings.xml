@@ -3,6 +3,7 @@
 
     <!-- general -->
     <string name="pleaseSpecifyFirst">Пожалуйста, введите сначала %1$s!</string>
+    <string name="pleaseEnter">Пожалуйста введите %1$s.</string>
     <string name="noInternetAccess">Интернет подключение недоступно</string>
     <string name="upload_limit_reached_message">Достигнут лимит бесплатных загрузок.</string>
     <string name="sync_cleared_message">Информация о синхронизации очищена</string>
@@ -11,8 +12,8 @@
     <string name="loading">Загрузка&#8230;</string>
 
     <!-- Api -->
-    <string name="api_invalid_token">Неправильный ключ</string>
-    <string name="api_expired_token">Срок действия ключа истек</string>
+    <string name="api_invalid_token">Введенный пароль неверен</string>
+    <string name="api_expired_token">Срок действия пароля истек</string>
 
     <!-- Menu -->
     <string name="menu_refresh">Обновить</string>
@@ -64,6 +65,11 @@
     <string name="notification_upload_failed_title">Загрузка не удалась</string>
     <string name="notification_upload_failed_title_with_reason">Загрузка не удалась: %1$s</string>
     <string name="notification_upload_failed_text">%1$s</string>
+    <string name="notification_upload_failed_multiple_title">Загрузка не удалась</string>
+    <string name="notification_upload_failed_multiple_text">Не удалось загрузить: %1$d фотографий</string>
+    <string name="notification_upload_failed_multiple_details">Детали неудачных загрузок</string>
+    <string name="notification_upload_failed_multiple_detail"><![CDATA[<b>%1$s</b> неудача]]></string>
+    <string name="notification_upload_failed_multiple_detail_with_reason"><![CDATA[<b>%1$s</b> неудача: %2$s]]></string>
     <string name="notification_upload_success_title">Загрузка завершена</string>
     <string name="notification_upload_skipped_title">Загрузка отменена. Найдена идентичная фотография на сервере.</string>
     <string name="notification_upload_success_text">%1$s</string>
@@ -79,5 +85,6 @@
     <string name="errorCouldNotValidateUploadToken">Не удалось верифицировать ключ для загрузки</string>
     <string name="errorSpecifiedUrlIsInvalid">Указанный URL неверен</string>
     <string name="unknown_error_with_code">Неизвестная ошибка с кодом %1$d</string>
+    <string name="unknown_error_try_again">Случилась непредвиденная ошибка. Пожалуйста попробуйте еще.</string>
 
 </resources>
