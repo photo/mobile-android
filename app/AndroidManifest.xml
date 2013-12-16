@@ -2,8 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.trovebox.android.app"
     android:installLocation="auto"
-    android:versionCode="14"
-    android:versionName="2.3" >
+    android:versionCode="15"
+    android:versionName="2.4" >
 
     <uses-sdk
         android:minSdkVersion="7"
@@ -100,6 +100,11 @@
 
                 <data android:scheme="trovebox-t3" />
             </intent-filter>
+        </activity>
+        <activity
+            android:name=".UploadManagerActivity"
+            android:label="@string/upload_manager_title"
+            android:launchMode="singleTask" >
         </activity>
         <activity android:name=".SettingsActivity" />
         <activity
