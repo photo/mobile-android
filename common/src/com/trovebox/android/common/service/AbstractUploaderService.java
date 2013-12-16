@@ -51,7 +51,7 @@ import com.trovebox.android.common.util.TrackerUtils;
 
 public abstract class AbstractUploaderService extends Service implements PhotoUploadHandler {
     private static final int NOTIFICATION_UPLOAD_PROGRESS = 1;
-    private static final String TAG = AbstractUploaderService.class.getSimpleName();
+    public static final String TAG = AbstractUploaderService.class.getSimpleName();
     private ITroveboxApi mApi;
 
     private static ConnectivityChangeReceiver sReceiver;
@@ -69,7 +69,7 @@ public abstract class AbstractUploaderService extends Service implements PhotoUp
      * different request codes each time we put some extra data into intent, or
      * it will not be recreated
      */
-    int requestCounter = 2;
+    protected int requestCounter = 2;
 
     protected boolean mCheckPhotoExistingOnServer = false;
 

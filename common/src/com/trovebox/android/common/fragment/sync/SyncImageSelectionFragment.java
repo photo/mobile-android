@@ -43,11 +43,15 @@ import com.trovebox.android.common.bitmapfun.util.ImageWorker.ImageWorkerAdapter
 import com.trovebox.android.common.fragment.common.CommonRefreshableFragmentWithImageWorker;
 import com.trovebox.android.common.fragment.sync.SyncActionModeHandler.ActionModeListener;
 import com.trovebox.android.common.net.UploadMetaData;
+import com.trovebox.android.common.provider.PhotoUpload;
 import com.trovebox.android.common.provider.UploadsProviderAccessor;
 import com.trovebox.android.common.service.AbstractUploaderService;
+import com.trovebox.android.common.service.UploaderServiceUtils;
+import com.trovebox.android.common.service.UploaderServiceUtils.PhotoUploadHandler;
 import com.trovebox.android.common.util.BackKeyControl;
 import com.trovebox.android.common.util.CommonUtils;
 import com.trovebox.android.common.util.GuiUtils;
+import com.trovebox.android.common.util.ImageUtils;
 import com.trovebox.android.common.util.LoadingControl;
 import com.trovebox.android.common.util.SimpleAsyncTaskEx;
 import com.trovebox.android.common.util.SyncUtils;
@@ -60,7 +64,7 @@ import com.trovebox.android.common.util.data.StringMapParcelableWrapper;
  * @author Eugene Popovich
  */
 public abstract class SyncImageSelectionFragment extends CommonRefreshableFragmentWithImageWorker
-        implements SyncSelectionListener, BackKeyControl {
+        implements SyncSelectionListener, BackKeyControl, PhotoUploadHandler {
     public static final String TAG = SyncImageSelectionFragment.class.getSimpleName();
     public static final String SELECTED_IMAGES = CommonConfigurationUtils.getApplicationContext()
             .getPackageName() + ".SyncImageSelectionFragmentSelectedImages";
@@ -161,6 +165,8 @@ public abstract class SyncImageSelectionFragment extends CommonRefreshableFragme
                 return onItemSelected(item);
             }
         });
+        addFragmentLifecycleRegisteredReceiver(UploaderServiceUtils
+                .getAndRegisterOnPhotoUploadRemovedActionBroadcastReceiver(TAG, this, getActivity()));
     }
 
     @Override
@@ -473,6 +479,26 @@ public abstract class SyncImageSelectionFragment extends CommonRefreshableFragme
 
     public void leaveSelectionMode() {
         mSelectionManager.leaveSelectionMode();
+    }
+
+    @Override
+    public void photoUploadUpdated(PhotoUpload photoUpload, int progress) {
+        // do nothing
+    }
+
+    @Override
+    public void photoUploadRemoved(PhotoUpload photoUpload) {
+        try {
+            if (isDataLoaded()) {
+                String filePath = ImageUtils
+                        .getRealPathFromURI(CommonConfigurationUtils.getApplicationContext(),
+                                photoUpload.getPhotoUri());
+                customImageWorkerAdapter.removeProcessedValue(filePath);
+                mAdapter.notifyDataSetChanged();
+            }
+        } catch (Exception ex) {
+            CommonUtils.error(TAG, ex);
+        }
     }
 
     public static class ImageData implements Parcelable {
@@ -962,6 +988,12 @@ public abstract class SyncImageSelectionFragment extends CommonRefreshableFragme
 
         public void addProcessedValues(List<String> values) {
             processedValues.addAll(values);
+            sort();
+            setFiltered(filtered);
+        }
+
+        public void removeProcessedValue(String value) {
+            processedValues.remove(value);
             sort();
             setFiltered(filtered);
         }

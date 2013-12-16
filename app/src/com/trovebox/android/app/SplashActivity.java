@@ -6,7 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import com.trovebox.android.app.service.UploaderService;
-import com.trovebox.android.app.service.UploaderServiceUtils;
+import com.trovebox.android.common.service.UploaderServiceUtils;
 import com.trovebox.android.common.util.CommonUtils;
 import com.trovebox.android.common.util.TrackerUtils;
 import com.trovebox.android.common.util.concurrent.AsyncTaskEx;
@@ -50,7 +50,7 @@ public class SplashActivity extends Activity {
          */
         @Override
         protected Void doInBackground(Void... params) {
-            if (!UploaderServiceUtils.isServiceRunning())
+            if (!UploaderServiceUtils.isServiceRunning(UploaderService.class))
             {
                 TrackerUtils.trackBackgroundEvent(
                         "uploader_service_start",
