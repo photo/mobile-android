@@ -10,9 +10,9 @@ import java.util.TreeSet;
 import android.os.Parcel;
 import android.test.InstrumentationTestCase;
 
-import com.trovebox.android.app.SyncImageSelectionFragment.CustomImageWorkerAdapter;
-import com.trovebox.android.app.SyncImageSelectionFragment.ImageData;
-import com.trovebox.android.app.SyncImageSelectionFragment.SelectionController;
+import com.trovebox.android.common.fragment.sync.SyncImageSelectionFragment.CustomImageWorkerAdapter;
+import com.trovebox.android.common.fragment.sync.SyncImageSelectionFragment.ImageData;
+import com.trovebox.android.common.fragment.sync.SyncImageSelectionFragment.SelectionController;
 
 public class SyncUploadFragmentParcelableTest extends InstrumentationTestCase {
     public void testImageData()
