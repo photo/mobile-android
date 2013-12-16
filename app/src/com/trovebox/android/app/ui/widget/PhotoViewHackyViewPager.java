@@ -31,6 +31,9 @@ public class PhotoViewHackyViewPager extends ViewPager {
 		} catch (IllegalArgumentException e) {
 			e.printStackTrace();
 			return false;
+        } catch (ArrayIndexOutOfBoundsException e) {
+            e.printStackTrace();
+            return false;
 		}
 	}
 
