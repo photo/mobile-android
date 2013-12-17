@@ -91,12 +91,15 @@ public abstract class SyncImageSelectionFragment extends CommonRefreshableFragme
     private int mActionModeLayout;
     private boolean mActionModeSelectionHasPopupMenu;
     private int mActionButtonTextResource;
+    private boolean mHasFilterActionMenu;
 
-    public SyncImageSelectionFragment(int actionModeLayout, boolean actionModeSelectionHasPopupMenu,
-            int actionButtonTextResource) {
+    public SyncImageSelectionFragment(int actionModeLayout,
+            boolean actionModeSelectionHasPopupMenu, int actionButtonTextResource,
+            boolean hasFilterActionMenu) {
         mActionModeLayout = actionModeLayout;
         mActionModeSelectionHasPopupMenu = actionModeSelectionHasPopupMenu;
         mActionButtonTextResource = actionButtonTextResource;
+        mHasFilterActionMenu = hasFilterActionMenu;
     }
 
     @Override
@@ -172,7 +175,9 @@ public abstract class SyncImageSelectionFragment extends CommonRefreshableFragme
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.sync_menu, menu);
+        if (mHasFilterActionMenu) {
+            inflater.inflate(R.menu.sync_menu, menu);
+        }
     }
 
     @Override

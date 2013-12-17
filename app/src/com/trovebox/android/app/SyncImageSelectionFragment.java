@@ -10,7 +10,7 @@ public class SyncImageSelectionFragment extends
     NextStepFlow nextStepFlow;
 
     public SyncImageSelectionFragment() {
-        super(R.layout.action_mode_sync, true, R.string.sync_next_button);
+        super(R.layout.action_mode_sync, true, R.string.sync_next_button, true);
     }
 
 
