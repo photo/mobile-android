@@ -167,7 +167,7 @@ public class GalleryFragment extends CommonRefreshableFragmentWithImageWorker
 
     void refresh(View v)
     {
-        mRevalidateRequired = false;
+        mRevalidateRequired = !isResumed();
         if (mTags == null && mAlbum == null)
         {
             Intent intent = getActivity().getIntent();
