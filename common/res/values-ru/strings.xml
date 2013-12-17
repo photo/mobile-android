@@ -42,11 +42,11 @@
     </plurals>
 
     <!-- Upload Manager screen -->
-    <string name="upload_status_uploaded">Загружено</string>
-    <string name="upload_status_uploading">Загружается: %1$d%%</string>
+    <string name="upload_status_uploaded">Отправлено</string>
+    <string name="upload_status_uploading">Отправляется: %1$d%%</string>
     <string name="upload_status_error">Ошибка: %1$s</string>
     <string name="upload_status_pending">Ожидание</string>
-    <string name="upload_manager_title">Менеджер загрузок</string>
+    <string name="upload_manager_title">Отправления</string>
     <string name="upload_manager_menu_cancel">Отменить</string>
     <string name="upload_manager_menu_clear">Очистить</string>
 

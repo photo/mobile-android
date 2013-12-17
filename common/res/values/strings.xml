@@ -42,11 +42,11 @@
     </plurals>
 
     <!-- Upload Manager screen -->
-    <string name="upload_status_uploaded">Uploaded</string>
-    <string name="upload_status_uploading">Uploading: %1$d%%</string>
+    <string name="upload_status_uploaded">Sent</string>
+    <string name="upload_status_uploading">Sending: %1$d%%</string>
     <string name="upload_status_error">Error: %1$s</string>
-    <string name="upload_status_pending">Pending</string>
-    <string name="upload_manager_title">Upload Manager</string>
+    <string name="upload_status_pending">Waiting</string>
+    <string name="upload_manager_title">Sending list</string>
     <string name="upload_manager_menu_cancel">Cancel</string>
     <string name="upload_manager_menu_clear">Clear</string>
 
