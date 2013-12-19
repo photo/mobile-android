@@ -486,6 +486,10 @@ public abstract class SyncImageSelectionFragment extends CommonRefreshableFragme
         mSelectionManager.leaveSelectionMode();
     }
 
+    public void enterSelectionMode() {
+        mSelectionManager.enterSelectionMode();
+    }
+
     @Override
     public void photoUploadUpdated(PhotoUpload photoUpload, int progress) {
         // do nothing
