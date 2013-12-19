@@ -33,7 +33,7 @@
     <string name="sync_show_all">Показать все</string>
     <string name="sync_uploaded">ЗАГРУЖЕНО!</string>
     <string name="sync_upload_button">Загрузить</string>
-    <string name="sync_uploading_in_background">Загрузка начата</string>
+    <string name="sync_uploading_in_background">Ваши фотографии отправляются</string>
 
     <plurals name="sync_upload_selected_confirmation">
         <item quantity="zero">Вы хотите загрузить %1$d выбранных изображения?</item>
