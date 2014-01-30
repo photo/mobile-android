@@ -153,8 +153,9 @@ public interface ITroveboxApi {
      * @param resize which sizes should be returned
      * @param tags filter potos by these tags
      * @param album filter potos by this album
+     * @param token access token for the album if required
      * @param sortBy sort photos condition
-     * @param pageing page and pageSize to be retrieved
+     * @param paging page and pageSize to be retrieved
      * @return the photos
      * @throws ClientProtocolException
      * @throws IOException
@@ -163,6 +164,7 @@ public interface ITroveboxApi {
      */
     PhotosResponse getPhotos(ReturnSizes resize, Collection<String> tags,
             String album,
+            String token,
             String sortBy,
             Paging paging) throws ClientProtocolException, IOException,
             IllegalStateException, JSONException;

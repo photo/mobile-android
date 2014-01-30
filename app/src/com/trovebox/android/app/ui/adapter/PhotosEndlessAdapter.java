@@ -135,7 +135,7 @@ public abstract class PhotosEndlessAdapter extends EndlessAdapter<Photo>
                     getClass().getSimpleName());
             long start = System.currentTimeMillis();
             PhotosResponse response = mTroveboxApi.getPhotos(returnSizes,
-                    mTagFilter, mAlbumFilter, sortBy, new Paging(page,
+                    mTagFilter, mAlbumFilter, null, sortBy, new Paging(page,
                             pageSize));
             if (TroveboxResponseUtils.checkResponseValid(response))
             {

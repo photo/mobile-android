@@ -3,6 +3,7 @@
   "result" : { "host" : "test.trovebox.com",
       "id" : "8f89059322",
       "owner" : "hello+test@openphoto.me",
-      "type" : "upload"
+      "type" : "upload",
+      "data" : "f"
     }
 }

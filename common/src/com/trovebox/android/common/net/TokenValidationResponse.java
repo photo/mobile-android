@@ -21,6 +21,7 @@ public class TokenValidationResponse extends TroveboxResponse {
     private String mHost;
     private String mOwner;
     private String mType;
+    private String mData;
 
     public TokenValidationResponse(JSONObject json) throws JSONException {
         super(RequestType.VALIDATE_UPLOAD_TOKEN, json);
@@ -30,6 +31,7 @@ public class TokenValidationResponse extends TroveboxResponse {
             mHost = json.optString("host");
             mOwner = json.optString("owner");
             mType = json.optString("type");
+            mData = json.optString("data");
         }
     }
 
@@ -47,6 +49,10 @@ public class TokenValidationResponse extends TroveboxResponse {
 
     public String getType() {
         return mType;
+    }
+
+    public String getData() {
+        return mData;
     }
 
     @Override

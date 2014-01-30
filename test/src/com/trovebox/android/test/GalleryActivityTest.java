@@ -46,6 +46,7 @@ public class GalleryActivityTest extends
         getApiMock().getPhotos((ReturnSizes) EasyMock.anyObject(),
                 (Collection<String>) EasyMock.anyObject(),
                 (String) EasyMock.anyObject(),
+                null,
                 (String) EasyMock.anyObject(),
                 (Paging) EasyMock.anyObject());
         PowerMock

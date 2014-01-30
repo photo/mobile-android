@@ -115,7 +115,7 @@ public class TroveboxApi extends ApiBase implements ITroveboxApi {
     public PhotosResponse getPhotos(ReturnSizes resize, Paging paging)
             throws ClientProtocolException, IllegalStateException, IOException,
             JSONException {
-        return getPhotos(resize, null, null, null, paging);
+        return getPhotos(resize, null, null, null, null, paging);
     }
 
     @Override
@@ -124,7 +124,7 @@ public class TroveboxApi extends ApiBase implements ITroveboxApi {
             String album)
             throws ClientProtocolException, IllegalStateException, IOException,
             JSONException {
-        return getPhotos(resize, tags, album, null, null);
+        return getPhotos(resize, tags, album, null, null, null);
     }
 
     /*
@@ -138,48 +138,41 @@ public class TroveboxApi extends ApiBase implements ITroveboxApi {
     public PhotosResponse getPhotos(ReturnSizes resize,
             Collection<String> tags,
             String album,
+            String token,
             String sortBy, Paging paging)
             throws ClientProtocolException, IOException, IllegalStateException,
             JSONException {
-        return getPhotos(resize, tags, album, null, sortBy, paging);
+        return getPhotos(resize, tags, album, token, null, sortBy, paging);
     }
 
-    public PhotosResponse getPhotos(ReturnSizes resize,
-            Collection<String> tags,
-            String album,
-            String hash,
-            String sortBy,
-            Paging paging)
-            throws ClientProtocolException, IOException, IllegalStateException,
-            JSONException
-    {
+    public PhotosResponse getPhotos(ReturnSizes resize, Collection<String> tags, String album,
+            String token, String hash, String sortBy, Paging paging)
+            throws ClientProtocolException, IOException, IllegalStateException, JSONException {
         ApiRequest request;
-        if (album != null && album.length() > 0)
-        {
-            request = new ApiRequest(ApiRequest.GET, "/photos/album-" + album
-                    + "/list.json");
-        } else
-        {
-            request = new ApiRequest(ApiRequest.GET, "/photos/list.json");
+        StringBuilder path = new StringBuilder();
+        if (album != null && album.length() > 0) {
+            path.append("/photos/album-" + album);
+        } else {
+            path.append("/photos");
         }
-        if (hash != null)
-        {
+        if (!TextUtils.isEmpty(token)) {
+            path.append("/token-" + token);
+        }
+        path.append("/list.json");
+        request = new ApiRequest(ApiRequest.GET, path.toString());
+        if (hash != null) {
             request.addParameter("hash", hash);
         }
-        if (sortBy != null)
-        {
+        if (sortBy != null) {
             request.addParameter("sortBy", sortBy);
         }
-        if (resize != null)
-        {
+        if (resize != null) {
             request.addParameter("returnSizes", resize.toString());
         }
-        if (tags != null && !tags.isEmpty())
-        {
+        if (tags != null && !tags.isEmpty()) {
             Iterator<String> it = tags.iterator();
             StringBuilder sb = new StringBuilder(it.next());
-            while (it.hasNext())
-            {
+            while (it.hasNext()) {
                 sb.append("," + it.next());
             }
             request.addParameter("tags", sb.toString());
@@ -271,7 +264,7 @@ public class TroveboxApi extends ApiBase implements ITroveboxApi {
             throws ClientProtocolException, IOException, IllegalStateException,
             JSONException
     {
-        return getPhotos(returnSize, null, null, NEWEST_PHOTO_SORT_ORDER, paging);
+        return getPhotos(returnSize, null, null, null, NEWEST_PHOTO_SORT_ORDER, paging);
     }
 
     /**
@@ -290,7 +283,7 @@ public class TroveboxApi extends ApiBase implements ITroveboxApi {
             IOException, IllegalStateException,
             JSONException
     {
-        return getPhotos(null, null, null, hash, null, null);
+        return getPhotos(null, null, null, null, hash, null, null);
     }
 
     @Override
