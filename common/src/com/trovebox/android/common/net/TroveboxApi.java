@@ -115,7 +115,7 @@ public class TroveboxApi extends ApiBase implements ITroveboxApi {
     public PhotosResponse getPhotos(ReturnSizes resize, Paging paging)
             throws ClientProtocolException, IllegalStateException, IOException,
             JSONException {
-        return getPhotos(resize, null, null, null, null, paging);
+        return getPhotos(resize, null, null, null, null, paging, null);
     }
 
     @Override
@@ -124,7 +124,7 @@ public class TroveboxApi extends ApiBase implements ITroveboxApi {
             String album)
             throws ClientProtocolException, IllegalStateException, IOException,
             JSONException {
-        return getPhotos(resize, tags, album, null, null, null);
+        return getPhotos(resize, tags, album, null, null, null, null);
     }
 
     /*
@@ -139,14 +139,14 @@ public class TroveboxApi extends ApiBase implements ITroveboxApi {
             Collection<String> tags,
             String album,
             String token,
-            String sortBy, Paging paging)
+            String sortBy, Paging paging, String host)
             throws ClientProtocolException, IOException, IllegalStateException,
             JSONException {
-        return getPhotos(resize, tags, album, token, null, sortBy, paging);
+        return getPhotos(resize, tags, album, token, null, sortBy, paging, host);
     }
 
     public PhotosResponse getPhotos(ReturnSizes resize, Collection<String> tags, String album,
-            String token, String hash, String sortBy, Paging paging)
+            String token, String hash, String sortBy, Paging paging, String host)
             throws ClientProtocolException, IOException, IllegalStateException, JSONException {
         ApiRequest request;
         StringBuilder path = new StringBuilder();
@@ -178,7 +178,7 @@ public class TroveboxApi extends ApiBase implements ITroveboxApi {
             request.addParameter("tags", sb.toString());
         }
         addPagingRestrictions(paging, request);
-        ApiResponse response = execute(request);
+        ApiResponse response = TextUtils.isEmpty(host) ? execute(request) : execute(request, host);
         return new PhotosResponse(response.getJSONObject());
     }
 
@@ -264,7 +264,7 @@ public class TroveboxApi extends ApiBase implements ITroveboxApi {
             throws ClientProtocolException, IOException, IllegalStateException,
             JSONException
     {
-        return getPhotos(returnSize, null, null, null, NEWEST_PHOTO_SORT_ORDER, paging);
+        return getPhotos(returnSize, null, null, null, NEWEST_PHOTO_SORT_ORDER, paging, null);
     }
 
     /**

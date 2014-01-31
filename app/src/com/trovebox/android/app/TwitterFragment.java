@@ -21,11 +21,11 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.trovebox.android.app.model.utils.PhotoUtils;
 import com.trovebox.android.app.twitter.TwitterProvider;
 import com.trovebox.android.app.twitter.TwitterUtils;
 import com.trovebox.android.common.fragment.common.CommonStyledDialogFragment;
 import com.trovebox.android.common.model.Photo;
+import com.trovebox.android.common.model.utils.PhotoUtils;
 import com.trovebox.android.common.util.CommonUtils;
 import com.trovebox.android.common.util.GuiUtils;
 import com.trovebox.android.common.util.LoadingControl;

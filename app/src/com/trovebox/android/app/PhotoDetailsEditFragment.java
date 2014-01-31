@@ -14,10 +14,10 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 
-import com.trovebox.android.app.model.utils.PhotoUtils;
 import com.trovebox.android.app.model.utils.TagUtils;
 import com.trovebox.android.common.fragment.common.CommonStyledDialogFragment;
 import com.trovebox.android.common.model.Photo;
+import com.trovebox.android.common.model.utils.PhotoUtils;
 import com.trovebox.android.common.util.ProgressDialogLoadingControl;
 import com.trovebox.android.common.util.TrackerUtils;
 

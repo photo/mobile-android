@@ -14,13 +14,13 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.trovebox.android.app.model.utils.PhotoUtils;
 import com.trovebox.android.app.ui.adapter.AlbumsEndlessAdapter;
 import com.trovebox.android.common.bitmapfun.util.ImageCache;
 import com.trovebox.android.common.bitmapfun.util.ImageFetcher;
 import com.trovebox.android.common.fragment.common.CommonRefreshableFragmentWithImageWorker;
 import com.trovebox.android.common.model.Album;
 import com.trovebox.android.common.model.Photo;
+import com.trovebox.android.common.model.utils.PhotoUtils;
 import com.trovebox.android.common.net.ReturnSizes;
 import com.trovebox.android.common.util.GalleryOpenControl;
 import com.trovebox.android.common.util.LoadingControl;

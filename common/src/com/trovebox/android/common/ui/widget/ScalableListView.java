@@ -1,5 +1,5 @@
 
-package com.trovebox.android.app.ui.widget;
+package com.trovebox.android.common.ui.widget;
 
 import org.holoeverywhere.widget.ListView;
 

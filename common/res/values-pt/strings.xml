@@ -38,6 +38,10 @@
     <string name="errorCouldNotStoreDownloadablePhotoNotEnoughSpace">Sem espaço em disco. Não é possível salvar fotos.</string>
     <string name="errorNotLoggedIn">Você não está logado.</string>
     <string name="errorSpecifiedUrlIsInvalid">URL não é válida</string>
+    <string name="errorCouldNotLoadNextPhotosInList">Não foi possível carregar próximas fotos</string>
+    <string name="errorCouldNotGetPhoto">Não foi possível carregar foto</string>
+    <string name="errorCouldNotDeletePhoto">Erro ao remover foto</string>
+    <string name="errorCouldNotUpdatePhoto">Erro ao atualizar a foto</string>
     <string name="unknown_error_with_code">Erro desconhecido com código %1$d</string>
 
 </resources>

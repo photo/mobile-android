@@ -21,6 +21,7 @@ import android.os.Bundle;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.text.TextUtils;
+import android.util.DisplayMetrics;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -40,15 +41,9 @@ import com.trovebox.android.app.TwitterFragment.TwitterLoadingControlAccessor;
 import com.trovebox.android.app.bitmapfun.util.ImageCacheUtils;
 import com.trovebox.android.app.facebook.FacebookProvider;
 import com.trovebox.android.app.facebook.FacebookUtils;
-import com.trovebox.android.app.model.utils.PhotoUtils;
-import com.trovebox.android.app.model.utils.PhotoUtils.PhotoDeletedHandler;
-import com.trovebox.android.app.model.utils.PhotoUtils.PhotoUpdatedHandler;
 import com.trovebox.android.app.share.ShareUtils;
 import com.trovebox.android.app.share.ShareUtils.TwitterShareRunnable;
 import com.trovebox.android.app.twitter.TwitterUtils;
-import com.trovebox.android.app.ui.adapter.PhotosEndlessAdapter;
-import com.trovebox.android.app.ui.adapter.PhotosEndlessAdapter.DetailsReturnSizes;
-import com.trovebox.android.app.ui.adapter.PhotosEndlessAdapter.ParametersHolder;
 import com.trovebox.android.app.ui.widget.HorizontalListView;
 import com.trovebox.android.app.ui.widget.HorizontalListView.OnDownListener;
 import com.trovebox.android.app.ui.widget.PhotoViewHackyViewPager;
@@ -58,7 +53,12 @@ import com.trovebox.android.common.bitmapfun.util.ImageFetcher;
 import com.trovebox.android.common.bitmapfun.util.ImageWorker;
 import com.trovebox.android.common.fragment.common.CommonFragmentWithImageWorker;
 import com.trovebox.android.common.model.Photo;
+import com.trovebox.android.common.model.utils.PhotoUtils;
+import com.trovebox.android.common.model.utils.PhotoUtils.PhotoDeletedHandler;
+import com.trovebox.android.common.model.utils.PhotoUtils.PhotoUpdatedHandler;
 import com.trovebox.android.common.net.ReturnSizes;
+import com.trovebox.android.common.ui.adapter.PhotosEndlessAdapter;
+import com.trovebox.android.common.ui.adapter.PhotosEndlessAdapter.ParametersHolder;
 import com.trovebox.android.common.ui.widget.YesNoDialogFragment;
 import com.trovebox.android.common.ui.widget.YesNoDialogFragment.YesNoButtonPressedHandler;
 import com.trovebox.android.common.util.CommonUtils;
@@ -504,8 +504,7 @@ public class PhotoDetailsActivity extends CommonActivity implements TwitterLoadi
         @Override
         protected void initImageWorker()
         {
-            DetailsReturnSizes detailReturnSizes = PhotosEndlessAdapter
-                    .getDetailsReturnSizes(getActivity());
+            DetailsReturnSizes detailReturnSizes = getDetailsReturnSizes(getActivity());
             bigPhotoSize = detailReturnSizes.detailsBigPhotoSize;
             thumbSize = detailReturnSizes.detailsThumbSize;
             returnSizes = PhotosEndlessAdapter.getReturnSizes(thumbSize, bigPhotoSize);
@@ -710,6 +709,60 @@ public class PhotoDetailsActivity extends CommonActivity implements TwitterLoadi
             {
                 actionBar.hide();
             }
+        }
+
+        /**
+         * Get the return sizes by clonning returnSize and adding
+         * detailsReturnSizes fields as a childs
+         * 
+         * @param returnSize
+         * @param detailsReturnSizes
+         * @return
+         */
+        public static ReturnSizes getReturnSizes(ReturnSizes returnSize,
+                DetailsReturnSizes detailsReturnSizes) {
+            return PhotosEndlessAdapter.getReturnSizes(returnSize,
+                    detailsReturnSizes.detailsBigPhotoSize,
+                    detailsReturnSizes.detailsThumbSize);
+        }
+
+        /**
+         * Get the return sizes for the gallery activity
+         * 
+         * @param activity
+         * @return
+         */
+        public static DetailsReturnSizes getDetailsReturnSizes(android.app.Activity activity) {
+            DetailsReturnSizes result = new DetailsReturnSizes();
+
+            int detailsThumbnailSize = activity.getResources().getDimensionPixelSize(
+                    R.dimen.detail_thumbnail_size);
+            result.detailsThumbSize = new ReturnSizes(detailsThumbnailSize, detailsThumbnailSize,
+                    true);
+            result.detailsBigPhotoSize = getBigImageSize(activity);
+
+            return result;
+        }
+
+        /**
+         * Get the big image size which depends on the screen dimension
+         * 
+         * @param activity
+         * @return
+         */
+        public static ReturnSizes getBigImageSize(android.app.Activity activity) {
+            final DisplayMetrics displaymetrics = new DisplayMetrics();
+            activity.getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
+            final int height = displaymetrics.heightPixels;
+            final int width = displaymetrics.widthPixels;
+            final int longest = height > width ? height : width;
+            ReturnSizes bigSize = new ReturnSizes(longest, longest);
+            return bigSize;
+        }
+
+        public static class DetailsReturnSizes {
+            public ReturnSizes detailsThumbSize;
+            public ReturnSizes detailsBigPhotoSize;
         }
 
         private class PhotoDetailPagerAdapter extends PagerAdapter {

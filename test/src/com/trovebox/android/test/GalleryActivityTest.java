@@ -17,8 +17,8 @@ import android.widget.ListAdapter;
 import android.widget.ListView;
 
 import com.jayway.android.robotium.solo.Solo;
-import com.trovebox.android.app.GalleryFragment.GalleryAdapterExt;
 import com.trovebox.android.app.MainActivity;
+import com.trovebox.android.common.fragment.gallery.GalleryFragment.GalleryAdapterExt;
 import com.trovebox.android.common.net.Paging;
 import com.trovebox.android.common.net.PhotoResponse;
 import com.trovebox.android.common.net.PhotosResponse;
@@ -48,7 +48,8 @@ public class GalleryActivityTest extends
                 (String) EasyMock.anyObject(),
                 null,
                 (String) EasyMock.anyObject(),
-                (Paging) EasyMock.anyObject());
+                (Paging) EasyMock.anyObject(),
+                null);
         PowerMock
                 .expectLastCall()
                 .andReturn(

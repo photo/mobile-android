@@ -1,12 +1,12 @@
 
-package com.trovebox.android.app.model.utils;
+package com.trovebox.android.common.model.utils;
 
 import java.io.IOException;
 
 import org.apache.http.client.ClientProtocolException;
 import org.json.JSONException;
 
-import com.trovebox.android.app.Preferences;
+import com.trovebox.android.common.CommonConfigurationUtils;
 import com.trovebox.android.common.model.Photo;
 import com.trovebox.android.common.model.Token;
 import com.trovebox.android.common.net.TokenResponse;
@@ -30,15 +30,13 @@ public class TokenUtils {
      * @throws JSONException
      */
     public static TokenResponse getPhotoShareTokenResponse(Photo photo)
-            throws ClientProtocolException, IOException,
-            JSONException {
+            throws ClientProtocolException, IOException, JSONException {
         TrackerUtils.trackBackgroundEvent("getPhotoShareToken", TAG);
         long start = System.currentTimeMillis();
-        TokenResponse response = Preferences.getApi()
-                .createTokenForPhoto(
-                        photo.getId());
-        TrackerUtils.trackDataLoadTiming(System.currentTimeMillis() - start,
-                "getPhotoShareToken", TAG);
+        TokenResponse response = CommonConfigurationUtils.getApi().createTokenForPhoto(
+                photo.getId());
+        TrackerUtils.trackDataLoadTiming(System.currentTimeMillis() - start, "getPhotoShareToken",
+                TAG);
         return response;
     }
 
@@ -48,8 +46,7 @@ public class TokenUtils {
      * @param token
      * @return
      */
-    public static String getTokenUrlSuffix(Token token)
-    {
+    public static String getTokenUrlSuffix(Token token) {
         return "/token-" + token.getId();
     }
 }

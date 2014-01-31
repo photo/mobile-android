@@ -84,6 +84,11 @@
     <string name="errorNotLoggedIn">Вы еще не авторизированы</string>
     <string name="errorCouldNotValidateUploadToken">Не удалось верифицировать ключ для загрузки</string>
     <string name="errorSpecifiedUrlIsInvalid">Указанный URL неверен</string>
+    <string name="errorCouldNotLoadNextPhotosInList">Не удалось загрузить следующие фотографии в списке</string>
+    <string name="errorCouldNotGetPhoto">Не удалось принять фотографию</string>
+    <string name="errorCouldNotDeletePhoto">Удалить фотографию не удалось</string>
+    <string name="errorCouldNotUpdatePhoto">Не удалось обновить детали фотографии</string>
+    <string name="errorCouldNotGetShareToken">Не удалось создать маркер публикации</string>
     <string name="unknown_error_with_code">Неизвестная ошибка с кодом %1$d</string>
     <string name="unknown_error_try_again">Случилась непредвиденная ошибка. Пожалуйста попробуйте еще.</string>
 

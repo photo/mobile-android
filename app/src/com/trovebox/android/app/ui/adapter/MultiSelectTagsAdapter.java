@@ -20,6 +20,7 @@ import com.trovebox.android.common.model.Tag;
 import com.trovebox.android.common.net.ITroveboxApi;
 import com.trovebox.android.common.net.TagsResponse;
 import com.trovebox.android.common.net.TroveboxResponseUtils;
+import com.trovebox.android.common.ui.adapter.EndlessAdapter;
 import com.trovebox.android.common.util.GuiUtils;
 import com.trovebox.android.common.util.LoadingControl;
 

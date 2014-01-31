@@ -29,18 +29,16 @@ import com.trovebox.android.app.SyncFragment.SyncHandler;
 import com.trovebox.android.app.TwitterFragment.TwitterLoadingControlAccessor;
 import com.trovebox.android.app.bitmapfun.util.ImageCacheUtils;
 import com.trovebox.android.app.facebook.FacebookProvider;
-import com.trovebox.android.app.model.utils.PhotoUtils;
-import com.trovebox.android.app.model.utils.PhotoUtils.PhotoDeletedHandler;
-import com.trovebox.android.app.model.utils.PhotoUtils.PhotoUpdatedHandler;
 import com.trovebox.android.app.net.account.AccountLimitUtils2;
 import com.trovebox.android.app.twitter.TwitterUtils;
 import com.trovebox.android.common.activity.CommonActivity;
 import com.trovebox.android.common.model.Album;
 import com.trovebox.android.common.model.Photo;
+import com.trovebox.android.common.model.utils.PhotoUtils;
+import com.trovebox.android.common.model.utils.PhotoUtils.PhotoDeletedHandler;
+import com.trovebox.android.common.model.utils.PhotoUtils.PhotoUpdatedHandler;
 import com.trovebox.android.common.provider.UploadsUtils;
 import com.trovebox.android.common.provider.UploadsUtils.UploadsClearedHandler;
-import com.trovebox.android.common.service.UploaderServiceUtils;
-import com.trovebox.android.common.service.UploaderServiceUtils.PhotoUploadedHandler;
 import com.trovebox.android.common.util.BackKeyControl;
 import com.trovebox.android.common.util.CommonUtils;
 import com.trovebox.android.common.util.GalleryOpenControl;
@@ -53,7 +51,7 @@ import com.trovebox.android.common.util.TrackerUtils;
 
 @Addons(Activity.ADDON_SLIDER)
 public class MainActivity extends CommonActivity implements LoadingControl, GalleryOpenControl,
-        SyncHandler, UploadsClearedHandler, PhotoUploadedHandler, TwitterLoadingControlAccessor,
+        SyncHandler, UploadsClearedHandler, TwitterLoadingControlAccessor,
         FacebookLoadingControlAccessor, SyncStartedHandler, PhotoDeletedHandler,
         PhotoUpdatedHandler, GalleryFragment.StartNowHandler, TitleChangedHandler {
     private static final String NAVIGATION_HANDLER_FRAGMENT_TAG = "NavigationHandlerFragment";
@@ -107,9 +105,6 @@ public class MainActivity extends CommonActivity implements LoadingControl, Gall
         addRegisteredReceiver(UploadsUtils
                 .getAndRegisterOnUploadClearedActionBroadcastReceiver(TAG,
                         this, this));
-        addRegisteredReceiver(UploaderServiceUtils
-                .getAndRegisterOnPhotoUploadedActionBroadcastReceiver(
-                        TAG, this, this));
         addRegisteredReceiver(SyncUtils.getAndRegisterOnSyncStartedActionBroadcastReceiver(
                 TAG, this, this));
         addRegisteredReceiver(PhotoUtils.getAndRegisterOnPhotoDeletedActionBroadcastReceiver(
@@ -400,15 +395,6 @@ public class MainActivity extends CommonActivity implements LoadingControl, Gall
         if (fragment != null)
         {
             fragment.uploadsCleared();
-        }
-    }
-
-    @Override
-    public void photoUploaded() {
-        GalleryFragment galleryFragment = navigationHandlerFragment.getGalleryFragment();
-        if (galleryFragment != null)
-        {
-            galleryFragment.photoUploaded();
         }
     }
 

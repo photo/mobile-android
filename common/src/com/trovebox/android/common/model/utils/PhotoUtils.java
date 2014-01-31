@@ -1,5 +1,5 @@
 
-package com.trovebox.android.app.model.utils;
+package com.trovebox.android.common.model.utils;
 
 import java.io.File;
 import java.io.IOException;
@@ -15,9 +15,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 
-import com.trovebox.android.app.Preferences;
-import com.trovebox.android.app.R;
-import com.trovebox.android.app.TroveboxApplication;
+import com.trovebox.android.common.CommonConfigurationUtils;
+import com.trovebox.android.common.R;
 import com.trovebox.android.common.model.Photo;
 import com.trovebox.android.common.net.PhotoResponse;
 import com.trovebox.android.common.net.ReturnSizes;
@@ -39,10 +38,14 @@ import com.trovebox.android.common.util.TrackerUtils;
  */
 public class PhotoUtils {
     public static final String TAG = PhotoUtils.class.getSimpleName();
-    public static String PHOTO_DELETED_ACTION = "com.trovebox.PHOTO_DELETED";
-    public static String PHOTO_DELETED = "PHOTO_DELETED";
-    public static String PHOTO_UPDATED_ACTION = "com.trovebox.PHOTO_UPDATED";
-    public static String PHOTO_UPDATED = "PHOTO_UPDATED";
+    public static String PHOTO_DELETED_ACTION = CommonConfigurationUtils.getApplicationContext()
+            .getPackageName() + ".PHOTO_DELETED";
+    public static String PHOTO_DELETED = CommonConfigurationUtils.getApplicationContext()
+            .getPackageName() + ".PHOTO_DELETED";
+    public static String PHOTO_UPDATED_ACTION = CommonConfigurationUtils.getApplicationContext()
+            .getPackageName() + ".PHOTO_UPDATED";
+    public static String PHOTO_UPDATED = CommonConfigurationUtils.getApplicationContext()
+            .getPackageName() + ".PHOTO_UPDATED";
 
     /**
      * Validate whether getUrl for the photo size is not null. Runs size
@@ -53,20 +56,13 @@ public class PhotoUtils {
      * @param runnable the runnable which will run with the validated photo
      * @param loadingControl the loading control to display loading indicator
      */
-    public static void validateUrlForSizeExistAsyncAndRun(
-            Photo photo,
-            ReturnSizes photoSize,
-            RunnableWithParameter<Photo> runnable,
-            LoadingControl loadingControl
-            )
-    {
+    public static void validateUrlForSizeExistAsyncAndRun(Photo photo, ReturnSizes photoSize,
+            RunnableWithParameter<Photo> runnable, LoadingControl loadingControl) {
         String size = photoSize.toString();
-        if (photo.getUrl(size) != null)
-        {
+        if (photo.getUrl(size) != null) {
             CommonUtils.debug(TAG, "Url for the size " + size + " exists. Running action.");
             runnable.run(photo);
-        } else
-        {
+        } else {
             CommonUtils.debug(TAG, "Url for the size " + size
                     + " doesn't exist. Running size retrieval task.");
             new RetrieveThumbUrlTask(photo, photoSize, runnable, loadingControl).execute();
@@ -84,17 +80,12 @@ public class PhotoUtils {
      * @throws IOException
      * @throws JSONException
      */
-    public static Photo validateUrlForSizeExistAndReturn(
-            Photo photo,
-            ReturnSizes photoSize
-            ) throws ClientProtocolException, IOException, JSONException
-    {
+    public static Photo validateUrlForSizeExistAndReturn(Photo photo, ReturnSizes photoSize)
+            throws ClientProtocolException, IOException, JSONException {
         String size = photoSize.toString();
-        if (photo.getUrl(size) != null)
-        {
+        if (photo.getUrl(size) != null) {
             CommonUtils.debug(TAG, "Url for the size " + size + " exists");
-        } else
-        {
+        } else {
             CommonUtils.debug(TAG, "Url for the size " + size
                     + " doesn't exist. Running size retrieval method.");
             Photo photo2 = getThePhotoWithReturnSize(photo, photoSize);
@@ -113,19 +104,13 @@ public class PhotoUtils {
      *            token retrieval failure
      * @param loadingControl the loading control to display loading indicator
      */
-    public static void validateShareTokenExistsAsyncAndRunAsync(
-            Photo photo,
-            RunnableWithParameter<Photo> runnable,
-            Runnable runnableOnFailure,
-            LoadingControl loadingControl
-            )
-    {
-        if (photo.getShareToken() != null)
-        {
+    public static void validateShareTokenExistsAsyncAndRunAsync(Photo photo,
+            RunnableWithParameter<Photo> runnable, Runnable runnableOnFailure,
+            LoadingControl loadingControl) {
+        if (photo.getShareToken() != null) {
             CommonUtils.debug(TAG, "Share token exists. Running action.");
             runnable.run(photo);
-        } else
-        {
+        } else {
             CommonUtils.debug(TAG, "Share token doesn't exist. Running token retrieval task.");
             new RetrieveShareTokenTask(photo, runnable, runnableOnFailure, loadingControl)
                     .execute();
@@ -142,15 +127,11 @@ public class PhotoUtils {
      * @throws IOException
      * @throws JSONException
      */
-    public static Photo validateShareTokenExistsAndReturn(
-            Photo photo
-            ) throws ClientProtocolException, IOException, JSONException
-    {
-        if (photo.getShareToken() != null)
-        {
+    public static Photo validateShareTokenExistsAndReturn(Photo photo)
+            throws ClientProtocolException, IOException, JSONException {
+        if (photo.getShareToken() != null) {
             CommonUtils.debug(TAG, "Share token exists");
-        } else
-        {
+        } else {
             CommonUtils.debug(TAG, "Share token doesn't exist. Running size retrieval method.");
             TokenResponse response = TokenUtils.getPhotoShareTokenResponse(photo);
             photo.setShareToken(response.getToken());
@@ -169,41 +150,29 @@ public class PhotoUtils {
      * @throws JSONException
      */
     public static Photo getThePhotoWithReturnSize(Photo photo, ReturnSizes photoSize)
-            throws ClientProtocolException, IOException,
-            JSONException {
+            throws ClientProtocolException, IOException, JSONException {
         TrackerUtils.trackBackgroundEvent("getThePhotoWithReturnSize", TAG);
         long start = System.currentTimeMillis();
-        PhotoResponse response = Preferences.getApi(TroveboxApplication.getContext())
-                .getPhoto(
-                        photo.getId(), photoSize);
+        PhotoResponse response = CommonConfigurationUtils.getApi().getPhoto(photo.getId(),
+                photoSize);
         photo = response.getPhoto();
         TrackerUtils.trackDataLoadTiming(System.currentTimeMillis() - start,
                 "getThePhotoWithReturnSize", TAG);
         return photo;
     }
 
-    public static void deletePhoto(Photo photo,
-            LoadingControl loadingControl)
-    {
+    public static void deletePhoto(Photo photo, LoadingControl loadingControl) {
         new DeletePhotoTask(photo, loadingControl).execute();
     }
 
-    public static void updatePhoto(
-            Photo photo, String title,
-            String description, Collection<String> tags,
-            boolean isPrivate,
-            LoadingControl loadingControl)
-    {
+    public static void updatePhoto(Photo photo, String title, String description,
+            Collection<String> tags, boolean isPrivate, LoadingControl loadingControl) {
         updatePhoto(photo, title, description, tags, isPrivate, null, loadingControl);
     }
 
-    public static void updatePhoto(
-            Photo photo, String title,
-            String description, Collection<String> tags,
-            boolean isPrivate,
-            Runnable runOnSuccessAction,
-            LoadingControl loadingControl)
-    {
+    public static void updatePhoto(Photo photo, String title, String description,
+            Collection<String> tags, boolean isPrivate, Runnable runOnSuccessAction,
+            LoadingControl loadingControl) {
         new UpdatePhotoTask(photo, title, description, tags, isPrivate, runOnSuccessAction,
                 loadingControl).execute();
     }
@@ -227,8 +196,7 @@ public class PhotoUtils {
      */
     public static String getShareUrl(Photo photo, boolean appendToken) {
         String result = photo.getUrl(Photo.URL);
-        if (appendToken)
-        {
+        if (appendToken) {
             result += TokenUtils.getTokenUrlSuffix(photo.getShareToken());
         }
         return result;
@@ -239,10 +207,8 @@ public class PhotoUtils {
         private ReturnSizes photoSize;
         private RunnableWithParameter<Photo> runnable;
 
-        public RetrieveThumbUrlTask(Photo photo,
-                ReturnSizes photoSize,
-                RunnableWithParameter<Photo> runnable,
-                LoadingControl loadingControl) {
+        public RetrieveThumbUrlTask(Photo photo, ReturnSizes photoSize,
+                RunnableWithParameter<Photo> runnable, LoadingControl loadingControl) {
             super(loadingControl);
             mPhoto = photo;
             this.photoSize = photoSize;
@@ -277,10 +243,8 @@ public class PhotoUtils {
         private RunnableWithParameter<Photo> runnable;
         private Runnable runnableOnFailure;
 
-        public RetrieveShareTokenTask(Photo photo,
-                RunnableWithParameter<Photo> runnable,
-                Runnable runnableOnFailure,
-                LoadingControl loadingControl) {
+        public RetrieveShareTokenTask(Photo photo, RunnableWithParameter<Photo> runnable,
+                Runnable runnableOnFailure, LoadingControl loadingControl) {
             super(loadingControl);
             this.photo = photo;
             this.runnable = runnable;
@@ -291,8 +255,7 @@ public class PhotoUtils {
         protected Boolean doInBackground(Void... params) {
             try {
                 TokenResponse response = TokenUtils.getPhotoShareTokenResponse(photo);
-                if (TroveboxResponseUtils.checkResponseValid(response))
-                {
+                if (TroveboxResponseUtils.checkResponseValid(response)) {
                     photo.setShareToken(response.getToken());
                     return true;
                 }
@@ -310,8 +273,7 @@ public class PhotoUtils {
         @Override
         protected void onFailedPostExecute() {
             super.onFailedPostExecute();
-            if (runnableOnFailure != null)
-            {
+            if (runnableOnFailure != null) {
                 runnableOnFailure.run();
             }
         }
@@ -321,8 +283,7 @@ public class PhotoUtils {
     private static class DeletePhotoTask extends SimpleAsyncTaskEx {
         private Photo photo;
 
-        public DeletePhotoTask(Photo photo,
-                LoadingControl loadingControl) {
+        public DeletePhotoTask(Photo photo, LoadingControl loadingControl) {
             super(loadingControl);
             this.photo = photo;
         }
@@ -330,11 +291,9 @@ public class PhotoUtils {
         @Override
         protected Boolean doInBackground(Void... params) {
             try {
-                if (GuiUtils.checkLoggedInAndOnline())
-                {
-                    TroveboxResponse response =
-                            Preferences.getApi(TroveboxApplication.getContext())
-                                    .deletePhoto(photo.getId());
+                if (GuiUtils.checkLoggedInAndOnline()) {
+                    TroveboxResponse response = CommonConfigurationUtils.getApi().deletePhoto(
+                            photo.getId());
                     return TroveboxResponseUtils.checkResponseValid(response);
                 }
             } catch (Exception e) {
@@ -356,11 +315,8 @@ public class PhotoUtils {
         Collection<String> tags;
         Runnable runOnSuccessAction;
 
-        public UpdatePhotoTask(
-                Photo photo, String title,
-                String description, Collection<String> tags,
-                boolean isPrivate,
-                Runnable runOnSuccessAction,
+        public UpdatePhotoTask(Photo photo, String title, String description,
+                Collection<String> tags, boolean isPrivate, Runnable runOnSuccessAction,
                 LoadingControl loadingControl) {
             super(loadingControl);
             this.photo = photo;
@@ -374,17 +330,10 @@ public class PhotoUtils {
         @Override
         protected Boolean doInBackground(Void... params) {
             try {
-                if (GuiUtils.checkLoggedInAndOnline())
-                {
-                    PhotoResponse response =
-                            Preferences.getApi(TroveboxApplication.getContext())
-                                    .updatePhotoDetails(
-                                            photo.getId(),
-                                            title,
-                                            description,
-                                            tags,
-                                            isPrivate ? Photo.PERMISSION_PRIVATE
-                                                    : Photo.PERMISSION_PUBLIC);
+                if (GuiUtils.checkLoggedInAndOnline()) {
+                    PhotoResponse response = CommonConfigurationUtils.getApi().updatePhotoDetails(
+                            photo.getId(), title, description, tags,
+                            isPrivate ? Photo.PERMISSION_PRIVATE : Photo.PERMISSION_PUBLIC);
                     photo = response.getPhoto();
                     return TroveboxResponseUtils.checkResponseValid(response);
                 }
@@ -397,8 +346,7 @@ public class PhotoUtils {
         @Override
         protected void onSuccessPostExecute() {
             sendPhotoUpdatedBroadcast(photo);
-            if (runOnSuccessAction != null)
-            {
+            if (runOnSuccessAction != null) {
                 runOnSuccessAction.run();
             }
         }
@@ -413,24 +361,16 @@ public class PhotoUtils {
      * @return
      */
     public static BroadcastReceiver getAndRegisterOnPhotoDeletedActionBroadcastReceiver(
-            final String TAG,
-            final PhotoDeletedHandler handler,
-            final Activity activity)
-    {
-        BroadcastReceiver br = new BroadcastReceiver()
-        {
+            final String TAG, final PhotoDeletedHandler handler, final Activity activity) {
+        BroadcastReceiver br = new BroadcastReceiver() {
 
             @Override
-            public void onReceive(Context context, Intent intent)
-            {
-                try
-                {
-                    CommonUtils.debug(TAG,
-                            "Received photo deleted broadcast message");
+            public void onReceive(Context context, Intent intent) {
+                try {
+                    CommonUtils.debug(TAG, "Received photo deleted broadcast message");
                     Photo photo = intent.getParcelableExtra(PHOTO_DELETED);
                     handler.photoDeleted(photo);
-                } catch (Exception ex)
-                {
+                } catch (Exception ex) {
                     GuiUtils.error(TAG, ex);
                 }
             }
@@ -444,15 +384,13 @@ public class PhotoUtils {
      * 
      * @param photo
      */
-    public static void sendPhotoDeletedBroadcast(Photo photo)
-    {
+    public static void sendPhotoDeletedBroadcast(Photo photo) {
         Intent intent = new Intent(PHOTO_DELETED_ACTION);
         intent.putExtra(PHOTO_DELETED, photo);
-        TroveboxApplication.getContext().sendBroadcast(intent);
+        CommonConfigurationUtils.getApplicationContext().sendBroadcast(intent);
     }
 
-    public static interface PhotoDeletedHandler
-    {
+    public static interface PhotoDeletedHandler {
         void photoDeleted(Photo photo);
     }
 
@@ -465,24 +403,16 @@ public class PhotoUtils {
      * @return
      */
     public static BroadcastReceiver getAndRegisterOnPhotoUpdatedActionBroadcastReceiver(
-            final String TAG,
-            final PhotoUpdatedHandler handler,
-            final Activity activity)
-    {
-        BroadcastReceiver br = new BroadcastReceiver()
-        {
+            final String TAG, final PhotoUpdatedHandler handler, final Activity activity) {
+        BroadcastReceiver br = new BroadcastReceiver() {
 
             @Override
-            public void onReceive(Context context, Intent intent)
-            {
-                try
-                {
-                    CommonUtils.debug(TAG,
-                            "Received photo updated broadcast message");
+            public void onReceive(Context context, Intent intent) {
+                try {
+                    CommonUtils.debug(TAG, "Received photo updated broadcast message");
                     Photo photo = intent.getParcelableExtra(PHOTO_UPDATED);
                     handler.photoUpdated(photo);
-                } catch (Exception ex)
-                {
+                } catch (Exception ex) {
                     GuiUtils.error(TAG, ex);
                 }
             }
@@ -496,15 +426,13 @@ public class PhotoUtils {
      * 
      * @param photo
      */
-    public static void sendPhotoUpdatedBroadcast(Photo photo)
-    {
+    public static void sendPhotoUpdatedBroadcast(Photo photo) {
         Intent intent = new Intent(PHOTO_UPDATED_ACTION);
         intent.putExtra(PHOTO_UPDATED, photo);
-        TroveboxApplication.getContext().sendBroadcast(intent);
+        CommonConfigurationUtils.getApplicationContext().sendBroadcast(intent);
     }
 
-    public static interface PhotoUpdatedHandler
-    {
+    public static interface PhotoUpdatedHandler {
         void photoUpdated(Photo photo);
     }
 
@@ -515,11 +443,9 @@ public class PhotoUtils {
      * @return
      * @throws IOException
      */
-    public static String generatePhotoTitle(String filePath) throws IOException
-    {
+    public static String generatePhotoTitle(String filePath) throws IOException {
         long createdDate = ImageUtils.getExifDateTime(filePath);
-        if (createdDate == -1)
-        {
+        if (createdDate == -1) {
             CommonUtils.debug(TAG, "generatePhotoTitle: createdDate from exif is missing");
             createdDate = (new File(filePath)).lastModified();
         }

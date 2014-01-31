@@ -156,6 +156,7 @@ public interface ITroveboxApi {
      * @param token access token for the album if required
      * @param sortBy sort photos condition
      * @param paging page and pageSize to be retrieved
+     * @param host alternate host
      * @return the photos
      * @throws ClientProtocolException
      * @throws IOException
@@ -166,7 +167,8 @@ public interface ITroveboxApi {
             String album,
             String token,
             String sortBy,
-            Paging paging) throws ClientProtocolException, IOException,
+            Paging paging,
+            String host) throws ClientProtocolException, IOException,
             IllegalStateException, JSONException;
 
     /**

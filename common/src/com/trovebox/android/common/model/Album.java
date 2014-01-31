@@ -46,6 +46,19 @@ public class Album implements Parcelable {
         return album;
     }
 
+    /**
+     * Creates an Album object with just an id field assigned
+     * 
+     * @param id
+     * @return
+     */
+    public static Album blankForId(String id)
+    {
+        Album album = new Album();
+        album.mId = id;
+        return album;
+    }
+    
     public String getId() {
         return mId;
     }

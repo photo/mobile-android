@@ -138,17 +138,12 @@
     <string name="errorCouldNotUploadTakenPhoto">Не удалось загрузить фотографию на сервер</string>
     <string name="errorVerifyingTheResponse">Ошибка во время проверки ответа</string>
     <string name="errorWithTwitterAuthentication">Ошибка аутентификации в twitter</string>
-    <string name="errorCouldNotLoadNextPhotosInList">Не удалось загрузить следующие фотографии в списке</string>
     <string name="errorCouldNotLogin">Не удалось войти</string>
     <string name="errorCouldNotSignup">Не удалось зарегистрироваться</string>
     <string name="errorCouldNotLoadNextAlbumsInList">Не удалось загрузить следующие альбомы в списке</string>
     <string name="errorCouldNotUseIntentsToOpenMaps">Не удалось использовать Intent для открытия карт</string>
     <string name="errorCouldNotGetAlbum">Не удалось загрузить информацию об альбоме</string>
-    <string name="errorCouldNotGetPhoto">Не удалось принять фотографию</string>
-    <string name="errorCouldNotDeletePhoto">Удалить фотографию не удалось</string>
-    <string name="errorCouldNotUpdatePhoto">Не удалось обновить детали фотографии</string>
     <string name="errorCouldNotCreateAlbum">Не удалось создать альбом</string>
-    <string name="errorCouldNotGetShareToken">Не удалось создать маркер публикации</string>
     <string name="errorOccured">Возникла ошибка</string>
     <string name="errorCouldNotLoadNextTagsInList">Не удалось загрузить следующие теги в списке</string>
     <string name="errorCouldNotInitTwitterFragment">Не удалось инициализировать twitter фрагмент</string>

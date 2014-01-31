@@ -6,9 +6,6 @@
     <dimen name="actionbar_title_text_size">20dp</dimen>
     <dimen name="actionbar_action_text_size">100dp</dimen>
     <dimen name="album_item_size">100dp</dimen>
-    <dimen name="gallery_item_size">100dp</dimen>
-    <dimen name="gallery_item_spacing">2dp</dimen>
-    <dimen name="gallery_item_border">1dp</dimen>
     <dimen name="image_thumbnail_size">100dp</dimen>
     <dimen name="image_thumbnail_spacing">1dp</dimen>
     <dimen name="image_thumbnail_border">1dp</dimen>

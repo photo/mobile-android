@@ -84,6 +84,11 @@
     <string name="errorNotLoggedIn">You are not yet logged in.</string>
     <string name="errorCouldNotValidateUploadToken">Could not validate upload token.</string>
     <string name="errorSpecifiedUrlIsInvalid">The specified URL is invalid</string>
+    <string name="errorCouldNotLoadNextPhotosInList">Could not load next photos in list</string>
+    <string name="errorCouldNotGetPhoto">Could not get photo</string>
+    <string name="errorCouldNotDeletePhoto">Could not delete photo</string>
+    <string name="errorCouldNotUpdatePhoto">Could not update photo details</string>
+    <string name="errorCouldNotGetShareToken">Could not get share token</string>
     <string name="unknown_error_with_code">Unknown error with code %1$d</string>
     <string name="unknown_error_try_again">We ran into an unknown problem. Please try again.</string>
 

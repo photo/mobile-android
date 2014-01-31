@@ -120,15 +120,11 @@
     <string name="errorCouldNotUploadTakenPhoto">Foto não enviada</string>
     <string name="errorVerifyingTheResponse">Erro ao verificar o resultado</string>
     <string name="errorWithTwitterAuthentication">Erro com autenticação do Twitter</string>
-    <string name="errorCouldNotLoadNextPhotosInList">Não foi possível carregar próximas fotos</string>
     <string name="errorCouldNotLogin">Erro ao logar</string>
     <string name="errorCouldNotSignup">Erro ao criar conta</string>
     <string name="errorCouldNotLoadNextAlbumsInList">Não foi possível carregar próximos álbuns</string>
     <string name="errorCouldNotUseIntentsToOpenMaps">Erro ao abrir o mapa com Intent</string>
     <string name="errorCouldNotLoadNextPhotosInList">Não foi possível carregar fotos</string>
-    <string name="errorCouldNotGetPhoto">Não foi possível carregar foto</string>
-    <string name="errorCouldNotDeletePhoto">Erro ao remover foto</string>
-    <string name="errorCouldNotUpdatePhoto">Erro ao atualizar a foto</string>
     <string name="errorOccured">Occorreu um erro</string>
     <string name="errorCouldNotLoadNextTagsInList">Não foi possível carregar lista de tags</string>
     <string name="errorCouldNotInitTwitterFragment">Erro ao iniciar fragment Twitter</string>

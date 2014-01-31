@@ -1,5 +1,5 @@
 
-package com.trovebox.android.app.ui.adapter;
+package com.trovebox.android.common.ui.adapter;
 
 import java.util.ArrayList;
 import java.util.List;
