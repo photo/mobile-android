@@ -26,7 +26,7 @@
  * https://github.com/dinocore1/DevsmartLib-Android
  */
 
-package com.trovebox.android.app.ui.widget;
+package com.trovebox.android.common.ui.widget;
 
 import java.util.LinkedList;
 import java.util.Queue;

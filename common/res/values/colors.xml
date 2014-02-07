@@ -11,6 +11,11 @@
     <color name="ab_bg_brown_gradient_end_color_with_alpha">#663c2514</color>
     <color name="ab_fg_white">#ffffff</color>
     <color name="ab_fg_black">#000000</color>
+
+    <drawable name="ab_bg_black">#66000000</drawable>
+
     <color name="pressed_trovebox">#CCfece31</color>
+    <color name="detail_thumb_unselected_border">#000</color>
+    <color name="detail_thumb_selected_border">#9eddff</color>
 
 </resources>

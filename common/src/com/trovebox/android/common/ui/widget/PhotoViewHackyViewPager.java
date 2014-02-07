@@ -1,4 +1,4 @@
-package com.trovebox.android.app.ui.widget;
+package com.trovebox.android.common.ui.widget;
 
 import android.content.Context;
 import android.support.v4.view.ViewPager;

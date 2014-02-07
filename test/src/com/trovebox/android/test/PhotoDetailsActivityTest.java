@@ -61,7 +61,7 @@ public class PhotoDetailsActivityTest extends
         Photo photo = Photo.fromJson(JSONUtils.getJson(
                 getInstrumentation().getContext(),
                 R.raw.json_photo));
-        intent.putExtra(PhotoDetailsActivity.EXTRA_PHOTO, photo);
+        intent.putExtra(PhotoDetailsUiFragment.EXTRA_PHOTO, photo);
         setActivityIntent(intent);
         activity = this.getActivity();
 

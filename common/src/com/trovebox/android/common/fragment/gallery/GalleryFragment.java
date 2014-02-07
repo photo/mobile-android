@@ -99,6 +99,10 @@ public abstract class GalleryFragment extends CommonRefreshableFragmentWithImage
 
         addFragmentLifecycleRegisteredReceiver(UploaderServiceUtils
                 .getAndRegisterOnPhotoUploadedActionBroadcastReceiver(TAG, this, getActivity()));
+        addFragmentLifecycleRegisteredReceiver(PhotoUtils
+                .getAndRegisterOnPhotoDeletedActionBroadcastReceiver(TAG, this, getActivity()));
+        addFragmentLifecycleRegisteredReceiver(PhotoUtils
+                .getAndRegisterOnPhotoUpdatedActionBroadcastReceiver(TAG, this, getActivity()));
     }
 
     @Override

@@ -233,7 +233,6 @@
     <string name="feather_failed_to_load_image">Не удалось загрузить изображение %1$s</string>
 
     <!-- Photo details -->
-    <string name="details_title_and_date_header">%1$s снято %2$s</string>
     <string name="delete_photo_confirmation_question">Вы уверены, что хотите удалить эту фотографию?</string>
     <string name="menu_edit">Редактировать</string>
     <string name="menu_delete">Удалить</string>

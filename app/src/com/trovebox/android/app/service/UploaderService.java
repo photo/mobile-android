@@ -24,6 +24,7 @@ import com.trovebox.android.app.UploadManagerActivity;
 import com.trovebox.android.app.facebook.FacebookProvider;
 import com.trovebox.android.app.net.account.AccountLimitUtils2;
 import com.trovebox.android.app.twitter.TwitterProvider;
+import com.trovebox.android.common.fragment.photo_details.PhotoDetailsFragment;
 import com.trovebox.android.common.model.Photo;
 import com.trovebox.android.common.model.utils.PhotoUtils;
 import com.trovebox.android.common.net.ReturnSizes;
@@ -126,7 +127,7 @@ public class UploaderService extends AbstractUploaderService {
     protected PendingIntent getSuccessPendingIntent(ArrayList<Photo> photos) {
         Intent notificationIntent;
         notificationIntent = new Intent(this, PhotoDetailsActivity.class);
-        notificationIntent.putParcelableArrayListExtra(PhotoDetailsActivity.EXTRA_PHOTOS, photos);
+        notificationIntent.putParcelableArrayListExtra(PhotoDetailsFragment.EXTRA_PHOTOS, photos);
         PendingIntent contentIntent = PendingIntent.getActivity(this, requestCounter++,
                 notificationIntent, 0);
         return contentIntent;

@@ -9,10 +9,6 @@
     <dimen name="image_thumbnail_size">100dp</dimen>
     <dimen name="image_thumbnail_spacing">1dp</dimen>
     <dimen name="image_thumbnail_border">1dp</dimen>
-    <dimen name="detail_thumbnail_size">100dp</dimen>
-    <dimen name="detail_thumbnail_spacing">0dp</dimen>
-    <dimen name="detail_thumbnail_border">2dp</dimen>
-    <dimen name="detail_thumbnail_with_border_size">104dp</dimen>
     <dimen name="profile_thumbnail_size">100dp</dimen>
     <dimen name="profile_thumbnail_corner_radius">10dp</dimen>
     <dimen name="select_profile_thumbnail_size">50dp</dimen>

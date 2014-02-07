@@ -18,6 +18,7 @@ import com.trovebox.android.app.NavigationHandlerFragment.TitleChangedHandler;
 import com.trovebox.android.app.PhotoDetailsActivity.PhotoDetailsUiFragment;
 import com.trovebox.android.app.model.utils.AlbumUtils;
 import com.trovebox.android.app.net.ProfileResponseUtils;
+import com.trovebox.android.common.fragment.photo_details.PhotoDetailsFragment;
 import com.trovebox.android.common.model.Album;
 import com.trovebox.android.common.model.Photo;
 import com.trovebox.android.common.model.ProfileInformation;
@@ -103,7 +104,7 @@ public class GalleryFragment extends com.trovebox.android.common.fragment.galler
             public void onClick(View v) {
                 TrackerUtils.trackButtonClickEvent("image", GalleryFragment.this);
                 Intent intent = new Intent(getActivity(), PhotoDetailsActivity.class);
-                intent.putExtra(PhotoDetailsActivity.EXTRA_ADAPTER_PHOTOS,
+                intent.putExtra(PhotoDetailsFragment.EXTRA_ADAPTER_PHOTOS,
                         new PhotosEndlessAdapter.ParametersHolder(galleryAdapter, value));
                 startActivity(intent);
                 clearImageWorkerCaches(true);

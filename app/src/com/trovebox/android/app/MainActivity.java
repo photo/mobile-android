@@ -33,10 +33,6 @@ import com.trovebox.android.app.net.account.AccountLimitUtils2;
 import com.trovebox.android.app.twitter.TwitterUtils;
 import com.trovebox.android.common.activity.CommonActivity;
 import com.trovebox.android.common.model.Album;
-import com.trovebox.android.common.model.Photo;
-import com.trovebox.android.common.model.utils.PhotoUtils;
-import com.trovebox.android.common.model.utils.PhotoUtils.PhotoDeletedHandler;
-import com.trovebox.android.common.model.utils.PhotoUtils.PhotoUpdatedHandler;
 import com.trovebox.android.common.provider.UploadsUtils;
 import com.trovebox.android.common.provider.UploadsUtils.UploadsClearedHandler;
 import com.trovebox.android.common.util.BackKeyControl;
@@ -52,8 +48,8 @@ import com.trovebox.android.common.util.TrackerUtils;
 @Addons(Activity.ADDON_SLIDER)
 public class MainActivity extends CommonActivity implements LoadingControl, GalleryOpenControl,
         SyncHandler, UploadsClearedHandler, TwitterLoadingControlAccessor,
-        FacebookLoadingControlAccessor, SyncStartedHandler, PhotoDeletedHandler,
-        PhotoUpdatedHandler, GalleryFragment.StartNowHandler, TitleChangedHandler {
+        FacebookLoadingControlAccessor, SyncStartedHandler, GalleryFragment.StartNowHandler,
+        TitleChangedHandler {
     private static final String NAVIGATION_HANDLER_FRAGMENT_TAG = "NavigationHandlerFragment";
 
     public static final String TAG = MainActivity.class.getSimpleName();
@@ -106,10 +102,6 @@ public class MainActivity extends CommonActivity implements LoadingControl, Gall
                 .getAndRegisterOnUploadClearedActionBroadcastReceiver(TAG,
                         this, this));
         addRegisteredReceiver(SyncUtils.getAndRegisterOnSyncStartedActionBroadcastReceiver(
-                TAG, this, this));
-        addRegisteredReceiver(PhotoUtils.getAndRegisterOnPhotoDeletedActionBroadcastReceiver(
-                TAG, this, this));
-        addRegisteredReceiver(PhotoUtils.getAndRegisterOnPhotoUpdatedActionBroadcastReceiver(
                 TAG, this, this));
         addRegisteredReceiver(ImageCacheUtils.getAndRegisterOnDiskCacheClearedBroadcastReceiver(
                 TAG,
@@ -432,26 +424,6 @@ public class MainActivity extends CommonActivity implements LoadingControl, Gall
         if (syncFragment != null)
         {
             syncFragment.syncStarted(processedFileNames);
-        }
-    }
-
-    @Override
-    public void photoDeleted(Photo photo)
-    {
-        GalleryFragment galleryFragment = navigationHandlerFragment.getGalleryFragment();
-        if (galleryFragment != null)
-        {
-            galleryFragment.photoDeleted(photo);
-        }
-    }
-
-    @Override
-    public void photoUpdated(Photo photo)
-    {
-        GalleryFragment galleryFragment = navigationHandlerFragment.getGalleryFragment();
-        if (galleryFragment != null)
-        {
-            galleryFragment.photoUpdated(photo);
         }
     }
 

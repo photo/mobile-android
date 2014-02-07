@@ -10,5 +10,8 @@
     <dimen name="gallery_item_size">100dp</dimen>
     <dimen name="gallery_item_spacing">2dp</dimen>
     <dimen name="gallery_item_border">1dp</dimen>
+    <dimen name="detail_thumbnail_size">100dp</dimen>
+    <dimen name="detail_thumbnail_spacing">0dp</dimen>
+    <dimen name="detail_thumbnail_border">2dp</dimen>
 
 </resources>
