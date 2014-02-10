@@ -11,6 +11,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
@@ -80,14 +81,16 @@ public abstract class GalleryFragment extends CommonRefreshableFragmentWithImage
 
     private int mLayoutId;
     private boolean mCleanCurrentParamsOnDeactivation;
+    private String mSortBy;
 
     /**
      * @param layoutId
      * @param cleanCurrentParamsOnDeactivation
      */
-    public GalleryFragment(int layoutId, boolean cleanCurrentParamsOnDeactivation) {
+    public GalleryFragment(int layoutId, boolean cleanCurrentParamsOnDeactivation, String sortBy) {
         mLayoutId = layoutId;
         mCleanCurrentParamsOnDeactivation = cleanCurrentParamsOnDeactivation;
+        mSortBy = sortBy;
     }
 
     @Override
@@ -123,13 +126,6 @@ public abstract class GalleryFragment extends CommonRefreshableFragmentWithImage
             currentAlbum = savedInstanceState.getParcelable(EXTRA_ALBUM);
             currentToken = savedInstanceState.getString(EXTRA_TOKEN);
             currentHost = savedInstanceState.getString(EXTRA_HOST);
-        } else {
-            if (mCleanCurrentParamsOnDeactivation) {
-                currentTags = null;
-                currentAlbum = null;
-                currentToken = null;
-                currentHost = null;
-            }
         }
         return v;
     }
@@ -188,19 +184,10 @@ public abstract class GalleryFragment extends CommonRefreshableFragmentWithImage
 
     void refresh(View v) {
         mRevalidateRequired = !isResumed();
-        if (currentTags == null && currentAlbum == null && currentToken == null
-                && currentHost == null) {
-            Intent intent = getActivity().getIntent();
-            currentTags = intent != null ? intent.getStringExtra(EXTRA_TAG) : null;
-            currentAlbum = intent != null ? (Album) intent.getParcelableExtra(EXTRA_ALBUM) : null;
-            currentToken = intent != null ? intent.getStringExtra(EXTRA_TOKEN) : null;
-            currentHost = intent != null ? intent.getStringExtra(EXTRA_HOST) : null;
-        }
         if (currentTags != null || currentAlbum != null || currentToken != null
                 || currentHost != null) {
             galleryAdapter = new GalleryAdapterExt(currentTags, currentAlbum == null ? null
-                    : currentAlbum.getId(), currentToken, currentHost);
-            removeTagsAndAlbumInformationFromActivityIntent();
+                    : currentAlbum.getId(), currentToken, mSortBy, currentHost);
         } else {
             galleryAdapter = createGalleryAdapterForNoParams();
         }
@@ -237,32 +224,33 @@ public abstract class GalleryFragment extends CommonRefreshableFragmentWithImage
     public void cleanRefreshIfFiltered() {
         if (currentTags != null || currentAlbum != null || currentToken != null
                 || currentHost != null) {
-            currentTags = null;
-            currentAlbum = null;
-            currentToken = null;
-            currentHost = null;
+            setCurrentParameters(null, null, null, null);
             refresh();
         }
     }
 
-    private void removeTagsAndAlbumInformationFromActivityIntent() {
-        Intent intent = getActivity().getIntent();
-        if (intent != null) {
-            intent.removeExtra(EXTRA_TAG);
-            intent.removeExtra(EXTRA_ALBUM);
-        }
+    public void setCurrentParameters(String tags, Album album, String token, String host) {
+        currentTags = tags;
+        currentAlbum = album;
+        currentToken = token;
+        currentHost = host;
     }
 
-    void saveCurrentTagAndAlbumInformationToActivityIntent() {
-        Intent intent = getActivity().getIntent();
-        if (intent == null) {
-            intent = new Intent();
-            getActivity().setIntent(intent);
+    public void reinitFromIntent(Intent intent) {
+        setParametersFromIntent(intent);
+        refreshIfNewParameters();
+    }
+
+    private void setParametersFromIntent(Intent intent) {
+        if (intent != null) {
+            String tag = intent.getStringExtra(EXTRA_TAG);
+            Album album = intent.getParcelableExtra(EXTRA_ALBUM);
+            String token = intent.getStringExtra(EXTRA_TOKEN);
+            String host = intent.getStringExtra(EXTRA_HOST);
+            setCurrentParameters(tag, album, token, host);
+        } else {
+            setCurrentParameters(null, null, null, null);
         }
-        intent.putExtra(GalleryFragment.EXTRA_TAG, currentTags);
-        intent.putExtra(GalleryFragment.EXTRA_ALBUM, currentAlbum);
-        intent.putExtra(GalleryFragment.EXTRA_TOKEN, currentToken);
-        intent.putExtra(GalleryFragment.EXTRA_HOST, currentHost);
     }
 
     @Override
@@ -301,11 +289,18 @@ public abstract class GalleryFragment extends CommonRefreshableFragmentWithImage
         }
         // if filtering is requested
         if (!refreshOnPageActivated) {
-            Intent intent = getActivity().getIntent();
-            if (intent != null) {
-                if (intent.hasExtra(EXTRA_ALBUM) || intent.hasExtra(EXTRA_TAG)) {
-                    refresh();
-                }
+            refreshIfNewParameters();
+        }
+    }
+
+    private void refreshIfNewParameters() {
+        if (galleryAdapter != null) {
+            if (!(TextUtils.equals(galleryAdapter.getTagFilter(), currentTags)
+                    && ((currentAlbum == null && galleryAdapter.getAlbumFilter() == null) || (currentAlbum != null && TextUtils
+                            .equals(currentAlbum.getId(), galleryAdapter.getAlbumFilter())))
+                    && TextUtils.equals(galleryAdapter.getToken(), currentToken) && TextUtils
+                        .equals(galleryAdapter.getHost(), currentHost))) {
+                refresh();
             }
         }
     }
@@ -315,10 +310,7 @@ public abstract class GalleryFragment extends CommonRefreshableFragmentWithImage
         super.pageDeactivated();
         if (mCleanCurrentParamsOnDeactivation
                 && (currentTags != null || currentAlbum != null || currentToken != null || currentHost != null)) {
-            currentTags = null;
-            currentAlbum = null;
-            currentToken = null;
-            currentHost = null;
+            setCurrentParameters(null, null, null, null);
             // we need to schedule refresh when the page will be activated in
             // viewpager to clear filters
             refreshOnPageActivated = true;
@@ -386,8 +378,9 @@ public abstract class GalleryFragment extends CommonRefreshableFragmentWithImage
             init();
         }
 
-        public GalleryAdapterExt(String tagFilter, String albumFilter, String token, String host) {
-            super(tagFilter, albumFilter, token, host);
+        public GalleryAdapterExt(String tagFilter, String albumFilter, String token, String sortBy,
+                String host) {
+            super(tagFilter, albumFilter, token, sortBy, host);
             init();
         }
 
@@ -503,11 +496,12 @@ public abstract class GalleryFragment extends CommonRefreshableFragmentWithImage
 
     private class GalleryAdapter extends PhotosEndlessAdapter {
         public GalleryAdapter() {
-            this(null, null, null, null);
+            this(null, null, null, null, null);
         }
 
-        public GalleryAdapter(String tagFilter, String albumFilter, String token, String host) {
-            super(getActivity(), pageSize, tagFilter, albumFilter, token, null, returnSizes, host);
+        public GalleryAdapter(String tagFilter, String albumFilter, String token, String sortBy,
+                String host) {
+            super(getActivity(), pageSize, tagFilter, albumFilter, token, sortBy, returnSizes, host);
         }
 
         @Override

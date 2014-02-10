@@ -33,7 +33,7 @@ import com.trovebox.android.common.util.TrackerUtils;
 public class GalleryFragment extends com.trovebox.android.common.fragment.gallery.GalleryFragment {
 
     public GalleryFragment() {
-        super(R.layout.fragment_gallery, true);
+        super(R.layout.fragment_gallery, true, null);
     }
 
     private TitleChangedHandler mTitleChangedHandler;

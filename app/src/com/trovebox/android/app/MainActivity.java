@@ -318,14 +318,7 @@ public class MainActivity extends CommonActivity implements LoadingControl, Gall
     @Override
     public void openGallery(String tag, Album album)
     {
-        Intent intent = getIntent();
-        if (intent == null)
-        {
-            intent = new Intent();
-            setIntent(intent);
-        }
-        intent.putExtra(GalleryFragment.EXTRA_TAG, tag);
-        intent.putExtra(GalleryFragment.EXTRA_ALBUM, album);
+        navigationHandlerFragment.getGalleryFragment().setCurrentParameters(tag, album, null, null);
         selectTab(navigationHandlerFragment.getGalleryIndex());
     }
 
