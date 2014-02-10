@@ -431,6 +431,12 @@ public abstract class GalleryFragment extends CommonRefreshableFragmentWithImage
                                             photo, photo.getUrl(thumbSize.toString()));
                                     mImageWorker.loadImage(fo, imageView);
                                 }
+                            }, new Runnable() {
+
+                                @Override
+                                public void run() {
+                                    mImageWorker.loadImage(null, imageView);
+                                }
                             }, loadingControl);
                 }
             };

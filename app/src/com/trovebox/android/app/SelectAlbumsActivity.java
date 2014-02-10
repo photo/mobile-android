@@ -230,6 +230,12 @@ public class SelectAlbumsActivity
                                             .loadImage(photo.getUrl(thumbSize.toString()), vh.cover);
 
                                 }
+                            }, new Runnable() {
+
+                                @Override
+                                public void run() {
+                                    mImageWorker.loadImage(null, vh.cover);
+                                }
                             }, SelectAlbumsUiFragment.this);
                 } else
                 {

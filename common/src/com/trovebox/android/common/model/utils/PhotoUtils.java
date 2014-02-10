@@ -54,10 +54,13 @@ public class PhotoUtils {
      * @param photo the photo to check
      * @param photoSize the required photo size
      * @param runnable the runnable which will run with the validated photo
+     * @param preSizeRetrievalRunnable runnable to run before the retrieval task
+     *            started
      * @param loadingControl the loading control to display loading indicator
      */
     public static void validateUrlForSizeExistAsyncAndRun(Photo photo, ReturnSizes photoSize,
-            RunnableWithParameter<Photo> runnable, LoadingControl loadingControl) {
+            RunnableWithParameter<Photo> runnable, Runnable preSizeRetrievalRunnable,
+            LoadingControl loadingControl) {
         String size = photoSize.toString();
         if (photo.getUrl(size) != null) {
             CommonUtils.debug(TAG, "Url for the size " + size + " exists. Running action.");
@@ -65,6 +68,9 @@ public class PhotoUtils {
         } else {
             CommonUtils.debug(TAG, "Url for the size " + size
                     + " doesn't exist. Running size retrieval task.");
+            if (preSizeRetrievalRunnable != null) {
+                preSizeRetrievalRunnable.run();
+            }
             new RetrieveThumbUrlTask(photo, photoSize, runnable, loadingControl).execute();
         }
     }
@@ -154,7 +160,7 @@ public class PhotoUtils {
         TrackerUtils.trackBackgroundEvent("getThePhotoWithReturnSize", TAG);
         long start = System.currentTimeMillis();
         PhotoResponse response = CommonConfigurationUtils.getApi().getPhoto(photo.getId(),
-                photoSize);
+                photoSize, photo.getToken(), photo.getHost());
         photo = response.getPhoto();
         TrackerUtils.trackDataLoadTiming(System.currentTimeMillis() - start,
                 "getThePhotoWithReturnSize", TAG);
@@ -204,6 +210,7 @@ public class PhotoUtils {
 
     private static class RetrieveThumbUrlTask extends SimpleAsyncTaskEx {
         private Photo mPhoto;
+        private Photo mPhoto2;
         private ReturnSizes photoSize;
         private RunnableWithParameter<Photo> runnable;
 
@@ -218,9 +225,7 @@ public class PhotoUtils {
         @Override
         protected Boolean doInBackground(Void... params) {
             try {
-                Photo mPhoto2 = getThePhotoWithReturnSize(mPhoto, photoSize);
-                String size = photoSize.toString();
-                mPhoto.putUrl(size, mPhoto2.getUrl(size));
+                mPhoto2 = getThePhotoWithReturnSize(mPhoto, photoSize);
                 return true;
             } catch (Exception e) {
                 GuiUtils.error(TAG, R.string.errorCouldNotGetPhoto, e);
@@ -230,7 +235,13 @@ public class PhotoUtils {
 
         @Override
         protected void onSuccessPostExecute() {
-            runnable.run(mPhoto);
+            try {
+                String size = photoSize.toString();
+                mPhoto.putUrl(size, mPhoto2.getUrl(size));
+                runnable.run(mPhoto);
+            } catch (Exception ex) {
+                GuiUtils.error(TAG, R.string.errorCouldNotGetPhoto, ex);
+            }
         }
 
     }

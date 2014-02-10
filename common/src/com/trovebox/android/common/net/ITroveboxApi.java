@@ -67,13 +67,15 @@ public interface ITroveboxApi {
      * 
      * @param photoId id of the photo
      * @param returnSize which sizes should be returned
+     * @param token access token for the photo if required
+     * @param host alternate host
      * @return the photo
      * @throws IOException
      * @throws ClientProtocolException
      * @throws JSONException
      * @throws IllegalStateException
      */
-    PhotoResponse getPhoto(String photoId, ReturnSizes returnSize)
+    PhotoResponse getPhoto(String photoId, ReturnSizes returnSize, String token, String host)
             throws ClientProtocolException, IOException, IllegalStateException,
             JSONException;
 

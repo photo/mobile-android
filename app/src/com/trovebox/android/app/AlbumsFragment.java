@@ -143,6 +143,12 @@ public class AlbumsFragment extends CommonRefreshableFragmentWithImageWorker imp
                                         .loadImage(photo.getUrl(thumbSize.toString()), image);
 
                             }
+                        }, new Runnable() {
+
+                            @Override
+                            public void run() {
+                                mImageWorker.loadImage(null, image);
+                            }
                         }, loadingControl);
             } else
             {

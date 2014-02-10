@@ -270,6 +270,8 @@ public abstract class AbstractUploaderService extends Service implements PhotoUp
                     if (uploadResponse.isSuccess()) {
                         Log.i(TAG, "Upload to Trovebox completed for: " + photoUpload.getPhotoUri());
                         photo = uploadResponse.getPhoto();
+                        photo.setHost(photoUpload.getHost());
+                        photo.setToken(photoUpload.getToken());
                         TrackerUtils.trackDataLoadTiming(System.currentTimeMillis() - start,
                                 "photoUpload", TAG);
                     } else {

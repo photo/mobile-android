@@ -79,15 +79,20 @@ public class TroveboxApi extends ApiBase implements ITroveboxApi {
     }
 
     @Override
-    public PhotoResponse getPhoto(String photoId, ReturnSizes returnSize)
+    public PhotoResponse getPhoto(String photoId, ReturnSizes returnSize, String token, String host)
             throws ClientProtocolException, IOException, IllegalStateException,
             JSONException {
-        ApiRequest request = new ApiRequest(ApiRequest.GET, "/photo/" + photoId
-                + "/view.json");
+        StringBuilder path = new StringBuilder("/photo/" + photoId);
+
+        if (!TextUtils.isEmpty(token)) {
+            path.append("/token-" + token);
+        }
+        path.append("/view.json");
+        ApiRequest request = new ApiRequest(ApiRequest.GET, path.toString());
         if (returnSize != null) {
             request.addParameter("returnSizes", returnSize.toString());
         }
-        ApiResponse response = execute(request);
+        ApiResponse response = TextUtils.isEmpty(host) ? execute(request) : execute(request, host);
         return new PhotoResponse(RequestType.PHOTO, response.getJSONObject());
     }
 

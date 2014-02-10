@@ -501,7 +501,15 @@ public class PhotoDetailsFragment extends CommonFragmentWithImageWorker implemen
                                 GuiUtils.noAlertError(TAG, ex);
                             }
                         }
-                    }, loadingControl);
+                    }, 
+                    new Runnable() {
+                        
+                        @Override
+                        public void run() {
+                            mImageWorker.loadImage(null, imageView);
+                        }
+                    },
+                    loadingControl);
 
             loadingControl.stopLoading();
 
@@ -600,6 +608,12 @@ public class PhotoDetailsFragment extends CommonFragmentWithImageWorker implemen
                         public void run(Photo photo) {
                             String url = photo.getUrl(thumbSize.toString());
                             mImageWorker2.loadImage(url, imageView);
+                        }
+                    }, new Runnable() {
+
+                        @Override
+                        public void run() {
+                            mImageWorker2.loadImage(null, imageView);
                         }
                     }, null);
             return view;

@@ -47,7 +47,8 @@ public class PhotoDetailsActivityTest extends
 
         getApiMock().getPhoto(
                 (String) EasyMock.anyObject(),
-                (ReturnSizes) EasyMock.anyObject()
+                (ReturnSizes) EasyMock.anyObject(),
+                (String) EasyMock.anyObject(), (String) EasyMock.anyObject()
                 );
         PowerMock
                 .expectLastCall()

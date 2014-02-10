@@ -157,7 +157,8 @@ public class FacebookFragment extends CommonStyledDialogFragment
                 new PostPhotoTask(photo).execute();
             }
         };
-        PhotoUtils.validateUrlForSizeExistAsyncAndRun(photo, thumbSize, runnable, loadingControl);
+        PhotoUtils.validateUrlForSizeExistAsyncAndRun(photo, thumbSize, runnable, null,
+                loadingControl);
     }
 
     private void performFacebookLogout()

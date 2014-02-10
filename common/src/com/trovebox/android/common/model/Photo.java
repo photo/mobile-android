@@ -35,6 +35,8 @@ public class Photo implements Parcelable {
     protected String mId;
     protected final List<String> mTags;
     protected String mAppId;
+    protected String mHost;
+    protected String mToken;
     protected final Map<String, String> mUrls;
     protected String mTitle;
     protected String mDescription;
@@ -150,6 +152,42 @@ public class Photo implements Parcelable {
     }
 
     /**
+     * Returns the host of the server on which this Photo is located.
+     * 
+     * @return host
+     */
+    public String getHost() {
+        return mHost;
+    }
+
+    /**
+     * Set the host of the server on which the Photo is located
+     * 
+     * @param host
+     */
+    public void setHost(String host) {
+        mHost = host;
+    }
+
+    /**
+     * Returns the access token of the photo.
+     * 
+     * @return token
+     */
+    public String getToken() {
+        return mToken;
+    }
+
+    /**
+     * Set the access token of the photo
+     * 
+     * @param token
+     */
+    public void setToken(String token) {
+        mToken = token;
+    }
+
+    /**
      * Get URL for a specific size. Examples are: 50x50xCR and 640x960 . CR
      * stands for cropped.
      * 
@@ -247,6 +285,8 @@ public class Photo implements Parcelable {
         out.writeString(mTitle);
         out.writeString(mDescription);
         out.writeString(mAppId);
+        out.writeString(mHost);
+        out.writeString(mToken);
         out.writeStringList(mTags);
         out.writeInt(mPermission);
         out.writeLong(mDateTaken.getTime());
@@ -283,6 +323,8 @@ public class Photo implements Parcelable {
         mTitle = in.readString();
         mDescription = in.readString();
         mAppId = in.readString();
+        mHost = in.readString();
+        mToken = in.readString();
         in.readStringList(mTags);
         mPermission = in.readInt();
         mDateTaken = new Date(in.readLong());

@@ -25,6 +25,9 @@
     <string name="sync_show_all">Mostre todas</string>
     <string name="sync_uploaded">ENVIADA!</string>
 
+    <!-- Photo details -->
+    <string name="details_title_and_date_header">%1$s tirada em %2$s</string>
+
     <!-- Notifications -->
     <string name="notification_uploading_photo">Enviando %1$s</string>
     <string name="notification_upload_failed_title">Falha no envio</string>
