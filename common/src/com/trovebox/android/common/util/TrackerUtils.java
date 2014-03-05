@@ -46,7 +46,7 @@ public class TrackerUtils {
     }
 
     /**
-     * Setup uncaug exception handler
+     * Setup uncaught exception handler
      */
     public static void setupTrackerUncaughtExceptionHandler() {
         EasyTracker.getInstance().setContext(CommonConfigurationUtils.getApplicationContext());

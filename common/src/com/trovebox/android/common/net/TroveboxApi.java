@@ -288,7 +288,7 @@ public class TroveboxApi extends ApiBase implements ITroveboxApi {
             IOException, IllegalStateException,
             JSONException
     {
-        return getPhotos(null, null, null, null, hash, null, null);
+        return getPhotos(null, null, null, null, hash, null, null, null);
     }
 
     @Override
