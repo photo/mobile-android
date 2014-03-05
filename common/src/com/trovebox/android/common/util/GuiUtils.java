@@ -42,6 +42,17 @@ public class GuiUtils {
     }
 
     /**
+     * Post action to handler
+     * 
+     * @param action
+     * @param delayMillis
+     */
+    public static final void postDelayed(Runnable action, int delayMillis) {
+        CommonUtils.debug(TAG, "post");
+        mHandler.postDelayed(action, delayMillis);
+    }
+
+    /**
      * Run action in UI thread
      * 
      * @param action

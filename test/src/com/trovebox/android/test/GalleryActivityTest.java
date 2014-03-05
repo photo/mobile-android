@@ -17,14 +17,14 @@ import android.widget.ListAdapter;
 import android.widget.ListView;
 
 import com.jayway.android.robotium.solo.Solo;
-import com.trovebox.android.app.GalleryFragment.GalleryAdapterExt;
 import com.trovebox.android.app.MainActivity;
-import com.trovebox.android.app.net.Paging;
-import com.trovebox.android.app.net.PhotoResponse;
-import com.trovebox.android.app.net.PhotosResponse;
-import com.trovebox.android.app.net.ReturnSizes;
-import com.trovebox.android.app.net.TroveboxResponse.RequestType;
-import com.trovebox.android.app.util.CommonUtils;
+import com.trovebox.android.common.fragment.gallery.GalleryFragment.GalleryAdapterExt;
+import com.trovebox.android.common.net.Paging;
+import com.trovebox.android.common.net.PhotoResponse;
+import com.trovebox.android.common.net.PhotosResponse;
+import com.trovebox.android.common.net.ReturnSizes;
+import com.trovebox.android.common.net.TroveboxResponse.RequestType;
+import com.trovebox.android.common.util.CommonUtils;
 import com.trovebox.android.test.net.JSONUtils;
 
 public class GalleryActivityTest extends
@@ -46,8 +46,10 @@ public class GalleryActivityTest extends
         getApiMock().getPhotos((ReturnSizes) EasyMock.anyObject(),
                 (Collection<String>) EasyMock.anyObject(),
                 (String) EasyMock.anyObject(),
+                null,
                 (String) EasyMock.anyObject(),
-                (Paging) EasyMock.anyObject());
+                (Paging) EasyMock.anyObject(),
+                null);
         PowerMock
                 .expectLastCall()
                 .andReturn(
@@ -56,7 +58,8 @@ public class GalleryActivityTest extends
                                 R.raw.json_photos_get))).times(2);
         getApiMock().getPhoto(
                 (String) EasyMock.anyObject(),
-                (ReturnSizes) EasyMock.anyObject()
+                (ReturnSizes) EasyMock.anyObject(),
+                (String) EasyMock.anyObject(), (String) EasyMock.anyObject()
                 );
         PowerMock
                 .expectLastCall()

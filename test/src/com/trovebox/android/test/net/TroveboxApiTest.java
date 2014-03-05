@@ -18,20 +18,21 @@ import android.os.Environment;
 import android.test.ApplicationTestCase;
 
 import com.trovebox.android.app.TroveboxApplication;
-import com.trovebox.android.app.model.Album;
-import com.trovebox.android.app.model.Photo;
-import com.trovebox.android.app.model.Token;
-import com.trovebox.android.app.net.AlbumResponse;
-import com.trovebox.android.app.net.ITroveboxApi;
-import com.trovebox.android.app.net.PhotoResponse;
-import com.trovebox.android.app.net.PhotosResponse;
-import com.trovebox.android.app.net.TagsResponse;
-import com.trovebox.android.app.net.TokenResponse;
-import com.trovebox.android.app.net.TroveboxApi;
-import com.trovebox.android.app.net.UploadMetaData;
-import com.trovebox.android.app.net.UploadResponse;
-import com.trovebox.android.app.util.SHA1Utils;
-import com.trovebox.android.app.util.TrackerUtils;
+import com.trovebox.android.common.model.Album;
+import com.trovebox.android.common.model.Photo;
+import com.trovebox.android.common.model.Token;
+import com.trovebox.android.common.net.AlbumResponse;
+import com.trovebox.android.common.net.ITroveboxApi;
+import com.trovebox.android.common.net.PhotoResponse;
+import com.trovebox.android.common.net.PhotosResponse;
+import com.trovebox.android.common.net.TagsResponse;
+import com.trovebox.android.common.net.TokenResponse;
+import com.trovebox.android.common.net.TroveboxApi;
+import com.trovebox.android.common.net.UploadMetaData;
+import com.trovebox.android.common.net.UploadResponse;
+import com.trovebox.android.common.util.CommonUtils;
+import com.trovebox.android.common.util.SHA1Utils;
+import com.trovebox.android.common.util.TrackerUtils;
 import com.trovebox.android.test.util.FileUtils;
 
 public class TroveboxApiTest extends ApplicationTestCase<TroveboxApplication>
@@ -49,7 +50,7 @@ public class TroveboxApiTest extends ApplicationTestCase<TroveboxApplication>
         super.setUp();
         TrackerUtils.SKIP_UNCAUGHT_SETUP = true;
         createApplication();
-        mApi = TroveboxApi.createInstance(TroveboxApplication.getContext());
+        mApi = TroveboxApi.createInstance();
     }
 
     @Override
@@ -271,6 +272,32 @@ public class TroveboxApiTest extends ApplicationTestCase<TroveboxApplication>
         assertEquals(201, resp.getCode());
     }
 
+    public void testPhotoUploadToken() throws Exception {
+        File file = createTestFileForUpload();
+
+        UploadMetaData settings = new UploadMetaData();
+        settings.setTags("uploadedBy: Test");
+        settings.setPrivate(true);
+        try {
+            UploadResponse resp = mApi.uploadPhoto(file, settings, "8f890593c5",
+                    "http://test.trovebox.com", null);
+            assertTrue(resp.isSuccess());
+            assertNotNull(resp.getPhoto());
+            try {
+
+                assertTrue(resp.getPhoto().getTags().size() >= 1);
+                assertTrue(resp.getPhoto().isPrivate());
+            } finally {
+                // remove uploaded photo
+                // mApi.deletePhoto(resp.getPhoto().getId());
+            }
+        } catch (Exception e) {
+            CommonUtils.error(TroveboxApiTest.class.getSimpleName(), e);
+            fail("Exception should not happen: " + e.getClass().getSimpleName() + " - "
+                    + e.getMessage());
+        }
+        file.delete();
+    }
     private Context getTestContext() throws Exception
     {
         return (Context) getClass().getMethod("getTestContext").invoke(this);

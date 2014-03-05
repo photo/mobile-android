@@ -7,8 +7,8 @@ import android.support.v4.view.ViewPager;
 import android.view.MotionEvent;
 import android.view.View;
 
-import com.trovebox.android.app.common.CommonActivity;
-import com.trovebox.android.app.util.TrackerUtils;
+import com.trovebox.android.common.activity.CommonActivity;
+import com.trovebox.android.common.util.TrackerUtils;
 import com.viewpagerindicator.CirclePageIndicator;
 import com.viewpagerindicator.PageIndicator;
 

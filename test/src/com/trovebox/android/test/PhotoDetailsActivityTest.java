@@ -15,10 +15,10 @@ import android.support.v4.app.Fragment;
 
 import com.trovebox.android.app.PhotoDetailsActivity;
 import com.trovebox.android.app.PhotoDetailsActivity.PhotoDetailsUiFragment;
-import com.trovebox.android.app.model.Photo;
-import com.trovebox.android.app.net.PhotoResponse;
-import com.trovebox.android.app.net.ReturnSizes;
-import com.trovebox.android.app.net.TroveboxResponse.RequestType;
+import com.trovebox.android.common.model.Photo;
+import com.trovebox.android.common.net.PhotoResponse;
+import com.trovebox.android.common.net.ReturnSizes;
+import com.trovebox.android.common.net.TroveboxResponse.RequestType;
 import com.trovebox.android.test.net.JSONUtils;
 
 public class PhotoDetailsActivityTest extends
@@ -47,7 +47,8 @@ public class PhotoDetailsActivityTest extends
 
         getApiMock().getPhoto(
                 (String) EasyMock.anyObject(),
-                (ReturnSizes) EasyMock.anyObject()
+                (ReturnSizes) EasyMock.anyObject(),
+                (String) EasyMock.anyObject(), (String) EasyMock.anyObject()
                 );
         PowerMock
                 .expectLastCall()
@@ -61,7 +62,7 @@ public class PhotoDetailsActivityTest extends
         Photo photo = Photo.fromJson(JSONUtils.getJson(
                 getInstrumentation().getContext(),
                 R.raw.json_photo));
-        intent.putExtra(PhotoDetailsActivity.EXTRA_PHOTO, photo);
+        intent.putExtra(PhotoDetailsUiFragment.EXTRA_PHOTO, photo);
         setActivityIntent(intent);
         activity = this.getActivity();
 

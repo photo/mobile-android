@@ -15,11 +15,11 @@ import android.net.Uri;
 
 import com.trovebox.android.app.Preferences;
 import com.trovebox.android.app.R;
-import com.trovebox.android.app.net.ITroveboxApi;
-import com.trovebox.android.app.util.GuiUtils;
-import com.trovebox.android.app.util.LoadingControl;
 import com.trovebox.android.app.util.LoginUtils;
-import com.trovebox.android.app.util.concurrent.AsyncTaskEx;
+import com.trovebox.android.common.net.ITroveboxApi;
+import com.trovebox.android.common.util.GuiUtils;
+import com.trovebox.android.common.util.LoadingControl;
+import com.trovebox.android.common.util.concurrent.AsyncTaskEx;
 
 public class OAuthUtils
 {

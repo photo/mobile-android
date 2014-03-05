@@ -40,7 +40,8 @@ public class UploadsProviderAccessor {
     }
 
     private void addPendingUpload(Uri photoUri, UploadMetaData metaData, String host, String token,
-            boolean isAutoUpload, boolean isShareOnTwitter, boolean isShareOnFacebook) {
+            String userName, boolean isAutoUpload, boolean isShareOnTwitter,
+            boolean isShareOnFacebook) {
         ContentResolver cp = mContext.getContentResolver();
         ContentValues values = new ContentValues();
         values.put(UploadsProvider.KEY_URI, photoUri.toString());
@@ -70,6 +71,7 @@ public class UploadsProviderAccessor {
         values.put(UploadsProvider.KEY_UPLOADED, 0);
         values.put(UploadsProvider.KEY_HOST, host);
         values.put(UploadsProvider.KEY_TOKEN, token);
+        values.put(UploadsProvider.KEY_USER_NAME, userName);
         values.put(UploadsProvider.KEY_IS_AUTOUPLOAD, isAutoUpload ? 1 : 0);
         values.put(UploadsProvider.KEY_SHARE_ON_FACEBOOK, isShareOnFacebook ? 1 : 0);
         values.put(UploadsProvider.KEY_SHARE_ON_TWITTER, isShareOnTwitter ? 1 : 0);
@@ -77,12 +79,17 @@ public class UploadsProviderAccessor {
     }
 
     public void addPendingAutoUpload(Uri photoUri, UploadMetaData metaData) {
-        addPendingUpload(photoUri, metaData, null, null, true, false, false);
+        addPendingUpload(photoUri, metaData, null, null, null, true, false, false);
+    }
+
+    public void addPendingUpload(Uri photoUri, UploadMetaData metaData, boolean isShareOnTwitter,
+            boolean isShareOnFacebook) {
+        addPendingUpload(photoUri, metaData, null, null, null, isShareOnTwitter, isShareOnFacebook);
     }
 
     public void addPendingUpload(Uri photoUri, UploadMetaData metaData, String host, String token,
-            boolean isShareOnTwitter, boolean isShareOnFacebook) {
-        addPendingUpload(photoUri, metaData, host, token, false, isShareOnTwitter,
+            String userName, boolean isShareOnTwitter, boolean isShareOnFacebook) {
+        addPendingUpload(photoUri, metaData, host, token, userName, false, isShareOnTwitter,
                 isShareOnFacebook);
     }
 
@@ -227,6 +234,7 @@ public class UploadsProviderAccessor {
             pendingUpload.setError(cursor.getString(UploadsProvider.ERROR_COLUMN));
             pendingUpload.setHost(cursor.getString(UploadsProvider.HOST_COLUMN));
             pendingUpload.setToken(cursor.getString(UploadsProvider.TOKEN_COLUMN));
+            pendingUpload.setUserName(cursor.getString(UploadsProvider.USER_NAME_COLUMN));
             pendingUpload.setUploaded(cursor.getLong(UploadsProvider.UPLOADED_COLUMN));
             pendingUpload.setIsAutoUpload(cursor.getInt(UploadsProvider.IS_AUTOUPLOAD_COLUMN) != 0);
             pendingUpload.setShareOnFacebook(cursor

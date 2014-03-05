@@ -2,7 +2,6 @@
 <resources>
 
     <string name="app_name">Trovebox</string>
-    <string name="loading">Loading&#8230;</string>
     <string name="take_photo">Take Photo</string>
 
     <!-- Intro -->
@@ -13,7 +12,6 @@
 
     <!-- Menu -->
     <string name="menu_camera">Take a photo</string>
-    <string name="menu_refresh">Refresh</string>
     <string name="menu_preferences">Preferences</string>
     <string name="menu_exit">Exit</string>
 
@@ -23,11 +21,6 @@
     <string name="menu_share_twitter">Twitter</string>
     <string name="menu_share_facebook">Facebook</string>
     <string name="menu_share_system">Other System Apps…</string>
-
-    <!-- Selection Menu -->
-    <string name="menu_select_all">Select All</string>
-    <string name="menu_select_none">Select None</string>
-    <string name="menu_selection">Selection</string>
 
     <!-- Share -->
     <string name="share_private_photo_forbidden">You can\'t share private photos</string>
@@ -118,28 +111,6 @@
     <!-- SelectAlbumsActivity -->
     <string name="title_activity_select_albums">Select Albums</string>
 
-    <!-- Sync screen -->
-    <string name="sync_next_button">Next</string>
-    <string name="sync_previous_button">Back</string>
-    <string name="sync_please_pick_at_least_one_photo">Please pick at least one photo first!</string>
-    <string name="sync_show_all">Show all</string>
-    <string name="sync_uploaded">UPLOADED!</string>
-
-    <!-- Notifications -->
-    <string name="notification_uploading_photo">Uploading %1$s</string>
-    <string name="notification_upload_failed_title">Upload failed</string>
-    <string name="notification_upload_failed_title_with_reason">Upload failed: %1$s</string>
-    <string name="notification_upload_failed_text">%1$s</string>
-    <string name="notification_upload_success_title">Upload finished</string>
-    <string name="notification_upload_skipped_title">Upload skipped. Found same photo on the server.</string>
-    <string name="notification_upload_success_text">%1$s</string>
-    <string name="notification_upload_multiple_title">Successfull upload</string>
-    <string name="notification_upload_multiple_text">Uploaded: %1$d; skipped: %2$d</string>
-    <string name="notification_upload_multiple_details">Upload details</string>
-    <string name="notification_upload_multiple_detail_skipped"><![CDATA[<b>%1$s</b> skipped]]></string>
-    <string name="notification_upload_multiple_detail_done"><![CDATA[<b>%1$s</b> done]]></string>
-    <string name="noInternetAccess">Internet connection is not available</string>
-
     <!-- Newest Home -->
     <string name="newest_this_photo_was_taken">This photo was taken %1$d %2$s ago.</string>
     <string name="newest_this_photo_was_taken_less_one_hour">This photo was taken less than one hour ago.</string>
@@ -153,14 +124,10 @@
     <string name="hours">hours</string>
     <string name="year">year</string>
     <string name="years">years</string>
-    <string name="yes">Yes</string>
-    <string name="no">No</string>
-    <string name="pleaseSpecifyFirst">Please specify %1$s first!</string>
     <string name="logOut">Sign out</string>
     <string name="areYouSureQuestion">Are you sure?</string>
     <string name="external_storage_na_message">sdcard is missing or currently not mounted. Cannot continue.</string>
     <string name="action_not_supported_on_os_version">This action is not supported on your device OS version.</string>
-    <string name="upload_limit_reached_message">The free upload limit is reached.</string>
     <string name="upload_limit_reached_with_reset_message">The free upload limit is reached. Please upgrade to Pro or wait until it will reset at %1$s</string>
     <string name="upload_limit_for_multiple_upload_reached_message">You\'ve selected to upload %1$d photos but the remaining free uploading limit for your account is %2$d. Please select the number of photos which feets the limit or upgrade to Pro.</string>
     <string name="autoupload_ignored">Automatic upload ignored.</string>
@@ -171,18 +138,12 @@
     <string name="errorCouldNotUploadTakenPhoto">Could not upload the photo taken</string>
     <string name="errorVerifyingTheResponse">Error while verifying the response</string>
     <string name="errorWithTwitterAuthentication">Error with twitter authentication</string>
-    <string name="errorCouldNotLoadNextPhotosInList">Could not load next photos in list</string>
     <string name="errorCouldNotLogin">Could not login</string>
     <string name="errorCouldNotSignup">Could not signup</string>
     <string name="errorCouldNotLoadNextAlbumsInList">Could not load next albums in list</string>
     <string name="errorCouldNotUseIntentsToOpenMaps">Could not use Intent to open maps</string>
-    <string name="errorCouldNotLoadNextPhotosInList">Could not load next photos in list</string>
     <string name="errorCouldNotGetAlbum">Could not get album</string>
-    <string name="errorCouldNotGetPhoto">Could not get photo</string>
-    <string name="errorCouldNotDeletePhoto">Could not delete photo</string>
-    <string name="errorCouldNotUpdatePhoto">Could not update photo details</string>
     <string name="errorCouldNotCreateAlbum">Could not create album</string>
-    <string name="errorCouldNotGetShareToken">Could not get share token</string>
     <string name="errorOccured">Error occurred</string>
     <string name="errorCouldNotLoadNextTagsInList">Could not load next tags in list</string>
     <string name="errorCouldNotInitTwitterFragment">Could not init twitter fragment</string>
@@ -192,12 +153,9 @@
     <string name="errorCouldNotInitFacebookFragment">Could not init facebook fragment</string>
     <string name="errorCouldNotRetrieveFacebookScreenName">Could not retrieve facebook user name</string>
     <string name="errorCouldNotSendFacebookPhoto">Could not post facebook message</string>
-    <string name="errorSpecifiedUrlIsInvalid">The specified URL is invalid</string>
     <string name="errorCantFindPendingUploadInformation">Can\'t find pending upload information</string>
-    <string name="errorCouldNotStoreDownloadablePhotoNotEnoughSpace">Couldn\'t store downloadable photo on disk. Not enough free space.</string>
     <string name="errorCouldNotRetrieveProfileInfo">Could not retrieve profile information.</string>
     <string name="errorCouldNotRetrieveSystemVersionInfo">Could not retrieve system version information.</string>
-    <string name="errorNotLoggedIn">You are not yet logged in.</string>
     <string name="errorSubscriptionNotSupported">Subscriptions are not supported by your device!</string>
     <string name="errorIabNotSupported">Billing operations are not supported by your device!</string>
     <string name="errorPurchasing">Error purchasing: %1$s</string>
@@ -220,7 +178,6 @@
     <string name="sync_preference_category">Sync</string>
     <string name="sync_clear">Clear sync information</string>
     <string name="sync_clear_comment">This doesn\'t touch your images. Only uploaded markers are removed.</string>
-    <string name="sync_cleared_message">The sync information has been cleared</string>
     <string name="setting_account_facebook_loggedin_logout">Facebook Sign out</string>
     <string name="setting_account_server_title">URL</string>
     <string name="setting_set_tag_dialog_title">Set tag for uploaded pictures</string>
@@ -249,7 +206,6 @@
     <string name="title_activity_account_signup">AccountSignup</string>
     <string name="invalid_credentials">Invalid username or password</string>
     <string name="unknown_error">Unknown error</string>
-    <string name="unknown_error_with_code">Unknown error with code %1$d</string>
     <string name="sign_in_instructions"><![CDATA[<b>Enter</b> an email, password and hit <b>Login</b>]]></string>
     <string name="password_recovery_instructions">Enter your email to recover your password</string>
     <string name="instant_sign_in_instructions"><![CDATA[<b>Sign up</b> or <b>sign in</b> with a single tap]]></string>
@@ -277,7 +233,6 @@
     <string name="feather_failed_to_load_image">Failed to load image %1$s</string>
 
     <!-- Photo details -->
-    <string name="details_title_and_date_header">%1$s taken at %2$s</string>
     <string name="delete_photo_confirmation_question">Are you sure you want to delete this photo?</string>
     <string name="menu_edit">Edit</string>
     <string name="menu_delete">Delete</string>

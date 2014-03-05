@@ -15,13 +15,13 @@ import android.webkit.URLUtil;
 import android.widget.Button;
 import android.widget.EditText;
 
-import com.trovebox.android.app.common.CommonActivity;
-import com.trovebox.android.app.common.CommonFragment;
 import com.trovebox.android.app.oauth.OAuthUtils;
-import com.trovebox.android.app.util.GuiUtils;
-import com.trovebox.android.app.util.ProgressDialogLoadingControl;
-import com.trovebox.android.app.util.TrackerUtils;
-import com.trovebox.android.app.util.regex.Patterns;
+import com.trovebox.android.common.activity.CommonActivity;
+import com.trovebox.android.common.fragment.common.CommonFragment;
+import com.trovebox.android.common.util.GuiUtils;
+import com.trovebox.android.common.util.ProgressDialogLoadingControl;
+import com.trovebox.android.common.util.TrackerUtils;
+import com.trovebox.android.common.util.regex.Patterns;
 
 /**
  * The activity that gets presented to the user in case the user is not logged

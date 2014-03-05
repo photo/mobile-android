@@ -30,4 +30,17 @@
 		<nature>com.android.ide.eclipse.adt.AndroidNature</nature>
 		<nature>org.eclipse.jdt.core.javanature</nature>
 	</natures>
+	<linkedResources>
+		<link>
+			<name>photoview</name>
+			<type>2</type>
+			<locationURI>SUBMODULES/PhotoView/library/src</locationURI>
+		</link>
+	</linkedResources>
+	<variableList>
+		<variable>
+			<name>SUBMODULES</name>
+			<value>$%7BPARENT-1-PROJECT_LOC%7D/submodules</value>
+		</variable>
+	</variableList>
 </projectDescription>

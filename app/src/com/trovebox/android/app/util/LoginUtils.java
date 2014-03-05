@@ -14,8 +14,11 @@ import android.content.IntentFilter;
 
 import com.trovebox.android.app.MainActivity;
 import com.trovebox.android.app.SelectAccountActivity;
-import com.trovebox.android.app.model.Credentials;
 import com.trovebox.android.app.net.account.AccountTroveboxResponse;
+import com.trovebox.android.common.model.Credentials;
+import com.trovebox.android.common.util.CommonUtils;
+import com.trovebox.android.common.util.ObjectAccessor;
+import com.trovebox.android.common.util.TrackerUtils;
 
 public class LoginUtils
 {

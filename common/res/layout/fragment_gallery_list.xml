@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.trovebox.android.common.ui.widget.ScalableListView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/list_photos"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_alignParentTop="true"
+    android:clickable="false"
+    android:divider="@null"
+    android:dividerHeight="0dp"
+    android:drawSelectorOnTop="false"
+    android:listSelector="@android:color/transparent"
+    android:longClickable="false" />

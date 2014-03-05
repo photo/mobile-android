@@ -17,16 +17,17 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.trovebox.android.app.bitmapfun.util.ImageFetcher;
-import com.trovebox.android.app.common.CommonActivity;
-import com.trovebox.android.app.common.CommonFragmentWithImageWorker;
-import com.trovebox.android.app.model.Credentials;
-import com.trovebox.android.app.model.ProfileInformation;
-import com.trovebox.android.app.net.ReturnSizes;
-import com.trovebox.android.app.util.LoadingControl;
+import com.trovebox.android.app.model.utils.CredentialsUtils;
 import com.trovebox.android.app.util.LoginUtils;
-import com.trovebox.android.app.util.SimpleViewLoadingControl;
-import com.trovebox.android.app.util.TrackerUtils;
+import com.trovebox.android.common.activity.CommonActivity;
+import com.trovebox.android.common.bitmapfun.util.ImageFetcher;
+import com.trovebox.android.common.fragment.common.CommonFragmentWithImageWorker;
+import com.trovebox.android.common.model.Credentials;
+import com.trovebox.android.common.model.ProfileInformation;
+import com.trovebox.android.common.net.ReturnSizes;
+import com.trovebox.android.common.util.LoadingControl;
+import com.trovebox.android.common.util.SimpleViewLoadingControl;
+import com.trovebox.android.common.util.TrackerUtils;
 
 /**
  * An activity to select account to login with
@@ -110,7 +111,7 @@ public class SelectAccountActivity extends CommonActivity {
             TrackerUtils.trackButtonClickEvent("album_item", SelectAccountFragment.this);
             Credentials credentials = mAdapter.getItem(position);
             Activity activity = getSupportActivity();
-            credentials.saveCredentials(activity);
+            CredentialsUtils.saveCredentials(activity, credentials);
             LoginUtils.onLoggedIn(activity, true);
         }
 

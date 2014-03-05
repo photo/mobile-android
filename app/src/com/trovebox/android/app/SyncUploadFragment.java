@@ -25,23 +25,23 @@ import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 import com.trovebox.android.app.UploadActivity.UploadUiFragment;
-import com.trovebox.android.app.common.CommonFragment;
 import com.trovebox.android.app.facebook.FacebookUtils;
 import com.trovebox.android.app.model.utils.AlbumUtils;
-import com.trovebox.android.app.net.UploadMetaData;
-import com.trovebox.android.app.net.account.AccountLimitUtils;
-import com.trovebox.android.app.provider.UploadsProviderAccessor;
+import com.trovebox.android.app.net.account.AccountLimitUtils2;
 import com.trovebox.android.app.service.UploaderService;
 import com.trovebox.android.app.twitter.TwitterUtils;
-import com.trovebox.android.app.util.CommonUtils;
-import com.trovebox.android.app.util.GuiUtils;
-import com.trovebox.android.app.util.LoadingControl;
-import com.trovebox.android.app.util.ProgressDialogLoadingControl;
-import com.trovebox.android.app.util.RunnableWithParameter;
-import com.trovebox.android.app.util.SyncUtils;
-import com.trovebox.android.app.util.TrackerUtils;
-import com.trovebox.android.app.util.concurrent.AsyncTaskEx;
-import com.trovebox.android.app.util.data.StringMapParcelableWrapper;
+import com.trovebox.android.common.fragment.common.CommonFragment;
+import com.trovebox.android.common.net.UploadMetaData;
+import com.trovebox.android.common.provider.UploadsProviderAccessor;
+import com.trovebox.android.common.util.CommonUtils;
+import com.trovebox.android.common.util.GuiUtils;
+import com.trovebox.android.common.util.LoadingControl;
+import com.trovebox.android.common.util.ProgressDialogLoadingControl;
+import com.trovebox.android.common.util.RunnableWithParameter;
+import com.trovebox.android.common.util.SyncUtils;
+import com.trovebox.android.common.util.TrackerUtils;
+import com.trovebox.android.common.util.concurrent.AsyncTaskEx;
+import com.trovebox.android.common.util.data.StringMapParcelableWrapper;
 
 public class SyncUploadFragment extends CommonFragment implements OnClickListener
 {
@@ -185,7 +185,7 @@ public class SyncUploadFragment extends CommonFragment implements OnClickListene
             }
         });
         reinitShareSwitches();
-        AccountLimitUtils.tryToRefreshLimitInformationAndRunInContextAsync(new Runnable() {
+        AccountLimitUtils2.tryToRefreshLimitInformationAndRunInContextAsync(new Runnable() {
 
             @Override
             public void run() {

@@ -14,16 +14,16 @@ import android.content.DialogInterface;
 import android.content.Intent;
 
 import com.trovebox.android.app.bitmapfun.util.ImageCacheUtils;
-import com.trovebox.android.app.common.CommonFragmentUtils;
-import com.trovebox.android.app.common.CommonRetainedFragmentWithTaskAndProgress;
 import com.trovebox.android.app.facebook.FacebookProvider;
 import com.trovebox.android.app.facebook.FacebookSessionEvents;
 import com.trovebox.android.app.facebook.FacebookSessionEvents.LogoutListener;
 import com.trovebox.android.app.facebook.FacebookUtils;
-import com.trovebox.android.app.provider.UploadsUtils;
 import com.trovebox.android.app.twitter.TwitterUtils;
-import com.trovebox.android.app.util.GuiUtils;
-import com.trovebox.android.app.util.TrackerUtils;
+import com.trovebox.android.common.fragment.common.CommonFragmentUtils;
+import com.trovebox.android.common.fragment.common.CommonRetainedFragmentWithTaskAndProgress;
+import com.trovebox.android.common.provider.UploadsUtils;
+import com.trovebox.android.common.util.GuiUtils;
+import com.trovebox.android.common.util.TrackerUtils;
 
 public class SettingsCommon implements
         OnPreferenceClickListener {

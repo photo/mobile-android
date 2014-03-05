@@ -7,8 +7,8 @@ import org.json.JSONObject;
 import android.os.Parcel;
 import android.test.InstrumentationTestCase;
 
-import com.trovebox.android.app.model.Album;
-import com.trovebox.android.app.model.Photo;
+import com.trovebox.android.common.model.Album;
+import com.trovebox.android.common.model.Photo;
 import com.trovebox.android.test.R;
 import com.trovebox.android.test.net.JSONUtils;
 

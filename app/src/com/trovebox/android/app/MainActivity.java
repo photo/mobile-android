@@ -16,6 +16,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
+import android.view.KeyEvent;
 
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.view.Menu;
@@ -27,33 +28,28 @@ import com.trovebox.android.app.NavigationHandlerFragment.TitleChangedHandler;
 import com.trovebox.android.app.SyncFragment.SyncHandler;
 import com.trovebox.android.app.TwitterFragment.TwitterLoadingControlAccessor;
 import com.trovebox.android.app.bitmapfun.util.ImageCacheUtils;
-import com.trovebox.android.app.common.CommonActivity;
 import com.trovebox.android.app.facebook.FacebookProvider;
-import com.trovebox.android.app.model.Album;
-import com.trovebox.android.app.model.Photo;
-import com.trovebox.android.app.model.utils.PhotoUtils;
-import com.trovebox.android.app.model.utils.PhotoUtils.PhotoDeletedHandler;
-import com.trovebox.android.app.model.utils.PhotoUtils.PhotoUpdatedHandler;
-import com.trovebox.android.app.net.account.AccountLimitUtils;
-import com.trovebox.android.app.provider.UploadsUtils;
-import com.trovebox.android.app.provider.UploadsUtils.UploadsClearedHandler;
-import com.trovebox.android.app.service.UploaderServiceUtils;
-import com.trovebox.android.app.service.UploaderServiceUtils.PhotoUploadedHandler;
+import com.trovebox.android.app.net.account.AccountLimitUtils2;
 import com.trovebox.android.app.twitter.TwitterUtils;
-import com.trovebox.android.app.util.BackKeyControl;
-import com.trovebox.android.app.util.CommonUtils;
-import com.trovebox.android.app.util.GalleryOpenControl;
-import com.trovebox.android.app.util.LoadingControl;
-import com.trovebox.android.app.util.ObjectAccessor;
-import com.trovebox.android.app.util.SyncUtils;
-import com.trovebox.android.app.util.SyncUtils.SyncStartedHandler;
-import com.trovebox.android.app.util.TrackerUtils;
+import com.trovebox.android.common.activity.CommonActivity;
+import com.trovebox.android.common.model.Album;
+import com.trovebox.android.common.provider.UploadsUtils;
+import com.trovebox.android.common.provider.UploadsUtils.UploadsClearedHandler;
+import com.trovebox.android.common.util.BackKeyControl;
+import com.trovebox.android.common.util.CommonUtils;
+import com.trovebox.android.common.util.GalleryOpenControl;
+import com.trovebox.android.common.util.GuiUtils;
+import com.trovebox.android.common.util.LoadingControl;
+import com.trovebox.android.common.util.ObjectAccessor;
+import com.trovebox.android.common.util.SyncUtils;
+import com.trovebox.android.common.util.SyncUtils.SyncStartedHandler;
+import com.trovebox.android.common.util.TrackerUtils;
 
 @Addons(Activity.ADDON_SLIDER)
 public class MainActivity extends CommonActivity implements LoadingControl, GalleryOpenControl,
-        SyncHandler, UploadsClearedHandler, PhotoUploadedHandler, TwitterLoadingControlAccessor,
-        FacebookLoadingControlAccessor, SyncStartedHandler, PhotoDeletedHandler,
-        PhotoUpdatedHandler, GalleryFragment.StartNowHandler, TitleChangedHandler {
+        SyncHandler, UploadsClearedHandler, TwitterLoadingControlAccessor,
+        FacebookLoadingControlAccessor, SyncStartedHandler, GalleryFragment.StartNowHandler,
+        TitleChangedHandler {
     private static final String NAVIGATION_HANDLER_FRAGMENT_TAG = "NavigationHandlerFragment";
 
     public static final String TAG = MainActivity.class.getSimpleName();
@@ -105,14 +101,7 @@ public class MainActivity extends CommonActivity implements LoadingControl, Gall
         addRegisteredReceiver(UploadsUtils
                 .getAndRegisterOnUploadClearedActionBroadcastReceiver(TAG,
                         this, this));
-        addRegisteredReceiver(UploaderServiceUtils
-                .getAndRegisterOnPhotoUploadedActionBroadcastReceiver(
-                        TAG, this, this));
         addRegisteredReceiver(SyncUtils.getAndRegisterOnSyncStartedActionBroadcastReceiver(
-                TAG, this, this));
-        addRegisteredReceiver(PhotoUtils.getAndRegisterOnPhotoDeletedActionBroadcastReceiver(
-                TAG, this, this));
-        addRegisteredReceiver(PhotoUtils.getAndRegisterOnPhotoUpdatedActionBroadcastReceiver(
                 TAG, this, this));
         addRegisteredReceiver(ImageCacheUtils.getAndRegisterOnDiskCacheClearedBroadcastReceiver(
                 TAG,
@@ -148,9 +137,9 @@ public class MainActivity extends CommonActivity implements LoadingControl, Gall
                     .add(R.id.leftView, navigationHandlerFragment,
                             NAVIGATION_HANDLER_FRAGMENT_TAG).commit();
         }
-        if (CommonUtils.checkLoggedIn(true))
+        if (GuiUtils.checkLoggedIn(true))
         {
-            AccountLimitUtils.updateLimitInformationCacheAsync(this);
+            AccountLimitUtils2.updateLimitInformationCacheAsync(this);
         }
     }
 
@@ -285,7 +274,7 @@ public class MainActivity extends CommonActivity implements LoadingControl, Gall
                 TrackerUtils.trackOptionsMenuClickEvent("menu_camera", MainActivity.this);
                 if (!cameraActionProcessing.getAndSet(true))
                 {
-                    AccountLimitUtils.checkQuotaPerOneUploadAvailableAndRunAsync(
+                    com.trovebox.android.common.net.account.AccountLimitUtils.checkQuotaPerOneUploadAvailableAndRunAsync(
                             new Runnable() {
 
                                 @Override
@@ -329,14 +318,7 @@ public class MainActivity extends CommonActivity implements LoadingControl, Gall
     @Override
     public void openGallery(String tag, Album album)
     {
-        Intent intent = getIntent();
-        if (intent == null)
-        {
-            intent = new Intent();
-            setIntent(intent);
-        }
-        intent.putExtra(GalleryFragment.EXTRA_TAG, tag);
-        intent.putExtra(GalleryFragment.EXTRA_ALBUM, album);
+        navigationHandlerFragment.getGalleryFragment().setCurrentParameters(tag, album, null, null);
         selectTab(navigationHandlerFragment.getGalleryIndex());
     }
 
@@ -402,15 +384,6 @@ public class MainActivity extends CommonActivity implements LoadingControl, Gall
     }
 
     @Override
-    public void photoUploaded() {
-        GalleryFragment galleryFragment = navigationHandlerFragment.getGalleryFragment();
-        if (galleryFragment != null)
-        {
-            galleryFragment.photoUploaded();
-        }
-    }
-
-    @Override
     public LoadingControl getTwitterLoadingControl() {
         return this;
     }
@@ -421,17 +394,20 @@ public class MainActivity extends CommonActivity implements LoadingControl, Gall
     }
 
     @Override
-    public void onBackPressed() {
-        Fragment fragment = getCurrentFragment();
+    public boolean dispatchKeyEvent(android.view.KeyEvent event) {
+        final int keyCode = event.getKeyCode();
+
         boolean proceed = true;
-        if (fragment != null && fragment instanceof BackKeyControl)
-        {
-            proceed &= !((BackKeyControl) fragment).isBackKeyOverrode();
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            Fragment fragment = getCurrentFragment();
+            if (fragment != null && fragment instanceof BackKeyControl) {
+                proceed &= !((BackKeyControl) fragment).isBackKeyOverrode();
+            }
         }
-        if (proceed)
-        {
-            super.onBackPressed();
+        if (proceed) {
+            return super.dispatchKeyEvent(event);
         }
+        return proceed;
     }
 
     @Override
@@ -441,26 +417,6 @@ public class MainActivity extends CommonActivity implements LoadingControl, Gall
         if (syncFragment != null)
         {
             syncFragment.syncStarted(processedFileNames);
-        }
-    }
-
-    @Override
-    public void photoDeleted(Photo photo)
-    {
-        GalleryFragment galleryFragment = navigationHandlerFragment.getGalleryFragment();
-        if (galleryFragment != null)
-        {
-            galleryFragment.photoDeleted(photo);
-        }
-    }
-
-    @Override
-    public void photoUpdated(Photo photo)
-    {
-        GalleryFragment galleryFragment = navigationHandlerFragment.getGalleryFragment();
-        if (galleryFragment != null)
-        {
-            galleryFragment.photoUpdated(photo);
         }
     }
 

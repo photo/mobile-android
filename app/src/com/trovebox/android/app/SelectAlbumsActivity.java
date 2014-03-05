@@ -22,23 +22,23 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.trovebox.android.app.bitmapfun.util.ImageCache;
-import com.trovebox.android.app.bitmapfun.util.ImageFetcher;
-import com.trovebox.android.app.common.CommonActivity;
-import com.trovebox.android.app.common.CommonFragmentWithImageWorker;
-import com.trovebox.android.app.model.Album;
-import com.trovebox.android.app.model.Photo;
 import com.trovebox.android.app.model.utils.AlbumUtils;
 import com.trovebox.android.app.model.utils.AlbumUtils.AlbumCreatedHandler;
 import com.trovebox.android.app.model.utils.AlbumUtils.AlbumsByIdComparator;
-import com.trovebox.android.app.model.utils.PhotoUtils;
-import com.trovebox.android.app.net.ReturnSizes;
 import com.trovebox.android.app.ui.adapter.MultiSelectAlbumsAdapter;
-import com.trovebox.android.app.util.CommonUtils;
-import com.trovebox.android.app.util.LoadingControl;
-import com.trovebox.android.app.util.RunnableWithParameter;
-import com.trovebox.android.app.util.TrackerUtils;
-import com.trovebox.android.app.util.data.StringMapParcelableWrapper;
+import com.trovebox.android.common.activity.CommonActivity;
+import com.trovebox.android.common.bitmapfun.util.ImageCache;
+import com.trovebox.android.common.bitmapfun.util.ImageFetcher;
+import com.trovebox.android.common.fragment.common.CommonFragmentWithImageWorker;
+import com.trovebox.android.common.model.Album;
+import com.trovebox.android.common.model.Photo;
+import com.trovebox.android.common.model.utils.PhotoUtils;
+import com.trovebox.android.common.net.ReturnSizes;
+import com.trovebox.android.common.util.CommonUtils;
+import com.trovebox.android.common.util.LoadingControl;
+import com.trovebox.android.common.util.RunnableWithParameter;
+import com.trovebox.android.common.util.TrackerUtils;
+import com.trovebox.android.common.util.data.StringMapParcelableWrapper;
 
 /**
  * The activity which allows to select albums
@@ -229,6 +229,12 @@ public class SelectAlbumsActivity
                                     mImageWorker
                                             .loadImage(photo.getUrl(thumbSize.toString()), vh.cover);
 
+                                }
+                            }, new Runnable() {
+
+                                @Override
+                                public void run() {
+                                    mImageWorker.loadImage(null, vh.cover);
                                 }
                             }, SelectAlbumsUiFragment.this);
                 } else

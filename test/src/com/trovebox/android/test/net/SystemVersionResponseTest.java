@@ -6,7 +6,7 @@ import org.json.JSONObject;
 
 import android.test.InstrumentationTestCase;
 
-import com.trovebox.android.app.net.SystemVersionResponse;
+import com.trovebox.android.common.net.SystemVersionResponse;
 import com.trovebox.android.test.R;
 
 public class SystemVersionResponseTest extends InstrumentationTestCase {

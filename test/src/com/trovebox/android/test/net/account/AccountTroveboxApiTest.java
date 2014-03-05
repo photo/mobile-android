@@ -21,12 +21,12 @@ import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.gson.GsonFactory;
 import com.trovebox.android.app.R;
 import com.trovebox.android.app.TroveboxApplication;
-import com.trovebox.android.app.model.Credentials;
 import com.trovebox.android.app.net.account.AccountTroveboxResponse;
 import com.trovebox.android.app.net.account.IAccountTroveboxApi;
 import com.trovebox.android.app.net.account.IAccountTroveboxApiFactory;
-import com.trovebox.android.app.util.CommonUtils;
-import com.trovebox.android.app.util.TrackerUtils;
+import com.trovebox.android.common.model.Credentials;
+import com.trovebox.android.common.util.CommonUtils;
+import com.trovebox.android.common.util.TrackerUtils;
 
 public class AccountTroveboxApiTest
         extends ApplicationTestCase<TroveboxApplication>

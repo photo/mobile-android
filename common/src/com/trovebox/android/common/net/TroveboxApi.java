@@ -79,15 +79,20 @@ public class TroveboxApi extends ApiBase implements ITroveboxApi {
     }
 
     @Override
-    public PhotoResponse getPhoto(String photoId, ReturnSizes returnSize)
+    public PhotoResponse getPhoto(String photoId, ReturnSizes returnSize, String token, String host)
             throws ClientProtocolException, IOException, IllegalStateException,
             JSONException {
-        ApiRequest request = new ApiRequest(ApiRequest.GET, "/photo/" + photoId
-                + "/view.json");
+        StringBuilder path = new StringBuilder("/photo/" + photoId);
+
+        if (!TextUtils.isEmpty(token)) {
+            path.append("/token-" + token);
+        }
+        path.append("/view.json");
+        ApiRequest request = new ApiRequest(ApiRequest.GET, path.toString());
         if (returnSize != null) {
             request.addParameter("returnSizes", returnSize.toString());
         }
-        ApiResponse response = execute(request);
+        ApiResponse response = TextUtils.isEmpty(host) ? execute(request) : execute(request, host);
         return new PhotoResponse(RequestType.PHOTO, response.getJSONObject());
     }
 
@@ -115,7 +120,7 @@ public class TroveboxApi extends ApiBase implements ITroveboxApi {
     public PhotosResponse getPhotos(ReturnSizes resize, Paging paging)
             throws ClientProtocolException, IllegalStateException, IOException,
             JSONException {
-        return getPhotos(resize, null, null, null, paging);
+        return getPhotos(resize, null, null, null, null, paging, null);
     }
 
     @Override
@@ -124,7 +129,7 @@ public class TroveboxApi extends ApiBase implements ITroveboxApi {
             String album)
             throws ClientProtocolException, IllegalStateException, IOException,
             JSONException {
-        return getPhotos(resize, tags, album, null, null);
+        return getPhotos(resize, tags, album, null, null, null, null);
     }
 
     /*
@@ -138,54 +143,47 @@ public class TroveboxApi extends ApiBase implements ITroveboxApi {
     public PhotosResponse getPhotos(ReturnSizes resize,
             Collection<String> tags,
             String album,
-            String sortBy, Paging paging)
+            String token,
+            String sortBy, Paging paging, String host)
             throws ClientProtocolException, IOException, IllegalStateException,
             JSONException {
-        return getPhotos(resize, tags, album, null, sortBy, paging);
+        return getPhotos(resize, tags, album, token, null, sortBy, paging, host);
     }
 
-    public PhotosResponse getPhotos(ReturnSizes resize,
-            Collection<String> tags,
-            String album,
-            String hash,
-            String sortBy,
-            Paging paging)
-            throws ClientProtocolException, IOException, IllegalStateException,
-            JSONException
-    {
+    public PhotosResponse getPhotos(ReturnSizes resize, Collection<String> tags, String album,
+            String token, String hash, String sortBy, Paging paging, String host)
+            throws ClientProtocolException, IOException, IllegalStateException, JSONException {
         ApiRequest request;
-        if (album != null && album.length() > 0)
-        {
-            request = new ApiRequest(ApiRequest.GET, "/photos/album-" + album
-                    + "/list.json");
-        } else
-        {
-            request = new ApiRequest(ApiRequest.GET, "/photos/list.json");
+        StringBuilder path = new StringBuilder();
+        if (album != null && album.length() > 0) {
+            path.append("/photos/album-" + album);
+        } else {
+            path.append("/photos");
         }
-        if (hash != null)
-        {
+        if (!TextUtils.isEmpty(token)) {
+            path.append("/token-" + token);
+        }
+        path.append("/list.json");
+        request = new ApiRequest(ApiRequest.GET, path.toString());
+        if (hash != null) {
             request.addParameter("hash", hash);
         }
-        if (sortBy != null)
-        {
+        if (sortBy != null) {
             request.addParameter("sortBy", sortBy);
         }
-        if (resize != null)
-        {
+        if (resize != null) {
             request.addParameter("returnSizes", resize.toString());
         }
-        if (tags != null && !tags.isEmpty())
-        {
+        if (tags != null && !tags.isEmpty()) {
             Iterator<String> it = tags.iterator();
             StringBuilder sb = new StringBuilder(it.next());
-            while (it.hasNext())
-            {
+            while (it.hasNext()) {
                 sb.append("," + it.next());
             }
             request.addParameter("tags", sb.toString());
         }
         addPagingRestrictions(paging, request);
-        ApiResponse response = execute(request);
+        ApiResponse response = TextUtils.isEmpty(host) ? execute(request) : execute(request, host);
         return new PhotosResponse(response.getJSONObject());
     }
 
@@ -271,7 +269,7 @@ public class TroveboxApi extends ApiBase implements ITroveboxApi {
             throws ClientProtocolException, IOException, IllegalStateException,
             JSONException
     {
-        return getPhotos(returnSize, null, null, NEWEST_PHOTO_SORT_ORDER, paging);
+        return getPhotos(returnSize, null, null, null, NEWEST_PHOTO_SORT_ORDER, paging, null);
     }
 
     /**
@@ -290,7 +288,7 @@ public class TroveboxApi extends ApiBase implements ITroveboxApi {
             IOException, IllegalStateException,
             JSONException
     {
-        return getPhotos(null, null, null, hash, null, null);
+        return getPhotos(null, null, null, null, hash, null, null);
     }
 
     @Override
@@ -384,5 +382,19 @@ public class TroveboxApi extends ApiBase implements ITroveboxApi {
                 ApiVersion.NO_VERSION);
         ApiResponse response = execute(request);
         return new TokenValidationResponse(response.getJSONObject());
+    }
+
+    @Override
+    public TroveboxResponse notifyUploadFinished(String token, String host, String uploader,
+            int count) throws ClientProtocolException, IOException, IllegalStateException,
+            JSONException {
+        ApiRequest request = new ApiRequest(ApiRequest.POST, "/photos/upload/" + token
+                + "/notify.json");
+        if (!TextUtils.isEmpty(uploader)) {
+            request.addParameter("uploader", uploader);
+        }
+        request.addParameter("count", Integer.toString(count));
+        ApiResponse response = TextUtils.isEmpty(host) ? execute(request) : execute(request, host);
+        return new TroveboxResponse(RequestType.NOTIFY_UPLOAD_DONE, response.getJSONObject());
     }
 }

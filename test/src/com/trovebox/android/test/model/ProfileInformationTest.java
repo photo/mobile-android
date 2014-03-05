@@ -9,10 +9,10 @@ import org.json.JSONObject;
 import android.os.Parcel;
 import android.test.InstrumentationTestCase;
 
-import com.trovebox.android.app.model.ProfileInformation;
-import com.trovebox.android.app.model.ProfileInformation.AccessPermissions;
-import com.trovebox.android.app.model.ProfileInformation.ProfileCounters;
-import com.trovebox.android.app.model.ProfileInformation.ProfileLimits;
+import com.trovebox.android.common.model.ProfileInformation;
+import com.trovebox.android.common.model.ProfileInformation.AccessPermissions;
+import com.trovebox.android.common.model.ProfileInformation.ProfileCounters;
+import com.trovebox.android.common.model.ProfileInformation.ProfileLimits;
 import com.trovebox.android.test.R;
 import com.trovebox.android.test.net.JSONUtils;
 

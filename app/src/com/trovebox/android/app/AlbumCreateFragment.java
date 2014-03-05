@@ -11,9 +11,9 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 
-import com.trovebox.android.app.common.CommonStyledDialogFragment;
 import com.trovebox.android.app.model.utils.AlbumUtils;
-import com.trovebox.android.app.util.ProgressDialogLoadingControl;
+import com.trovebox.android.common.fragment.common.CommonStyledDialogFragment;
+import com.trovebox.android.common.util.ProgressDialogLoadingControl;
 
 /**
  * The fragment which represents albums creation functionality

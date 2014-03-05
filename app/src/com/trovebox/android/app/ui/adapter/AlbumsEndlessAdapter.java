@@ -3,14 +3,14 @@ package com.trovebox.android.app.ui.adapter;
 
 import com.trovebox.android.app.Preferences;
 import com.trovebox.android.app.R;
-import com.trovebox.android.app.model.Album;
-import com.trovebox.android.app.net.AlbumsResponse;
-import com.trovebox.android.app.net.ITroveboxApi;
-import com.trovebox.android.app.net.Paging;
-import com.trovebox.android.app.net.TroveboxResponseUtils;
-import com.trovebox.android.app.util.CommonUtils;
-import com.trovebox.android.app.util.GuiUtils;
-import com.trovebox.android.app.util.LoadingControl;
+import com.trovebox.android.common.model.Album;
+import com.trovebox.android.common.net.AlbumsResponse;
+import com.trovebox.android.common.net.ITroveboxApi;
+import com.trovebox.android.common.net.Paging;
+import com.trovebox.android.common.net.TroveboxResponseUtils;
+import com.trovebox.android.common.ui.adapter.EndlessAdapter;
+import com.trovebox.android.common.util.GuiUtils;
+import com.trovebox.android.common.util.LoadingControl;
 
 /**
  * An endless adapter for albums
@@ -44,7 +44,7 @@ public abstract class AlbumsEndlessAdapter extends EndlessAdapter<Album> {
     @Override
     public LoadResponse loadItems(int page)
     {
-        if (CommonUtils.checkLoggedInAndOnline())
+        if (GuiUtils.checkLoggedInAndOnline())
         {
             try
             {

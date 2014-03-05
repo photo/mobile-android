@@ -67,13 +67,15 @@ public interface ITroveboxApi {
      * 
      * @param photoId id of the photo
      * @param returnSize which sizes should be returned
+     * @param token access token for the photo if required
+     * @param host alternate host
      * @return the photo
      * @throws IOException
      * @throws ClientProtocolException
      * @throws JSONException
      * @throws IllegalStateException
      */
-    PhotoResponse getPhoto(String photoId, ReturnSizes returnSize)
+    PhotoResponse getPhoto(String photoId, ReturnSizes returnSize, String token, String host)
             throws ClientProtocolException, IOException, IllegalStateException,
             JSONException;
 
@@ -153,8 +155,10 @@ public interface ITroveboxApi {
      * @param resize which sizes should be returned
      * @param tags filter potos by these tags
      * @param album filter potos by this album
+     * @param token access token for the album if required
      * @param sortBy sort photos condition
-     * @param pageing page and pageSize to be retrieved
+     * @param paging page and pageSize to be retrieved
+     * @param host alternate host
      * @return the photos
      * @throws ClientProtocolException
      * @throws IOException
@@ -163,8 +167,10 @@ public interface ITroveboxApi {
      */
     PhotosResponse getPhotos(ReturnSizes resize, Collection<String> tags,
             String album,
+            String token,
             String sortBy,
-            Paging paging) throws ClientProtocolException, IOException,
+            Paging paging,
+            String host) throws ClientProtocolException, IOException,
             IllegalStateException, JSONException;
 
     /**
@@ -339,5 +345,21 @@ public interface ITroveboxApi {
      */
     TokenValidationResponse validateUploadToken(String token) throws ClientProtocolException,
             IOException, IllegalStateException, JSONException;
+
+    /**
+     * Notify upload finished event for the token
+     * 
+     * @param token the token uploads done for
+     * @param host the alternate notify host
+     * @param uploader the user name uploads was tagged with
+     * @param count the successful uploads count
+     * @return
+     * @throws ClientProtocolException
+     * @throws IOException
+     * @throws IllegalStateException
+     * @throws JSONException
+     */
+    TroveboxResponse notifyUploadFinished(String token, String host, String uploader, int count)
+            throws ClientProtocolException, IOException, IllegalStateException, JSONException;
 
 }

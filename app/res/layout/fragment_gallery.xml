@@ -4,17 +4,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical" >
 
-    <com.trovebox.android.app.ui.widget.ScalableListView
-        android:id="@+id/list_photos"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:clickable="false"
-        android:divider="@null"
-        android:dividerHeight="0dp"
-        android:drawSelectorOnTop="false"
-        android:listSelector="@android:color/transparent"
-        android:longClickable="false" />
+    <include layout="@layout/fragment_gallery_list" />
 
     <include layout="@layout/start_now" />
 

@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <!-- general -->
     <string name="pleaseSpecifyFirst">Please specify %1$s first!</string>
+    <string name="pleaseEnter">Please enter %1$s.</string>
     <string name="noInternetAccess">Internet connection is not available</string>
     <string name="upload_limit_reached_message">The free upload limit is reached.</string>
     <string name="sync_cleared_message">The sync information has been cleared</string>
@@ -10,8 +12,8 @@
     <string name="loading">Loading&#8230;</string>
 
     <!-- Api -->
-    <string name="api_invalid_token">Invalid token</string>
-    <string name="api_expired_token">Expired token</string>
+    <string name="api_invalid_token">The password you entered was incorrect</string>
+    <string name="api_expired_token">This password has expired</string>
 
     <!-- Menu -->
     <string name="menu_refresh">Refresh</string>
@@ -30,23 +32,27 @@
     <string name="sync_please_pick_at_least_one_photo">Please pick at least one photo first!</string>
     <string name="sync_show_all">Show all</string>
     <string name="sync_uploaded">UPLOADED!</string>
-    <string name="sync_upload_button">Upload!</string>
-    <string name="sync_uploading_in_background">Your upload has been started</string>
-
-    <!-- Upload Manager screen -->
-    <string name="upload_status_uploaded">Uploaded</string>
-    <string name="upload_status_uploading">Uploading: %1$d%%</string>
-    <string name="upload_status_error">Error: %1$s</string>
-    <string name="upload_status_pending">Pending</string>
-    <string name="upload_manager_title">Upload Manager</string>
-    <string name="upload_manager_menu_cancel">Cancel</string>
-    <string name="upload_manager_menu_clear">Clear</string>
+    <string name="sync_upload_button">Upload</string>
+    <string name="sync_uploading_in_background">Sending your photos</string>
 
     <plurals name="sync_upload_selected_confirmation">
         <item quantity="zero">Do you want to upload %1$d selected pictures?</item>
         <item quantity="one">Do you want to upload %1$d selected picture?</item>
         <item quantity="other">Do you want to upload %1$d selected pictures?</item>
     </plurals>
+
+    <!-- Upload Manager screen -->
+    <string name="upload_status_uploaded">Sent</string>
+    <string name="upload_status_uploading">Sending: %1$d%%</string>
+    <string name="upload_status_error">Error: %1$s</string>
+    <string name="upload_status_pending">Waiting</string>
+    <string name="upload_manager_title">Sending list</string>
+    <string name="upload_manager_menu_cancel">Cancel</string>
+    <string name="upload_manager_menu_clear">Clear</string>
+
+    <!-- Photo details -->
+    <string name="details_title_and_date_header">%1$s taken at %2$s</string>
+
     <!--
          String indicating how many media item(s) is(are) selected
             eg. 1 selected [CHAR LIMIT=30]
@@ -62,6 +68,11 @@
     <string name="notification_upload_failed_title">Upload failed</string>
     <string name="notification_upload_failed_title_with_reason">Upload failed: %1$s</string>
     <string name="notification_upload_failed_text">%1$s</string>
+    <string name="notification_upload_failed_multiple_title">Upload failed</string>
+    <string name="notification_upload_failed_multiple_text">Failed: %1$d photos</string>
+    <string name="notification_upload_failed_multiple_details">Failed details</string>
+    <string name="notification_upload_failed_multiple_detail"><![CDATA[<b>%1$s</b> failed]]></string>
+    <string name="notification_upload_failed_multiple_detail_with_reason"><![CDATA[<b>%1$s</b> failed: %2$s]]></string>
     <string name="notification_upload_success_title">Upload finished</string>
     <string name="notification_upload_skipped_title">Upload skipped. Found same photo on the server.</string>
     <string name="notification_upload_success_text">%1$s</string>
@@ -76,6 +87,12 @@
     <string name="errorNotLoggedIn">You are not yet logged in.</string>
     <string name="errorCouldNotValidateUploadToken">Could not validate upload token.</string>
     <string name="errorSpecifiedUrlIsInvalid">The specified URL is invalid</string>
+    <string name="errorCouldNotLoadNextPhotosInList">Could not load next photos in list</string>
+    <string name="errorCouldNotGetPhoto">Could not get photo</string>
+    <string name="errorCouldNotDeletePhoto">Could not delete photo</string>
+    <string name="errorCouldNotUpdatePhoto">Could not update photo details</string>
+    <string name="errorCouldNotGetShareToken">Could not get share token</string>
     <string name="unknown_error_with_code">Unknown error with code %1$d</string>
+    <string name="unknown_error_try_again">We ran into an unknown problem. Please try again.</string>
 
 </resources>

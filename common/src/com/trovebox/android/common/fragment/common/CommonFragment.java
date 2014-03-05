@@ -3,22 +3,25 @@ package com.trovebox.android.common.fragment.common;
 
 import java.io.Serializable;
 import java.lang.ref.WeakReference;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.holoeverywhere.LayoutInflater;
 import org.holoeverywhere.app.Activity;
 import org.holoeverywhere.app.Fragment;
 
+import android.content.BroadcastReceiver;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.trovebox.android.common.common.lifecycle.ViewPagerHandler;
 import com.trovebox.android.common.util.CommonUtils;
 import com.trovebox.android.common.util.ObjectAccessor;
 import com.trovebox.android.common.util.RunnableWithResult;
 import com.trovebox.android.common.util.TrackerUtils;
+import com.trovebox.android.common.utils.lifecycle.ViewPagerHandler;
 
 /**
  * Common parent fragment. All the tab fragments under MainActivity should to
@@ -31,6 +34,8 @@ public class CommonFragment extends Fragment implements ViewPagerHandler {
     static final String CATEGORY = "Fragment Lifecycle";
     private boolean instanceSaved = false;
     protected boolean isActivePage = false;
+    private List<BroadcastReceiver> mViewLifecycleReceivers = new ArrayList<BroadcastReceiver>();
+    private List<BroadcastReceiver> mFragmentLifecycleReceivers = new ArrayList<BroadcastReceiver>();
 
     void trackLifecycleEvent(String event) {
         CommonUtils.debug(TAG, event + ": " + getClass().getSimpleName());
@@ -69,6 +74,14 @@ public class CommonFragment extends Fragment implements ViewPagerHandler {
     public void onDestroy() {
         super.onDestroy();
         trackLifecycleEvent("onDestroy");
+        try {
+            for (BroadcastReceiver br : mFragmentLifecycleReceivers) {
+                getActivity().unregisterReceiver(br);
+            }
+            mFragmentLifecycleReceivers.clear();
+        } catch (Exception ex) {
+            CommonUtils.error(TAG, ex);
+        }
     }
 
     @Override
@@ -82,6 +95,14 @@ public class CommonFragment extends Fragment implements ViewPagerHandler {
         super.onDestroyView();
         trackLifecycleEvent("onDestroyView");
         isActivePage = false;
+        try {
+            for (BroadcastReceiver br : mViewLifecycleReceivers) {
+                getActivity().unregisterReceiver(br);
+            }
+            mViewLifecycleReceivers.clear();
+        } catch (Exception ex) {
+            CommonUtils.error(TAG, ex);
+        }
     }
 
     @Override
@@ -195,4 +216,23 @@ public class CommonFragment extends Fragment implements ViewPagerHandler {
         }
     }
 
+    /**
+     * Add broadcast receiver which should be automatically unregistered when
+     * fragment view is destroyed
+     * 
+     * @param receiver
+     */
+    public void addViewLifecycleRegisteredReceiver(BroadcastReceiver receiver) {
+        mViewLifecycleReceivers.add(receiver);
+    }
+
+    /**
+     * Add broadcast receiver which should be automatically unregistered when
+     * fragment is destroyed
+     * 
+     * @param receiver
+     */
+    public void addFragmentLifecycleRegisteredReceiver(BroadcastReceiver receiver) {
+        mFragmentLifecycleReceivers.add(receiver);
+    }
 }

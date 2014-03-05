@@ -10,11 +10,11 @@ import android.text.method.LinkMovementMethod;
 import android.view.View;
 import android.widget.Button;
 
-import com.trovebox.android.app.common.CommonActivity;
-import com.trovebox.android.app.common.CommonFragmentUtils;
-import com.trovebox.android.app.util.CommonUtils;
 import com.trovebox.android.app.util.LoginUtils;
-import com.trovebox.android.app.util.TrackerUtils;
+import com.trovebox.android.common.activity.CommonActivity;
+import com.trovebox.android.common.fragment.common.CommonFragmentUtils;
+import com.trovebox.android.common.util.CommonUtils;
+import com.trovebox.android.common.util.TrackerUtils;
 
 public class AccountActivity extends CommonActivity {
     private static final String TAG = AccountActivity.class.getSimpleName();

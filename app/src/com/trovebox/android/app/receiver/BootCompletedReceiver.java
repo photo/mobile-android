@@ -2,7 +2,7 @@
 package com.trovebox.android.app.receiver;
 
 import com.trovebox.android.app.service.UploaderService;
-import com.trovebox.android.app.util.CommonUtils;
+import com.trovebox.android.common.util.CommonUtils;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;

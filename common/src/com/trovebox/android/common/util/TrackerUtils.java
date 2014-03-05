@@ -270,6 +270,18 @@ public class TrackerUtils {
     }
 
     /**
+     * Track an event
+     * 
+     * @param category
+     * @param action
+     * @param label
+     * @param value
+     */
+    public static void trackEvent(String category, String action, String label, Long value) {
+        EasyTracker.getTracker().sendEvent(category + getTrackingSuffix(), action, label, value);
+    }
+
+    /**
      * @param inteval
      * @param action
      * @param holder

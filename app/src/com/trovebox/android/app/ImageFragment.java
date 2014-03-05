@@ -11,7 +11,7 @@ import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.TextView;
 
-import com.trovebox.android.app.common.CommonFragment;
+import com.trovebox.android.common.fragment.common.CommonFragment;
 
 public final class ImageFragment extends CommonFragment {
     int imageResourceId;

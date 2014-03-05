@@ -6,8 +6,8 @@ import java.io.File;
 import junit.framework.TestCase;
 import android.os.Environment;
 
-import com.trovebox.android.app.net.ApiRequest;
-import com.trovebox.android.app.net.ApiRequest.ApiVersion;
+import com.trovebox.android.common.net.ApiRequest;
+import com.trovebox.android.common.net.ApiRequest.ApiVersion;
 
 public class ApiRequestTest extends TestCase {
     public void testBasicConstruction() {

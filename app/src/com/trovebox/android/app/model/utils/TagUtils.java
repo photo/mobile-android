@@ -8,7 +8,7 @@ import java.util.Set;
 
 import android.text.TextUtils;
 
-import com.trovebox.android.app.net.UploadMetaDataUtils;
+import com.trovebox.android.common.net.UploadMetaDataUtils;
 
 /**
  * @author Eugene Popovich

@@ -21,9 +21,9 @@ import com.trovebox.android.app.Preferences;
 import com.trovebox.android.app.R;
 import com.trovebox.android.app.facebook.FacebookSessionEvents.AuthListener;
 import com.trovebox.android.app.facebook.FacebookSessionEvents.LogoutListener;
-import com.trovebox.android.app.ui.widget.YesNoDialogFragment;
-import com.trovebox.android.app.ui.widget.YesNoDialogFragment.YesNoButtonPressedHandler;
-import com.trovebox.android.app.util.GuiUtils;
+import com.trovebox.android.common.ui.widget.YesNoDialogFragment;
+import com.trovebox.android.common.ui.widget.YesNoDialogFragment.YesNoButtonPressedHandler;
+import com.trovebox.android.common.util.GuiUtils;
 
 /**
  * @author Eugene Popovich

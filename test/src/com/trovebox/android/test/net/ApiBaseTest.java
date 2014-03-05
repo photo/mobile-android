@@ -9,9 +9,9 @@ import org.apache.http.client.ClientProtocolException;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.trovebox.android.app.net.ApiBase;
-import com.trovebox.android.app.net.ApiRequest;
-import com.trovebox.android.app.net.ApiResponse;
+import com.trovebox.android.common.net.ApiBase;
+import com.trovebox.android.common.net.ApiRequest;
+import com.trovebox.android.common.net.ApiResponse;
 
 public class ApiBaseTest extends TestCase {
     // public void testConstructorUrl() {
@@ -27,7 +27,7 @@ public class ApiBaseTest extends TestCase {
     // }
 
     public void testBasicRequest() throws ClientProtocolException, IOException, JSONException {
-        ApiBase api = new ApiBase(null);
+        ApiBase api = new ApiBase();
         ApiRequest request = new ApiRequest(ApiRequest.GET, "/photos/list.json");
 
         ApiResponse response = api.execute(request,

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- general -->
+    <string name="pleaseSpecifyFirst">Por favor, forneça %1$s primeiramente!</string>
+    <string name="noInternetAccess">Sem conexão à internet</string>
+    <string name="upload_limit_reached_message">Limite para contas gratuítas alcançado.</string>
+    <string name="sync_cleared_message">Informações do Sync removidas</string>
+    <string name="yes">Sim</string>
+    <string name="no">Não</string>
+    <string name="loading">Carregando&#8230;</string>
+
+    <!-- Menu -->
+    <string name="menu_refresh">Atualizar</string>
+
+    <!-- Selection Menu -->
+    <string name="menu_select_all">Selecionar Todos</string>
+    <string name="menu_select_none">Apague Seleção</string>
+    <string name="menu_selection">Seleção</string>
+
+    <!-- Sync screen -->
+    <string name="sync_next_button">Próximo</string>
+    <string name="sync_previous_button">Anterior</string>
+    <string name="sync_please_pick_at_least_one_photo">Por favor, selecione primeiramente uma foto!</string>
+    <string name="sync_show_all">Mostre todas</string>
+    <string name="sync_uploaded">ENVIADA!</string>
+
+    <!-- Photo details -->
+    <string name="details_title_and_date_header">%1$s tirada em %2$s</string>
+
+    <!-- Notifications -->
+    <string name="notification_uploading_photo">Enviando %1$s</string>
+    <string name="notification_upload_failed_title">Falha no envio</string>
+    <string name="notification_upload_failed_title_with_reason">Falha no envio: %1$s</string>
+    <string name="notification_upload_failed_text">%1$s</string>
+    <string name="notification_upload_success_title">Enviado</string>
+    <string name="notification_upload_skipped_title">Envio não necessário. Versão já no servidor.</string>
+    <string name="notification_upload_success_text">%1$s</string>
+
+    <!-- Errors -->
+    <string name="errorCouldNotStoreDownloadablePhotoNotEnoughSpace">Sem espaço em disco. Não é possível salvar fotos.</string>
+    <string name="errorNotLoggedIn">Você não está logado.</string>
+    <string name="errorSpecifiedUrlIsInvalid">URL não é válida</string>
+    <string name="errorCouldNotLoadNextPhotosInList">Não foi possível carregar próximas fotos</string>
+    <string name="errorCouldNotGetPhoto">Não foi possível carregar foto</string>
+    <string name="errorCouldNotDeletePhoto">Erro ao remover foto</string>
+    <string name="errorCouldNotUpdatePhoto">Erro ao atualizar a foto</string>
+    <string name="unknown_error_with_code">Erro desconhecido com código %1$d</string>
+
+</resources>

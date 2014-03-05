@@ -1,8 +1,8 @@
 
 package com.trovebox.android.test;
 
-import com.trovebox.android.app.net.ITroveboxApi;
-import com.trovebox.android.app.util.CommonUtils;
+import com.trovebox.android.common.net.ITroveboxApi;
+import com.trovebox.android.common.util.CommonUtils;
 import com.trovebox.android.test.util.MockUtils;
 
 import android.app.Activity;

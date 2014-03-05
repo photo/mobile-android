@@ -4,11 +4,10 @@ package com.trovebox.android.test.util;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-
 import org.powermock.api.easymock.PowerMock;
 
-import com.trovebox.android.app.net.ITroveboxApi;
-import com.trovebox.android.app.net.TroveboxApi;
+import com.trovebox.android.common.net.ITroveboxApi;
+import com.trovebox.android.common.net.TroveboxApi;
 
 public class MockUtils {
     /**

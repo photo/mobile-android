@@ -14,17 +14,17 @@ import android.text.Html;
 import com.trovebox.android.app.FacebookFragment;
 import com.trovebox.android.app.R;
 import com.trovebox.android.app.TwitterFragment;
-import com.trovebox.android.app.common.CommonFragment;
-import com.trovebox.android.app.model.Photo;
-import com.trovebox.android.app.model.utils.PhotoUtils;
-import com.trovebox.android.app.ui.widget.YesNoDialogFragment;
-import com.trovebox.android.app.ui.widget.YesNoDialogFragment.YesNoButtonPressedHandler;
-import com.trovebox.android.app.util.CommonUtils;
-import com.trovebox.android.app.util.GuiUtils;
-import com.trovebox.android.app.util.LoadingControl;
-import com.trovebox.android.app.util.RunnableWithParameter;
-import com.trovebox.android.app.util.RunnableWithResult;
-import com.trovebox.android.app.util.TrackerUtils;
+import com.trovebox.android.common.fragment.common.CommonFragment;
+import com.trovebox.android.common.model.Photo;
+import com.trovebox.android.common.model.utils.PhotoUtils;
+import com.trovebox.android.common.ui.widget.YesNoDialogFragment;
+import com.trovebox.android.common.ui.widget.YesNoDialogFragment.YesNoButtonPressedHandler;
+import com.trovebox.android.common.util.CommonUtils;
+import com.trovebox.android.common.util.GuiUtils;
+import com.trovebox.android.common.util.LoadingControl;
+import com.trovebox.android.common.util.RunnableWithParameter;
+import com.trovebox.android.common.util.RunnableWithResult;
+import com.trovebox.android.common.util.TrackerUtils;
 
 /**
  * Sharing functionality utils

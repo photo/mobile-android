@@ -20,17 +20,18 @@ import com.google.android.gms.auth.GooglePlayServicesAvailabilityException;
 import com.google.android.gms.auth.UserRecoverableAuthException;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
-import com.trovebox.android.app.common.CommonDialogFragment;
-import com.trovebox.android.app.common.CommonRetainedFragmentWithTaskAndProgress;
-import com.trovebox.android.app.net.TroveboxResponseUtils;
+import com.trovebox.android.app.model.utils.CredentialsUtils;
 import com.trovebox.android.app.net.account.AccountTroveboxResponse;
 import com.trovebox.android.app.net.account.IAccountTroveboxApiFactory;
-import com.trovebox.android.app.util.CommonUtils;
-import com.trovebox.android.app.util.GuiUtils;
 import com.trovebox.android.app.util.LoginUtils;
 import com.trovebox.android.app.util.LoginUtils.LoginActionHandler;
-import com.trovebox.android.app.util.ObjectAccessor;
-import com.trovebox.android.app.util.TrackerUtils;
+import com.trovebox.android.common.fragment.common.CommonDialogFragment;
+import com.trovebox.android.common.fragment.common.CommonRetainedFragmentWithTaskAndProgress;
+import com.trovebox.android.common.net.TroveboxResponseUtils;
+import com.trovebox.android.common.util.CommonUtils;
+import com.trovebox.android.common.util.GuiUtils;
+import com.trovebox.android.common.util.ObjectAccessor;
+import com.trovebox.android.common.util.TrackerUtils;
 
 /**
  * The fragment which handles login via google action
@@ -183,9 +184,9 @@ public class GoogleLoginFragment extends CommonRetainedFragmentWithTaskAndProgre
     }
 
     @Override
-    public void processLoginCredentials(com.trovebox.android.app.model.Credentials credentials) {
+    public void processLoginCredentials(com.trovebox.android.common.model.Credentials credentials) {
         Activity activity = getSupportActivity();
-        credentials.saveCredentials(activity);
+        CredentialsUtils.saveCredentials(activity, credentials);
         LoginUtils.onLoggedIn(activity, true);
     }
 
@@ -229,7 +230,7 @@ public class GoogleLoginFragment extends CommonRetainedFragmentWithTaskAndProgre
         @Override
         protected Boolean doInBackground(Void... params) {
             try {
-                if (CommonUtils.checkOnline())
+                if (GuiUtils.checkOnline())
                 {
                     String token = fetchToken();
                     if (token != null)

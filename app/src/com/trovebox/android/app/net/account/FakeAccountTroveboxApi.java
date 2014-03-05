@@ -7,11 +7,9 @@ import java.security.NoSuchAlgorithmException;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.content.Context;
-
-import com.trovebox.android.app.net.ApiBase;
-import com.trovebox.android.app.net.TroveboxResponse;
-import com.trovebox.android.app.net.TroveboxResponse.RequestType;
+import com.trovebox.android.common.net.ApiBase;
+import com.trovebox.android.common.net.TroveboxResponse;
+import com.trovebox.android.common.net.TroveboxResponse.RequestType;
 
 /**
  * @author Patrick Santana <patrick@trovebox.com>
@@ -19,8 +17,8 @@ import com.trovebox.android.app.net.TroveboxResponse.RequestType;
 public class FakeAccountTroveboxApi extends ApiBase implements
         IAccountTroveboxApi {
 
-    public FakeAccountTroveboxApi(Context context) {
-        super(context);
+    public FakeAccountTroveboxApi() {
+        super();
     }
 
     @Override
