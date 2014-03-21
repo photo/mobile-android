@@ -21,6 +21,7 @@
     <string name="setting_account_type">setting_account_type</string>
     <string name="setting_account_access_type">setting_account_access_type</string>
     <string name="setting_account_access_permissions">setting_account_access_permissions</string>
+    <string name="setting_upload_manager_key">setting_upload_manager</string>
     <string name="setting_upload_limit_reset_date">setting_upload_limit_reset_date</string>
     <string name="setting_system_version_info_updated">setting_system_version_info_updated_v2</string>
     <string name="setting_system_version_hosted">setting_system_version_hosted</string>
