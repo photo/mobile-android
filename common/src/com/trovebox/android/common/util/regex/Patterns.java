@@ -86,7 +86,7 @@ public class Patterns {
                     + "|(?:mil|mobi|museum|m[acdeghklmnopqrstuvwxyz])"
                     + "|(?:name|net|n[acefgilopruz])"
                     + "|(?:org|om)"
-                    + "|(?:pro|p[aefghklmnrstwy])"
+                    + "|(?:pro|photo(?:s|graphy)?|pics|p[aefghklmnrstwy])"
                     + "|qa"
                     + "|r[eosuw]"
                     + "|s[abcdeghijklmnortuvyz]"
