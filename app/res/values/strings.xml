@@ -104,6 +104,7 @@
 
     <!-- Tags -->
     <string name="tags_view_in_gallery">View tagged photos</string>
+    <string name="enter_tags_manually">Enter tags</string>
 
     <!-- SelectTagsActivity -->
     <string name="title_activity_select_tags">Select Tags</string>

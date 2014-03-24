@@ -36,7 +36,6 @@
         android:paddingTop="@dimen/trovebox_site_padding_half" >
 
         <LinearLayout
-            android:id="@+id/image_details"
             android:layout_width="0dip"
             android:layout_height="wrap_content"
             android:layout_weight="1"

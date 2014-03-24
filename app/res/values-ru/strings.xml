@@ -104,6 +104,7 @@
 
     <!-- Tags -->
     <string name="tags_view_in_gallery">Посмотреть отмеченные тегами фотографии</string>
+    <string name="enter_tags_manually">Введите теги</string>
 
     <!-- SelectTagsActivity -->
     <string name="title_activity_select_tags">Выбор тегов</string>

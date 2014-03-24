@@ -12,6 +12,7 @@ import android.widget.LinearLayout.LayoutParams;
 import android.widget.TextView;
 
 import com.trovebox.android.common.fragment.common.CommonFragment;
+import com.trovebox.android.common.util.CommonUtils;
 
 public final class ImageFragment extends CommonFragment {
     int imageResourceId;
@@ -53,8 +54,13 @@ public final class ImageFragment extends CommonFragment {
 
         LinearLayout layout = new LinearLayout(getActivity());
         layout.setOrientation(LinearLayout.VERTICAL);
-        layout.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT,
-                LayoutParams.MATCH_PARENT));
+        if (CommonUtils.isFroyoOrHigher()) {
+            layout.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT,
+                    LayoutParams.MATCH_PARENT));
+        } else {
+            layout.setLayoutParams(new LayoutParams(LayoutParams.FILL_PARENT,
+                    LayoutParams.FILL_PARENT));
+        }
 
         layout.setGravity(Gravity.CENTER);
         layout.addView(image);

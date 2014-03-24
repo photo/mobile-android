@@ -164,7 +164,8 @@
 
         <provider
             android:name="com.trovebox.android.common.provider.UploadsProvider"
-            android:authorities="com.trovebox.android.app" />
+            android:authorities="com.trovebox.android.app"
+            android:exported="false" />
         <!-- Required for the hi-res image processing -->
         <!-- authorities can have the value you prefer -->
         <provider

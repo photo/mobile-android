@@ -76,7 +76,7 @@
     <string name="notification_upload_success_title">Upload finished</string>
     <string name="notification_upload_skipped_title">Upload skipped. Found same photo on the server.</string>
     <string name="notification_upload_success_text">%1$s</string>
-    <string name="notification_upload_multiple_title">Successfull upload</string>
+    <string name="notification_upload_multiple_title">Successful upload</string>
     <string name="notification_upload_multiple_text">Uploaded: %1$d; skipped: %2$d</string>
     <string name="notification_upload_multiple_details">Upload details</string>
     <string name="notification_upload_multiple_detail_skipped"><![CDATA[<b>%1$s</b> skipped]]></string>

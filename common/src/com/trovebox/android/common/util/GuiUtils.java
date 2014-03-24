@@ -265,8 +265,9 @@ public class GuiUtils {
         for (int i = 0; i < values.length; i++) {
             String value = values[i];
             if (TextUtils.isEmpty(value)) {
-                String pleaseSpecifyFirst = activity.getString(R.string.pleaseSpecifyFirst);
-                info(String.format(pleaseSpecifyFirst, titles[i]), activity);
+                String pleaseSpecifyFirst = activity.getString(R.string.pleaseSpecifyFirst,
+                        titles[i]);
+                info(pleaseSpecifyFirst, activity);
                 return false;
             }
         }
@@ -285,9 +286,9 @@ public class GuiUtils {
         for (int i = 0; i < values.length; i++) {
             String value = values[i];
             if (TextUtils.isEmpty(value)) {
-                String pleaseSpecifyFirst = CommonUtils
-                        .getStringResource(R.string.pleaseSpecifyFirst);
-                info(String.format(pleaseSpecifyFirst, CommonUtils.getStringResource(titles[i])));
+                String pleaseSpecifyFirst = CommonUtils.getStringResource(
+                        R.string.pleaseSpecifyFirst, CommonUtils.getStringResource(titles[i]));
+                info(pleaseSpecifyFirst);
                 return false;
             }
         }

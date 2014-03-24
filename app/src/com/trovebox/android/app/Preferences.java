@@ -24,7 +24,7 @@ import com.trovebox.android.common.net.TroveboxApi;
 import com.trovebox.android.common.util.CommonUtils;
 
 public class Preferences {
-    public final static int PREFERENCES_MODE = Context.MODE_MULTI_PROCESS;
+    public final static int PREFERENCES_MODE = Context.MODE_PRIVATE;
     public final static String PREFERENCES_NAME = "default";
     public final static String LIMITS_PREFERENCES_NAME = "limits";
     public final static String SYSTEM_VERSION_PREFERENCES_NAME = "system_version";
