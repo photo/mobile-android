@@ -2,8 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.trovebox.android.app"
     android:installLocation="auto"
-    android:versionCode="16"
-    android:versionName="2.5" >
+    android:versionCode="17"
+    android:versionName="2.6" >
 
     <uses-sdk
         android:minSdkVersion="7"
@@ -164,7 +164,8 @@
 
         <provider
             android:name="com.trovebox.android.common.provider.UploadsProvider"
-            android:authorities="com.trovebox.android.app" />
+            android:authorities="com.trovebox.android.app"
+            android:exported="false" />
         <!-- Required for the hi-res image processing -->
         <!-- authorities can have the value you prefer -->
         <provider

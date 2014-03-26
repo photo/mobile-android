@@ -22,11 +22,11 @@ import com.trovebox.android.app.twitter.TwitterUtils;
 import com.trovebox.android.common.fragment.common.CommonFragmentUtils;
 import com.trovebox.android.common.fragment.common.CommonRetainedFragmentWithTaskAndProgress;
 import com.trovebox.android.common.provider.UploadsUtils;
+import com.trovebox.android.common.util.CommonUtils;
 import com.trovebox.android.common.util.GuiUtils;
 import com.trovebox.android.common.util.TrackerUtils;
 
-public class SettingsCommon implements
-        OnPreferenceClickListener {
+public class SettingsCommon implements OnPreferenceClickListener {
     static final String TAG = SettingsCommon.class.getSimpleName();
     Activity activity;
     Preference mLoginPreference;
@@ -45,41 +45,27 @@ public class SettingsCommon implements
 
     @Override
     public boolean onPreferenceClick(Preference preference) {
-        if (activity.getString(R.string.setting_account_loggedin_key)
-                .equals(
-                        preference.getKey()))
-        {
-            if (Preferences.isLoggedIn(activity))
-            {
+        if (activity.getString(R.string.setting_account_loggedin_key).equals(preference.getKey())) {
+            if (Preferences.isLoggedIn(activity)) {
 
                 // confirm if user wants to log out
                 new AlertDialog.Builder(activity, R.style.Theme_Trovebox_Dialog_Light)
-                        .setTitle(R.string.logOut)
-                        .setMessage(R.string.areYouSureQuestion)
+                        .setTitle(R.string.logOut).setMessage(R.string.areYouSureQuestion)
                         .setIcon(android.R.drawable.ic_dialog_alert)
-                        .setPositiveButton(R.string.yes,
-                                new DialogInterface.OnClickListener() {
+                        .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
 
-                                    @Override
-                                    public void onClick(
-                                            DialogInterface dialog,
-                                            int whichButton) {
-                                        TrackerUtils.trackButtonClickEvent("setting_logout",
-                                                activity);
-                                        getLogoutFragment().doLogout();
-                                    }
-                                })
-                        .setNegativeButton(R.string.no, null)
-                        .show();
+                            @Override
+                            public void onClick(DialogInterface dialog, int whichButton) {
+                                TrackerUtils.trackButtonClickEvent("setting_logout", activity);
+                                getLogoutFragment().doLogout();
+                            }
+                        }).setNegativeButton(R.string.no, null).show();
 
-            } else
-            {
+            } else {
                 getLogoutFragment().finishActivity();
             }
-        } else if (activity.getString(
-                R.string.setting_account_facebook_loggedin_key)
-                .equals(preference.getKey()))
-        {
+        } else if (activity.getString(R.string.setting_account_facebook_loggedin_key).equals(
+                preference.getKey())) {
             LogoutListener logoutListener = new LogoutListener() {
 
                 @Override
@@ -89,22 +75,25 @@ public class SettingsCommon implements
                 @Override
                 public void onLogoutFinish() {
                     FacebookSessionEvents.removeLogoutListener(this);
-                    loginCategory
-                            .removePreference(mFacebookLoginPreference);
+                    loginCategory.removePreference(mFacebookLoginPreference);
                 }
 
             };
             mFacebookLoginPreference.setEnabled(false);
             FacebookSessionEvents.addLogoutListener(logoutListener);
             FacebookUtils.logoutRequest(activity);
+        } else if (CommonUtils.getStringResource(R.string.setting_upload_manager_key).equals(
+                preference.getKey())) {
+            Intent intent = new Intent(activity, UploadManagerActivity.class);
+            activity.startActivity(intent);
         }
         return false;
     }
 
     public void refresh() {
-        mLoginPreference.setTitle(Preferences.isLoggedIn(activity) ?
-                R.string.setting_account_loggedin_logout
-                : R.string.setting_account_loggedin_login);
+        mLoginPreference
+                .setTitle(Preferences.isLoggedIn(activity) ? R.string.setting_account_loggedin_logout
+                        : R.string.setting_account_loggedin_login);
     }
 
     public Preference getLoginPreference() {
@@ -120,19 +109,20 @@ public class SettingsCommon implements
         return mFacebookLoginPreference;
     }
 
-    public void setFacebookLoginPreference(
-            Preference mFacebookLoginPreference) {
+    public void setFacebookLoginPreference(Preference mFacebookLoginPreference) {
         this.mFacebookLoginPreference = mFacebookLoginPreference;
         this.mFacebookLoginPreference.setOnPreferenceClickListener(this);
         if (FacebookProvider.getFacebook() == null
-                || !FacebookProvider.getFacebook().isSessionValid())
-        {
+                || !FacebookProvider.getFacebook().isSessionValid()) {
             loginCategory.removePreference(mFacebookLoginPreference);
         }
     }
 
-    public void setAutoUploadTagPreference(
-            Preference autoUploadTagPreference) {
+    public void setUploadManagerPreference(Preference uploadManagerPreference) {
+        uploadManagerPreference.setOnPreferenceClickListener(this);
+    }
+
+    public void setAutoUploadTagPreference(Preference autoUploadTagPreference) {
         this.autoUploadTagPreference = autoUploadTagPreference;
         this.autoUploadTagPreference
                 .setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
@@ -148,33 +138,28 @@ public class SettingsCommon implements
         autoUploadTagPreference.setSummary(Preferences.getAutoUploadTag(activity));
     }
 
-    public void setWiFiOnlyUploadPreference(
-            Preference wiFiOnlyUploadPreference) {
-        wiFiOnlyUploadPreference
-                .setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
+    public void setWiFiOnlyUploadPreference(Preference wiFiOnlyUploadPreference) {
+        wiFiOnlyUploadPreference.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
 
-                    @Override
-                    public boolean onPreferenceChange(Preference preference, Object newValue) {
-                        TrackerUtils.trackPreferenceChangeEvent("settings_wifi_only_upload_on",
-                                newValue,
-                                activity);
-                        return true;
-                    }
-                });
+            @Override
+            public boolean onPreferenceChange(Preference preference, Object newValue) {
+                TrackerUtils.trackPreferenceChangeEvent("settings_wifi_only_upload_on", newValue,
+                        activity);
+                return true;
+            }
+        });
     }
 
-    public void setAutoUploadPreference(
-            Preference autoUploadPreference) {
-        autoUploadPreference
-                .setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
+    public void setAutoUploadPreference(Preference autoUploadPreference) {
+        autoUploadPreference.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
 
-                    @Override
-                    public boolean onPreferenceChange(Preference preference, Object newValue) {
-                        TrackerUtils.trackPreferenceChangeEvent("settings_autoupload_on", newValue,
-                                activity);
-                        return true;
-                    }
-                });
+            @Override
+            public boolean onPreferenceChange(Preference preference, Object newValue) {
+                TrackerUtils.trackPreferenceChangeEvent("settings_autoupload_on", newValue,
+                        activity);
+                return true;
+            }
+        });
         if (Preferences.isLimitedAccountAccessType()) {
             autoUploadPreference.setEnabled(false);
             ((CheckBoxPreference) autoUploadPreference).setChecked(false);
@@ -196,85 +181,67 @@ public class SettingsCommon implements
     public void setServerUrl(Preference mServerUrl) {
         this.mServerUrl = mServerUrl;
         mServerUrl.setSummary(Preferences.getServer(activity));
-        mServerUrl
-                .setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
-                    @Override
-                    public boolean onPreferenceChange(Preference preference,
-                            Object newValue) {
-                        String oldValue = ((EditTextPreference)
-                                preference).getText();
-                        if (!oldValue.equals(newValue))
-                        {
-                            Preferences.logout(activity);
-                            refresh();
-                        }
-                        return true;
-                    }
-                });
+        mServerUrl.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference, Object newValue) {
+                String oldValue = ((EditTextPreference) preference).getText();
+                if (!oldValue.equals(newValue)) {
+                    Preferences.logout(activity);
+                    refresh();
+                }
+                return true;
+            }
+        });
     }
 
     public void setSyncClearPreference(Preference mSyncClearPreference) {
         this.mSyncClearPreference = mSyncClearPreference;
-        mSyncClearPreference
-                .setOnPreferenceClickListener(new OnPreferenceClickListener() {
+        mSyncClearPreference.setOnPreferenceClickListener(new OnPreferenceClickListener() {
 
-                    @Override
-                    public boolean onPreferenceClick(Preference preference) {
-                        // confirm if user wants to clear sync information
-                        new AlertDialog.Builder(activity, R.style.Theme_Trovebox_Dialog_Light)
-                                .setTitle(R.string.sync_clear)
-                                .setMessage(R.string.areYouSureQuestion)
-                                .setIcon(android.R.drawable.ic_dialog_alert)
-                                .setPositiveButton(R.string.yes,
-                                        new DialogInterface.OnClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                // confirm if user wants to clear sync information
+                new AlertDialog.Builder(activity, R.style.Theme_Trovebox_Dialog_Light)
+                        .setTitle(R.string.sync_clear).setMessage(R.string.areYouSureQuestion)
+                        .setIcon(android.R.drawable.ic_dialog_alert)
+                        .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
 
-                                            @Override
-                                            public void onClick(
-                                                    DialogInterface dialog,
-                                                    int whichButton) {
-                                                TrackerUtils.trackButtonClickEvent(
-                                                        "setting_sync_clear", activity);
-                                                UploadsUtils.clearUploadsAsync();
-                                            }
-                                        })
-                                .setNegativeButton(R.string.no, null)
-                                .show();
+                            @Override
+                            public void onClick(DialogInterface dialog, int whichButton) {
+                                TrackerUtils.trackButtonClickEvent("setting_sync_clear", activity);
+                                UploadsUtils.clearUploadsAsync();
+                            }
+                        }).setNegativeButton(R.string.no, null).show();
 
-                        return true;
-                    }
-                });
+                return true;
+            }
+        });
     }
 
     public void setDiskCachClearPreference(Preference diskCacheClearPreference) {
         this.diskCacheClearPreference = diskCacheClearPreference;
-        diskCacheClearPreference
-                .setOnPreferenceClickListener(new OnPreferenceClickListener() {
+        diskCacheClearPreference.setOnPreferenceClickListener(new OnPreferenceClickListener() {
 
-                    @Override
-                    public boolean onPreferenceClick(Preference preference) {
-                        // confirm if user wants to clear sync information
-                        new AlertDialog.Builder(activity, R.style.Theme_Trovebox_Dialog_Light)
-                                .setTitle(R.string.disk_cache_clear)
-                                .setMessage(R.string.areYouSureQuestion)
-                                .setIcon(android.R.drawable.ic_dialog_alert)
-                                .setPositiveButton(R.string.yes,
-                                        new DialogInterface.OnClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                // confirm if user wants to clear sync information
+                new AlertDialog.Builder(activity, R.style.Theme_Trovebox_Dialog_Light)
+                        .setTitle(R.string.disk_cache_clear)
+                        .setMessage(R.string.areYouSureQuestion)
+                        .setIcon(android.R.drawable.ic_dialog_alert)
+                        .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
 
-                                            @Override
-                                            public void onClick(
-                                                    DialogInterface dialog,
-                                                    int whichButton) {
-                                                TrackerUtils.trackButtonClickEvent(
-                                                        "setting_disk_cache_clear", activity);
-                                                getClearDiskCachesFragment().clearDiskCaches();
-                                            }
-                                        })
-                                .setNegativeButton(R.string.no, null)
-                                .show();
+                            @Override
+                            public void onClick(DialogInterface dialog, int whichButton) {
+                                TrackerUtils.trackButtonClickEvent("setting_disk_cache_clear",
+                                        activity);
+                                getClearDiskCachesFragment().clearDiskCaches();
+                            }
+                        }).setNegativeButton(R.string.no, null).show();
 
-                        return true;
-                    }
-                });
+                return true;
+            }
+        });
     }
 
     /**
@@ -306,12 +273,10 @@ public class SettingsCommon implements
 
         public void finishActivity() {
             Activity activity = getSupportActivity();
-            if (activity != null)
-            {
+            if (activity != null) {
                 activity.startActivity(new Intent(activity, AccountActivity.class));
                 activity.finish();
-            } else
-            {
+            } else {
                 TrackerUtils.trackErrorEvent("activity_null", TAG);
             }
         }
@@ -319,15 +284,13 @@ public class SettingsCommon implements
         class LogoutUserTask extends RetainedTask {
             @Override
             protected Boolean doInBackground(Void... params) {
-                try
-                {
+                try {
                     UploadsUtils.clearUploads();
                     FacebookUtils.logoutRequest(TroveboxApplication.getContext());
                     TwitterUtils.logout(TroveboxApplication.getContext());
                     ImageCacheUtils.clearDiskCaches();
                     return true;
-                } catch (Exception ex)
-                {
+                } catch (Exception ex) {
                     GuiUtils.noAlertError(TAG, ex);
                 }
                 return false;
@@ -335,13 +298,10 @@ public class SettingsCommon implements
 
             @Override
             protected void onSuccessPostExecuteAdditional() {
-                try
-                {
-                    Preferences
-                            .logout(getSupportActivity());
+                try {
+                    Preferences.logout(getSupportActivity());
                     finishActivity();
-                } catch (Exception e)
-                {
+                } catch (Exception e) {
                     GuiUtils.error(TAG, e);
                 }
             }

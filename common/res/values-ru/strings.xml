@@ -36,9 +36,11 @@
     <string name="sync_uploading_in_background">Ваши фотографии отправляются</string>
 
     <plurals name="sync_upload_selected_confirmation">
-        <item quantity="zero">Вы хотите загрузить %1$d выбранных изображения?</item>
+        <item quantity="few">Вы хотите загрузить %1$d выбранных изображения?</item>
+        <item quantity="zero">Вы хотите загрузить %1$d выбранных изображений?</item>
+        <item quantity="other">Вы хотите загрузить %1$d выбранных изображений?</item>
+        <item quantity="many">Вы хотите загрузить %1$d выбранных изображений?</item>
         <item quantity="one">Вы хотите загрузить выбранное изображение?</item>
-        <item quantity="other">Вы хотите загрузить %1$d выбранных изображения?</item>
     </plurals>
 
     <!-- Upload Manager screen -->
@@ -59,7 +61,9 @@
     -->
     <plurals name="number_of_items_selected">
         <item quantity="zero">%1$d выбрано</item>
-        <item quantity="one">%1$d выбрано</item>
+        <item quantity="one">%1$d выбран</item>
+        <item quantity="few">%1$d выбрано</item>
+        <item quantity="many">%1$d выбрано</item>
         <item quantity="other">%1$d выбрано</item>
     </plurals>
 

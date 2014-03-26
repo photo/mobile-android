@@ -7,15 +7,19 @@
     <EditText
         android:id="@+id/edit_search"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:hint="@string/enter_tags_manually" />
 
     <ListView
         android:id="@+id/list_tags"
         android:layout_width="match_parent"
         android:layout_height="0dip"
         android:layout_weight="1" />
-    
-    <Button android:id="@+id/filterBtn" android:layout_width="match_parent"
-		android:layout_height="wrap_content" android:text="@string/tags_view_in_gallery" />
+
+    <Button
+        android:id="@+id/filterBtn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/tags_view_in_gallery" />
 
 </LinearLayout>

@@ -38,6 +38,8 @@ public class SettingsFragment extends CommonPreferenceFragment
         settingsCommon
                 .setDiskCachClearPreference(findPreference(getString(R.string.setting_disk_cache_clear_key)));
         settingsCommon
+                .setUploadManagerPreference(findPreference(getString(R.string.setting_upload_manager_key)));
+        settingsCommon
                 .setAutoUploadTagPreference(findPreference(getString(R.string.setting_autoupload_tag_key)));
         settingsCommon
                 .setAutoUploadPreference(findPreference(getString(R.string.setting_autoupload_on_key)));

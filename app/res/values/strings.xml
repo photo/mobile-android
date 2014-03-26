@@ -104,6 +104,7 @@
 
     <!-- Tags -->
     <string name="tags_view_in_gallery">View tagged photos</string>
+    <string name="enter_tags_manually">Enter tags</string>
 
     <!-- SelectTagsActivity -->
     <string name="title_activity_select_tags">Select Tags</string>
@@ -172,6 +173,8 @@
 
     <!-- Preferences -->
     <string name="upload_preference_category">Camera upload</string>
+    <string name="setting_upload_manager_title">Upload Manager</string>
+    <string name="setting_upload_manager_summary">Click to open \"Sending list\"</string>
     <string name="wifi_only_upload">Upload only if WiFi network used</string>
     <string name="auto_upload_preference_category">Automatically upload photos (Experimental)</string>
     <string name="auto_upload_preference">Auto upload taken pictures</string>

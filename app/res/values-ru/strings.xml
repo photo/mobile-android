@@ -104,6 +104,7 @@
 
     <!-- Tags -->
     <string name="tags_view_in_gallery">Посмотреть отмеченные тегами фотографии</string>
+    <string name="enter_tags_manually">Введите теги</string>
 
     <!-- SelectTagsActivity -->
     <string name="title_activity_select_tags">Выбор тегов</string>
@@ -172,6 +173,8 @@
 
     <!-- Preferences -->
     <string name="upload_preference_category">Загрузка фотографий с камеры</string>
+    <string name="setting_upload_manager_title">Менеджер отправлений</string>
+    <string name="setting_upload_manager_summary">Нажмите, чтобы увидеть текущие оправления</string>
     <string name="wifi_only_upload">Загружать только если используется WiFi сеть</string>
     <string name="auto_upload_preference_category">Автоматически загружать фотографии</string>
     <string name="auto_upload_preference">Автоматически загружать сделанные снимки</string>

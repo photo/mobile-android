@@ -22,6 +22,11 @@
             holo:defaultValue="@bool/setting_wifi_only_upload_on_default"
             holo:key="@string/setting_wifi_only_upload_on_key"
             holo:title="@string/wifi_only_upload" />
+
+        <PreferenceScreen
+            holo:key="@string/setting_upload_manager_key"
+            holo:summary="@string/setting_upload_manager_summary"
+            holo:title="@string/setting_upload_manager_title" />
     </PreferenceCategory>
     <PreferenceCategory holo:title="@string/auto_upload_preference_category" >
         <CheckBoxPreference
